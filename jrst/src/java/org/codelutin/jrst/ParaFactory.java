@@ -87,6 +87,10 @@ public class ParaFactory extends AbstractFactory { // ParaFactory
             // getPara().setText(buffer.toString());
             result = parseEnd(c);
             result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
+        }else if((char)c == '\n' && (char)lastc == ':' && (char)lastlastc == ':') {
+            // il s'agit d'un bloc literal
+            getPara().setText(buffer.substring(0,buffer.length()-1));
+            result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-3); // on laisse les "::"
         }else{
             if ((char) c == '\n')
                 buffer.append(' ');

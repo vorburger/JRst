@@ -1,5 +1,5 @@
 /* *##%
- * Copyright (C) 2002, 2003 Code Lutin
+ * Copyright (C) 2002, 2004 Code Lutin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,135 +19,84 @@
 /* *
  * LitteralFactory.java
  *
- * Created: 23 juin. 2004
+ * bloc litteral dans le texte rST
  *
- * @author Bucas
- * Copyright Code Lutin
- * @version $Revision$
+ * Created: 23 juillet 2004
  *
- * Mise a jour: $Date$
- * par : $Author$
  */
 
 package org.codelutin.jrst;
 
-public class LitteralFactory extends AbstractFactory { // LitteralFactory
+public class LitteralFactory extends IndentedAbstractFactory { // LitteralFactory
 
-    /** les différents états d'avancenement de la recherche de bloc litteral **/
-    final static Object COLONS_REMOVE = new Object(); // pour enlever les "::" du début
-    final static Object INDENT_SEARCH = new Object(); // on cherche la première fois l'indentation
-    final static Object READING = new Object();  // on lit le texte
-    final static Object FIND_INDENT = new Object(); // on cherche l'indentation minimum pour rester dans le bloc litteral
+    /** Constantes **/
 
-    //StringBuffer buffer = null;
-    int lastc = -1;
-    int lastlastc = -1;
-    int indentRead = 0;   // indentation en cours de lecture
-    int indentLength = 0; // indentation de base trouvée avec INDENT_SEARCH
+    /** Attributs **/
 
-    protected AbstractFactory factoryNew(){
-        return  new LitteralFactory();
-    }
-    protected Element elementNew(){
-        return new Litteral();
-    }
+    int count = 0;
 
-    protected Litteral getLitteral(){
-        return (Litteral)getElement();
-    }
+    StringBuffer sb = null;
 
+
+    /** Méthodes **/
+
+    // Accesseurs et recopieurs
+    protected AbstractFactory factoryNew(){ return new LitteralFactory(); }
+    protected Element elementNew(){ return new Litteral(); }
+    protected Litteral getLitteral(){ return (Litteral)getElement(); }
+
+    // Constructeur
+    public LitteralFactory(){ init(); }
+
+    // Initialisation
     public void init(){
+        // est ce que l'élément est unique ou bien forme une liste
+        unique      = true;
+        // est ce que l'élément peut être sur une seule ligne
+        //oneLiner    = true;
+        // est ce qu'il faut envoyer \n à parseHead pour identifier la tete
+        //noEndHead   = true;
+
+        // Expression régulière de l'entete
+        // qui permet de reconnaitre quel bloc
+        headRegExpr = "\\:\\:";
+
+        // initialisation des attributs de la classe
+        count = 0;
+        sb = new StringBuffer();
+
         super.init();
-        lastc = -1;
-        //buffer = new StringBuffer();
-        STATE = COLONS_REMOVE;
-        indentRead = 0;
     }
 
-    public ParseResult accept(int c) {
-        ParseResult result = parse(c);
-        if(result == ParseResult.FINISHED){
-            result = ParseResult.ACCEPT;
-        }
-        return result;
-    }
-
-    public ParseResult parseEnd(){
-        // TODO a faire
-        System.out.println("Litteral FINITED");
-        return null;
-    }
-
-    /**
-    * Retourne true tant que l'objet n'a pas fini de parser son élément.
-    * Lorsqu'il retourne false, la factory est capable de savoir si l'élement est convenable ou non, pour cela il faut appeler la méthode {@link getParseResult}.
-    */
-    public ParseResult parse(int c) {
+    // parse l'entete [ exemple sans signification précise ]
+    public ParseResult parseHead(int c) {
         ParseResult result = ParseResult.IN_PROGRESS;
-        consumedCharCount++;
 
-        Object lastState = STATE;
+        System.out.print("\033[00;31m"+(char)c+"\033[00m");
 
-        if (STATE == COLONS_REMOVE) {
-            if ((char)c == ':') {
-                indentRead++;
-                if (indentRead > 2) {
-                    result = ParseResult.FAILED.setError("expected only double semi-colon '::'");
-                }
-            }else if ((char)c == '\n') {
-                    indentRead++;
-                    if (indentRead == 3) {
-                        STATE = INDENT_SEARCH;
-                        indentRead = 0;
-                    }
-                  }else{
-                      result = ParseResult.FAILED.setError("expected double semi-colon '::'");
-                  }
-        }else if (STATE == INDENT_SEARCH) {
-            if ((char)c == ' ') {
-                indentRead ++;
-            }else if ((char)c == '\n' ) {
-                indentRead = 0;
-            }else{
-                // on trouve un caractère ki n'est pas un espace
-                indentLength = indentRead;
-                STATE = READING;
-            }
-        }else if (STATE == READING) {
-            if ((char)c == '\n') {
-                System.out.print(getLitteral().getText());
-                indentRead = 0;
-                STATE = FIND_INDENT;
-            }
-        }else if (STATE == FIND_INDENT) {
-            if ((char) c == ' ') {
-                indentRead ++;
-            }else if ((char)c == '\n') {
-                indentRead = 0;
-            }else{
-                // on trouve un caractere non espace
-                if (indentRead < indentLength){
-                    System.out.println("Youpi le finichead");
-                    result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
-                }else{
-                    STATE = READING;
-                }
-            }
-        }
+        count++;
 
-        if (result == ParseResult.IN_PROGRESS) {
-            if (lastState != COLONS_REMOVE) {
-                buffer.append((char)c);
-                getLitteral().setText(buffer.toString());
-            }
-        }
-
-        if (result == ParseResult.FAILED) {
-            if (result.getError() != "expected double semi-colon '::'")
-            System.out.println(" :: "+result.getError());
+        if (count == 2) { // "::"
+            INDENT_STATE = READING_BODY;
+            result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount);
         }
 
         return result;
+    }
+
+    // Parse Body
+    public ParseResult parseBody(int c) {
+        ParseResult result = ParseResult.IN_PROGRESS;
+        System.out.print("\033[00;37m"+(char)c+"\033[00m");
+        sb.append((char)c);
+        return result;
+    }
+
+    // Demande à se terminer
+    public ParseResult parseEnd(int c){
+        getLitteral().setText(sb.toString());
+
+        return super.parseEnd(c);
     }
 
 } // LitteralFactory

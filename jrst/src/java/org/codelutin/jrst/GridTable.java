@@ -31,24 +31,60 @@ public class GridTable extends AbstractElement { // GridTable Element
 
     /** Constantes **/
 
-    // type
-    static final Object KIND = new Object();
-    // ...
-
     /** Attributs **/
 
     Object type = null;
+    int largeur = 0;
+    int longueur = 0;
+    Element[][] table = null;
+    boolean head = false;
+
 
     /** Méthodes **/
 
     // constructeur
     public GridTable(){}
 
+    public void initTable(int largeur, int longueur) {
+        table = new Element[largeur][longueur];
+        this.largeur = largeur;
+        this.longueur = longueur;
+    }
+
     // Accesseurs -- SETTERs
     public void setType(Object type) { this.type = type; }
+    public void setLargeur(int larg) {  largeur = larg;  }
+    public void setLongueur(int larg) {  longueur = larg;  }
+    public void setHead(boolean h) {  head = h;  }
+
+    /**
+     *   Set Table
+     *
+     * @param x @param y : la coordonnée de l'élément à entrer
+     * @param e : l'élément à placer dans la case
+     *
+     */
+    public void setTable(int x, int y, Element e) {
+        table[x][y] = e;
+    }
+
 
     // Accesseurs -- GETTERs
     public Object getType() { return type; }
+    public int getLargeur() { return largeur; }
+    public int getLongueur() { return longueur; }
+    public boolean getHead() { return head; }
+
+    /**
+     *   Get Table
+     *
+     * @param x @param y : la coordonnée de l'élément à entrer
+     *
+     */
+    public Element getTable(int x, int y) {
+        return table[x][y];
+    }
+
 
 
 } // GridTable Element

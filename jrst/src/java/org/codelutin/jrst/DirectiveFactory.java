@@ -94,8 +94,9 @@ public class DirectiveFactory extends IndentedAbstractFactory { // DirectiveFact
                 if((char)c != ':' || ((char)c == ':' && (char)lastc == '\\')){
                     text.append((char)c);
                 }else{
-                    Term t = new Term(text);
-                    getElement().addChild(t);
+                    //Term t = new Term(text);
+                    //getElement().addChild(t);
+                    ((Directive)getElement()).setText(text.toString());
                     text.delete(0, text.length());
                     SUB_STATE = COLONS;
                     counter = 1;

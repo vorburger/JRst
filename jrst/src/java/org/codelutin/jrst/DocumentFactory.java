@@ -56,7 +56,31 @@ public class DocumentFactory extends AbstractFactory { // DocumentFactory
             return (Title)e;
         }else{
             for(Iterator i=e.getChilds().iterator(); i.hasNext();){
-                return ParcoursTitle((Element)i.next());
+                Title result = ParcoursTitle((Element)i.next());
+                if ( result != null ) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
+    public FieldList ChercheBibliographic(Element e) {
+        if (e instanceof FieldList) {
+            for(int i=0; i<e.getChilds().size(); i++){
+                Object child = e.getChilds().get(i);
+                if(child instanceof Term){
+                    if ("author".equals(((Term)child).getText().toLowerCase())) {
+                        return (FieldList)e;
+                    }
+                }
+            }
+        }else{
+            for(Iterator i=e.getChilds().iterator(); i.hasNext();){
+                FieldList result = ChercheBibliographic((Element)i.next());
+                if ( result != null ) {
+                    return result;
+                }
             }
         }
         return null;
@@ -70,7 +94,14 @@ public class DocumentFactory extends AbstractFactory { // DocumentFactory
         if (t != null) {
             myDoc.setTitle(t);
         }else{
-            System.out.println("No Title Found!");
+            //System.out.println("No Title Found!");
+        }
+
+        FieldList f = ChercheBibliographic(myDoc);
+        if (f != null) {
+            myDoc.setBibliographic(f);
+        }else{
+            //System.out.println("No bibliographic data");
         }
 
         return ParseResult.ACCEPT;

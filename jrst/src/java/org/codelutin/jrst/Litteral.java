@@ -1,5 +1,5 @@
 /* *##%
- * Copyright (C) 2002, 2003 Code Lutin
+ * Copyright (C) 2002, 2004 Code Lutin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,31 +19,32 @@
 /* *
  * Litteral.java
  *
- * Created: 23 juin 2004
  *
- * @author Bucas
- * Copyright Code Lutin
- * @version $Revision$
+ * Created: 23 juillet. 2004
  *
- * Mise a jour: $Date$
- * par : $Author$
  */
 
 package org.codelutin.jrst;
 
-public class Litteral extends AbstractElement { // Litteral
+public class Litteral extends AbstractElement { // Litteral Element
+
+    /** Constantes **/
+
+    /** Attributs **/
+
     String text = null;
 
-    public Litteral(){
-    }
+    /** Méthodes **/
 
-    public String getText(){
-        return text;
-    }
+    // constructeur
+    public Litteral(){}
 
-    public void setText(String text){
-        this.text = text;
-    }
+    // Accesseurs -- SETTERs
+    public void setText(String t) { this.text = t; }
 
-} // Litteral
+    // Accesseurs -- GETTERs
+    public String getText() { return text; }
+
+
+} // Litteral Element
 

@@ -83,5 +83,21 @@ public class XmlGenerator extends AbstractGenerator { // XmlGenerator
        System.out.println("</fieldlist>");
    }
 
+   public String inlineMarkup(String text) {
+       // TODO
+       String before = "([ '\"(\\[<])";
+       String after = "([ '\".,:\\;!?)\\]}/\\>])";
+       String t = text;
+
+       t = t.replaceAll("([^ ]+@[^ ]+\\.[^ ]+)","<a href=\"mailto:$1\">$1</a>"); // courriel
+       t = t.replaceAll("(((http[s]?)|ftp|mailto|telnet|news|skype|e2k|ssh)://[^ \\)]+\\.[^ \\)]+)","<a href=\"$1\">$1</a>"); // URL
+
+       t = t.replaceAll(before+"[\\*][\\*]([^ ]*.*[^ ]*)[\\*][\\*]"+after,"$1<strong>$2</strong>$3"); // strong emphasis
+       t = t.replaceAll(before+"[\\*]([^ ]*.*[^ ]*)[\\*]"+after,"$1<em>$2</em>$3"); // emphasis
+
+       return t;
+   }
+
+
 } // XmlGenerator
 

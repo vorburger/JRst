@@ -33,6 +33,8 @@ package org.codelutin.jrst;
 
 import java.util.ArrayList;
 import java.util.List;
+import jregex.Pattern;
+import jregex.Matcher;
 
 public class AbstractElement implements Element { // AbstractElement
     ArrayList childs = new ArrayList();
@@ -43,6 +45,20 @@ public class AbstractElement implements Element { // AbstractElement
     }
     public List getChilds(){
         return childs;
+    }
+
+
+    /**
+     *  le petit nom véritable de la factory
+     */
+
+    // pour récuperer le nom des factories
+    Pattern ElementName = new Pattern("org\\.codelutin\\.jrst\\.(.*)");
+
+    public String Name() {
+        Matcher myM = ElementName.matcher(getClass().getName());
+        myM.matches();
+        return myM.group(1);
     }
 
 } // AbstractElement

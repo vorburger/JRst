@@ -71,7 +71,7 @@ public class CommentFactory extends AbstractFactory { // CommentFactory
         return result;
     }
 
-    public ParseResult parseEnd(){
+    public ParseResult parseEnd(int c){
         // TODO a faire
         return null;
     }

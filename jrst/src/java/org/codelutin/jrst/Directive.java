@@ -32,8 +32,17 @@
 package org.codelutin.jrst;
 
 public class Directive extends AbstractElement { // Directive
+
+    // constantes
+
+    final static Object KIND_NOTE = new Object(); // la directive est une note
+    final static Object KIND_CONTENTS = new Object(); // la table des matières
+
+    // attributs
+
     String text = null;
     boolean is_directive;
+    Object type = null;
 
     public Directive(){
         is_directive = false;
@@ -51,9 +60,20 @@ public class Directive extends AbstractElement { // Directive
         return text.trim();
     }
 
-    public void setText(String text){
-        this.text = text;
-    }
+    public void setText(String t){
+        if ( "note".equals(t.toLowerCase()) ){
+            type = KIND_NOTE;
+        }else if ( "contents".equals(t.toLowerCase()) ) {
+            type = KIND_CONTENTS;
+        }
 
+        this.text = t;
+    }
+    public void setType(Object type) {
+        this.type = type;
+    }
+    public Object getType() {
+        return type;
+    }
 } // Directive
 

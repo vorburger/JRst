@@ -36,6 +36,7 @@ import java.util.Iterator;
 public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
 
     protected boolean showBalise = false;
+    protected boolean paraP = true;
 
     protected Document doc = null;
 
@@ -94,11 +95,15 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
     }
 
     public void generate(Para e){
-        System.out.println("<p>"+inlineMarkup(e.getText())+"</p>");
+        if (paraP) {
+            System.out.println("<p>"+inlineMarkup(e.getText())+"</p>");
+        }else{
+            System.out.print(inlineMarkup(e.getText()));
+        }
     }
 
     public void generate(Litteral e){
-        System.out.println(e.getText());
+        System.out.println(getIndent()+"<pre>"+e.getText()+"</pre>");
     }
 
     public void generate(Term e){
@@ -118,13 +123,26 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
    }
 
    public void generate(FieldList e){
-       System.out.println(getIndent()+"<table><tbody>");
+
+       String classTerm = null;
+       if (e == doc.getBibliographic()) {
+           System.out.println(getIndent()+"<table class=\"docinfo\" frame=\"void\" rules=\"none\">");
+           System.out.println(getIndent()+"<col class=\"docinfo-name\" />");
+           System.out.println(getIndent()+"<col class=\"docinfo-content\" />");
+           classTerm = " class=\"docinfo-name\" ";
+       }else{
+           System.out.println(getIndent()+"<table>");
+       }
+       System.out.println(getIndent()+"<tbody valign=\"top\">");
+
+       boolean oldParaP = paraP;
+       paraP = false;
        for(int i=0; i<e.getChilds().size(); i++){
            Object child = e.getChilds().get(i);
            if(child instanceof Term){
-               System.out.print(getIndent()+"<tr><td>");
-               visit((Element)child);
-               System.out.println("</td>");
+               System.out.print(getIndent()+"<tr><th"+classTerm+">");
+               System.out.print(((Term)child).getText()+":");
+               System.out.println("</th>");
            }else{
                System.out.print(getIndent()+"<td>");
                indentation ++;
@@ -133,6 +151,7 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
                System.out.println("</td></tr>");
            }
        }
+       paraP = oldParaP;
        System.out.println(getIndent()+"</tbody></table>");
    }
 
@@ -207,21 +226,27 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
        if ( showBalise ) System.out.println("<!-- Directive -->");
        boolean afterTitle = false;
 
+       if (e.getType() == Directive.KIND_NOTE) {
+           System.out.println(getIndent()+ "<div class=\"note\">"+
+           "<p class=\"admonition-title first\">Note</p>");
+       }else if (e.getType() == Directive.KIND_CONTENTS) {
+           System.out.println(getIndent()+ "<table border='1'><tbody><td>");
+       }else{
+           System.out.println(getIndent()+"<strong>"+e.getText()+"</strong>");
+       }
 
-       System.out.println(getIndent()+"<table border='1'><tbody><td>");
        for(int i=0; i<e.getChilds().size(); i++){
            Object child = e.getChilds().get(i);
-           if(child instanceof Term){
-               System.out.println(getIndent()+"<strong>");
-               visit((Element)child);
-               System.out.println(getIndent()+"</strong>");
-           }else{
-               indentation ++;
-               visit((Element)child);
-               indentation --;
-           }
+           indentation ++;
+           visit((Element)child);
+           indentation --;
        }
-       System.out.println(getIndent()+"</td></tbody></table>");
+
+       if (e.getType() == Directive.KIND_NOTE) {
+           System.out.println(getIndent()+ "</div>");
+       }else if (e.getType() == Directive.KIND_CONTENTS) {
+           System.out.println(getIndent()+"</td></tbody></table>");
+       }
    }
 
    public void generate(Hyperlink e){
@@ -263,6 +288,71 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
       showBalise = oldShow;
    }
 
+   public void generate(GridTable e) {
+       boolean oldParaP = paraP;
+       boolean inHead = e.getHead();
+       paraP = false;
+
+       System.out.println(getIndent()+"<table border=\"1\" cellspacing=\"0\">");
+       if (inHead)
+           System.out.println(getIndent()+"<thead valign=\"bottom\">");
+       else
+           System.out.println(getIndent()+"<tbody valign=\"top\">");
+
+       for(int j=0; j<e.getLongueur(); j++){
+           System.out.println(getIndent()+"<tr>");
+           indentation++;
+           for(int i=0; i<e.getLargeur(); i++){
+               if (e.getTable(i,j) != null) {
+                   Element compartment = e.getTable(i,j);
+
+                   int countRowSpan = 0;
+                   int countColumnSpan = 0;
+
+                   while (j+countColumnSpan < e.getLongueur() &&
+                   e.getTable(i,j+countColumnSpan) == compartment) {
+                       countRowSpan=0;
+                       while (i+countRowSpan < e.getLargeur() &&
+                       e.getTable(i+countRowSpan,j+countColumnSpan) == compartment) {
+                           if (!(countRowSpan == 0 && countColumnSpan == 0))
+                               // pour ne pas faire la case par la suite
+                               e.setTable(i+countRowSpan,j+countColumnSpan, null);
+
+                           countRowSpan++;
+                       }
+                       countColumnSpan++;
+                   }
+
+                   String rowSpan = countRowSpan != 0 ? " colspan=\""+(countRowSpan)+"\"" : "";
+                   rowSpan += countColumnSpan != 0 ? " rowspan=\""+(countColumnSpan)+"\"" : "";
+
+                   if (inHead)
+                       System.out.print(getIndent()+"<th"+rowSpan+">");
+                   else
+                       System.out.print(getIndent()+"<td"+rowSpan+">");
+
+                   indentation++;
+                   //System.out.println("["+i+","+j+"]");
+                   visit(compartment);
+                   indentation--;
+
+                   if (inHead)
+                       System.out.println(getIndent()+"</th>");
+                   else
+                       System.out.println(getIndent()+"</td>");
+               }
+           }
+           indentation--;
+           System.out.println(getIndent()+"</tr>");
+           if (inHead) {
+               System.out.println(getIndent()+"</thead>\n"+getIndent()+"<tbody valign=\"top\">");
+               inHead = false;
+           }
+       }
+       System.out.println(getIndent()+"</table>");
+
+   }
+
    /** Modificateur de String **/
 
    public String getHtmlName(String text) {
@@ -277,6 +367,9 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
 
        t = t.replaceAll("([^ ]+@[^ ]+\\.[^ ]+)","<a href=\"mailto:$1\">$1</a>"); // courriel
        t = t.replaceAll("(((http[s]?)|ftp|mailto|telnet|news|skype|e2k|ssh)://[^ \\)]+\\.[^ \\)]+)","<a href=\"$1\">$1</a>"); // URL
+
+       t = t.replaceAll(before+"[\\`][\\`]([^ ]*.*[^ ]*)[\\`][\\`]"+after,"$1<code>$2</code>$3"); // inline literal
+       t = t.replaceAll(before+"[\\`]([^ ]*.*[^ ]*)[\\`]"+after,"$1<i>$2</i>$3"); // interpreted text
 
        t = t.replaceAll(before+"[\\*][\\*]([^ ]*.*[^ ]*)[\\*][\\*]"+after,"$1<strong>$2</strong>$3"); // strong emphasis
        t = t.replaceAll(before+"[\\*]([^ ]*.*[^ ]*)[\\*]"+after,"$1<em>$2</em>$3"); // emphasis

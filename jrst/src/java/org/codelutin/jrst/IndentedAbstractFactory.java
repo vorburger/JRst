@@ -141,7 +141,7 @@ public abstract class IndentedAbstractFactory extends AbstractFactory {// Indent
     public ParseResult headRegExprAccept(int c) {
         ParseResult result = ParseResult.IN_PROGRESS;
 
-        //System.out.print("\033[00;33m"+(char)c+"\033[00m");//JAUNE
+        System.out.print("\033[00;33m"+(char)c+"\033[00m");//JAUNE
         //System.out.print("\033[00;36m"+"#"+"\033[00m"); // CYAN
 
 
@@ -155,6 +155,7 @@ public abstract class IndentedAbstractFactory extends AbstractFactory {// Indent
                 if ( oneLiner ) {
                     ACCEPT_STATE = END_ACCEPT;
                 }else{
+                    System.out.print("\033[00;36m"+(char)c+"\033[00m");
                     ACCEPT_STATE = INDENT_READ;
                 }
             }
@@ -162,14 +163,17 @@ public abstract class IndentedAbstractFactory extends AbstractFactory {// Indent
             // pour les non oneLiner il faut confirmer
             //  en utilisant l'indentation
         }else if (ACCEPT_STATE == INDENT_READ) {
+            System.out.print("\033[00;36m{"+(char)c+"}\033[00m");
             if (((char)c == '\n')||((char)c == ' ')) {
                 text.append((char)c);
+
             }else{
                 ACCEPT_STATE = END_ACCEPT;
             }
         }
 
         if (ACCEPT_STATE == END_ACCEPT) {
+            System.out.println('['+text.toString()+']');
 
             if ( headREMatcher.matches(text.toString())){
                 result = ParseResult.ACCEPT;
@@ -181,10 +185,9 @@ public abstract class IndentedAbstractFactory extends AbstractFactory {// Indent
         }
 
         if (result == ParseResult.ACCEPT){
-            //System.out.print("\033[01;32m["+Name()+"]\033[00m ");
-            //+"("+headRegExpr+")");
+            System.out.print("\033[01;32m["+Name()+"]\033[00m ");
         }else if (result == ParseResult.FAILED){
-            //System.out.print("\033[01;31m["+Name()+"]\033[00m ");
+            System.out.print("\033[01;31m["+Name()+"]\033[00m ");
         }else if (result == ParseResult.IN_PROGRESS){
             //System.out.print("\033[00;35m["+Name()+"]\033[00m ");
         }
@@ -217,7 +220,9 @@ public abstract class IndentedAbstractFactory extends AbstractFactory {// Indent
             }else if ((char)c == '\n') {
                 if ((char)lastc == '\n') {
                     if ((char)lastlastc == '\n') {
-                        result = endChild(c);
+                        if (! (currentChild instanceof LitteralFactory)) {
+                            result = endChild(c);
+                        }
                     }
                 }
                 indentRead = 0;
@@ -264,7 +269,7 @@ public abstract class IndentedAbstractFactory extends AbstractFactory {// Indent
                 // lorsque la fin de l'entete n'est pas identifiable
                 // il faut envoyer le code '\n'
                 if ( noEndHead && (INDENT_STATE == READING_HEAD))
-                    result = parseHead(c); // est ce bien ??
+                    result = parseHead(c);
 
 
                 result = delegate(c);

@@ -53,6 +53,9 @@ public class GridTableFactory extends AbstractFactory { // GridTableFactory
 
     boolean first = true;
 
+    // dernière ligne Inter dans le parcours du tableau
+    int lastInter = 0;
+
     // position dans le tableau
     int x = 0;
     int y = 0;
@@ -84,6 +87,8 @@ public class GridTableFactory extends AbstractFactory { // GridTableFactory
         theLines = new StringBuffer[15]; // on commence avec 15 lignes
         theLines[0] = new StringBuffer();
 
+        lastInter = 0;
+
         // état initial
         STATE = null; // no state for GridTable
     }
@@ -113,7 +118,9 @@ public class GridTableFactory extends AbstractFactory { // GridTableFactory
     public ParseResult parseInter(int n) {
         ParseResult result = ParseResult.IN_PROGRESS;
         boolean contentInInter = false;
-        System.out.print("Inter   +");
+
+        lastInter = n;
+
 
         for (int i = 1; i < theLines[n].length() && result == ParseResult.IN_PROGRESS; i++) {
             char c = theLines[n].charAt(i);
@@ -122,40 +129,70 @@ public class GridTableFactory extends AbstractFactory { // GridTableFactory
                     x ++;
                 }else if ( c == '-' ) {
                 }else if ( c == '=' ) {
+                    ((GridTable)getElement()).setHead(true);
                 }else{
                     contentInInter = true;
-                    System.out.print(c);
+                    if (table[x][y] != table[x][y+1]) // row span
+                        table[x][y+1] = table[x][y];
+                    table[x][y].append(c);
                 }
             }else{
 
                 if ( c == '+' ) {
+                    table[x][y].append('\n'); // pour le delegate
                     x ++;
                     contentInInter = false;
                 }else if ( c == '|' ) {
+                    table[x][y].append('\n'); // pour le delegate
                     x ++;
+                    if (table[x][y] != table[x][y+1]) // row span
+                        table[x][y+1] = table[x][y];
                 }else{
-                    System.out.print(c);
+                    table[x][y].append(c);
                 }
             }
         }
-        System.out.println();
         return result;
     }
 
     // parse les lignes du tableau qui commencent par '|'
     public ParseResult parseContent(int n) {
         ParseResult result = ParseResult.IN_PROGRESS;
-        System.out.print("Content |");
 
-        for (int i = 0; i < theLines[n].length() && result == ParseResult.IN_PROGRESS; i++) {
+        for (int i = 1; i < theLines[n].length() && result == ParseResult.IN_PROGRESS; i++) {
             char c = theLines[n].charAt(i);
             if ( c == '|' ) {
+                int j = n;
+                while (j >= 0 && theLines[j].charAt(i) != '+' &&
+                       theLines[j].charAt(i) == '|') {
+                    j--;
+                }
+                if (j >= 0 && theLines[j].charAt(i) == '+') {
+                    j = n;
+                    while (j < line && theLines[j].charAt(i) != '+' &&
+                           theLines[j].charAt(i) == '|') {
+                        j++;
+                    }
+                    if (j <line && theLines[j].charAt(i) == '+') {
+                        table[x][y].append('\n'); // pour le delegate
+                        x ++;
+                        if (i != theLines[n].length())
+                            if (table[x][y] == null) { table[x][y] = new StringBuffer(); }
+                    }else{
+                        table[x][y].append(c);
+                    }
+                }else{
+                    table[x][y].append(c);
+                }
+            }else if (theLines[lastInter].charAt(i) == '+' || theLines[0].charAt(i) == '+') {
+                if (table[x][y] != table[x+1][y]) // column span
+                    table[x+1][y] = table[x][y];
                 x ++;
+                table[x][y].append(c);
             }else{
-                System.out.print(c);
+                table[x][y].append(c);
             }
         }
-        System.out.println();
         return result;
     }
 
@@ -163,27 +200,70 @@ public class GridTableFactory extends AbstractFactory { // GridTableFactory
     public ParseResult parseLines(){
         ParseResult result = ParseResult.IN_PROGRESS;
 
-        // on a déjà le nombre maximum de lignes du tableau : line
+        int maxX = 0;
+
+        // on a déjà le nombre maximum de lignes du tableau : line / 2 +1
         // ainsi que le nombre maximum de colonnes du tableau : theLines[0].length() / 2;
-        table = new StringBuffer[theLines[0].length() / 2][line];
+        table = new StringBuffer[theLines[0].length() / 2][line / 2 +1];
 
         for (int i = 0; i < line && result == ParseResult.IN_PROGRESS; i++) {
 
             if (theLines[i].charAt(0) == '+') {
                 x = 0;
-               // result = parseInter(i);
-                y ++;
+                result = parseInter(i);
+                if (i != 0) y ++;
             }else if (theLines[i].charAt(0) == '|') {
                 x = 0;
-               // result = parseContent(i);
+                if (table[x][y] == null) { table[x][y] = new StringBuffer(); }
+                result = parseContent(i);
             }else{
                 result = ParseResult.FAILED.setError(" Attendu | ou + , eu '"+theLines[i].charAt(0)+"'");
             }
 
+            if ( x > maxX ) { maxX = x; }
+
         }
 
+        // à partir de la table, il faut parser l'intérieur des cases
+        // et remplir l'élément de la factory
+        GridTable g = (GridTable)getElement();
+        g.initTable(maxX,y);
+        for(int j = 0; j < y; j ++){
+            for(int i = 0; i < maxX; i ++){
+                //System.out.print("Case["+i+"]["+j+"] : ");
+                if (table[i][j] != null ) {
+                    if (i==0 || j == 0 ||
+                        i > 0 && table[i][j] != table[i-1][j] &&
+                        j > 0 && table[i][j] != table[i][j-1]) {
+                            String caseTexte  = table[i][j].toString().replaceAll(" *\n *","\n").trim();
+                            if (caseTexte.length() != 0) {
+                                for(int l = 0;l < caseTexte.length(); l++) {
+                                    char c = caseTexte.charAt(l);
+                                    //if (c != '\n')
+                                        //System.out.print(c);
+                                    delegate(c);
+                                }
+                                if (currentChild != null) {
+                                    buffer.delete(0,buffer.length());
+                                    ((AbstractFactory)currentChild).parseEnd((int)'\n');
+                                    CHILD_STATE = null;
+                                    g.setTable(i,j,currentChild.getElement());
+                                }
+                            }
+                        }
+                    if (i > 0 && table[i][j] == table[i-1][j])
+                        g.setTable(i,j,g.getTable(i-1,j));
+
+                    if (j > 0 && table[i][j] == table[i][j-1])
+                        g.setTable(i,j,g.getTable(i,j-1));
+
+                }
+        }}
+
+        //System.out.println("Nombre d'enfants : "+getElement().getChilds().size());
+
         if (result == ParseResult.IN_PROGRESS) {
-            result = ParseResult.FINISHED;
+            result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount);
         }
 
         return result;
@@ -200,6 +280,7 @@ public class GridTableFactory extends AbstractFactory { // GridTableFactory
 
         if ((char)c == '\n' && first) {
             result = parseLines();
+
         }else if ((char)c == '\n') {
             line++;
             if (line >= theLines.length) {
