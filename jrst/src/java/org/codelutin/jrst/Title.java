@@ -35,11 +35,12 @@ public class Title extends AbstractElement { // Title
 
     static int numbered = 0;
 
-    String text = null;
-    int titleMark = -1;
+    String text    = null;
+    int titleMark  = -1;
     int markLength = -1;
     boolean upperline = false;
-    int id = 0;
+    int id   = 0;
+    int profondeur = 0;
 
 
     public Title(){
@@ -72,6 +73,7 @@ public class Title extends AbstractElement { // Title
     }
 
     public String getText(){
+        if (text == null) return null;
         return text.trim();
     }
 
@@ -86,5 +88,14 @@ public class Title extends AbstractElement { // Title
     public void setUpperline(boolean upperline){
         this.upperline = upperline;
     }
+
+    public int getProfondeur() {
+        return profondeur;
+    }
+
+    public void setProfondeur(int profondeur) {
+        this.profondeur = profondeur;
+    }
+
 } // Title
 

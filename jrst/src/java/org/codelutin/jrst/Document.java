@@ -31,18 +31,20 @@
 
 package org.codelutin.jrst;
 
+import java.util.List;
+
 public class Document extends AbstractElement { // Document
 
 
     Title title             = null;
     FieldList bibliographic = null;
-    Element contents        = null;
+    List contents           = null;
 
 
     public void setTitle(Title title) {
         this.title = title;
     }
-    public void setContents(Element contents) {
+    public void setContents(List contents) {
         this.contents = contents;
     }
     public void setBibliographic(FieldList b) {
@@ -53,7 +55,7 @@ public class Document extends AbstractElement { // Document
     public Title getTitle() {
         return title;
     }
-    public Element getContents() {
+    public List getContents() {
         return contents;
     }
     public FieldList getBibliographic() {

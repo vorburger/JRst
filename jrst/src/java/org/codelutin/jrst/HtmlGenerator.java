@@ -32,6 +32,8 @@
 package org.codelutin.jrst;
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
 
 public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
 
@@ -86,11 +88,11 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
         if (e == doc.getTitle()) {
             os.println("<h1 class=\"title\">"+e.getText().trim()+"</h1>");
         }else if ( e.getUpperline()) {
-            os.print("<h1><a class=\"toc-backref\" href=\"#id"+e.getId()+"\" name=\""+getHtmlName(e.getText())+"\"> ");
+            os.print("<h1><a class=\"toc-backref\"  name=\""+getHtmlName(e.getText())+"\"> ");//href=\"#id"+e.getId()+"\"
             os.println(e.getText()+"</h1>");
         }else{
-            os.print("<h2><a class=\"toc-backref\" href=\"#id"+e.getId()+"\" name=\""+getHtmlName(e.getText())+"\"> ");
-            os.println(e.getText()+"</h2>");
+            os.print("<h"+(e.getProfondeur()+1)+"><a class=\"toc-backref\"  name=\""+getHtmlName(e.getText())+"\"> "); //href=\"#id"+e.getId()+"\"
+            os.println(e.getText()+"</h"+(e.getProfondeur()+1)+">");
         }
     }
 
@@ -240,29 +242,30 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
        if ( showBalise ) os.println("<!-- Directive -->");
        boolean afterTitle = false;
 
+       // Une Note
        if (e.getType() == Directive.KIND_NOTE) {
            os.println(getIndent()+ "<div class=\"note\">"+
            "<p class=\"admonition-title first\">Note</p>");
+           for(int i=0; i<e.getChilds().size(); i++){
+               Object child = e.getChilds().get(i);
+               indentation ++;
+               visit((Element)child);
+               indentation --;
+           }
+           os.println(getIndent()+ "</div>");
+
+       // la Table des matières
        }else if (e.getType() == Directive.KIND_CONTENTS) {
-           os.println(getIndent()+ "<table border='1'><tbody><td>");
-           Element contents = doc.getContents();
+           os.println(getIndent()+ "<div class=\"contents topic\" id=\"contents\">");
+           os.println(getIndent()+ "<p class=\"topic-title first\"><a name=\"contents\">Contents</a></p>");
+           List contents = doc.getContents();
+           generateContents(contents);
+           os.println(getIndent()+ "</div>");
        }else{
            os.println(getIndent()+"<strong>"+e.getText()+"</strong>");
        }
-
-       for(int i=0; i<e.getChilds().size(); i++){
-           Object child = e.getChilds().get(i);
-           indentation ++;
-           visit((Element)child);
-           indentation --;
-       }
-
-       if (e.getType() == Directive.KIND_NOTE) {
-           os.println(getIndent()+ "</div>");
-       }else if (e.getType() == Directive.KIND_CONTENTS) {
-           os.println(getIndent()+"</td></tbody></table>");
-       }
    }
+
 
    public void generate(Hyperlink e){
        /*
@@ -368,10 +371,71 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
 
    }
 
+   /** table des matières **/
+
+   public void generateContents(List e) {
+       ArrayList stack = new ArrayList(); // pîle des symboles de titre
+       int counter = 0;
+
+       if (e != null) {
+           Title prec = null;
+           for(Iterator i=e.iterator(); i.hasNext();){ // liste des titres
+               Title next = (Title)i.next();
+               if (next == doc.getTitle())
+                   continue;
+
+               if (prec != null) {
+                   if (prec.getTitleMark() != next.getTitleMark()) {
+                       boolean trouve = false;
+                       int trouveAt = -1;
+                       for(int j=0; j < stack.size(); j++){ // parcous de la pile
+                           if (trouve) {
+                               indentation --;
+                               os.println(getIndent()+"</ul>");
+                           }
+                           if (((Integer)stack.get(j)).intValue() == next.getTitleMark()) {
+                               trouve = true;
+                               trouveAt = j;
+                           }
+                       }
+                       if ( !trouve ) {
+                           stack.add(new Integer(next.getTitleMark()));
+                           os.println(getIndent()+ "<ul class=\"simple\">");
+                           indentation ++;
+                       }else{
+
+                           while (stack.size()-1 > trouveAt && stack.size()>0 ){
+                               stack.remove(stack.size()-1);
+                           }
+                       }
+                   }
+               }else{
+                   os.println(getIndent()+ "<ul class=\"simple\">");
+                   indentation ++;
+               }
+
+               next.setProfondeur(stack.size());
+               next.setId(counter);
+               os.print(getIndent()+"<li class=\"reference\"><a href=\"#"+getHtmlName(next.getText())+
+               "\"  id=\"id"+next.getId()+"\" name=\"id"+next.getId()+"\">");
+               os.println(next.getText()+"</a>");
+               prec = next;
+               counter ++;
+
+           }
+           for(Iterator j=stack.iterator(); j.hasNext();){
+               j.next();
+               indentation --;
+               os.println(getIndent()+"</ul>");
+           }
+       }
+   }
+
+
    /** Modificateur de String **/
 
    public String getHtmlName(String text) {
-       return text.toLowerCase().trim().replace(' ','_');
+       return text.toLowerCase().trim().replace(' ','-');
    }
 
    public String inlineMarkup(String text) {
@@ -389,6 +453,10 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
 
        t = t.replaceAll(before+"[\\*][\\*]([^ ]*.*[^ ]*)[\\*][\\*]"+after,"$1<strong>$2</strong>$3"); // strong emphasis
        t = t.replaceAll(before+"[\\*]([^ ]*.*[^ ]*)[\\*]"+after,"$1<em>$2</em>$3"); // emphasis
+
+       //String reference = getHtmlName(t.replaceAll(before+"(`(.*)`_)|(([^ ]*)_)"+after,"$3$4")); // reference
+       //t = t.replaceAll(before+"(`(.*)`_)|(([^ ]*)_)"+after,"$1<a href=\"#"+reference+"\">$3$4</a>$4");
+
 
        return t;
    }

@@ -32,6 +32,8 @@
 package org.codelutin.jrst;
 
 import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DocumentFactory extends AbstractFactory { // DocumentFactory
 
@@ -41,7 +43,7 @@ public class DocumentFactory extends AbstractFactory { // DocumentFactory
 
     public ParseResult parse(int c){
         ParseResult result = ParseResult.IN_PROGRESS;
-        System.out.print("\033[00;37m"+(char)c+"\033[00m");
+        //System.out.print("\033[00;37m"+(char)c+"\033[00m");
 
         result = delegate(c);
         return result;
@@ -87,23 +89,28 @@ public class DocumentFactory extends AbstractFactory { // DocumentFactory
         }
         return null;
     }
-/*
-    public Element getContents(Element e,) {
-        if (e instanceof Title) {
-            return e;
-        }else{
-            Title t = null;
-            for(Iterator i=e.getChilds().iterator(); i.hasNext();){
-                Element result = getContents((Element)i.next());
-                if ( result != null ) {
 
-                    return result;
+    public List getContents(Element e) {
+        if (e instanceof Title) {
+            ArrayList result = new ArrayList();
+            result.add(e);
+            return result;
+        }else{
+            ArrayList resultat = null;
+            for(Iterator i=e.getChilds().iterator(); i.hasNext();){
+                List result = getContents((Element)i.next());
+                if ( result != null ) {
+                    if (resultat == null) {
+                        resultat = (ArrayList)result;
+                    }else{
+                        resultat.addAll(result);
+                    }
                 }
             }
+            return resultat;
         }
-        return null;
     }
-*/
+
 
     public ParseResult parseEnd(int c){
         Document myDoc = (Document)getElement();
@@ -121,14 +128,14 @@ public class DocumentFactory extends AbstractFactory { // DocumentFactory
         }else{
             //System.out.println("No bibliographic data");
         }
-  /*
-        Element e = getContents(myDoc);
+
+        List e = getContents(myDoc);
         if (e != null) {
             myDoc.setContents(e);
         }else{
             System.err.println("Problem with contents");
         }
-*/
+
         return ParseResult.ACCEPT;
     }
 } // DocumentFactory
