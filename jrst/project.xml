@@ -38,12 +38,12 @@
     <dependency>
       <groupId>lutinlib</groupId>
       <artifactId>lutinutil</artifactId>
-      <version>0.8</version>
+      <version>0.12</version>
     </dependency>
     <dependency>
       <groupId>lutinlib</groupId>
       <artifactId>lutinxml</artifactId>
-      <version>0.5</version>
+      <version>0.6</version>
     </dependency>
     <dependency>
       <groupId>externallib</groupId>
