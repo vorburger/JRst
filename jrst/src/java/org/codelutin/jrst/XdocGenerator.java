@@ -29,33 +29,33 @@ import java.util.Iterator;
 
 public class XdocGenerator extends HtmlGenerator { // XdocGenerator
 
-    public XdocGenerator() {}
+    public XdocGenerator() { super(); }
 
     public void generate(Document e){
         doc = e;
-        System.out.println("<?xml version=\"1.0\" encoding=\"iso-8859-15\" ?>");
+        os.println("<?xml version=\"1.0\" encoding=\"iso-8859-15\" ?>");
 
-        System.out.println("<document>\n<properties>");
+        os.println("<document>\n<properties>");
         if (e.getTitle() != null)
-            System.out.println("<title>"+e.getTitle().getText()+"</title>");
-        System.out.println("</properties>\n<body>");
+            os.println("<title>"+e.getTitle().getText()+"</title>");
+        os.println("</properties>\n<body>");
 
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
             visit((Element)i.next());
         }
-        System.out.println("</body></document>");
+        os.println("</body></document>");
     }
 
     public void generate(OrElement e){
-        if ( showBalise) System.out.println("<!-- OrElement:"+e.getName()+" -->");
+        if ( showBalise) os.println("<!-- OrElement:"+e.getName()+" -->");
         if ("Section".equals(e.getName()))
-            System.out.println(getIndent()+"<section name=\""+"NoName"+"\">");
+            os.println(getIndent()+"<section name=\""+"NoName"+"\">");
 
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
             visit((Element)i.next());
         }
         if ("Section".equals(e.getName())) {
-            System.out.println(getIndent()+"</section>");
+            os.println(getIndent()+"</section>");
         }
     }
 

@@ -35,68 +35,68 @@ import java.util.Iterator;
 
 public class XmlGenerator extends AbstractGenerator { // XmlGenerator
     public void generate(Element e){
-        System.out.println("default generate: "+e.getClass().getName());
+        os.println("default generate: "+e.getClass().getName());
     }
 
     public void generate(Document e){
-        System.out.println("<document>");
+        os.println("<document>");
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
             this.visit((Element)i.next());
         }
-        System.out.println("</document>");
+        os.println("</document>");
     }
 
     public void generate(Title e){
-        System.out.println("<title>");
-        System.out.println(e.getText());
-        System.out.println("</title>");
+        os.println("<title>");
+        os.println(e.getText());
+        os.println("</title>");
     }
 
     public void generate(Para e){
-        System.out.println("<para>");
-        System.out.println(e.getText());
-        System.out.println("</para>");
+        os.println("<para>");
+        os.println(e.getText());
+        os.println("</para>");
     }
 
     public void generate(BulletList e){
-        System.out.println("<bulletlist>");
+        os.println("<bulletlist>");
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
-            System.out.print("<item>");
+            os.print("<item>");
             visit((Element)i.next());
-            System.out.print("</item>");
+            os.print("</item>");
         }
-        System.out.println("<bulletlist>");
-   }
+        os.println("<bulletlist>");
+    }
 
-   public void generate(FieldList e){
-       System.out.println("<fieldlist>");
-       for(int i=0; i<e.getChilds().size(); i++){
-           Object child = e.getChilds().get(i);
-           if(child instanceof String){
-               System.out.print("<term>"+child+"<term>");
-           }else{
-               System.out.print("<decription>");
-               visit((Element)child);
-               System.out.print("</decription>");
-           }
-       }
-       System.out.println("</fieldlist>");
-   }
+    public void generate(FieldList e){
+        os.println("<fieldlist>");
+        for(int i=0; i<e.getChilds().size(); i++){
+            Object child = e.getChilds().get(i);
+            if(child instanceof String){
+                os.print("<term>"+child+"<term>");
+            }else{
+                os.print("<decription>");
+                visit((Element)child);
+                os.print("</decription>");
+            }
+        }
+        os.println("</fieldlist>");
+    }
 
-   public String inlineMarkup(String text) {
-       // TODO
-       String before = "([ '\"(\\[<])";
-       String after = "([ '\".,:\\;!?)\\]}/\\>])";
-       String t = text;
+    public String inlineMarkup(String text) {
+        // TODO
+        String before = "([ '\"(\\[<])";
+        String after = "([ '\".,:\\;!?)\\]}/\\>])";
+        String t = text;
 
-       t = t.replaceAll("([^ ]+@[^ ]+\\.[^ ]+)","<a href=\"mailto:$1\">$1</a>"); // courriel
-       t = t.replaceAll("(((http[s]?)|ftp|mailto|telnet|news|skype|e2k|ssh)://[^ \\)]+\\.[^ \\)]+)","<a href=\"$1\">$1</a>"); // URL
+        t = t.replaceAll("([^ ]+@[^ ]+\\.[^ ]+)","<a href=\"mailto:$1\">$1</a>"); // courriel
+        t = t.replaceAll("(((http[s]?)|ftp|mailto|telnet|news|skype|e2k|ssh)://[^ \\)]+\\.[^ \\)]+)","<a href=\"$1\">$1</a>"); // URL
 
-       t = t.replaceAll(before+"[\\*][\\*]([^ ]*.*[^ ]*)[\\*][\\*]"+after,"$1<strong>$2</strong>$3"); // strong emphasis
-       t = t.replaceAll(before+"[\\*]([^ ]*.*[^ ]*)[\\*]"+after,"$1<em>$2</em>$3"); // emphasis
+        t = t.replaceAll(before+"[\\*][\\*]([^ ]*.*[^ ]*)[\\*][\\*]"+after,"$1<strong>$2</strong>$3"); // strong emphasis
+        t = t.replaceAll(before+"[\\*]([^ ]*.*[^ ]*)[\\*]"+after,"$1<em>$2</em>$3"); // emphasis
 
-       return t;
-   }
+        return t;
+    }
 
 
 } // XmlGenerator

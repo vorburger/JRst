@@ -1,5 +1,5 @@
-/*##%
- * Copyright (C) 2002, 2003 Code Lutin
+/* *##%
+ * Copyright (C) 2002, 2004 Code Lutin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,30 +16,28 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *##%*/
 
-/*
- * Generator.java
+/* *
+ * BlockQuote.java
  *
- * Created: Oct 8, 2003
  *
- * @author Benjamin Poussin <poussin@codelutin.com>
- * Copyright Code Lutin
- * @version $Revision$
+ * Created: 16 juillet. 2004
  *
- * Mise a jour: $Date$
- * par : $Author$
  */
 
 package org.codelutin.jrst;
 
-import java.io.OutputStream;
-import java.io.Writer;
+public class BlockQuote extends AbstractElement { // BlockQuote Element
 
-public interface Generator { // Generator
-    public void visit(Element e);
-    public void generate(Element e);
+    /** Constantes **/
 
-    public void setOs(Writer os);
-    public void setOs(OutputStream os);
-    public void close();
-} // Generator
+    /** Attributs **/
+
+
+    /** Méthodes **/
+
+    // constructeur
+    public BlockQuote(){}
+
+
+} // BlockQuote Element
 

@@ -39,6 +39,11 @@ import java.io.FileReader;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import org.codelutin.util.Resource;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.io.File;
+import java.io.FileWriter;
 
 public abstract class Parser { // Parser
 
@@ -57,7 +62,7 @@ public abstract class Parser { // Parser
             System.out.println("--xdoc       ");
             System.out.println("--xml        ");
             System.out.println("--rst        generate with the selected format");
-            System.out.println("-o file      out file");
+            System.out.println("-o file      output file (--output)");
     }
 
 
@@ -67,11 +72,18 @@ public abstract class Parser { // Parser
         String fileOut = null;
         Object type = null;
 
+        boolean nextIsOutPut = false;
+
         if(args.length > 0){
             for(int i = 0; i < args.length; i ++) {
-                if ("-h".equals(args[i]) || "--help".equals(args[i])) {
+                if (nextIsOutPut) {
+                    nextIsOutPut = false;
+                    fileOut = args[i];
+                }else if ("-h".equals(args[i]) || "--help".equals(args[i])) {
                     help();
                     return;
+                }else if ( "-o".equals(args[i]) || "--output".equals(args[i]) ) {
+                    nextIsOutPut = true;
                 }else if ( "--html".equals(args[i]) ) {
                     type = TYPE_HTML;
                 }else if ( "--xdoc".equals(args[i]) ) {
@@ -87,8 +99,6 @@ public abstract class Parser { // Parser
                     help();
                     return;
                 }else{
-                    //System.out.println("Lecture du fichier " + filename);
-                    //in = new LineNumberReader(new FileReader());
                     fileIn = args[i];
                 }
             }
@@ -106,9 +116,9 @@ public abstract class Parser { // Parser
 
     static public void parse(Object type, String fileIn, String fileOut)  throws Exception{
         Reader in = new LineNumberReader(new FileReader(fileIn));
+        Writer out = null;
 
-        // TODO : fileOut
-
+        // Instanciation du Générateur
         Generator gen = null;
         if (type == TYPE_HTML) {
             gen = new HtmlGenerator();
@@ -119,14 +129,36 @@ public abstract class Parser { // Parser
         }else if (type == TYPE_RST) {
             gen = new RstGenerator();
         }else{
-            System.err.println("Type de fichier de sortie inconnu");
+            System.err.println("unknown outfile kind -HTML by default-");
+            gen = new HtmlGenerator();
         }
+
+        // fichier de sortie
+        if (fileOut != null){
+            File foout = new File(fileOut);
+
+            if ( foout.getParent() != null) {
+                File parent = foout.getParentFile();
+                if (! parent.mkdirs()){
+                    System.err.println("Path "+foout.getParent()+" not created");
+                }
+            }
+
+            try {
+                out = new BufferedWriter(new FileWriter(fileOut));
+                gen.setOs(out);
+            }catch ( IOException ioe) {
+                System.err.println("Error with outfile ("+fileOut+") : "+ioe.getMessage());
+            }
+        }
+
 
         // Lecture de la hiérarchie des éléments
         DocumentFactory document = new DocumentFactory();
         FactoryParser fp = new FactoryParser(Resource.getURL("jrst.xml"));
         document = (DocumentFactory)fp.getInstance();
 
+        /** PARSAGE **/
         ParseResult result = ParseResult.IN_PROGRESS;
         // on considère qu'avant le document il y a une ligne blanche
         int c = (int)'\n';
@@ -139,11 +171,19 @@ public abstract class Parser { // Parser
             result = document.parseEnd((int)'D'); // 'D' like DAT green
         }else{
             result = document.parseEnd((int)'D'); // 'D' like DAT green
-//            document.getBuffer().delete(0,);
+//            document.getBuffer().delete(0,result.getConsumedCharCount());
         }
 
+        /** GENERATION **/
+        // lancement de la génération du document de sortie
         Element e = document.getElement();
         gen.visit(e);
+
+
+        if (out != null) {
+            out.close();
+            gen.close();
+        }
         if(result == ParseResult.FAILED){
             System.out.println("\033[01;31m------[-- ERROR ### --]-------------------------------------\033[00m");
             System.out.println("Nombre de caractères lu :"+ result.getConsumedCharCount());

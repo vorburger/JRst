@@ -162,6 +162,7 @@ public class GridTableFactory extends AbstractFactory { // GridTableFactory
         for (int i = 1; i < theLines[n].length() && result == ParseResult.IN_PROGRESS; i++) {
             char c = theLines[n].charAt(i);
             if ( c == '|' ) {
+                // est ce que le '|' fait bien partie de la grille ?
                 int j = n;
                 while (j >= 0 && theLines[j].charAt(i) != '+' &&
                        theLines[j].charAt(i) == '|') {
@@ -235,7 +236,9 @@ public class GridTableFactory extends AbstractFactory { // GridTableFactory
                     if (i==0 || j == 0 ||
                         i > 0 && table[i][j] != table[i-1][j] &&
                         j > 0 && table[i][j] != table[i][j-1]) {
-                            String caseTexte  = table[i][j].toString().replaceAll(" *\n *","\n").trim();
+                            String caseTexte  = table[i][j].toString();
+                            caseTexte.replaceAll(" *\\n +\\n *","\n\n\n");
+                            caseTexte = caseTexte.replaceAll(" +\n +","\n").trim();
                             if (caseTexte.length() != 0) {
                                 for(int l = 0;l < caseTexte.length(); l++) {
                                     char c = caseTexte.charAt(l);
@@ -251,6 +254,7 @@ public class GridTableFactory extends AbstractFactory { // GridTableFactory
                                 }
                             }
                         }
+                    // pour le spanning
                     if (i > 0 && table[i][j] == table[i-1][j])
                         g.setTable(i,j,g.getTable(i-1,j));
 

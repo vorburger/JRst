@@ -33,11 +33,24 @@ package org.codelutin.jrst;
 
 import java.util.Iterator;
 import java.lang.reflect.Method;
+import java.io.PrintWriter;
+import java.io.OutputStream;
+import java.io.Writer;
 
 public abstract class AbstractGenerator implements Generator { // AbstractGenerator
 
+    // la cible des écritures
+    protected PrintWriter os;
+
+    public AbstractGenerator() {
+        os = new PrintWriter(System.out, true);
+    }
+
+    // "" les marquages en lignes ""
     abstract public String inlineMarkup(String text);
 
+
+    /** Génération des éléments **/
     public void visit(Element e){
         if(e != null){
             callGenerate(e);
@@ -62,7 +75,7 @@ public abstract class AbstractGenerator implements Generator { // AbstractGenera
         }
     }
 
-    // Gestion de l'indentation
+    /**  Gestion de l'indentation **/
     protected int indentation = 0;
 
     protected String getIndent() {
@@ -73,6 +86,23 @@ public abstract class AbstractGenerator implements Generator { // AbstractGenera
         return resultat;
     }
 
+    /** le Writer !! */
+    public void setOs(Writer os) {
+        this.os = new PrintWriter(os, true);
+    }
+
+    public void setOs(OutputStream os) {
+        this.os = new PrintWriter(os, true);
+    }
+
+    public PrintWriter getOs() {
+        return os;
+    }
+
+    public void close() {
+        os.flush();
+        os.close();
+    }
 
 } // AbstractGenerator
 

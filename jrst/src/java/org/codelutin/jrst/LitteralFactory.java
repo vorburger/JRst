@@ -79,10 +79,17 @@ public class LitteralFactory extends AbstractFactory { // LitteralFactory
 
     // Accept ce qui arrive ?
     public ParseResult accept(int c) {
-        ParseResult result = ParseResult.FAILED.setError("not a ':'");
+        ParseResult result = ParseResult.IN_PROGRESS;
 
-        if ((char) c == ':')
-            result = ParseResult.ACCEPT;
+        if ((char) c == ':') {
+            sb.append((char)c);
+            if (sb.length() == 2) {
+                result = ParseResult.ACCEPT;
+                sb.delete(0,2);
+            }
+        }else{
+            result = ParseResult.FAILED.setError("not a ':'");
+        }
 
         return result;
     }
@@ -140,6 +147,7 @@ public class LitteralFactory extends AbstractFactory { // LitteralFactory
                 }
             }else if ((char)c == '\n') {
                 indentRead = 0;
+                sb.append((char)c);
             }else{ // on trouve un caractère qui n'est pas un espace
                 if (INDENT_STATE == INDENT_COUNT){
                     indentLength = indentRead;

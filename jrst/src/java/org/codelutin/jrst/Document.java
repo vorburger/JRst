@@ -36,10 +36,14 @@ public class Document extends AbstractElement { // Document
 
     Title title             = null;
     FieldList bibliographic = null;
+    Element contents        = null;
 
 
     public void setTitle(Title title) {
         this.title = title;
+    }
+    public void setContents(Element contents) {
+        this.contents = contents;
     }
     public void setBibliographic(FieldList b) {
         this.bibliographic = b;
@@ -48,6 +52,9 @@ public class Document extends AbstractElement { // Document
 
     public Title getTitle() {
         return title;
+    }
+    public Element getContents() {
+        return contents;
     }
     public FieldList getBibliographic() {
         return bibliographic;

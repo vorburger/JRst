@@ -87,19 +87,22 @@ public class EnumListFactory extends IndentedAbstractFactory { // EnumListFactor
             if (myList.getType() == null) {
                 myList.setType(EnumList.KIND_NUM);
             }else if (myList.getType() != EnumList.KIND_NUM) {
-                result = ParseResult.FAILED.setError("Mixing numeric and alpha are not permit in EnumList");
+                //result = ParseResult.FAILED.setError("Mixing numeric and alpha are not permit in EnumList");
+                result = ParseResult.FINISHED;
             }
         }else if (c >= (int)'a' && c <= (int)'z') { // alpha lower_case
             if (myList.getType() == null) {
                 myList.setType(EnumList.KIND_ALPHA);
             }else if (myList.getType() != EnumList.KIND_ALPHA) {
-                result = ParseResult.FAILED.setError("Mixing numeric and alpha or alpha and alpha uppercase are not permit in EnumList");
+                //result = ParseResult.FAILED.setError("Mixing numeric and alpha or alpha and alpha uppercase are not permit in EnumList");
+                result = ParseResult.FINISHED;
             }
         }else if (c >= (int)'A' && c <= (int)'Z') {     // alpha upper_case
             if (myList.getType() == null) {
                 myList.setType(EnumList.KIND_ALPHA_MAJ);
             }else if (myList.getType() != EnumList.KIND_ALPHA_MAJ) {
-                result = ParseResult.FAILED.setError("Mixing numeric and alpha or alpha and alpha uppercase are not permit in EnumList");
+                //result = ParseResult.FAILED.setError("Mixing numeric and alpha or alpha and alpha uppercase are not permit in EnumList");
+                result = ParseResult.FINISHED;
             }
         }else
             took = false;

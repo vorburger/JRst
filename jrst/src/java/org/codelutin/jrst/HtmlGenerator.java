@@ -45,38 +45,38 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
     }
 
     public void generate(Element e){
-        System.out.println("<!-- default generate: " + e.getClass().getName() + "-->");
+        os.println("<!-- default generate: " + e.getClass().getName() + "-->");
     }
 
     // Element racine - root
     public void generate(Document e){
         doc = e;
 
-        System.out.println("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-        System.out.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
-        System.out.println("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">");
-        System.out.println("<head>");
-        System.out.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
-        System.out.println("<meta name=\"generator\" content=\"JRST http://www.codelutin.org/\" />");
+        os.println("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
+        os.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+        os.println("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">");
+        os.println("<head>");
+        os.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+        os.println("<meta name=\"generator\" content=\"JRST http://www.codelutin.org/\" />");
         if (e.getTitle() != null)
-            System.out.println("<title>"+e.getTitle().getText()+"</title>");
-        System.out.println("<link rel=\"stylesheet\" href=\"default.css\" type=\"text/css\" />");
-        System.out.println("</head>\n<body>");
+            os.println("<title>"+e.getTitle().getText()+"</title>");
+        os.println("<link rel=\"stylesheet\" href=\"default.css\" type=\"text/css\" />");
+        os.println("</head>\n<body>");
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
             this.visit((Element)i.next());
         }
-        System.out.println("</body></html>");
+        os.println("</body></html>");
     }
 
     public void generate(AndElement e){
-        if ( showBalise) System.out.println("<!-- AndElement:"+e.name+" -->");
+        if ( showBalise) os.println("<!-- AndElement:"+e.name+" -->");
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
             this.visit((Element)i.next());
         }
     }
 
     public void generate(OrElement e){
-        if ( showBalise) System.out.println("<!-- OrElement:"+e.name+" -->");
+        if ( showBalise) os.println("<!-- OrElement:"+e.name+" -->");
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
             this.visit((Element)i.next());
         }
@@ -84,90 +84,90 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
 
     public void generate(Title e){
         if (e == doc.getTitle()) {
-            System.out.println("<h1 class=\"title\">"+e.getText().trim()+"</h1>");
+            os.println("<h1 class=\"title\">"+e.getText().trim()+"</h1>");
         }else if ( e.getUpperline()) {
-            System.out.print("<h1><a class=\"toc-backref\" href=\"#id"+e.getId()+"\" name=\""+getHtmlName(e.getText())+"\"> ");
-            System.out.println(e.getText()+"</h1>");
+            os.print("<h1><a class=\"toc-backref\" href=\"#id"+e.getId()+"\" name=\""+getHtmlName(e.getText())+"\"> ");
+            os.println(e.getText()+"</h1>");
         }else{
-            System.out.print("<h2><a class=\"toc-backref\" href=\"#id"+e.getId()+"\" name=\""+getHtmlName(e.getText())+"\"> ");
-            System.out.println(e.getText()+"</h2>");
+            os.print("<h2><a class=\"toc-backref\" href=\"#id"+e.getId()+"\" name=\""+getHtmlName(e.getText())+"\"> ");
+            os.println(e.getText()+"</h2>");
         }
     }
 
     public void generate(Para e){
         if (paraP) {
-            System.out.println("<p>"+inlineMarkup(e.getText())+"</p>");
+            os.println("<p>"+inlineMarkup(e.getText())+"</p>");
         }else{
-            System.out.print(inlineMarkup(e.getText()));
+            os.print(inlineMarkup(e.getText()));
         }
     }
 
     public void generate(Litteral e){
-        System.out.println(getIndent()+"<pre>"+e.getText()+"</pre>");
+        os.println(getIndent()+"<pre class=\"literal-block\">"+e.getText()+"</pre>");
     }
 
     public void generate(Term e){
-        System.out.print(e.getText());
+        os.print(e.getText());
     }
 
     public void generate(BulletList e){
-        System.out.println(getIndent()+"<ul>");
+        os.println(getIndent()+"<ul>");
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
-            System.out.print("<li>");
+            os.print("<li>");
             indentation ++;
             visit((Element)i.next());
             indentation --;
-            System.out.println("</li>");
+            os.println("</li>");
         }
-        System.out.println(getIndent()+"</ul>");
+        os.println(getIndent()+"</ul>");
    }
 
    public void generate(FieldList e){
 
        String classTerm = null;
        if (e == doc.getBibliographic()) {
-           System.out.println(getIndent()+"<table class=\"docinfo\" frame=\"void\" rules=\"none\">");
-           System.out.println(getIndent()+"<col class=\"docinfo-name\" />");
-           System.out.println(getIndent()+"<col class=\"docinfo-content\" />");
+           os.println(getIndent()+"<table class=\"docinfo\" frame=\"void\" rules=\"none\">");
+           os.println(getIndent()+"<col class=\"docinfo-name\" />");
+           os.println(getIndent()+"<col class=\"docinfo-content\" />");
            classTerm = " class=\"docinfo-name\" ";
        }else{
-           System.out.println(getIndent()+"<table>");
+           os.println(getIndent()+"<table>");
        }
-       System.out.println(getIndent()+"<tbody valign=\"top\">");
+       os.println(getIndent()+"<tbody valign=\"top\">");
 
        boolean oldParaP = paraP;
        paraP = false;
        for(int i=0; i<e.getChilds().size(); i++){
            Object child = e.getChilds().get(i);
            if(child instanceof Term){
-               System.out.print(getIndent()+"<tr><th"+classTerm+">");
-               System.out.print(((Term)child).getText()+":");
-               System.out.println("</th>");
+               os.print(getIndent()+"<tr><th"+classTerm+">");
+               os.print(((Term)child).getText()+":");
+               os.println("</th>");
            }else{
-               System.out.print(getIndent()+"<td>");
+               os.print(getIndent()+"<td>");
                indentation ++;
                visit((Element)child);
                indentation --;
-               System.out.println("</td></tr>");
+               os.println("</td></tr>");
            }
        }
        paraP = oldParaP;
-       System.out.println(getIndent()+"</tbody></table>");
+       os.println(getIndent()+"</tbody></table>");
    }
 
    public void generate(EnumList e){
-       System.out.println("<ol>");
+       os.println("<ol>");
        for(int i=0; i<e.getChilds().size(); i++){
            Object child = e.getChilds().get(i);
            if(child instanceof Term){
-               System.out.print("<li>");
+               os.print("<li>");
                //visit((Element)child);
            }else{
                visit((Element)child);
-               System.out.print("</li>");
+               os.print("</li>");
            }
        }
-       System.out.println("</ol>");
+       os.println("</ol>");
 
        /*
        <ol type="1">
@@ -177,62 +177,77 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
 
    public void generate(DefList e){
 
-       System.out.println(getIndent()+"<dl>");
+       os.println(getIndent()+"<dl>");
        for(int i=0; i<e.getChilds().size(); i++){
            Object child = e.getChilds().get(i);
            if(child instanceof Term){
-               System.out.print("<dt><strong>");
+               os.print("<dt><strong>");
                visit((Element)child);
-               System.out.print("</strong>");
+               os.print("</strong>");
            }else{
-               System.out.print("<dd>");
+               os.print("<dd>");
                indentation ++;
                visit((Element)child);
                indentation --;
-               System.out.print("</dd>");
+               os.print("</dd>");
            }
        }
-       System.out.println(getIndent()+"</dl>");
+       os.println(getIndent()+"</dl>");
    }
 
 
    public void generate(OptionList e){
-       if ( showBalise)  System.out.println(getIndent()+"<!-- OptionList -->");
+       if ( showBalise)  os.println(getIndent()+"<!-- OptionList -->");
        boolean first = true;
 
-       System.out.println(getIndent()+"<table><tbody>");
+       os.println(getIndent()+"<table><tbody>");
        for(int i=0; i<e.getChilds().size(); i++) {
            Object child = e.getChilds().get(i);
            if ( child instanceof Term ) {
                if (first) {
-                   System.out.print(getIndent()+"<tr><td>");
+                   os.print(getIndent()+"<tr><td>");
                    first = false;
                }
                visit((Element)child);
            }else{
-               System.out.println("</td>");
-               System.out.print(getIndent()+"<td>");
+               os.println("</td>");
+               os.print(getIndent()+"<td>");
                indentation ++;
                visit((Element)child);
                indentation --;
-               System.out.println("</td></tr>");
+               os.println("</td></tr>");
                first = true;
            }
        }
-       System.out.println(getIndent()+"</tbody></table>");
+       os.println(getIndent()+"</tbody></table>");
    }
 
+   public void generate(BlockQuote e){
+       if ( showBalise)  os.println(getIndent()+"<!-- blockQuote -->");
+
+       os.println(getIndent()+"<blockquote>");
+       for(int i=0; i<e.getChilds().size(); i++) {
+           Object child = e.getChilds().get(i);
+           //indentation ++;
+           visit((Element)child);
+           //indentation --;
+       }
+       os.println(getIndent()+"</blockquote>");
+   }
+
+
    public void generate(Directive e){
-       if ( showBalise ) System.out.println("<!-- Directive -->");
+       if ( showBalise ) os.println("<!-- Directive -->");
        boolean afterTitle = false;
 
        if (e.getType() == Directive.KIND_NOTE) {
-           System.out.println(getIndent()+ "<div class=\"note\">"+
+           os.println(getIndent()+ "<div class=\"note\">"+
            "<p class=\"admonition-title first\">Note</p>");
        }else if (e.getType() == Directive.KIND_CONTENTS) {
-           System.out.println(getIndent()+ "<table border='1'><tbody><td>");
+           os.println(getIndent()+ "<table border='1'><tbody><td>");
+           Element contents = doc.getContents();
        }else{
-           System.out.println(getIndent()+"<strong>"+e.getText()+"</strong>");
+           os.println(getIndent()+"<strong>"+e.getText()+"</strong>");
        }
 
        for(int i=0; i<e.getChilds().size(); i++){
@@ -243,15 +258,15 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
        }
 
        if (e.getType() == Directive.KIND_NOTE) {
-           System.out.println(getIndent()+ "</div>");
+           os.println(getIndent()+ "</div>");
        }else if (e.getType() == Directive.KIND_CONTENTS) {
-           System.out.println(getIndent()+"</td></tbody></table>");
+           os.println(getIndent()+"</td></tbody></table>");
        }
    }
 
    public void generate(Hyperlink e){
        /*
-       if ( showBalise) System.out.println(getIndent()+"<Hyperlink>");
+       if ( showBalise) os.println(getIndent()+"<Hyperlink>");
 
        boolean oldShow = showBalise;
        int counter = 0;
@@ -260,21 +275,21 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
        for(Iterator i=e.getChilds().iterator(); i.hasNext();){
 
            if (counter == 0){
-               System.out.print(getIndent()+".. ");
+               os.print(getIndent()+".. ");
                visit((Term)i.next());
-               System.out.print(": ");
+               os.print(": ");
            }else{
                visit((Element)i.next());
            }
            counter++;
        }
        showBalise = oldShow;
-       //System.out.println();
+       //os.println();
        */
    }
 
    public void generate(Comment e){
-      System.out.println("<!-- Comment ");
+      os.println("<!-- Comment ");
       boolean oldShow = showBalise;
       showBalise = false;
 
@@ -284,7 +299,7 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
           visit((Element)child);
       }
       indentation --;
-      System.out.println("-->");
+      os.println("-->");
       showBalise = oldShow;
    }
 
@@ -293,14 +308,14 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
        boolean inHead = e.getHead();
        paraP = false;
 
-       System.out.println(getIndent()+"<table border=\"1\" cellspacing=\"0\">");
+       os.println(getIndent()+"<table border=\"1\" cellspacing=\"0\">");
        if (inHead)
-           System.out.println(getIndent()+"<thead valign=\"bottom\">");
+           os.println(getIndent()+"<thead valign=\"bottom\">");
        else
-           System.out.println(getIndent()+"<tbody valign=\"top\">");
+           os.println(getIndent()+"<tbody valign=\"top\">");
 
        for(int j=0; j<e.getLongueur(); j++){
-           System.out.println(getIndent()+"<tr>");
+           os.println(getIndent()+"<tr>");
            indentation++;
            for(int i=0; i<e.getLargeur(); i++){
                if (e.getTable(i,j) != null) {
@@ -327,29 +342,29 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
                    rowSpan += countColumnSpan != 0 ? " rowspan=\""+(countColumnSpan)+"\"" : "";
 
                    if (inHead)
-                       System.out.print(getIndent()+"<th"+rowSpan+">");
+                       os.print(getIndent()+"<th"+rowSpan+">");
                    else
-                       System.out.print(getIndent()+"<td"+rowSpan+">");
+                       os.print(getIndent()+"<td"+rowSpan+">");
 
                    indentation++;
-                   //System.out.println("["+i+","+j+"]");
+                   //os.println("["+i+","+j+"]");
                    visit(compartment);
                    indentation--;
 
                    if (inHead)
-                       System.out.println(getIndent()+"</th>");
+                       os.println(getIndent()+"</th>");
                    else
-                       System.out.println(getIndent()+"</td>");
+                       os.println(getIndent()+"</td>");
                }
            }
            indentation--;
-           System.out.println(getIndent()+"</tr>");
+           os.println(getIndent()+"</tr>");
            if (inHead) {
-               System.out.println(getIndent()+"</thead>\n"+getIndent()+"<tbody valign=\"top\">");
+               os.println(getIndent()+"</thead>\n"+getIndent()+"<tbody valign=\"top\">");
                inHead = false;
            }
        }
-       System.out.println(getIndent()+"</table>");
+       os.println(getIndent()+"</table>");
 
    }
 
@@ -363,6 +378,7 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
        // TODO
        String before = "([ '\"(\\[<])";
        String after = "([ '\".,:\\;!?)\\]}/\\>])";
+
        String t = text;
 
        t = t.replaceAll("([^ ]+@[^ ]+\\.[^ ]+)","<a href=\"mailto:$1\">$1</a>"); // courriel

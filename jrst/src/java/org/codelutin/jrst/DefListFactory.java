@@ -56,7 +56,7 @@ public class DefListFactory extends IndentedAbstractFactory { // DefListFactory
     protected void init(){
         text = new StringBuffer();
         SUB_STATE = DEF_SEQ_BEGIN;
-        headRegExpr = "[\\w ]+( : [\\w ]+)?";
+        headRegExpr = "[\\w &&[^,]]+( : [\\w ]+)?";
         noEndHead = true;
         super.init();
     }
@@ -66,7 +66,7 @@ public class DefListFactory extends IndentedAbstractFactory { // DefListFactory
         ParseResult result = ParseResult.IN_PROGRESS;
 
         if ((char)c != '\n') {
-            //System.out.print("\033[00;36m"+(char)c+"\033[00m");
+            System.out.print("\033[00;36m"+(char)c+"\033[00m");
             text.append((char)c);
         }else{
             Term t = new Term(text.toString());
