@@ -11,7 +11,7 @@
 
   <!-- The version of the project under development, e.g.
        1.1, 1.2, 2.0-SNAPSHOT -->
-  <currentVersion>0.1</currentVersion>
+  <currentVersion>0.2</currentVersion>
 
   <!-- the year the project started -->
   <inceptionYear>2004</inceptionYear>
@@ -26,12 +26,12 @@
     <dependency>
       <groupId>lutinlib</groupId>
       <artifactId>lutini18n</artifactId>
-      <version>0.10</version>
+      <version>0.11</version>
     </dependency>
     <dependency>
       <groupId>lutinlib</groupId>
       <artifactId>lutinutil</artifactId>
-      <version>0.6</version>
+      <version>0.8</version>
     </dependency>
   </dependencies>
 
