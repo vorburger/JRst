@@ -6,6 +6,9 @@
                 <factory class="org.codelutin.jrst.TitleFactory" cardinality="0..1"/>
                 <factory class="org.codelutin.jrst.TitleFactory" cardinality="0..1"/>
                 <factory class="org.codelutin.jrst.OrElementFactory" name="BodyElement" cardinality="1..*">
+                    <factory class="org.codelutin.jrst.GridTableFactory">
+                        <factory ref="BodyElement" cardinality="1..*"/>
+                    </factory>
                     <factory class="org.codelutin.jrst.TitleFactory" cardinality="0..1"/>
                     <factory class="org.codelutin.jrst.EnumListFactory">
                         <factory ref="BodyElement" cardinality="1..*"/>
@@ -34,9 +37,6 @@
                     </factory-->
                     <factory class="org.codelutin.jrst.BlockQuoteFactory">
                         <factory class="org.codelutin.jrst.ParaFactory" cardinality="1..*"/>
-                    </factory>
-                    <factory class="org.codelutin.jrst.GridTableFactory">
-                        <factory ref="BodyElement" cardinality="1..*"/>
                     </factory>
                     <factory class="org.codelutin.jrst.ParaFactory"/>
                 </factory>

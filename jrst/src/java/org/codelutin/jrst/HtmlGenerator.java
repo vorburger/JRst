@@ -464,7 +464,11 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
    /** Modificateur de String **/
 
    public String getHtmlName(String text) {
-       return text.toLowerCase().trim().replace(' ','-');
+       if(text == null){
+           return "null";
+       }else{
+           return text.toLowerCase().trim().replace(' ','-');
+       }
    }
 
    /**
@@ -478,6 +482,9 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
    * Permet de convertir les caratere speciaux HTML du texte
    */
    protected String encode(String s){
+       if(s == null){
+           return "";
+       }
        s = s.replaceAll("&", "&amp;"); // first all the time
        s = s.replaceAll("<", "&lt;");
        s = s.replaceAll(">", "&gt;");
