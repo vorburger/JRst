@@ -28,6 +28,7 @@ package org.codelutin.jrst;
 import java.util.HashMap;
 import org.codelutin.xml.XMLObjectParser;
 import org.codelutin.util.ResourceNotFoundException;
+import java.net.URL;
 
  public class FactoryParser {
 
@@ -58,6 +59,12 @@ import org.codelutin.util.ResourceNotFoundException;
      * @param filename fichier XML a lire
      */
      public FactoryParser( String filename ) throws ResourceNotFoundException {
+         XMLObjectParser xOP = new XMLObjectParser(filename);
+         xOP.setPrefix("par");
+         xOP.parseRoot(this);
+     }
+
+     public FactoryParser( URL filename ) throws ResourceNotFoundException {
          XMLObjectParser xOP = new XMLObjectParser(filename);
          xOP.setPrefix("par");
          xOP.parseRoot(this);

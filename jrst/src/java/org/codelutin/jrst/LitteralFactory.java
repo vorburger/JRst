@@ -27,15 +27,29 @@
 
 package org.codelutin.jrst;
 
-public class LitteralFactory extends IndentedAbstractFactory { // LitteralFactory
+public class LitteralFactory extends AbstractFactory { // LitteralFactory
 
     /** Constantes **/
 
+    /* pour l'indentation */
+    final static Object READING_HEAD  = new Object(); // lecture de la tete
+    final static Object INDENT_COUNT  = new Object(); // compte le nombre d'indentation
+    final static Object READING_BODY  = new Object(); // lecture du corps
+    final static Object VERIFY_INDENT = new Object(); // on essayes de retrouver la même indentation
+    final static Object FINISHED      = new Object(); // état final
+
+
     /** Attributs **/
 
-    int count = 0;
+    Object INDENT_STATE = null;  // état dans le mécanisme de gestion de l'indentation
+    int indentRead      =  0;    // indentation en cours de lecture
+    int indentLength    = -1;    // indentation de base trouvée avec INDENT_SEARCH
 
-    StringBuffer sb = null;
+    int lastc           = -1;    // caractère précédent
+    int lastlastc       = -1;    // caractère précédent le caractère précédent
+
+    StringBuffer sb     = null;
+    int count           = 0;
 
 
     /** Méthodes **/
@@ -50,36 +64,49 @@ public class LitteralFactory extends IndentedAbstractFactory { // LitteralFactor
 
     // Initialisation
     public void init(){
-        // est ce que l'élément est unique ou bien forme une liste
-        unique      = true;
-        // est ce que l'élément peut être sur une seule ligne
-        //oneLiner    = true;
-        // est ce qu'il faut envoyer \n à parseHead pour identifier la tete
-        //noEndHead   = true;
 
-        // Expression régulière de l'entete
-        // qui permet de reconnaitre quel bloc
-        headRegExpr = "\\:\\:";
-
-        // initialisation des attributs de la classe
-        count = 0;
-        sb = new StringBuffer();
+        lastc        = -1;
+        lastlastc    = -1;
+        indentRead   =  0;
+        indentLength = -1;
+        INDENT_STATE = READING_HEAD;
+        count        =  0;
+        sb           = new StringBuffer();
 
         super.init();
+
     }
 
-    // parse l'entete [ exemple sans signification précise ]
+    // Accept ce qui arrive ?
+    public ParseResult accept(int c) {
+        ParseResult result = ParseResult.FAILED.setError("not a ':'");
+
+        if ((char) c == ':')
+            result = ParseResult.ACCEPT;
+
+        return result;
+    }
+
+     // Demande à se terminer
+    public ParseResult parseEnd(int c){
+        getLitteral().setText(sb.toString());
+        return ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
+    }
+
+
+    // Parse Head
     public ParseResult parseHead(int c) {
         ParseResult result = ParseResult.IN_PROGRESS;
 
-        System.out.print("\033[00;31m"+(char)c+"\033[00m");
-
-        count++;
-
-        if (count == 2) { // "::"
-            INDENT_STATE = READING_BODY;
-            result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount);
+        if((char)c == '\n' && (char)lastc == ':' && (char)lastlastc == ':') {
+            result = ParseResult.FINISHED.setConsumedCharCount(3);
         }
+
+        if ((char)c != ':' && (char) c != '\n')
+            result = ParseResult.FAILED.setError("not a Litteral header  != '::\\n' ");
+
+        lastlastc = lastc;
+        lastc = c;
 
         return result;
     }
@@ -87,16 +114,78 @@ public class LitteralFactory extends IndentedAbstractFactory { // LitteralFactor
     // Parse Body
     public ParseResult parseBody(int c) {
         ParseResult result = ParseResult.IN_PROGRESS;
-        System.out.print("\033[00;37m"+(char)c+"\033[00m");
+//        System.out.print("\033[00;37m"+(char)c+"\033[00m");
         sb.append((char)c);
         return result;
     }
 
-    // Demande à se terminer
-    public ParseResult parseEnd(int c){
-        getLitteral().setText(sb.toString());
 
-        return super.parseEnd(c);
+    // Parse caractère après caractère
+    public ParseResult parse(int c) {
+        if(INDENT_STATE == FINISHED)
+            throw new IllegalStateException("Parsing is finished");
+
+        ParseResult result = ParseResult.IN_PROGRESS;
+        consumedCharCount++;
+
+        //System.out.print("\033[00;36m"+(char) c+"\033[00m"); // CYAN
+
+
+        //** Gestion de l'indentation si il y en a une
+        if (INDENT_STATE == INDENT_COUNT || INDENT_STATE == VERIFY_INDENT) {
+            if ((char)c == ' ') {
+                indentRead++;
+                if (indentLength > 0 && indentRead > indentLength){
+                    INDENT_STATE = READING_BODY;
+                }
+            }else if ((char)c == '\n') {
+                indentRead = 0;
+            }else{ // on trouve un caractère qui n'est pas un espace
+                if (INDENT_STATE == INDENT_COUNT){
+                    indentLength = indentRead;
+                    INDENT_STATE = READING_BODY;
+                    if (indentRead == 0){ // Pas d'indentation
+                        indentLength = -2;
+                    }
+                }
+                if (INDENT_STATE == VERIFY_INDENT) {
+                    INDENT_STATE = READING_BODY;
+                    if (indentRead < indentLength || (indentRead == 0 && indentLength != -2)) {
+                        // indentation terminée, le bloc est à fermer
+                        INDENT_STATE = FINISHED;
+                    }
+                }
+            }
+        }
+
+        //** Gestion du contenu
+        if (INDENT_STATE == READING_BODY || INDENT_STATE == READING_HEAD) { // le corps
+            if ((char)c == '\n') {
+
+                if (INDENT_STATE == READING_BODY)
+                    result = parseBody(c);
+                indentRead = 0;
+                if (indentLength == -1)
+                    INDENT_STATE = INDENT_COUNT;
+                else
+                    INDENT_STATE = VERIFY_INDENT;
+
+
+            }else{
+                if (INDENT_STATE == READING_BODY)
+                    result = parseBody(c);
+                else
+                    result = parseHead(c);
+            }
+        }
+
+        if (INDENT_STATE == FINISHED)
+            result = parseEnd(c);
+
+        lastlastc = lastc;
+        lastc = c;
+
+        return result;
     }
 
 } // LitteralFactory

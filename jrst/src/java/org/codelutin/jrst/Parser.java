@@ -38,61 +38,92 @@ import java.io.StringReader;
 import java.io.FileReader;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import org.codelutin.util.Resource;
 
 public abstract class Parser { // Parser
+
+    static final Object TYPE_RST = new Object();
+    static final Object TYPE_HTML = new Object();
+    static final Object TYPE_XDOC = new Object();
+    static final Object TYPE_XML = new Object();
 
     static public void help() {
             System.out.println("--[ JRsT 0.0a - www.codelutin.com - 2003,2004 ]--");
             System.out.println("");
-            System.out.println("usage :  jrst [--html|--xdoc|--xml|--rst] document.rst");
+            System.out.println("usage :  jrst [--html|--xdoc|--xml|--rst] [-o outfile] document.rst");
             System.out.println("");
             System.out.println("-h, --help   this help");
             System.out.println("--html       (default)");
             System.out.println("--xdoc       ");
             System.out.println("--xml        ");
             System.out.println("--rst        generate with the selected format");
+            System.out.println("-o file      out file");
     }
 
 
     static public void main(String [] args) throws Exception {
 
-        Generator gen = null;
-        Reader in = null;
+        String fileIn = null;
+        String fileOut = null;
+        Object type = null;
+
         if(args.length > 0){
             for(int i = 0; i < args.length; i ++) {
                 if ("-h".equals(args[i]) || "--help".equals(args[i])) {
                     help();
                     return;
                 }else if ( "--html".equals(args[i]) ) {
-                    gen = new HtmlGenerator();
+                    type = TYPE_HTML;
                 }else if ( "--xdoc".equals(args[i]) ) {
-                    gen = new XdocGenerator();
+                    type = TYPE_XDOC;
                 }else if ( "--xml".equals(args[i]) ) {
-                    gen = new XmlGenerator();
+                    type = TYPE_XML;
                 }else if ( "--rst".equals(args[i]) ) {
-                    gen = new RstGenerator();
+                    type = TYPE_RST;
                 }else if (args[i].matches("\\-+.*")) {
                     System.out.println("Unknown argument : " +args[i]+ "\n");
                     help();
                     return;
                 }else{
                     //System.out.println("Lecture du fichier " + filename);
-                    in = new LineNumberReader(new FileReader(args[i]));
+                    //in = new LineNumberReader(new FileReader());
+                    fileIn = args[i];
                 }
             }
-            if (gen == null) {
-                gen = new HtmlGenerator();
+            if (type == null) {
+                type = TYPE_HTML;
             }
         }else{
             help();
             return;
         }
 
+        parse(type, fileIn, null);
+
+    }
+
+    static public void parse(Object type, String fileIn, String fileOut)  throws Exception{
+        Reader in = new LineNumberReader(new FileReader(fileIn));
+
+        // TODO : fileOut
+
+        Generator gen = null;
+        if (type == TYPE_HTML) {
+            gen = new HtmlGenerator();
+        }else if (type == TYPE_XDOC) {
+            gen = new XdocGenerator();
+        }else if (type == TYPE_XML) {
+            gen = new XmlGenerator();
+        }else if (type == TYPE_RST) {
+            gen = new RstGenerator();
+        }else{
+            System.err.println("Type de fichier de sortie inconnu");
+        }
+
         // Lecture de la hiérarchie des éléments
         DocumentFactory document = new DocumentFactory();
-        FactoryParser fp = new FactoryParser("jrst.xml");
+        FactoryParser fp = new FactoryParser(Resource.getURL("jrst.xml"));
         document = (DocumentFactory)fp.getInstance();
-
 
         ParseResult result = ParseResult.IN_PROGRESS;
         // on considère qu'avant le document il y a une ligne blanche
