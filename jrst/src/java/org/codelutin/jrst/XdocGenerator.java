@@ -46,6 +46,19 @@ public class XdocGenerator extends HtmlGenerator { // XdocGenerator
         os.println("</body></document>");
     }
 
+    public void generate(Title e){
+        if (e == doc.getTitle()) {
+            os.println("<section name=\""+getHtmlName(e.getText().trim())+"\">"+e.getText().trim()+"</section>");
+        }else if ( e.getUpperline()) {
+            os.print("<h1><a class=\"toc-backref\"  name=\""+getHtmlName(e.getText())+"\"> ");//href=\"#id"+e.getId()+"\"
+            os.println(e.getText()+"</a></h1>");
+        }else{
+            os.print("<h"+(e.getProfondeur()+1)+"><a class=\"toc-backref\"  name=\""+getHtmlName(e.getText())+"\"> "); //href=\"#id"+e.getId()+"\"
+            os.println(e.getText()+"</a></h"+(e.getProfondeur()+1)+">");
+        }
+    }
+
+/*
     public void generate(OrElement e){
         if ( showBalise) os.println("<!-- OrElement:"+e.getName()+" -->");
         if ("Section".equals(e.getName()))
@@ -58,6 +71,7 @@ public class XdocGenerator extends HtmlGenerator { // XdocGenerator
             os.println(getIndent()+"</section>");
         }
     }
+*/
 
 } // XdocGenerator
 

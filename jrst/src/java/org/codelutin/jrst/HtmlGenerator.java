@@ -89,10 +89,10 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
             os.println("<h1 class=\"title\">"+e.getText().trim()+"</h1>");
         }else if ( e.getUpperline()) {
             os.print("<h1><a class=\"toc-backref\"  name=\""+getHtmlName(e.getText())+"\"> ");//href=\"#id"+e.getId()+"\"
-            os.println(e.getText()+"</h1>");
+            os.println(e.getText()+"</a></h1>");
         }else{
             os.print("<h"+(e.getProfondeur()+1)+"><a class=\"toc-backref\"  name=\""+getHtmlName(e.getText())+"\"> "); //href=\"#id"+e.getId()+"\"
-            os.println(e.getText()+"</h"+(e.getProfondeur()+1)+">");
+            os.println(e.getText()+"</a></h"+(e.getProfondeur()+1)+">");
         }
     }
 

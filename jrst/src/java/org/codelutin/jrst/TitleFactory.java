@@ -70,7 +70,10 @@ public class TitleFactory extends AbstractFactory { // TitleFactory
     public ParseResult accept(int c) {
         ParseResult result = parse(c);
         if(result == ParseResult.FINISHED){
+            System.out.print("\033[01;32mTitle \033[00m ");
             result = ParseResult.ACCEPT;
+        }else if (result == ParseResult.FAILED) {
+            System.out.print("\033[01;31mTitle \033[00m");
         }
         return result;
     }

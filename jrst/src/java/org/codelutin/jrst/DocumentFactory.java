@@ -43,7 +43,7 @@ public class DocumentFactory extends AbstractFactory { // DocumentFactory
 
     public ParseResult parse(int c){
         ParseResult result = ParseResult.IN_PROGRESS;
-        //System.out.print("\033[00;37m"+(char)c+"\033[00m");
+        System.out.print("\033[00;37m"+(char)c+"\033[00m");
 
         result = delegate(c);
         return result;
