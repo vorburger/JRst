@@ -33,13 +33,20 @@ public class XdocGenerator extends HtmlGenerator { // XdocGenerator
 
     public void generate(Document e){
         doc = e;
+        String title = "NoTitle";
+        if (e.getTitle() != null){
+            title = e.getTitle().getText();
+            if(title != null){
+                title = title.trim();
+            }
+        }
+
         os.println("<?xml version=\"1.0\" encoding=\"iso-8859-15\" ?>");
 
         os.println("<document>\n<properties>");
-        if (e.getTitle() != null)
-            os.println("<title>"+encode(e.getTitle().getText())+"</title>");
+        os.println("<title>"+encode(title)+"</title>");
         os.println("</properties>\n<body>");
-        os.println("<section name=\""+getHtmlName(e.getTitle().getText().trim())+"\">");
+        os.println("<section name=\""+getHtmlName(title)+"\">");
 
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
             visit((Element)i.next());

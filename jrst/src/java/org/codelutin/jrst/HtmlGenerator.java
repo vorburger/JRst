@@ -127,7 +127,7 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
 
    public void generate(FieldList e){
 
-       String classTerm = null;
+       String classTerm = "";
        if (e == doc.getBibliographic()) {
            os.println(getIndent()+"<table class=\"docinfo\" frame=\"void\" rules=\"none\">");
            os.println(getIndent()+"<col class=\"docinfo-name\" />");
@@ -281,7 +281,7 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
                    }
 
                }
-               os.println(img+">");
+               os.println(img+"/>");
                if (comment != null) {
                    os.println(getIndent()+"<p><i>"+comment+"</i></p>");
                }
@@ -392,7 +392,7 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
                inHead = false;
            }
        }
-       os.println(getIndent()+"</table>");
+       os.println(getIndent()+"</tbody></table>");
 
    }
 
@@ -478,6 +478,7 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
    * Permet de convertir les caratere speciaux HTML du texte
    */
    protected String encode(String s){
+       s = s.replaceAll("&", "&amp;"); // first all the time
        s = s.replaceAll("<", "&lt;");
        s = s.replaceAll(">", "&gt;");
        return s;
