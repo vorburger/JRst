@@ -96,7 +96,7 @@
     <report>maven-junit-report-plugin</report>
     <report>maven-jxr-plugin</report>
     <report>maven-license-plugin</report>
-    <report>maven-linkcheck-plugin</report>
+<!--    <report>maven-linkcheck-plugin</report> -->
     <report>maven-pmd-plugin</report>
     <report>maven-statcvs-plugin</report>
     <report>maven-simian-plugin</report>
@@ -119,6 +119,14 @@
     </unitTest>
 
     <resources>
+      <resource>
+        <directory>${maven.src.dir}/java</directory>
+        <includes>
+          <include>**/*.properties</include>
+          <include>**/*.xml</include>
+          <include>**/*.jdo</include>
+         </includes>
+      </resource>
       <resource>
         <directory>${maven.src.dir}/resources</directory>
         <includes>
