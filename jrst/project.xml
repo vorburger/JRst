@@ -26,12 +26,12 @@
     <dependency>
       <groupId>lutinlib</groupId>
       <artifactId>lutini18n</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.10</version>
     </dependency>
     <dependency>
       <groupId>lutinlib</groupId>
       <artifactId>lutinutil</artifactId>
-      <version>SNAPSHOT</version>
+      <version>0.3</version>
     </dependency>
   </dependencies>
 
