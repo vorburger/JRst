@@ -62,16 +62,19 @@ public abstract class Parser { // Parser
     static final Object TYPE_XDOC = new Object();
     static final Object TYPE_XML = new Object();
 
+    static protected boolean overwrite = true;
+
     static public void help() {
             System.out.println("--[ JRsT 0.0a - www.codelutin.com - 2003,2004 ]--");
             System.out.println("");
-            System.out.println("usage :  jrst [--html|--xdoc|--xml|--rst] [-o outfile] document.rst");
+            System.out.println("usage :  jrst [--html|--xdoc|--xml|--rst] [[--nooverwrite] -o outfile] document.rst");
             System.out.println("");
             System.out.println("-h, --help   this help");
             System.out.println("--html       (default)");
             System.out.println("--xdoc       ");
             System.out.println("--xml        ");
             System.out.println("--rst        generate with the selected format");
+            System.out.println("--nooverwrite don't generate file allready uptodate");
             System.out.println("-o file      output file (--output)");
             System.out.println("-v #         verbosity : 0 <= # <= 3");
     }
@@ -96,6 +99,8 @@ public abstract class Parser { // Parser
                     type = TYPE_XML;
                 }else if ( "--rst".equals(args[i]) ) {
                     type = TYPE_RST;
+                }else if ( "--nooverwrite".equals(args[i]) ) {
+                    overwrite = false;
                 }else if ( "-o".equals(args[i]) ) {
                     fileOut = args[++i];
                 }else if ( "-v".equals(args[i]) ) {
@@ -129,6 +134,13 @@ public abstract class Parser { // Parser
     }
 
     static public void parse(Object type, String fileIn, String fileOut)  throws Exception{
+        if(!overwrite && new File(fileIn).lastModified() <= new File(fileOut).lastModified()){
+            if(DEBUG == DEBUG_LEVEL0){
+                System.out.println("File " + fileOut +" is uptodate compared to " + fileIn);
+            }
+            return;
+        }
+
         Reader in = null;
         try{
             in = new LineNumberReader(new FileReader(fileIn));
