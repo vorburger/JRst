@@ -38,21 +38,54 @@ import java.io.StringReader;
 import java.io.FileReader;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import org.apache.regexp.RE;
 
 public abstract class Parser { // Parser
 
-    static String TEXT = "======\ncoucou\n======\n\nun\n\ndeux\n";
+    static public void help() {
+            System.out.println("--[ JRsT 0.0a - www.codelutin.com - 2003,2004 ]--");
+            System.out.println("");
+            System.out.println("usage :  jrst [--html|--xdoc|--xml|--rst] document.rst");
+            System.out.println("");
+            System.out.println("-h, --help   this help");
+            System.out.println("--html       (default)");
+            System.out.println("--xdoc       ");
+            System.out.println("--xml        ");
+            System.out.println("--rst        generate with the selected format");
+    }
+
 
     static public void main(String [] args) throws Exception {
 
-        Reader in;
+        Generator gen = null;
+        Reader in = null;
         if(args.length > 0){
-            String filename = args[0];
-            in = new LineNumberReader(new FileReader(filename));
-            //System.out.println("Lecture du fichier " + filename);
+            for(int i = 0; i < args.length; i ++) {
+                if ("-h".equals(args[i]) || "--help".equals(args[i])) {
+                    help();
+                    return;
+                }else if ( "--html".equals(args[i]) ) {
+                    gen = new HtmlGenerator();
+                }else if ( "--xdoc".equals(args[i]) ) {
+                    gen = new XdocGenerator();
+                }else if ( "--xml".equals(args[i]) ) {
+                    gen = new XmlGenerator();
+                }else if ( "--rst".equals(args[i]) ) {
+                    gen = new RstGenerator();
+                }else if (args[i].matches("\\-+.*")) {
+                    System.out.println("Unknown argument : " +args[i]+ "\n");
+                    help();
+                    return;
+                }else{
+                    //System.out.println("Lecture du fichier " + filename);
+                    in = new LineNumberReader(new FileReader(args[i]));
+                }
+            }
+            if (gen == null) {
+                gen = new HtmlGenerator();
+            }
         }else{
-            in = new LineNumberReader(new StringReader(TEXT));
+            help();
+            return;
         }
 
         // Lecture de la hiérarchie des éléments
@@ -77,7 +110,6 @@ public abstract class Parser { // Parser
         }
 
         Element e = document.getElement();
-        Generator gen = new XdocGenerator();
         gen.visit(e);
         if(result == ParseResult.FAILED){
             System.out.println("\033[01;31m------[-- ERROR ### --]-------------------------------------\033[00m");
