@@ -47,6 +47,9 @@ public class DocumentFactory extends AbstractFactory { // DocumentFactory
         result = delegate(c);
         return result;
     }
-
+    public ParseResult parseEnd(){
+	// TODO a faire
+	return null;
+    }
 } // DocumentFactory
 

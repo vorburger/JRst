@@ -72,10 +72,11 @@ public class FieldListFactory extends AbstractFactory { // FieldListFactory
         }
     }
 
-    /**
-    * Retourne true tant que l'objet n'a pas fini de parser son élément.
-    * Lorsqu'il retourne false, la factory est capable de savoir si l'élement est convenable ou non, pour cela il faut appeler la méthode {@link getParseResult}.
-    */
+    public ParseResult parseEnd(){
+        // TODO a faire
+        return null;
+    }
+                                                                                                                                                                                                                            
     public ParseResult parse(int c) {
         ParseResult result = ParseResult.IN_PROGRESS;
         consumedCharCount++;
@@ -90,7 +91,7 @@ public class FieldListFactory extends AbstractFactory { // FieldListFactory
                 if((char)c != ':' || ((char)c == ':' && (char)lastc == '\\')){
                     fieldText.append((char)c);
                 }else{
-                    getFieldList().addFieldText(fieldText.toString());
+                    getElement().addChild(new Term().addChild(Text.parse(fieldText.toString())));
                     fieldText.delete(0, fieldText.length());
                     STATE = AFTER_FIELD_TEXT;
                 }

@@ -49,9 +49,5 @@ public class FieldList extends AbstractElement { // FieldList
     public FieldList(){
     }
 
-    public void addFieldText(String fieldText){
-        this.childs.add(fieldText);
-    }
-
 } // FieldList
 

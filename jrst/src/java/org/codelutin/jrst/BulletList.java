@@ -34,7 +34,7 @@ package org.codelutin.jrst;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class BulletList  extends AbstractElement { // BulletList
+public class BulletList extends AbstractElement { // BulletList
 
     /** liste de chaine de caratere */
     int symbole = -1;

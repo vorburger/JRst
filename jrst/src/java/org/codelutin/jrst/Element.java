@@ -39,7 +39,7 @@ import java.util.List;
  */
 public interface Element {// Element
 
-    public void addChild(Element e);
+    public Element addChild(Element e);
 
     public List getChilds();
 }// Element

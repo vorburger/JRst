@@ -75,6 +75,10 @@ public class TitleFactory extends AbstractFactory { // TitleFactory
         return result;
     }
 
+    public ParseResult parseEnd(){
+        // TODO a faire
+        return null;
+    } 
 
     /**
     * Retourne true tant que l'objet n'a pas fini de parser son élément.

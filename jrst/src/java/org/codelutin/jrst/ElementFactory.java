@@ -44,6 +44,8 @@ public interface ElementFactory { // ElementFactory
      */
     public ParseResult accept(int c);
     public ParseResult parse(int c);
+    public ParseResult parseEnd();
+
     /**
      * Retourne l'élement représenté créé après la lecture de l'élément.
      *

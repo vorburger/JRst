@@ -91,6 +91,12 @@ public class BulletListFactory extends AbstractFactory { // BulletListFactory
             return ParseResult.FAILED;
         }
     }
+
+    public ParseResult parseEnd(){
+        // TODO a faire
+        return null;
+    }
+                                                                                                                                                                                                                            
     public ParseResult parse(int c) {
         if(STATE == FINISHED)
             throw new IllegalStateException("Parsing is finished");

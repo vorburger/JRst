@@ -72,8 +72,10 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
        System.out.println("<dl>");
        for(int i=0; i<e.getChilds().size(); i++){
            Object child = e.getChilds().get(i);
-           if(child instanceof String){
-               System.out.print("<dt>"+child+"<dt>");
+           if(child instanceof Term){
+               System.out.print("<dt>");
+               visit((Element)child);
+               System.out.print("<dt>");
            }else{
                System.out.print("<dd>");
                visit((Element)child);
@@ -81,6 +83,13 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
            }
        }
        System.out.println("</dl>");
+   }
+
+   public void generate(Term e){
+       for(int i=0; i<e.getChilds().size(); i++){
+           Text child = (Text)e.getChilds().get(i);
+           visit(child);
+       }
    }
 
 } // HtmlGenerator

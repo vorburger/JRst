@@ -37,8 +37,9 @@ import java.util.List;
 public class AbstractElement implements Element { // AbstractElement
     ArrayList childs = new ArrayList();
 
-    public void addChild(Element e){
+    public Element addChild(Element e){
         childs.add(e);
+        return this;
     }
     public List getChilds(){
         return childs;

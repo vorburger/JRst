@@ -60,6 +60,11 @@ public class ParaFactory extends AbstractFactory { // ParaFactory
         }
     }
 
+    public ParseResult parseEnd(){
+        // TODO a faire
+        return null;
+    }
+                                                                                                                                                                                                                            
     /**
     * Retourne true tant que l'objet n'a pas fini de parser son élément.
     * Lorsqu'il retourne false, la factory est capable de savoir si l'élement est convenable ou non, pour cela il faut appeler la méthode {@link getParseResult}.
