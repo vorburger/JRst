@@ -164,8 +164,7 @@
   </target>
 
   <target name="javacc" depends="taskdef">
-    <mkdir dir="${gendir}/${javadir}"/>
-    <javacctask javacchome="${javacchome}" destdir="${gendir}/${javadir}" srcdir="${srcdir}/${javadir}" />
+    <javacctask javacchome="${javacchome}" destdir="${gendir}" srcdir="${srcdir}" />
   </target>
 
   <target name="processor" depends="taskdef" description="Applique des filtres du processor sur les fichiers sources Java" if="processor.available">
