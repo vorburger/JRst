@@ -41,7 +41,8 @@
     <dependency>
       <groupId>externallib</groupId>
       <artifactId>jregex</artifactId>
-      <jar>jregex1.2_01-src.jar</jar>
+      <jar>jregex1.2_01.jar</jar>
+      <url>http://jregex.sourceforge.net/</url>
     </dependency>
   </dependencies>
 

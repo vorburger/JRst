@@ -80,6 +80,8 @@ public abstract class Parser { // Parser
                     type = TYPE_XML;
                 }else if ( "--rst".equals(args[i]) ) {
                     type = TYPE_RST;
+                }else if ( "-o".equals(args[i]) ) {
+                    fileOut = args[++i];
                 }else if (args[i].matches("\\-+.*")) {
                     System.out.println("Unknown argument : " +args[i]+ "\n");
                     help();
@@ -98,7 +100,7 @@ public abstract class Parser { // Parser
             return;
         }
 
-        parse(type, fileIn, null);
+        parse(type, fileIn, fileOut);
 
     }
 
