@@ -48,7 +48,7 @@ public class Directive extends AbstractElement { // Directive
     }
 
     public String getText(){
-        return text;
+        return text.trim();
     }
 
     public void setText(String text){

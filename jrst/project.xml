@@ -33,6 +33,16 @@
       <artifactId>lutinutil</artifactId>
       <version>0.8</version>
     </dependency>
+    <dependency>
+      <groupId>lutinlib</groupId>
+      <artifactId>lutinxml</artifactId>
+      <version>0.5</version>
+    </dependency>
+    <dependency>
+      <groupId>externallib</groupId>
+      <artifactId>jregex</artifactId>
+      <jar>jregex1.2_01-src.jar</jar>
+    </dependency>
   </dependencies>
 
 </project>

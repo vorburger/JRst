@@ -33,10 +33,28 @@ package org.codelutin.jrst;
 
 public class OrElement extends AbstractElement {
 
-    String name = "";
+    static int numbered = 0;
+
+    String name = null;
+    int id = 0;
+
+    public OrElement() {
+        id = numbered;
+        numbered++;
+    }
 
     public OrElement(String nom) {
+        this();
         name = nom;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
 } // OrElement
 

@@ -1,4 +1,4 @@
-/*##%
+/* ##%
  * Copyright (C) 2002, 2003 Code Lutin
  *
  * This program is free software; you can redistribute it and/or
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *##%*/
+ * ##%*/
 /*
  * AbstractFactory.java
  *
@@ -30,7 +30,9 @@
 package org.codelutin.jrst;
 
 import java.util.ArrayList;
-import java.util.List;
+import jregex.Pattern;
+import jregex.Matcher;
+
 
 /**
  * TODO Description of the Class
@@ -40,37 +42,13 @@ import java.util.List;
  *
  *  mise à jour le 18 juin 2004
  */
+
 public abstract class AbstractFactory implements ElementFactory {// AbstractFactory
 
-    Object SEARCH_CHILD = new Object();
-    Object PARSE = new Object();
-
-    /** La liste potentiel de tous les types elements acceptable */
-    protected ArrayList childs = new ArrayList();
-
-    protected int currentChildIndex = -1;
-    protected ElementFactory currentChild = null;
-    protected StringBuffer buffer = null;
-
-    /** Util a tous les enfants pour leur automate */
-    protected Object STATE = null;
-    protected Object CHILD_STATE = null;
-    int consumedCharCount = 0;
-
-    Element element = null;
-
-    abstract protected AbstractFactory factoryNew();
-    abstract protected Element elementNew();
-    abstract public ParseResult accept(int c);
-    abstract public ParseResult parse(int c);
-
-    /** Fonctionnement de la factory **/
-
+    /** --- Constantes --- */
     // type OR ou AND sur les fils
     final static protected Object FUNCTION_OR = new Object();
     final static protected Object FUNCTION_AND = new Object();
-
-    protected Object factoryAND_OR = FUNCTION_AND; // AND par défaut
 
     // la cardinalite de la factory : type "1", "?", "+", "*"
     final static protected Object CARDINALITE_SIMPLE = new Object(); // une fois
@@ -78,87 +56,54 @@ public abstract class AbstractFactory implements ElementFactory {// AbstractFact
     final static protected Object CARDINALITE_ETOILE = new Object(); // zéro ou plus
     final static protected Object CARDINALITE_PLUS = new Object(); // un ou plus
 
+    // Etat du fils vu du père
+    final static Object SEARCH_CHILD = new Object();
+    final static Object PARSE = new Object();
+
+    /** --- Attibuts --- **/
+    /* Etat courant de la Factory pour leur automate */
+    protected Object STATE = null;
+
+    /* Gestion des enfants de la Factory */
+    // La liste de tous les types elements acceptable
+    protected ArrayList childs = new ArrayList();
+    // l'enfant courant
+    protected ElementFactory currentChild = null;
+    // indexe de départ pour le prochain enfant
+    protected int currentChildIndex = -1;
+    // Etat de l'enfant
+    protected Object CHILD_STATE = null;
+
+    /* le buffer des caractères à parser */
+    protected StringBuffer buffer = null;
+    // nombre de caractères consommés dans le buffer
+    int consumedCharCount = 0;
+
+    /* L'élément de la Factory */
+    Element element = null;
+
+    /* comportement de la Factory */
+    // les enfants sont à suivre ou tous possibles en même temps
+    protected Object factoryAND_OR = FUNCTION_AND; // AND par défaut
+    // nombre de fois qu'il faut répèter la Factory
     protected Object factoryCardinalite = CARDINALITE_SIMPLE;
 
-    /** déclaration des méthodes **/
 
-    public StringBuffer getBuffer(){
-        return buffer;
-    }
 
-    public AbstractFactory(){
-        init();
-    }
+    /** --- Méthodes abstraites --- **/
+
+    abstract protected AbstractFactory factoryNew();
+    abstract protected Element elementNew();
+    abstract public ParseResult accept(int c);
+    abstract public ParseResult parseEnd(int c);
+    abstract public ParseResult parse(int c);
 
     /**
-    * Construit une nouvelle factory du meme type avec les memes enfants
-    * la meme cardinalité et la même propriété AND_OR
-    */
-    public ElementFactory create(){
-        AbstractFactory result = factoryNew();
-        result.childs = childs;
-        result.init();
-        result.factoryAND_OR = factoryAND_OR;
-        result.factoryCardinalite = factoryCardinalite;
-        return result;
-    }
+     **   Déclaration des méthodes
+     **/
 
-    public Element getElement(){
-        return element;
-    }
-
-    // renvoie une nouvelle factory avec une cardinalité simple (1)
-    public ElementFactory getSimple() {
-        AbstractFactory result = (AbstractFactory)create();
-        result.factoryCardinalite = CARDINALITE_SIMPLE;
-        return result;
-    }
-
-    // renvoie une nouvelle factory avec une cardinalité zéro ou un (?)
-    public ElementFactory getZero_Un() {
-        AbstractFactory result = (AbstractFactory)create();
-        result.factoryCardinalite = CARDINALITE_ZERO_UN;
-        return result;
-    }
-
-    // renvoie une nouvelle factory avec une cardinalité étoile (*)
-    public ElementFactory getEtoile() {
-        AbstractFactory result = (AbstractFactory)create();
-        result.factoryCardinalite = CARDINALITE_ETOILE;
-        return result;
-    }
-
-    // renvoie une nouvelle factory avec une cardinalité plus (+)
-    public ElementFactory getPlus() {
-        AbstractFactory result = (AbstractFactory)create();
-        result.factoryCardinalite = CARDINALITE_PLUS;
-        return result;
-    }
-
-    // pour savoir si un Element est nécessaire par rapport à sa
-    // cardinalité
-    public boolean isNecessaire() {
-        return (factoryCardinalite == CARDINALITE_PLUS ||
-                factoryCardinalite == CARDINALITE_SIMPLE);
-    }
-
-    // pour savoir si un Element est multiple par rapport à sa
-    // cardinalité
-    public boolean isMultiple() {
-        return (factoryCardinalite == CARDINALITE_PLUS ||
-                factoryCardinalite == CARDINALITE_ETOILE);
-    }
-    /** OR et AND **/
-    // passe le fonctionnement de la factory en OR
-    public void setFunctionOR() {
-        factoryAND_OR = FUNCTION_OR;
-    }
-
-    // passe le fonctionnement de la factory en AND
-    // (ne devrait pas bcp servir normallement car c le mode par défaut)
-    public void setFunctionAND() {
-        factoryAND_OR = FUNCTION_AND;
-    }
+    // Constructeur
+    public AbstractFactory(){ init(); }
 
     /**
     * Appele par la methode create, contient des initialisations, les enfants
@@ -168,49 +113,69 @@ public abstract class AbstractFactory implements ElementFactory {// AbstractFact
         consumedCharCount = 0;
         STATE = null;
         CHILD_STATE = null;
-        currentChildIndex = 0;
         currentChild = null;
+        currentChildIndex = 0;
         element = elementNew();
         buffer = new StringBuffer();
-        childIndentRead = new StringBuffer();
-        childIndent = -1;
+//        childIndentRead = new StringBuffer();
+//        childIndent = -1;
     }
 
-
-    /** l'indentation requise pour les enfants */
-    int childIndent = -1;
-    int lastChildIndentRead = 0;
-    StringBuffer childIndentRead = null;
     /**
-    * se positionne juste au debut du texte pour le fils.
-    * c-a-d que l'on mange les caracteres blancs.
+    * Construit une nouvelle factory du meme type avec les memes enfants
+    * la meme cardinalité et la même propriété AND_OR
     */
-    protected ParseResult searchChildText(int c){
-        ParseResult result = ParseResult.IN_PROGRESS;
-        if((char)c == ' ' || (char)c == '\n'){
-            childIndentRead.append((char)c);
-            if((char)c == '\n'){ // pour fermer les enfants si besoin
-                delegate(c);
-            }
-        }else{
-            lastChildIndentRead = 0;
-            for(int i=0; i<childIndentRead.length(); i++){
-                if(childIndentRead.charAt(i) == '\n'){
-                    lastChildIndentRead = 0;
-                }else{
-                    lastChildIndentRead++;
-                }
-            }
-            result = ParseResult.FINISHED.setConsumedCharCount(childIndentRead.length());
-            if(childIndent == -1 && lastChildIndentRead != 0){
-                childIndent = lastChildIndentRead;
-            }else if(childIndent != lastChildIndentRead){
-                result = ParseResult.FAILED.setError("Bad indentation found: " + lastChildIndentRead+" wait: " + childIndent);
-            }
-            childIndentRead.delete(0, childIndentRead.length());
-        }
+    public ElementFactory create(Object cardinal){
+        AbstractFactory result = factoryNew();
+        result.childs = childs;
+        result.factoryAND_OR = factoryAND_OR;
+        result.factoryCardinalite = cardinal;
+        result.init();
         return result;
     }
+
+    public ElementFactory create() { return create(factoryCardinalite); }
+
+    /**  Accesseurs **/
+    public Element      getElement() { return element; }
+    public StringBuffer getBuffer()  { return buffer;  }
+
+    // renvoie une nouvelle factory avec une cardinalité simple (1)
+    public ElementFactory getSimple() { return create( CARDINALITE_SIMPLE );  }
+    // renvoie une nouvelle factory avec une cardinalité zéro ou un (?)
+    public ElementFactory getZero_Un(){ return create( CARDINALITE_ZERO_UN ); }
+    // renvoie une nouvelle factory avec une cardinalité étoile (*)
+    public ElementFactory getEtoile() { return create( CARDINALITE_ETOILE );  }
+    // renvoie une nouvelle factory avec une cardinalité plus (+)
+    public ElementFactory getPlus()   { return create( CARDINALITE_PLUS );    }
+
+    // pour savoir si un Element est nécessaire par rapport à sa
+    // cardinalité
+    public boolean isNecessaire() {
+        return (factoryCardinalite == CARDINALITE_PLUS ||
+                factoryCardinalite == CARDINALITE_SIMPLE);
+    }
+    // pour savoir si un Element est multiple par rapport à sa
+    // cardinalité
+    public boolean isMultiple() {
+        return (factoryCardinalite == CARDINALITE_PLUS ||
+                factoryCardinalite == CARDINALITE_ETOILE);
+    }
+
+    /** Modififieurs OR et AND **/
+    // passe le fonctionnement de la factory en OR
+    public void setFunctionOR()  { factoryAND_OR = FUNCTION_OR;  }
+    // passe le fonctionnement de la factory en AND
+    // (ne devrait pas bcp servir normallement car c le mode par défaut)
+    public void setFunctionAND() { factoryAND_OR = FUNCTION_AND; }
+
+
+
+
+    /**
+     **    Gestion des enfants
+     **/
+
 
     /**
     * Recherche un enfant qui conviendrait pour les caracteres que l'on
@@ -223,6 +188,7 @@ public abstract class AbstractFactory implements ElementFactory {// AbstractFact
 
         // nombre de fils qui vont être parcourus pendant la recherche
         int limit = 0;
+
         if (factoryAND_OR == FUNCTION_OR) { // FUNCTION_OR
             limit = childs.size();      // on parcours tous les fils dans le cas du OR
         }else{ // FUNCTION AND
@@ -327,6 +293,26 @@ public abstract class AbstractFactory implements ElementFactory {// AbstractFact
         childs.add(child);
         return this;
     }
+
+    /**
+     *  le petit nom véritable de la factory
+     */
+
+    // pour récuperer le nom des factories
+    Pattern factoryName = new Pattern("org\\.codelutin\\.jrst\\.(.*)Factory");
+
+    public String Name() {
+
+        Matcher myM = factoryName.matcher(getClass().getName());
+        myM.matches();
+        return myM.group(1);
+    }
+
+    // identification
+    public String identify() {
+        return Integer.toHexString(hashCode());
+    }
+
 
 }// AbstractFactory
 

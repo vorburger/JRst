@@ -1,5 +1,5 @@
 /* *##%
- * Copyright (C) 2002, 2003 Code Lutin
+ * Copyright (C) 2002, 2004 Code Lutin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,11 +17,11 @@
  *##%*/
 
 /* *
- * Hyperlink.java
+ * DefList.java
  *
- * Created: 24 juin 2004
+ * Created: 35 juin 2004
  *
- * @author Bucas
+ * @author Bucas <bucas@codelutin.com>
  * Copyright Code Lutin
  * @version $Revision$
  *
@@ -31,19 +31,17 @@
 
 package org.codelutin.jrst;
 
-public class Hyperlink extends AbstractElement { // Hyperlink
-    String text = null;
+public class DefList extends AbstractElement { // DefList
 
-    public Hyperlink(){
-    }
+    /** Constantes **/
+    /** Attributs **/
+    /** Méthodes **/
 
-    public String getText(){
-        return text.trim();
-    }
+    // constructeur
+    public DefList() { }
 
-    public void setText(String text){
-        this.text = text;
-    }
+    // Accesseurs -- SETTERs
+    // Accesseurs -- GETTERs
 
-} // Hyperlink
+} // DefList
 

@@ -31,155 +31,106 @@
 
 package org.codelutin.jrst;
 
-public class DirectiveFactory extends AbstractFactory { // DirectiveFactory
+public class DirectiveFactory extends IndentedAbstractFactory { // DirectiveFactory
 
-    /** les différents états d'avancenement de la recherche de bloc litteral **/
+    /** Constantes **/
+
+    // les différents états d'avancenement de la recherche de bloc litteral
     final static Object DOT_DOT_SPACE = new Object(); // pour enlever le ".. " du début
     final static Object TERM = new Object(); // on lit le nom de la directive
     final static Object COLONS = new Object(); // on enleve les "::"
-    final static Object TITLE = new Object();  // on lit le titre
-    final static Object SEARCH_INDENT = new Object(); // on compte l'indentation
-    final static Object FIND_INDENT = new Object(); // on cherche l'indentation minimum pour rester dans le bloc
-    final static Object READING = new Object(); // on lit ce qu'il y a après l'indentation
+    final static Object AFTER_COLONS = new Object(); // après les colons
 
-    //StringBuffer buffer = null;
-    int lastc = -1;
-    int lastlastc = -1;
-    int indentRead = 0;   // indentation en cours de lecture
-    int indentLength = 0; // indentation de base trouvée avec INDENT_SEARCH
-    StringBuffer fieldText = null;
+    /** Attributs **/
 
-    protected AbstractFactory factoryNew(){
-        return  new DirectiveFactory();
-    }
-    protected Element elementNew(){
-        return new Directive();
-    }
-    protected Directive getDirective(){
-        return (Directive)getElement();
-    }
+    StringBuffer text = null;
+    int counter       = 0;
 
+    /** Méthodes **/
+
+    // Accesseurs et recopieurs
+    protected AbstractFactory factoryNew(){ return  new DirectiveFactory(); }
+    protected Element elementNew(){ return new Directive(); }
+    protected Directive getDirective(){ return (Directive)getElement(); }
+
+    // Constructeur
+    public DirectiveFactory(){ init(); }
+
+    // Initialisation
     public void init(){
+        text        = new StringBuffer();
+        counter     = 0;
+        SUB_STATE   = DOT_DOT_SPACE;
+        unique      = true;
+        oneLiner    = true;
+        headRegExpr = "\\.\\. \\w+::";
         super.init();
-        fieldText = new StringBuffer();
-        STATE = DOT_DOT_SPACE;
-        indentRead = 0;
     }
 
-    public ParseResult accept(int c) {
-        ParseResult result = parse(c);
-        if(result == ParseResult.FINISHED){
-            result = ParseResult.ACCEPT;
-        }
-        return result;
-    }
-
-    public ParseResult parseEnd(){
-        // TODO a faire
-        return null;
-    }
-
-    /**
-    * Retourne true tant que l'objet n'a pas fini de parser son élément.
-    * Lorsqu'il retourne false, la factory est capable de savoir si l'élement est convenable ou non, pour cela il faut appeler la méthode {@link getParseResult}.
-    */
-    public ParseResult parse(int c) {
+    // parse l'entete de la directive
+    public ParseResult parseHead(int c) {
         ParseResult result = ParseResult.IN_PROGRESS;
-        consumedCharCount++;
 
-        if (STATE == DOT_DOT_SPACE) {
+        if (SUB_STATE == DOT_DOT_SPACE) {
             if ((char)c == '.') {
-                indentRead++;
-                if (indentRead > 2) {
-                    result = ParseResult.FAILED.setError("expected only double dot '..'");
+                counter++;
+                if (counter > 2) {
+                    result = ParseResult.FAILED.setError("expected only double-dot '..'");
                 }
-            }else if ((char)c == ' ') {
-                    indentRead++;
-                    if (indentRead == 3) {
-                        STATE = TERM;
-                        indentRead = 0;
-                        fieldText.delete(0, fieldText.length());
+            }else if ((char)c == ' ' && counter == 2) {
+                    counter++;
+                    if (counter == 3) {
+                        SUB_STATE = TERM;
+                        counter = 0;
+                        text.delete(0, text.length());
                     }
-                  }else{
-                      result = ParseResult.FAILED.setError("expected double semi-colon '..'");
-                  }
-        }else if (STATE == TERM) {
+            }else{
+                result = ParseResult.FAILED.setError("expected double-dot '..'");
+            }
+        }else if (SUB_STATE == TERM) {
             if((char)c == ' ') {
                 result = ParseResult.FAILED.setError("there should be no space (' ') in the name of the directive");
             }else if((char)c != '\\'){
                 if((char)c != ':' || ((char)c == ':' && (char)lastc == '\\')){
-                    fieldText.append((char)c);
+                    text.append((char)c);
                 }else{
-                    Term t = new Term();
-                    getElement().addChild(t.setText(fieldText.toString()));
-                    fieldText.delete(0, fieldText.length());
-                    STATE = COLONS;
-                    indentRead = 1;
+                    Term t = new Term(text);
+                    getElement().addChild(t);
+                    text.delete(0, text.length());
+                    SUB_STATE = COLONS;
+                    counter = 1;
                 }
             }
-        }else if (STATE == COLONS) {
+        }else if (SUB_STATE == COLONS) {
             if ((char)c == ':') {
-                indentRead ++;
-            }else if (indentRead != 2) {
-                result = ParseResult.FAILED.setError("only double semi-colons allowed '::'");
-            }else if ((char)c == '\n'){
-                STATE = SEARCH_INDENT;
-                indentRead = 0;
-            }else if ((char)c == ' ') {
-                STATE = READING;
-            }
-        }else if (STATE == SEARCH_INDENT) {
-            if ((char)c == ' ') {
-                indentRead ++;
-            }else if ((char)c == '\n' ) {
-                indentRead = 0;
-                if ((char)lastc == '\n' && ((char)lastlastc == '\n')) {
-                    result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
-                }
+                counter ++;
             }else{
-                // on trouve un caractère ki n'est pas un espace
-                if (indentRead > 0) {
-                    indentLength = indentRead;
-                    STATE = READING;
+                result = ParseResult.FAILED.setError("character illegal");
+            }
+            if (counter != 1 ) {
+                if (counter > 2) {
+                    result = ParseResult.FAILED.setError("only double semi-colons allowed '::'");
                 }else{
-                    indentLength = 0;
-                    result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
-                    System.out.println(" Fini pas d'intendation !");
+                    counter = 0;
+                    SUB_STATE = AFTER_COLONS;
                 }
             }
-        }else if (STATE == READING) {
-            if ((char)c == '\n') {
-                if ((char)lastc == '\n' && ((char)lastlastc == '\n')) {
-                    result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
-                }
-                indentRead = 0;
-                STATE = FIND_INDENT;
-                delegate(c);
-            }
-        }else if (STATE == FIND_INDENT) {
-            if ((char) c == ' ') {
-                indentRead ++;
+        }else if (SUB_STATE == AFTER_COLONS) {
+            if ((char)c == ' ') {
+                INDENT_STATE = READING_BODY;
+                SUB_STATE = FINISHED;
+                result = parseEnd(c);
             }else if ((char)c == '\n') {
-                indentRead = 0;
+                INDENT_STATE = INDENT_COUNT;
+                SUB_STATE = FINISHED;
+                result = parseEnd(c);
             }else{
-                // on trouve un caractere non espace donc c la fin du bloc
-                if (indentRead < indentLength || indentLength == 0) {
-                    result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
-                }else
-                    STATE = READING;
+                result = ParseResult.FAILED.setError("need a space or carriage return");
             }
         }
 
-        if (result == ParseResult.IN_PROGRESS) {
-            if (STATE == READING) {
-                result = delegate(c);
-            }
-        }
-
-        lastlastc = lastc;
-        lastc = c;
         return result;
     }
 
-} // LitteralFactory
+} // DirectiveFactory
 

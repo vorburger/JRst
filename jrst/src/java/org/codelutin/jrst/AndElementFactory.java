@@ -35,7 +35,11 @@ import java.util.Iterator;
 
 public class AndElementFactory extends AbstractFactory {
 
-    public String name;
+    public String name = null;
+
+    public AndElementFactory() {
+        init();
+    }
 
     public AndElementFactory(String nom) {
         init();
@@ -50,6 +54,9 @@ public class AndElementFactory extends AbstractFactory {
         return new AndElement(name);
     }
 
+    public void setName(String n) { name = n; }
+    public String getName() { return name; }
+
     public ParseResult accept(int c){
 
         // tant qu'un fils n'est pas nécessaire
@@ -57,8 +64,10 @@ public class AndElementFactory extends AbstractFactory {
         Iterator it=childs.iterator();
         do {
             ElementFactory factory = (ElementFactory)it.next();
-            if (factory.accept(c) == ParseResult.ACCEPT) {
-                return ParseResult.ACCEPT;
+            ParseResult result = factory.accept(c);
+            if ( result == ParseResult.ACCEPT ||
+                 result == ParseResult.IN_PROGRESS) {
+                return result;
             }else{
                 if (factory.isNecessaire()) {
                     break;
@@ -69,10 +78,25 @@ public class AndElementFactory extends AbstractFactory {
         return ParseResult.ACCEPT;
     }
 
+    public ParseResult parseEnd(int c){
+        ParseResult result = ParseResult.ACCEPT;
+        if (currentChild != null){
+//            System.out.println("ANDelemChild:"+currentChild); //((AbstractFactory)currentChild).identify());
+            result = currentChild.parseEnd(c);
+        }
+
+        CHILD_STATE = null;
+        buffer.delete(0,buffer.length());
+
+        return result;
+
+    }
+
+
     int lastc = 0;
     int lastlastc = 0;
 
-    public ParseResult parse(int c){
+    public ParseResult parse(int c) {
         ParseResult result = ParseResult.IN_PROGRESS;
 
         consumedCharCount++;
@@ -93,9 +117,5 @@ public class AndElementFactory extends AbstractFactory {
         return result;
     }
 
-    public ParseResult parseEnd(){
-    // TODO a faire
-    return null;
-    }
 } // StructureModelFactory
 

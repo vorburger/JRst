@@ -1,0 +1,39 @@
+<factory class="org.codelutin.jrst.DocumentFactory">
+	<factory class="org.codelutin.jrst.TitleFactory" cardinality="0..1"/>
+	<factory class="org.codelutin.jrst.AndElementFactory" name="StructureModel">
+		<factory class="org.codelutin.jrst.OrElementFactory" name="Section" cardinality="1..*">
+			<factory class="org.codelutin.jrst.AndElementFactory" name="Topic">
+				<factory class="org.codelutin.jrst.TitleFactory" cardinality="0..1"/>
+				<factory class="org.codelutin.jrst.TitleFactory" cardinality="0..1"/>
+				<factory class="org.codelutin.jrst.OrElementFactory" name="BodyElement" cardinality="1..*">
+					<factory class="org.codelutin.jrst.DirectiveFactory">
+						<factory ref="BodyElement" cardinality="1..*"/>
+					</factory>
+					<factory class="org.codelutin.jrst.HyperlinkFactory">
+						<factory class="org.codelutin.jrst.ParaFactory"/>
+					</factory>
+					<factory class="org.codelutin.jrst.EnumListFactory">
+						<factory ref="BodyElement" cardinality="1..*"/>
+					</factory>
+					<factory class="org.codelutin.jrst.BulletListFactory">
+						<factory ref="BodyElement" cardinality="1..*"/>
+					</factory>
+					<factory class="org.codelutin.jrst.FieldListFactory">
+						<factory ref="BodyElement" cardinality="1..*"/>
+					</factory>
+					<factory class="org.codelutin.jrst.OptionListFactory">
+						<factory class="org.codelutin.jrst.ParaFactory"/>
+					</factory>
+					<factory class="org.codelutin.jrst.DefListFactory">
+						<factory ref="BodyElement" cardinality="1..*"/>
+					</factory>
+					<factory class="org.codelutin.jrst.GridTableFactory">
+						<factory ref="BodyElement" cardinality="1..*"/>
+					</factory>
+					<factory class="org.codelutin.jrst.ParaFactory"/>
+				</factory>
+			</factory>
+		</factory>
+	</factory>
+</factory>
+

@@ -32,38 +32,43 @@
 package org.codelutin.jrst;
 
 public class ParaFactory extends AbstractFactory { // ParaFactory
+
+    /** Attributs **/
+
     StringBuffer buffer = null;
     int lastc = -1;
     int lastlastc = -1;
 
-    protected AbstractFactory factoryNew(){
-        return  new ParaFactory();
-    }
-    protected Element elementNew(){
-        return new Para();
-    }
+    /** Méthodes **/
 
-    protected Para getPara(){
-        return (Para)getElement();
-    }
+    // Accesseurs et Recopieurs
+    protected AbstractFactory factoryNew(){ return  new ParaFactory();}
+    protected Element elementNew(){ return new Para(); }
+    protected Para getPara(){ return (Para)getElement(); }
 
+    // Initialisation
     public void init(){
         super.init();
         lastc = -1;
+        lastlastc = -1;
         buffer = new StringBuffer();
     }
 
+    // Acceptation
     public ParseResult accept(int c) {
         if((char)c != ' ' && (char)c != '\n'){
+            //System.out.print("\033[01;32mPara\033[00m ");
             return ParseResult.ACCEPT;
         }else{
+            //System.out.print("\033[01;31mPara\033[00m");
             return ParseResult.FAILED;
         }
     }
 
-    public ParseResult parseEnd(){
-        // TODO a faire
-        return null;
+    // Terminaison
+    public ParseResult parseEnd(int c){
+        getPara().setText(buffer.toString());
+        return ParseResult.ACCEPT;
     }
 
     /**
@@ -73,22 +78,24 @@ public class ParaFactory extends AbstractFactory { // ParaFactory
     public ParseResult parse(int c) {
         ParseResult result = ParseResult.IN_PROGRESS;
         consumedCharCount++;
+
+        //System.out.print((char)c);
+
         if(lastc == -1 && (char)c == ' '){
             result = ParseResult.FAILED.setError("Para must begin at column 0");
         }else if((char)c == '\n' && (char)lastc =='\n'){
-            getPara().setText(buffer.toString());
+            // getPara().setText(buffer.toString());
+            result = parseEnd(c);
             result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
-/*        }else if((char)c == '\n' && (char)lastc ==':' && (char)lastlastc == ':'){
-            buffer.delete(buffer.length()-4, buffer.length()-1);
-            getPara().setText(buffer.toString());
-            result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
-  */      }else{
-            lastlastc = lastc;
-            lastc = c;
-            buffer.append((char)c);
-            getPara().setText(buffer.toString());
-//            System.out.print((char)c);
+        }else{
+            if ((char) c == '\n')
+                buffer.append(' ');
+            else
+                buffer.append((char)c);
         }
+
+        lastlastc = lastc;
+        lastc = c;
         return result;
     }
 

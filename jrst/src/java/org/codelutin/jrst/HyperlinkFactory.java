@@ -31,172 +31,96 @@
 
 package org.codelutin.jrst;
 
-public class HyperlinkFactory extends AbstractFactory { // HyperlinkFactory
+public class HyperlinkFactory extends IndentedAbstractFactory { // HyperlinkFactory
 
-    /** les différents états d'avancenement de la recherche de bloc litteral **/
+    /** Constantes **/
+
+    // les différents états d'avancenement de la recherche de bloc litteral
     final static Object DOT_DOT_SPACE = new Object(); // pour enlever le ".. " du début
     final static Object TERM = new Object(); // on lit le nom de la directive
-    final static Object COLONS = new Object(); // on enleve les "::"
-    final static Object TITLE = new Object();  // on lit le titre
-    final static Object SEARCH_INDENT = new Object(); // on compte l'indentation
-    final static Object FIND_INDENT = new Object(); // on cherche l'indentation minimum pour rester dans le bloc
-    final static Object READING = new Object(); // on lit ce qu'il y a après l'indentation
+    final static Object COLON = new Object(); // on enleve les "::"
+    final static Object AFTER_COLON = new Object();  // on lit le titre
 
-    //StringBuffer buffer = null;
-    int lastc = -1;
-    int lastlastc = -1;
-    int indentRead = 0;   // indentation en cours de lecture
-    int indentLength = 0; // indentation de base trouvée avec INDENT_SEARCH
-    StringBuffer fieldText = null;
+    /** Attributs **/
 
-    protected AbstractFactory factoryNew(){
-        return  new HyperlinkFactory();
-    }
-    protected Element elementNew(){
-        return new Hyperlink();
-    }
-    protected Hyperlink getHyperlink(){
-        return (Hyperlink)getElement();
-    }
+    StringBuffer text = null;
+    int counter       = 0;
 
+    /** Méthodes **/
+
+    // Accesseurs et Recopieurs
+    protected AbstractFactory factoryNew(){ return  new HyperlinkFactory(); }
+    protected Element elementNew(){ return new Hyperlink(); }
+    protected Hyperlink getHyperlink(){ return (Hyperlink)getElement(); }
+
+    // Constructeur
+    public HyperlinkFactory(){ init(); }
+
+    // Initialisation
     public void init(){
+        text      = new StringBuffer();
+        counter   = 0;
+        SUB_STATE = DOT_DOT_SPACE;
+        unique    = true;
+        oneLiner  = true;
+        headRegExpr = "\\.\\. [^ ][\\w _]*:";
         super.init();
-        fieldText = new StringBuffer();
-        STATE = DOT_DOT_SPACE;
-        indentRead = 0;
     }
 
-    public ParseResult accept(int c) {
-        ParseResult result = parse(c);
-        if(result == ParseResult.FINISHED){
-            result = ParseResult.ACCEPT;
-        }
-        return result;
-    }
-
-    public ParseResult parseEnd(){
-        // TODO a faire
-        return null;
-    }
-
-    /**
-    * Retourne true tant que l'objet n'a pas fini de parser son élément.
-    * Lorsqu'il retourne false, la factory est capable de savoir si l'élement est convenable ou non, pour cela il faut appeler la méthode {@link getParseResult}.
-    */
-    public ParseResult parse(int c) {
+    // Parse l'entete de l'hyperlink
+    public ParseResult parseHead(int c) {
         ParseResult result = ParseResult.IN_PROGRESS;
-        consumedCharCount++;
 
-        //System.out.print((char)c);
+        // System.out.print((char)c);
 
-        if (STATE == DOT_DOT_SPACE) {
+        if (SUB_STATE == DOT_DOT_SPACE) {
             if ((char)c == '.') {
-                indentRead++;
-                if (indentRead > 2) {
-                    result = ParseResult.FAILED.setError("expected only double dot '..'");
+                counter++;
+                if (counter > 2) {
+                    result = ParseResult.FAILED.setError("expected only double-dot '..'");
                 }
-            }else if ((char)c == ' ') {
-                    indentRead++;
-                    if (indentRead == 3) {
-                        STATE = TERM;
-                        indentRead = 0;
-                        fieldText.delete(0, fieldText.length());
+            }else if ((char)c == ' ' && counter == 2) {
+                    counter++;
+                    if (counter == 3) {
+                        SUB_STATE = TERM;
+                        counter = 0;
+                        text.delete(0, text.length());
                     }
                   }else{
-                      result = ParseResult.FAILED.setError("expected double semi-colon '..'");
+                      result = ParseResult.FAILED.setError("expected double dot '..'");
                   }
-        }else if (STATE == TERM) {
+        }else if (SUB_STATE == TERM) {
             if((char)c != '\\'){
                 if((char)c != ':' || ((char)c == ':' && (char)lastc == '\\')){
-                    fieldText.append((char)c);
+                    text.append((char)c);
                 }else{
-                    Term t = new Term();
-                    getElement().addChild(t.setText(fieldText.toString()));
-                    fieldText.delete(0, fieldText.length());
-                    STATE = COLONS;
-                    indentRead = 1;
+                    Term t = new Term(text);
+                    getElement().addChild(t);
+                    text.delete(0, text.length());
+                    SUB_STATE = COLON;
                 }
             }
-        }else if (STATE == COLONS) {
-            if ((char)c == ':') {
-                result = ParseResult.FAILED.setError("too much semi colon ':' before title");
-            }else if ((char)c == '\n'){
-                STATE = SEARCH_INDENT;
-                indentRead = 0;
-            }else if ((char)c == ' ') {
-                STATE = TITLE;
-                fieldText.delete(0, fieldText.length());
-            }
-        }else if (STATE == TITLE) {
-            if((char)c != '\\'){
-                if((char)c != '\n'){
-                    fieldText.append((char)c);
-                }else{
-                    while (fieldText.charAt(0) == ' ') fieldText.delete(0,0);
-                    while (fieldText.charAt(fieldText.length()-1) == ' '
-                           && fieldText.length() != 0)
-                        fieldText.delete(fieldText.length()-1,fieldText.length()-1);
-
-                    ((Hyperlink)getElement()).setText(fieldText.toString());
-                    fieldText.delete(0, fieldText.length());
-                    STATE = SEARCH_INDENT;
-                    indentRead = 0;
-                }
-            }
-        }else if (STATE == SEARCH_INDENT) {
+        }else if (SUB_STATE == COLON) {
             if ((char)c == ' ') {
-                indentRead ++;
-            }else if ((char)c == '\n' ) {
-                indentRead = 0;
-                if ((char)lastc == '\n' && ((char)lastlastc == '\n')) {
-                    result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
-                }
-            }else{
-                // on trouve un caractère ki n'est pas un espace
-                if (indentRead > 0) {
-                    indentLength = indentRead;
-                    STATE = READING;
-                    fieldText.append((char)c);
-                }else{
-                    indentLength = 0;
-                    result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
-                }
-            }
-        }else if (STATE == READING) {
-            if ((char)c == '\n') {
-                if ((char)lastc == '\n' && ((char)lastlastc == '\n')) {
-                    result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
-                }
-                while (fieldText.charAt(0) == ' ') fieldText.delete(0,0);
-                while (fieldText.charAt(fieldText.length()-1) == ' '
-                       && fieldText.length() != 0)
-                       fieldText.delete(fieldText.length()-1,fieldText.length()-1);
-
-                String tmp = ((Hyperlink)getElement()).getText();
-                if (tmp == null) tmp = "";
-                ((Hyperlink)getElement()).setText( tmp + fieldText.toString());
-                fieldText.delete(0, fieldText.length());
-                indentRead = 0;
-                STATE = FIND_INDENT;
-            }else{
-                fieldText.append((char)c);
-            }
-        }else if (STATE == FIND_INDENT) {
-            if ((char) c == ' ') {
-                indentRead ++;
+                SUB_STATE = AFTER_COLON;
             }else if ((char)c == '\n') {
-                indentRead = 0;
+                result = ParseResult.ACCEPT; // pour 'accept'
+            }else if ((char)c == ':') {
+                result = ParseResult.FAILED.setError("too much semi colon ':' before link");
+            }else
+                result = ParseResult.FAILED.setError("need space before link");
+
+        }else if (SUB_STATE == AFTER_COLON) {
+            if ((char)c == ' ') {
+                result = ParseResult.FAILED.setError("need only one space before link");
+            }else if ((char) c == '\n') {
+                result = ParseResult.ACCEPT; // pour 'accept'
             }else{
-                // on trouve un caractere non espace donc c la fin du bloc
-                if (indentRead < indentLength || indentLength == 0) {
-                    result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
-                }else
-                    STATE = READING;
+                INDENT_STATE = READING_BODY; // pour 'parse'
+                result = delegate(c);
             }
         }
 
-        lastlastc = lastc;
-        lastc = c;
         return result;
     }
 

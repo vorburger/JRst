@@ -1,4 +1,4 @@
-/*##%
+/* ##%
  * Copyright (C) 2002, 2003 Code Lutin
  *
  * This program is free software; you can redistribute it and/or
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *##%*/
+ * ##%*/
 
 /*
  * Parser.java
@@ -36,67 +36,32 @@ import java.io.Reader;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.io.FileReader;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import org.apache.regexp.RE;
 
 public abstract class Parser { // Parser
 
     static String TEXT = "======\ncoucou\n======\n\nun\n\ndeux\n";
 
     static public void main(String [] args) throws Exception {
+
         Reader in;
         if(args.length > 0){
             String filename = args[0];
             in = new LineNumberReader(new FileReader(filename));
-            System.out.println("Lecture du fichier " + filename);
+            //System.out.println("Lecture du fichier " + filename);
         }else{
             in = new LineNumberReader(new StringReader(TEXT));
         }
 
-        /* Définition de la structure d'un document */
+        // Lecture de la hiérarchie des éléments
         DocumentFactory document = new DocumentFactory();
-        ElementFactory structureModel1 = new OrElementFactory("StructureModel(partie1)");
-        ElementFactory structureModel = new AndElementFactory("StructureModel");
-        ElementFactory topic = new AndElementFactory("topic");
-        ElementFactory bodyElement = new OrElementFactory("BodyElement");
-        ElementFactory title = new TitleFactory();
-        ElementFactory bulletList = new BulletListFactory();
-        ElementFactory fieldList = new FieldListFactory();
-        ElementFactory litteral = new LitteralFactory();
-        ElementFactory para = new ParaFactory();
-        ElementFactory comment = new CommentFactory();
-        ElementFactory hyperlink = new HyperlinkFactory();
-        ElementFactory directive = new DirectiveFactory();
-
-        document.addChild(title.getZero_Un());
-        document.addChild(structureModel);
-
-        structureModel1.addChild(topic);
-        structureModel1.addChild(bodyElement);
-
-        structureModel.addChild(structureModel1.getPlus());
-
-        bodyElement.addChild(directive);
-        bodyElement.addChild(hyperlink);
-        bodyElement.addChild(comment);
-        bodyElement.addChild(litteral);
-        bodyElement.addChild(bulletList);
-        bodyElement.addChild(fieldList);
-        // mettre le paragraphe a la fin car il mange tout
-        bodyElement.addChild(para);
-
-        topic.addChild(title.getZero_Un());
-        topic.addChild(title.getZero_Un());
-        topic.addChild(bodyElement.getPlus());
-
-        bulletList.addChild(bodyElement.getPlus());
-        fieldList.addChild(bodyElement.getPlus());
-
-        directive.addChild(bodyElement.getPlus());
-        comment.addChild(bodyElement.getPlus());
-        // fin de la définition
+        FactoryParser fp = new FactoryParser("jrst.xml");
+        document = (DocumentFactory)fp.getInstance();
 
 
         ParseResult result = ParseResult.IN_PROGRESS;
-
         // on considère qu'avant le document il y a une ligne blanche
         int c = (int)'\n';
         while(c != -1 && ((result = document.parse(c)) == ParseResult.IN_PROGRESS)){
@@ -105,17 +70,22 @@ public abstract class Parser { // Parser
         // après le document il y a une ligne blanche
         if (c == -1) {
             result = document.parse((int)'\n');
+            result = document.parseEnd((int)'D'); // 'D' like DAT green
+        }else{
+            result = document.parseEnd((int)'D'); // 'D' like DAT green
+//            document.getBuffer().delete(0,);
         }
 
         Element e = document.getElement();
-        Generator gen = new RstGenerator();
+        Generator gen = new XdocGenerator();
         gen.visit(e);
-
         if(result == ParseResult.FAILED){
+            System.out.println("\033[01;31m------[-- ERROR ### --]-------------------------------------\033[00m");
+            System.out.println("Nombre de caractères lu :"+ result.getConsumedCharCount());
             System.out.println(result.getError());
-            System.out.println("buffer was:'''");
-            System.out.println(document.getBuffer().toString());
-            System.out.println("'''");
+            System.out.print("buffer was : [");
+            System.out.print(document.getBuffer().toString());
+            System.out.println("]");
         }
 
     }

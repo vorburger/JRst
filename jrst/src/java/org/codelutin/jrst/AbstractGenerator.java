@@ -36,6 +36,8 @@ import java.lang.reflect.Method;
 
 public abstract class AbstractGenerator implements Generator { // AbstractGenerator
 
+    abstract public String inlineMarkup(String text);
+
     public void visit(Element e){
         if(e != null){
             callGenerate(e);

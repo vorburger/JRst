@@ -1,5 +1,5 @@
 /* *##%
- * Copyright (C) 2002, 2003 Code Lutin
+ * Copyright (C) 2002, 2004 Code Lutin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,33 +17,39 @@
  *##%*/
 
 /* *
- * Hyperlink.java
+ * GridTable.java
  *
- * Created: 24 juin 2004
+ * Grid Table Element
  *
- * @author Bucas
- * Copyright Code Lutin
- * @version $Revision$
+ * Created: 20 juillet. 2004
  *
- * Mise a jour: $Date$
- * par : $Author$
  */
 
 package org.codelutin.jrst;
 
-public class Hyperlink extends AbstractElement { // Hyperlink
-    String text = null;
+public class GridTable extends AbstractElement { // GridTable Element
 
-    public Hyperlink(){
-    }
+    /** Constantes **/
 
-    public String getText(){
-        return text.trim();
-    }
+    // type
+    static final Object KIND = new Object();
+    // ...
 
-    public void setText(String text){
-        this.text = text;
-    }
+    /** Attributs **/
 
-} // Hyperlink
+    Object type = null;
+
+    /** Méthodes **/
+
+    // constructeur
+    public GridTable(){}
+
+    // Accesseurs -- SETTERs
+    public void setType(Object type) { this.type = type; }
+
+    // Accesseurs -- GETTERs
+    public Object getType() { return type; }
+
+
+} // GridTable Element
 

@@ -1,4 +1,4 @@
-/*##%
+/* ##%
  * Copyright (C) 2002, 2003 Code Lutin
  *
  * This program is free software; you can redistribute it and/or
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *##%**/
+ * ##%**/
 
 /*
  * Title.java
@@ -33,23 +33,46 @@ package org.codelutin.jrst;
 
 public class Title extends AbstractElement { // Title
 
+    static int numbered = 0;
+
     String text = null;
     int titleMark = -1;
+    int markLength = -1;
     boolean upperline = false;
+    int id = 0;
+
 
     public Title(){
+        id = numbered;
+        numbered ++;
     }
 
     public int getTitleMark(){
         return titleMark;
     }
 
+    public int getId(){
+        return id;
+    }
+
+    public void setId(int i){
+        id = i;
+    }
+
     public void setTitleMark(int titleMark){
         this.titleMark = titleMark;
     }
 
+    public int getMarkLength(){
+        return markLength;
+    }
+
+    public void setMarkLength(int l){
+        this.markLength = l;
+    }
+
     public String getText(){
-        return text;
+        return text.trim();
     }
 
     public void setText(String text){

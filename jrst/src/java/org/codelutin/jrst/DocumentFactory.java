@@ -31,25 +31,49 @@
 
 package org.codelutin.jrst;
 
+import java.util.Iterator;
+
 public class DocumentFactory extends AbstractFactory { // DocumentFactory
 
-    protected AbstractFactory factoryNew(){
-        return new DocumentFactory();
-    }
-    protected Element elementNew(){
-        return new Document();
-    }
-    public ParseResult accept(int c){
-        return ParseResult.ACCEPT;
-    }
+    protected AbstractFactory factoryNew(){  return new DocumentFactory();  }
+    protected Element elementNew(){  return new Document();  }
+    public ParseResult accept(int c){  return ParseResult.ACCEPT;  }
+
     public ParseResult parse(int c){
         ParseResult result = ParseResult.IN_PROGRESS;
         result = delegate(c);
         return result;
     }
-    public ParseResult parseEnd(){
-	// TODO a faire
-	return null;
+
+    /**
+     *   Récursif à travers le modèle pour chercher le titre du document
+     *   qui est en réalité le premier titre trouvé !
+     *   @param e l'élément dans lequel chercher le titre (lui ou ses fils)
+     */
+
+    public Title ParcoursTitle(Element e) {
+        if (e instanceof Title) {
+            return (Title)e;
+        }else{
+            for(Iterator i=e.getChilds().iterator(); i.hasNext();){
+                return ParcoursTitle((Element)i.next());
+            }
+        }
+        return null;
+    }
+
+
+    public ParseResult parseEnd(int c){
+        Document myDoc = (Document)getElement();
+
+        Title t = ParcoursTitle(myDoc);
+        if (t != null) {
+            myDoc.setTitle(t);
+        }else{
+            System.out.println("No Title Found!");
+        }
+
+        return ParseResult.ACCEPT;
     }
 } // DocumentFactory
 

@@ -33,5 +33,53 @@ package org.codelutin.jrst;
 
 public class Document extends AbstractElement { // Document
 
+
+    Title title     = null;
+    Para author    = null;
+    Para contact   = null;
+    Para revision  = null;
+    Para date      = null;
+    Para copyright = null;
+
+
+    public void setTitle(Title title) {
+        this.title = title;
+    }
+    public void setCopyright(Para copyright) {
+        this.copyright = copyright;
+    }
+    public void setAuthor(Para author) {
+        this.author = author;
+    }
+    public void setContact(Para contact) {
+        this.contact = contact;
+    }
+    public void setRevision(Para revision) {
+        this.revision = revision;
+    }
+    public void setDate(Para date) {
+        this.date = date;
+    }
+
+
+    public Title getTitle() {
+        return title;
+    }
+    public Para getCopyright() {
+        return copyright;
+    }
+    public Para getAuthor() {
+        return author;
+    }
+    public Para getContact() {
+        return contact;
+    }
+    public Para getRevision() {
+        return revision;
+    }
+    public Para getDate() {
+        return date;
+    }
+
 } // Document
 

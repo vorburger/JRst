@@ -1,5 +1,5 @@
 /* *##%
- * Copyright (C) 2002, 2003 Code Lutin
+ * Copyright (C) 2002, 2004 Code Lutin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,33 +17,33 @@
  *##%*/
 
 /* *
- * Hyperlink.java
+ * OptionList.java
  *
- * Created: 24 juin 2004
  *
- * @author Bucas
- * Copyright Code Lutin
- * @version $Revision$
+ * Created: 17 juillet. 2004
  *
- * Mise a jour: $Date$
- * par : $Author$
  */
 
 package org.codelutin.jrst;
 
-public class Hyperlink extends AbstractElement { // Hyperlink
-    String text = null;
+public class OptionList extends AbstractElement { // OptionList
 
-    public Hyperlink(){
-    }
+    /** Constantes **/
 
-    public String getText(){
-        return text.trim();
-    }
+    /** Attributs **/
 
-    public void setText(String text){
-        this.text = text;
-    }
+    int longueur = 0;
 
-} // Hyperlink
+    /** Méthodes **/
+
+    // Constructeur
+    public OptionList() {}
+
+    // Accesseurs -- SETTERs
+    public void setLongueur(int longueur) { this.longueur = longueur; }
+
+    // Accesseurs -- GETTERs
+    public int getLongueur() { return longueur; }
+
+} // OptionList
 

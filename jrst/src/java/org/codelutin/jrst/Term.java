@@ -38,8 +38,12 @@ public class Term extends AbstractElement { // Param
         text = t;
     }
 
+    public Term(StringBuffer t){
+        text = t.toString();
+    }
+
     public String getText(){
-        return text;
+        return text.trim();
     }
 
     public AbstractElement setText(String text){

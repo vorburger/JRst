@@ -1,5 +1,5 @@
 /* *##%
- * Copyright (C) 2002, 2003 Code Lutin
+ * Copyright (C) 2002, 2004 Code Lutin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,116 +31,75 @@
 
 package org.codelutin.jrst;
 
-public class FieldListFactory extends AbstractFactory { // FieldListFactory
-    int lastc = -1;
-    int indentLength = 0;
-    int indentRead = 0;
-    StringBuffer fieldText = null;
+public class FieldListFactory extends IndentedAbstractFactory { // FieldListFactory
+
+    /** Constantes **/
 
     static final Object FIELD_TEXT_BEGIN = new Object();
-    static final Object AFTER_FIELD_TEXT = new Object();
     static final Object FIELD_TEXT_READ = new Object();
-    static final Object INDENT_READ = new Object();
-    static final Object CHILD_READ = new Object();
-    static final Object FIELD_TEXT_BEGIN_OR_INDENT_READ = new Object();
+    static final Object AFTER_FIELD_TEXT = new Object();
 
-    protected AbstractFactory factoryNew(){
-        return  new FieldListFactory();
-    }
-    protected Element elementNew(){
-        return new FieldList();
-    }
+    /** Attributs **/
 
-    protected FieldList getFieldList(){
-        return (FieldList)getElement();
-    }
+    StringBuffer fieldText = null;
+    int nbField = 0;
+    int countSpace = 0;
 
+    /** Méthodes **/
+
+    // Accesseurs et Recopieurs
+    protected AbstractFactory factoryNew(){ return  new FieldListFactory();    }
+    protected Element elementNew(){ return new FieldList(); }
+    protected FieldList getFieldList(){ return (FieldList)getElement(); }
+
+    // Constructeur
+    public FieldListFactory() { init(); }
+
+    // Initialisation
     protected void init(){
-        super.init();
-        lastc = -1;
-        indentLength = 0;
-        indentRead = 0;
+        oneLiner = true;
+        nbField = 0;
+        countSpace = 0;
         fieldText = new StringBuffer();
-        STATE = FIELD_TEXT_BEGIN;
+        SUB_STATE = FIELD_TEXT_BEGIN;
+        headRegExpr = ":\\w+: ";
+        super.init();
     }
 
-    public ParseResult accept(int c) {
-        if((char)c == ':'){
-            return ParseResult.ACCEPT;
-        }else{
-            return ParseResult.FAILED;
-        }
-    }
-
-    public ParseResult parseEnd(){
-        // TODO a faire
-        return null;
-    }
-
-    public ParseResult parse(int c) {
+    // Parse l'entete d'un élement de la liste
+    public ParseResult parseHead(int c) {
         ParseResult result = ParseResult.IN_PROGRESS;
 
-        consumedCharCount++;
-
-        if(STATE == FIELD_TEXT_BEGIN){
-            if((char)c != ':'){
-                result = ParseResult.FAILED.setError("FieldList must begin at column 0 with char ':'");
-            }else{
-                STATE = FIELD_TEXT_READ;
-            }
-        }else if(STATE == FIELD_TEXT_READ){
-            if((char)c != '\\'){
-                if((char)c != ':' || ((char)c == ':' && (char)lastc == '\\')){
-                    fieldText.append((char)c);
-                }else{
-                    Term t = new Term();
-                    getElement().addChild(t.setText(fieldText.toString()));
-                    fieldText.delete(0, fieldText.length());
-                    STATE = AFTER_FIELD_TEXT;
+        if(SUB_STATE == FIELD_TEXT_BEGIN){
+            if((char)c == ':')
+                SUB_STATE = FIELD_TEXT_READ;
+            else{
+                if (nbField == 0)
+                    result = ParseResult.FAILED.setError("FieldList must begin at column 0 with char ':'");
+                else{
+                    result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
+                    //parseEnd(c);
                 }
             }
-        }else if(STATE == AFTER_FIELD_TEXT){
-            if((char)c != ' ' && (char)c != '\n'){
-                result = ParseResult.FAILED.setError("List must have one space after field text");
-            }else if((char)c == '\n'){
-                STATE = FIELD_TEXT_BEGIN_OR_INDENT_READ;
+        }else if(SUB_STATE == FIELD_TEXT_READ){
+            if((char)c != ':' ){
+                fieldText.append((char)c);
             }else{
-                STATE = CHILD_READ;
+                Term t = new Term(fieldText);
+                getElement().addChild(t);
+                fieldText.delete(0, fieldText.length());
+                SUB_STATE = AFTER_FIELD_TEXT;
             }
-        }else if(STATE == FIELD_TEXT_BEGIN_OR_INDENT_READ){
-            if((char)c == ':'){
-                CHILD_STATE = null;
-                buffer.delete(0, buffer.length());
-                STATE = FIELD_TEXT_READ;
-            }else if((char)c == ' ' || (char)c == '\n'){
-                STATE = INDENT_READ;
-            }
-        }else if(STATE == CHILD_READ){
-            if((char)c == '\n'){
-                //result = delegate(c);
-                STATE = FIELD_TEXT_BEGIN_OR_INDENT_READ;
-            }else{
-                result = delegate(c);
+        }else if(SUB_STATE == AFTER_FIELD_TEXT){
+            if((char)c != ' ')
+                result = ParseResult.FAILED.setError("List must have one space after symbole");
+            else{
+                nbField++;
+                INDENT_STATE = READING_BODY;
+                SUB_STATE = FIELD_TEXT_BEGIN;
             }
         }
-
-        if(STATE == INDENT_READ){
-            result = searchChildText(c);
-            if(result == ParseResult.FINISHED){
-                result = delegate(c);
-                STATE = CHILD_READ;
-            }else if(result == ParseResult.FAILED){
-                if(lastChildIndentRead == 0){
-                    // si le niveau d'indentation est 0, alors c qu'en fait la
-                    // liste est terminée
-                    result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount - result.getConsumedCharCount()-2);
-                }
-            }
-        }
-
-        lastc = c;
         return result;
     }
-
 } // FieldListFactory
 

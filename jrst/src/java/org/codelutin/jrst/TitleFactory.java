@@ -1,5 +1,5 @@
 /*##%
-* Copyright (C) 2002, 2003 Code Lutin
+* Copyright (C) 2002, 2004 Code Lutin
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -75,9 +75,8 @@ public class TitleFactory extends AbstractFactory { // TitleFactory
         return result;
     }
 
-    public ParseResult parseEnd(){
-        // TODO a faire
-        return null;
+    public ParseResult parseEnd(int c){
+        return ParseResult.ACCEPT;
     }
 
     /**
@@ -112,7 +111,7 @@ public class TitleFactory extends AbstractFactory { // TitleFactory
             }
         }else if(STATE == IN){
             if((char)c == '\n'){
-                if(countMarkBefore == titleText.length() || countMarkBefore == 0){
+                if(countMarkBefore >= titleText.length() || countMarkBefore == 0){
                     STATE = AFTER;
                 }else{
                     result = ParseResult.FAILED.setError("Title and upperline don't have same length");
@@ -125,16 +124,18 @@ public class TitleFactory extends AbstractFactory { // TitleFactory
                 titleMark = c;
                 countMarkAfter++;
             }
-            if(countMarkAfter > titleText.length() || (countMarkAfter < titleText.length() && (char)c == '\n')){
+            if (countMarkAfter < titleText.length() && (char)c == '\n'){
                 result = ParseResult.FAILED.setError("Title and underline don't have same length: "+titleText.length()+ "underline length: "+countMarkAfter);
-            }else if((char)c == '\n' && countMarkAfter == titleText.length()){
+            }else if((char)c == '\n' && countMarkAfter >= titleText.length()){
                 getTitle().setText(titleText.toString());
                 getTitle().setTitleMark(titleMark);
+                getTitle().setMarkLength(countMarkAfter);
                 getTitle().setUpperline(countMarkBefore!=0);
                 STATE = FINISHED;
                 result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount);
             }
         }
+
         return result;
     }
 

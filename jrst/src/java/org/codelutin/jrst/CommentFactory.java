@@ -100,7 +100,7 @@ public class CommentFactory extends AbstractFactory { // CommentFactory
                   }else{
                       result = ParseResult.FAILED.setError("expected double dots '..'");
                   }
-        }else  if (STATE == SEARCH_INDENT) {
+        }else if (STATE == SEARCH_INDENT) {
             if ((char)c == ' ') {
                 indentRead ++;
             }else if ((char)c == '\n' ) {

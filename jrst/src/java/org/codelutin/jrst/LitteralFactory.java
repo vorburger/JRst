@@ -74,6 +74,7 @@ public class LitteralFactory extends AbstractFactory { // LitteralFactory
 
     public ParseResult parseEnd(){
         // TODO a faire
+        System.out.println("Litteral FINITED");
         return null;
     }
 
@@ -114,6 +115,7 @@ public class LitteralFactory extends AbstractFactory { // LitteralFactory
             }
         }else if (STATE == READING) {
             if ((char)c == '\n') {
+                System.out.print(getLitteral().getText());
                 indentRead = 0;
                 STATE = FIND_INDENT;
             }
@@ -124,10 +126,12 @@ public class LitteralFactory extends AbstractFactory { // LitteralFactory
                 indentRead = 0;
             }else{
                 // on trouve un caractere non espace
-                if (indentRead < indentLength)
+                if (indentRead < indentLength){
+                    System.out.println("Youpi le finichead");
                     result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
-                else
+                }else{
                     STATE = READING;
+                }
             }
         }
 
@@ -137,6 +141,12 @@ public class LitteralFactory extends AbstractFactory { // LitteralFactory
                 getLitteral().setText(buffer.toString());
             }
         }
+
+        if (result == ParseResult.FAILED) {
+            if (result.getError() != "expected double semi-colon '::'")
+            System.out.println(" :: "+result.getError());
+        }
+
         return result;
     }
 
