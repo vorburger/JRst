@@ -10,6 +10,7 @@ JRst est un parser RestructuredText en Java.
 Il permet d'ajouter des extenstions très facilement en construisant deux
 classe. Une pour parser l'élément, l'autre qui représente l'élément parsé.
 
+
 Principe
 ========
 
@@ -22,6 +23,7 @@ Cette phase peut-etre assimilé au lexer.
 Dans la seconde les éléments sont structurés pour donner le document réelle.
 Le premier titre devient le titre du document, les titres suivant selon la
 façon de les souligner devient des titres de section, sous-section, ...
+
 
 Le lexer
 --------
@@ -39,6 +41,7 @@ l'élément dans l'état ou il est. Par exemple lorsque l'on parse une liste,
 l'élément liste contient d'autre élément, mais c'est l'élément liste qui force
 le dernier des fils d'un item à s'arrêter. Car c'est la liste qui détecte le
 nouveau symbole d'item et non pas le fils.
+
 
 Implantation
 ============
@@ -62,6 +65,7 @@ et des éléments de regroupement:
 - section
 - block
 
+
 document
 --------
 
@@ -70,6 +74,7 @@ document
 - un block optionnel
 - des sections optionnelles
 
+
 section
 -------
 
@@ -77,10 +82,12 @@ section
 - un sous titre optionnel
 - un block
 
+
 block
 -----
 
 une suite d'élément concret
+
 
 Parsing
 =======

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+
+<project name="JRst">
+  <title>Implantation Java d'un générateur ReStructuredText</title>
+  <body>
+    <links>
+      <item href="http://labs.libre-entreprise.org/" name="Labs">
+      </item>
+      <item href="http://www.codelutin.com/" name="Code Lutin">
+      </item>
+    </links>
+    <menu name="Overview">
+      <item href="/JRst.html" name="About">
+      </item>
+    </menu>
+  </body>
+</project>
