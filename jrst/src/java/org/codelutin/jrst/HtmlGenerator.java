@@ -467,7 +467,9 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
        if(text == null){
            return "null";
        }else{
-           return text.toLowerCase().trim().replace(' ','-');
+           return text./*toLowerCase().*/trim().replace(' ','-');
+           // 20050224 BB on ne fait plus le toLowerCase car ca pose probleme pour
+           // les urls externes contenant des majuscules
        }
    }
 
