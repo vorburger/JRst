@@ -467,24 +467,6 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
        return text.toLowerCase().trim().replace(' ','-');
    }
 
-<<<<<<< HtmlGenerator.java
-   /**
-    * Encode pour les expressions régulières
-    */
-   public String encodeSpecChar(String text) {
-       return text.replaceAll("\\(", "\\\\(").replaceAll("\\)","\\\\)").replaceAll("\\[","\\\\[").replaceAll("\\]","\\\\]");
-   }
-
-   /**
-   * Permet de convertir les caratere speciaux HTML du texte
-   */
-   protected String encode(String s){
-       s = s.replaceAll("<", "&lt;");
-       s = s.replaceAll(">", "&gt;");
-       return s;
-   }
-
-=======
    /**
     * Encode pour les expressions régulières
     */
@@ -502,7 +484,6 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
        return s;
    }
 
->>>>>>> 1.11
    public String inlineMarkup(String text) {
        String before = "(^|[ '\"(\\[<])";
        String after = "([ '\".,:\\;!?)\\]}/\\>]|$)";
