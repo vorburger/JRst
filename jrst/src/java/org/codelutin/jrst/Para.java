@@ -38,7 +38,10 @@ public class Para extends AbstractElement { // Param
     }
 
     public String getText(){
-        return text.trim();
+        if(text == null)
+            return "";
+        else
+            return text.trim();
     }
 
     public void setText(String text){

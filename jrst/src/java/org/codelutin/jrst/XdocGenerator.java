@@ -37,7 +37,7 @@ public class XdocGenerator extends HtmlGenerator { // XdocGenerator
 
         os.println("<document>\n<properties>");
         if (e.getTitle() != null)
-            os.println("<title>"+e.getTitle().getText()+"</title>");
+            os.println("<title>"+encode(e.getTitle().getText())+"</title>");
         os.println("</properties>\n<body>");
         os.println("<section name=\""+getHtmlName(e.getTitle().getText().trim())+"\">");
 
@@ -51,10 +51,10 @@ public class XdocGenerator extends HtmlGenerator { // XdocGenerator
         if (e == doc.getTitle()) {
         }else if ( e.getUpperline()) {
             os.print("<h1><a class=\"toc-backref\"  name=\""+getHtmlName(e.getText())+"\"> ");//href=\"#id"+e.getId()+"\"
-            os.println(e.getText()+"</a></h1>");
+            os.println(inlineMarkup(e.getText())+"</a></h1>");
         }else{
             os.print("<h"+(e.getProfondeur()+1)+"><a class=\"toc-backref\"  name=\""+getHtmlName(e.getText())+"\"> "); //href=\"#id"+e.getId()+"\"
-            os.println(e.getText()+"</a></h"+(e.getProfondeur()+1)+">");
+            os.println(inlineMarkup(e.getText())+"</a></h"+(e.getProfondeur()+1)+">");
         }
     }
 

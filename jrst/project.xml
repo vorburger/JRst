@@ -3,15 +3,9 @@
 
   <extend>${basedir}/lutinproject.xml</extend>
 
-  <!-- a unique name for this project -->
   <id>jrst</id>
-
-  <!-- a short but descriptive name for the project -->
   <name>JRst</name>
-
-  <!-- The version of the project under development, e.g.
-       1.1, 1.2, 2.0-SNAPSHOT -->
-  <currentVersion>0.2</currentVersion>
+  <currentVersion>0.3</currentVersion>
 
   <!-- the year the project started -->
   <inceptionYear>2004</inceptionYear>

@@ -61,7 +61,7 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
         os.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
         os.println("<meta name=\"generator\" content=\"JRST http://www.codelutin.org/\" />");
         if (e.getTitle() != null)
-            os.println("<title>"+e.getTitle().getText()+"</title>");
+            os.println("<title>"+inlineMarkup(e.getTitle().getText())+"</title>");
         os.println("<link rel=\"stylesheet\" href=\"default.css\" type=\"text/css\" />");
         os.println("</head>\n<body>");
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
@@ -86,13 +86,13 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
 
     public void generate(Title e){
         if (e == doc.getTitle()) {
-            os.println("<h1 class=\"title\">"+e.getText().trim()+"</h1>");
+            os.println("<h1 class=\"title\">"+inlineMarkup(e.getText()).trim()+"</h1>");
         }else if ( e.getUpperline()) {
             os.print("<h1><a class=\"toc-backref\"  name=\""+getHtmlName(e.getText())+"\"> ");//href=\"#id"+e.getId()+"\"
-            os.println(e.getText()+"</a></h1>");
+            os.println(inlineMarkup(e.getText())+"</a></h1>");
         }else{
             os.print("<h"+(e.getProfondeur()+1)+"><a class=\"toc-backref\"  name=\""+getHtmlName(e.getText())+"\"> "); //href=\"#id"+e.getId()+"\"
-            os.println(e.getText()+"</a></h"+(e.getProfondeur()+1)+">");
+            os.println(inlineMarkup(e.getText())+"</a></h"+(e.getProfondeur()+1)+">");
         }
     }
 
@@ -105,11 +105,11 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
     }
 
     public void generate(Litteral e){
-        os.println(getIndent()+"<pre class=\"literal-block\">"+e.getText()+"</pre>");
+        os.println(getIndent()+"<pre class=\"literal-block\">"+encode(e.getText())+"</pre>");
     }
 
     public void generate(Term e){
-        os.print(e.getText());
+        os.print(inlineMarkup(e.getText()));
     }
 
     public void generate(BulletList e){
@@ -143,7 +143,7 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
            Object child = e.getChilds().get(i);
            if(child instanceof Term){
                os.print(getIndent()+"<tr><th"+classTerm+">");
-               os.print(((Term)child).getText()+":");
+               os.print(inlineMarkup(((Term)child).getText())+":");
                os.println("</th>");
            }else{
                os.print(getIndent()+"<td>");
@@ -262,7 +262,7 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
            generateContents(contents);
            os.println(getIndent()+ "</div>");
        }else{
-           os.println(getIndent()+"<strong>"+e.getText()+"</strong>");
+           os.println(getIndent()+"<strong>"+inlineMarkup(e.getText())+"</strong>");
        }
    }
 
@@ -375,6 +375,7 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
 
    public void generateContents(List e) {
        ArrayList stack = new ArrayList(); // pîle des symboles de titre
+       int ulCounter = 0;
        int counter = 0;
 
        if (e != null) {
@@ -401,6 +402,7 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
                        if ( !trouve ) {
                            stack.add(new Integer(next.getTitleMark()));
                            os.println(getIndent()+ "<ul class=\"simple\">");
+                           ulCounter++;
                            indentation ++;
                        }else{
 
@@ -411,6 +413,7 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
                    }
                }else{
                    os.println(getIndent()+ "<ul class=\"simple\">");
+                   ulCounter++;
                    indentation ++;
                }
 
@@ -418,13 +421,12 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
                next.setId(counter);
                os.print(getIndent()+"<li class=\"reference\"><a href=\"#"+getHtmlName(next.getText())+
                "\"  id=\"id"+next.getId()+"\" name=\"id"+next.getId()+"\">");
-               os.println(next.getText()+"</a>");
+               os.println(inlineMarkup(next.getText())+"</a></li>");
                prec = next;
                counter ++;
 
            }
-           for(Iterator j=stack.iterator(); j.hasNext();){
-               j.next();
+           for(int i=0; i<ulCounter; i++){
                indentation --;
                os.println(getIndent()+"</ul>");
            }
@@ -443,7 +445,7 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
        String before = "([ '\"(\\[<])";
        String after = "([ '\".,:\\;!?)\\]}/\\>])";
 
-       String t = text;
+       String t = encode(text);
 
        t = t.replaceAll("([^ ]+@[^ ]+\\.[^ ]+)","<a href=\"mailto:$1\">$1</a>"); // courriel
        t = t.replaceAll("(((http[s]?)|ftp|mailto|telnet|news|skype|e2k|ssh)://[^ \\)]+\\.[^ \\)]+)","<a href=\"$1\">$1</a>"); // URL
@@ -460,6 +462,17 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
 
        return t;
    }
+
+   /**
+   * Permet de convertir les caratere speciaux HTML du texte
+   */
+   protected String encode(String s){
+       s = s.replaceAll("<", "&lt;");
+       s = s.replaceAll(">", "&gt;");
+       // TODO: faire les autres :)
+       return s;
+   }
+
 
 } // HtmlGenerator
 

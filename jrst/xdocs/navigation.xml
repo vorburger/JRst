@@ -9,9 +9,9 @@
       <item href="http://www.codelutin.com/" name="Code Lutin">
       </item>
     </links>
-    <menu name="Overview">
-      <item href="/JRst.html" name="About">
-      </item>
+    <menu name="JRst">
+      <item href="/JRst.html" name="About"></item>
+      <item href="/Todo.html" name="Todo"></item>
     </menu>
   </body>
 </project>
