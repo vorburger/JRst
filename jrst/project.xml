@@ -16,6 +16,19 @@
 
   <issueTrackingUrl>http://labs.libre-entreprise.org/tracker/?group_id=54</issueTrackingUrl>
 
+  <contributors>
+    <contributor>
+      <name>Jean-François Bucas</name>
+      <id>bucas</id>
+      <email>bucas@codelutin.com</email>
+      <organization>Code Lutin</organization>
+       <timezone>+2</timezone>
+      <roles>
+        <role>Développeur</role>
+      </roles>
+    </contributor>
+  </contributors>
+
   <dependencies>
     <dependency>
       <groupId>lutinlib</groupId>

@@ -15,3 +15,5 @@ a une idée à proposer il ne faut pas hésiter.
   destination est le répertoire destination
   extension est la modification de l'extension des fichiers sources avec
   cette extension
+
+- un export vers pretion, magic, ou autre outil de presentation.
