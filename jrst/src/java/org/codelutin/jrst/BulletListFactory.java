@@ -53,6 +53,8 @@ public class BulletListFactory extends AbstractFactory { // BulletListFactory
     final static protected Object FIRST_SYMBOLE_SEARCH = new Object();
     /** on recherche le symbole de liste */
     final static protected Object SYMBOLE_SEARCH = new Object();
+    /** on recherche après une ligne blanche */
+    final static protected Object PARA_SEARCH = new Object();
     /** on recherche un espace derriere le symbole */
     final static protected Object AFTER_SYMBOLE = new Object();
     /** on est en lecture de l'élément de liste */
@@ -71,19 +73,27 @@ public class BulletListFactory extends AbstractFactory { // BulletListFactory
     }
 
     int lastc = -1;
-    int indentLenght = 2;
+    int indentLength = 0;
     int symbole = -1;
     int indentRead = 0;
 
     public void init(){
         super.init();
         lastc = -1;
-        indentLenght = 0;
+        indentLength = 0;
         indentRead = 0;
         symbole = -1;
         STATE = FIRST_SYMBOLE_SEARCH;
     }
-
+/*
+    public ParseResult accept(int c) {
+        ParseResult result = parse(c);
+        if(result == ParseResult.FINISHED){
+            result = ParseResult.ACCEPT;
+        }
+        return result;
+    }
+  */
     public ParseResult accept(int c) {
         if(ACCEPTED_CHAR.indexOf((char)c) != -1){
             return ParseResult.ACCEPT;
@@ -96,7 +106,7 @@ public class BulletListFactory extends AbstractFactory { // BulletListFactory
         // TODO a faire
         return null;
     }
-                                                                                                                                                                                                                            
+
     public ParseResult parse(int c) {
         if(STATE == FINISHED)
             throw new IllegalStateException("Parsing is finished");
@@ -109,7 +119,7 @@ public class BulletListFactory extends AbstractFactory { // BulletListFactory
                 symbole = c;
                 indentRead = 0;
                 STATE = AFTER_SYMBOLE;
-            }else {
+            }else{
                 result = ParseResult.FAILED.setError("Illegal symbole for bullet list: '"+(char)c+"'");
             }
         }else if(STATE == AFTER_SYMBOLE){
@@ -117,32 +127,55 @@ public class BulletListFactory extends AbstractFactory { // BulletListFactory
                 result = ParseResult.FAILED.setError("List must have one space after symbole");
             }else if((char)c == ' ' && indentRead == 0){
                 indentRead++;
+  //              System.out.print(indentRead+" ");
             }else{
                 STATE = READ;
             }
-        }else if(STATE == SYMBOLE_SEARCH){
-            if((char)c == '\n' && (char)lastc == '\n'){
-               result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
-            }
-            else if(c == symbole){
+        }else if(STATE == SYMBOLE_SEARCH || STATE == PARA_SEARCH){
+            if(c == symbole){
+                indentRead = 0;
                 CHILD_STATE = null; // il faut recherche un nouveau fils
                 buffer.delete(0, buffer.length()); // on est sur que le fils a tout mangé, puisque c nous qui l'arretons
+//                System.out.print("Symbole("+ (char)symbole+") ");
                 STATE = AFTER_SYMBOLE;
             }else if((char)c == ' '){
                 indentRead++;
-            }else{
-                if(indentRead != indentLenght){
-                    result = ParseResult.FAILED.setError("bad indentation");
-               }else{
-                   STATE = READ;
+/*                if (STATE != PARA_SEARCH) {
+                    System.out.print("Para ");
                 }
+                */
+                if (indentLength != 0) {
+                    if (indentRead > indentLength) {
+                        result = delegate(c);
+                    }
+                }
+//                System.out.print(indentRead+" ");
+            }else if((char)c == '\n' && (char)lastc == '\n'){
+                if (STATE == SYMBOLE_SEARCH){
+                    STATE = PARA_SEARCH;
+                    indentRead = 0;
+                    result = delegate(c);
+                }else{
+                    result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
+                }
+            }else if(indentRead < indentLength){ // < >
+                 result = ParseResult.FAILED.setError("bad indentation :"+ indentRead +" ("+ indentLength + " attendu)");
+            }else{
+                //System.out.println(" ");
+
+                STATE = READ;
             }
         }
 
         if(STATE == READ){ // STATE READ
             lastc = c;
+
             result = delegate(c);
             if((char)c == '\n'){
+                if (indentLength == 0) {
+                    indentLength = indentRead + 1; // on compte le symbole en plus
+                    //System.out.println("la longueur lue pour " + (char)symbole +" est : "+indentLength);
+                }
                 indentRead = 0;
                 STATE = SYMBOLE_SEARCH;
             }

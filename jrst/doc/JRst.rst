@@ -26,7 +26,7 @@ façon de les souligner devient des titres de section, sous-section, ...
 Le lexer
 --------
 
-Un élément est constitué de deux classe, une classe qui représente lélément,
+Un élément est constitué de deux classe, une classe qui représente l'élément,
 et une classe qui permet de construire cette élément. Le constructeur (ou
 factory) contient deux méthodes principales **accept** et **parse**. La
 première permet de savoir si les caractères pourrait convenir à cette élément

@@ -76,10 +76,12 @@ public class FieldListFactory extends AbstractFactory { // FieldListFactory
         // TODO a faire
         return null;
     }
-                                                                                                                                                                                                                            
+
     public ParseResult parse(int c) {
         ParseResult result = ParseResult.IN_PROGRESS;
+
         consumedCharCount++;
+
         if(STATE == FIELD_TEXT_BEGIN){
             if((char)c != ':'){
                 result = ParseResult.FAILED.setError("FieldList must begin at column 0 with char ':'");
@@ -91,7 +93,8 @@ public class FieldListFactory extends AbstractFactory { // FieldListFactory
                 if((char)c != ':' || ((char)c == ':' && (char)lastc == '\\')){
                     fieldText.append((char)c);
                 }else{
-                    getElement().addChild(new Term().addChild(Text.parse(fieldText.toString())));
+                    Term t = new Term();
+                    getElement().addChild(t.setText(fieldText.toString()));
                     fieldText.delete(0, fieldText.length());
                     STATE = AFTER_FIELD_TEXT;
                 }
@@ -114,7 +117,7 @@ public class FieldListFactory extends AbstractFactory { // FieldListFactory
             }
         }else if(STATE == CHILD_READ){
             if((char)c == '\n'){
-                result = delegate(c);
+                //result = delegate(c);
                 STATE = FIELD_TEXT_BEGIN_OR_INDENT_READ;
             }else{
                 result = delegate(c);

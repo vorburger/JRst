@@ -17,7 +17,7 @@
  *##%*/
 
 /* *
- * Param.java
+ * Para.java
  *
  * Created: 17 janv. 2004
  *

@@ -34,6 +34,7 @@ package org.codelutin.jrst;
 public class ParaFactory extends AbstractFactory { // ParaFactory
     StringBuffer buffer = null;
     int lastc = -1;
+    int lastlastc = -1;
 
     protected AbstractFactory factoryNew(){
         return  new ParaFactory();
@@ -64,7 +65,7 @@ public class ParaFactory extends AbstractFactory { // ParaFactory
         // TODO a faire
         return null;
     }
-                                                                                                                                                                                                                            
+
     /**
     * Retourne true tant que l'objet n'a pas fini de parser son élément.
     * Lorsqu'il retourne false, la factory est capable de savoir si l'élement est convenable ou non, pour cela il faut appeler la méthode {@link getParseResult}.
@@ -77,10 +78,16 @@ public class ParaFactory extends AbstractFactory { // ParaFactory
         }else if((char)c == '\n' && (char)lastc =='\n'){
             getPara().setText(buffer.toString());
             result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
-        }else{
+/*        }else if((char)c == '\n' && (char)lastc ==':' && (char)lastlastc == ':'){
+            buffer.delete(buffer.length()-4, buffer.length()-1);
+            getPara().setText(buffer.toString());
+            result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
+  */      }else{
+            lastlastc = lastc;
             lastc = c;
             buffer.append((char)c);
             getPara().setText(buffer.toString());
+//            System.out.print((char)c);
         }
         return result;
     }

@@ -34,19 +34,38 @@ package org.codelutin.jrst;
 import java.util.Iterator;
 
 public class RstGenerator extends AbstractGenerator { // RstGenerator
+
+    private boolean showBalise = true;
+
+
     public void generate(Element e){
         System.out.println("default generate: "+e.getClass().getName());
     }
 
     public void generate(Document e){
-        System.out.println("<Document>");
+        if ( showBalise) System.out.println("<Document>");
+        for(Iterator i=e.getChilds().iterator(); i.hasNext();){
+            this.visit((Element)i.next());
+        }
+    }
+
+    public void generate(AndElement e){
+        if ( showBalise) System.out.println("<AndElement:"+e.name+">");
+        for(Iterator i=e.getChilds().iterator(); i.hasNext();){
+            this.visit((Element)i.next());
+        }
+    }
+
+    public void generate(OrElement e){
+        if (e.name.matches("StructureModel.*")) System.out.println();
+        if ( showBalise) System.out.println("<OrElement:"+e.name+">");
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
             this.visit((Element)i.next());
         }
     }
 
     public void generate(Title e){
-        System.out.println("<Title>");
+        if ( showBalise) System.out.println("<Title>");
         String title = e.getText();
         if(e.getUpperline()){
             for(int i=0; i<title.length(); i++){
@@ -65,31 +84,117 @@ public class RstGenerator extends AbstractGenerator { // RstGenerator
     }
 
     public void generate(Para e){
-        System.out.println("<Para>");
+        String texte = e.getText();
+        texte = texte.replaceAll("\n", "\n"+ getIndent());
+//        texte = texte.replaceAll(" ::$", "");
+//        texte = texte.replaceAll("(\\S)::$", "$1:");
+        if ( showBalise) System.out.println(getIndent()+"<Para>");
+        System.out.println(getIndent()+texte);
+    }
+
+    public void generate(Litteral e){
+        if ( showBalise) System.out.println(getIndent()+"<Litteral>");
         System.out.println(e.getText());
     }
 
+    public void generate(Term e){
+        if ( showBalise) System.out.println(getIndent()+"<Term>");
+        System.out.print(e.getText());
+    }
+
     public void generate(BulletList e){
-        System.out.println("<BulletList>");
+        if ( showBalise) System.out.println("<BulletList>");
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
-            System.out.print(e.getSymbole()+" ");
+            System.out.print(getIndent()+e.getSymbole()+" ");
+            indentation ++;
             visit((Element)i.next());
+            indentation --;
         }
         System.out.println();
    }
 
    public void generate(FieldList e){
-       System.out.println("<FieldList>");
+       if ( showBalise) System.out.println("<FieldList>");
+       boolean oldShow = showBalise;
+       showBalise = false;
        for(int i=0; i<e.getChilds().size(); i++){
            Object child = e.getChilds().get(i);
-           if(child instanceof String){
-               System.out.print(":"+child+": ");
+           if(child instanceof Term){
+               System.out.print(":");
+               visit((Element)child);
+               System.out.print(": ");
            }else{
                visit((Element)child);
            }
        }
        System.out.println();
+       showBalise = oldShow;
    }
+
+
+   public void generate(Directive e){
+       if ( showBalise) System.out.println("<Directive>");
+       boolean oldShow = showBalise;
+       boolean afterTitle = false;
+       showBalise = false;
+
+       System.out.print(".. ");
+       for(int i=0; i<e.getChilds().size(); i++){
+           Object child = e.getChilds().get(i);
+           if(child instanceof Term){
+               visit((Element)child);
+               if (i == 0) {
+                   System.out.print(":: ");
+               }else if (i == 1) {
+                   System.out.println();
+                   afterTitle = true;
+                   indentation ++;
+               }
+           }else{
+               if ( ! afterTitle ) {
+                   System.out.println();
+                   afterTitle = true;
+                   indentation ++;
+               }
+               visit((Element)child);
+           }
+       }
+       if (afterTitle) indentation --;
+       System.out.println();
+       showBalise = oldShow;
+  }
+
+  public void generate(Hyperlink e){
+       if ( showBalise) System.out.println("<Hyperlink>");
+
+       if (e.getChilds().size() != 0) {
+           Term t = (Term)e.getChilds().get(0);
+           System.out.print(".. "+t.getText()+": ");
+       }else
+           System.out.print(".. : ");
+
+       if (e.getText() != null)
+           System.out.println(e.getText());
+       else
+           System.out.println();
+  }
+
+  public void generate(Comment e){
+      if ( showBalise) System.out.println("<Comment>");
+      boolean oldShow = showBalise;
+      showBalise = false;
+
+      System.out.print(".. ");
+      indentation ++;
+      for(int i=0; i<e.getChilds().size(); i++){
+          Object child = e.getChilds().get(i);
+          visit((Element)child);
+      }
+      indentation --;
+      System.out.println();
+      showBalise = oldShow;
+  }
+
 
 } // RstGenerator
 

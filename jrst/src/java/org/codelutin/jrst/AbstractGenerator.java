@@ -60,5 +60,17 @@ public abstract class AbstractGenerator implements Generator { // AbstractGenera
         }
     }
 
+    // Gestion de l'indentation
+    protected int indentation = 0;
+
+    protected String getIndent() {
+        String resultat = "";
+        for(int i = 0; i != indentation; i++)
+            resultat += "  ";
+
+        return resultat;
+    }
+
+
 } // AbstractGenerator
 

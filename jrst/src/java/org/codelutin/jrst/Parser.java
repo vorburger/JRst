@@ -46,38 +46,69 @@ public abstract class Parser { // Parser
         if(args.length > 0){
             String filename = args[0];
             in = new LineNumberReader(new FileReader(filename));
+            System.out.println("Lecture du fichier " + filename);
         }else{
             in = new LineNumberReader(new StringReader(TEXT));
         }
 
+        /* Définition de la structure d'un document */
         DocumentFactory document = new DocumentFactory();
+        ElementFactory structureModel1 = new OrElementFactory("StructureModel(partie1)");
+        ElementFactory structureModel = new AndElementFactory("StructureModel");
+        ElementFactory topic = new AndElementFactory("topic");
+        ElementFactory bodyElement = new OrElementFactory("BodyElement");
         ElementFactory title = new TitleFactory();
         ElementFactory bulletList = new BulletListFactory();
         ElementFactory fieldList = new FieldListFactory();
+        ElementFactory litteral = new LitteralFactory();
         ElementFactory para = new ParaFactory();
+        ElementFactory comment = new CommentFactory();
+        ElementFactory hyperlink = new HyperlinkFactory();
+        ElementFactory directive = new DirectiveFactory();
 
-        document.addChild(title);
-        document.addChild(bulletList);
-        document.addChild(fieldList);
-        document.addChild(para); // mettre le paragraphe a la fin car il mange tout
+        document.addChild(title.getZero_Un());
+        document.addChild(structureModel);
 
-        bulletList.addChild(fieldList);
-        bulletList.addChild(bulletList);
-        bulletList.addChild(para); // mettre le paragraphe a la fin car il mange tout
+        structureModel1.addChild(topic);
+        structureModel1.addChild(bodyElement);
 
-        fieldList.addChild(fieldList);
-        fieldList.addChild(bulletList);
-        fieldList.addChild(para); // mettre le paragraphe a la fin car il mange tout
+        structureModel.addChild(structureModel1.getPlus());
+
+        bodyElement.addChild(directive);
+        bodyElement.addChild(hyperlink);
+        bodyElement.addChild(comment);
+        bodyElement.addChild(litteral);
+        bodyElement.addChild(bulletList);
+        bodyElement.addChild(fieldList);
+        // mettre le paragraphe a la fin car il mange tout
+        bodyElement.addChild(para);
+
+        topic.addChild(title.getZero_Un());
+        topic.addChild(title.getZero_Un());
+        topic.addChild(bodyElement.getPlus());
+
+        bulletList.addChild(bodyElement.getPlus());
+        fieldList.addChild(bodyElement.getPlus());
+
+        directive.addChild(bodyElement.getPlus());
+        comment.addChild(bodyElement.getPlus());
+        // fin de la définition
+
 
         ParseResult result = ParseResult.IN_PROGRESS;
-        int c = in.read();
+
+        // on considère qu'avant le document il y a une ligne blanche
+        int c = (int)'\n';
         while(c != -1 && ((result = document.parse(c)) == ParseResult.IN_PROGRESS)){
             c = in.read();
         }
+        // après le document il y a une ligne blanche
+        if (c == -1) {
+            result = document.parse((int)'\n');
+        }
 
         Element e = document.getElement();
-
-        Generator gen = new HtmlGenerator();
+        Generator gen = new RstGenerator();
         gen.visit(e);
 
         if(result == ParseResult.FAILED){

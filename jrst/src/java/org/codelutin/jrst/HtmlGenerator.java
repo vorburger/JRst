@@ -87,8 +87,8 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
 
    public void generate(Term e){
        for(int i=0; i<e.getChilds().size(); i++){
-           Text child = (Text)e.getChilds().get(i);
-           visit(child);
+           //Text child = (Text)e.getChilds().get(i);
+           //visit(child);
        }
    }
 

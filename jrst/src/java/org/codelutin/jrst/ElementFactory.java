@@ -55,5 +55,17 @@ public interface ElementFactory { // ElementFactory
 
     public ElementFactory addChild(ElementFactory child);
 
+
+    /**
+     *  Pour des cardinalités différentes de la factory
+     *  (par défaut : SIMPLE)
+     */
+
+    public ElementFactory getSimple();   // 1
+    public ElementFactory getZero_Un();  // 0 | 1
+    public ElementFactory getEtoile();   // *
+    public ElementFactory getPlus();     // +
+    public boolean isNecessaire();       // (0 | 1) | ( * )
+
 } // ElementFactory
 
