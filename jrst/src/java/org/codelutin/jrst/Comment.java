@@ -32,18 +32,8 @@
 package org.codelutin.jrst;
 
 public class Comment extends AbstractElement { // Directive
-    String text = null;
 
-    public Comment(){
-    }
-
-    public String getText(){
-        return text.trim();
-    }
-
-    public void setText(String text){
-        this.text = text;
-    }
+    public Comment(){}
 
 } // Directive
 

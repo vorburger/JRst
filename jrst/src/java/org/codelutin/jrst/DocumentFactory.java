@@ -41,11 +41,18 @@ public class DocumentFactory extends AbstractFactory { // DocumentFactory
     protected Element elementNew(){  return new Document();  }
     public ParseResult accept(int c){  return ParseResult.ACCEPT;  }
 
+    int consumed = 0;
+
     public ParseResult parse(int c){
         ParseResult result = ParseResult.IN_PROGRESS;
-        System.out.print("\033[00;37m"+(char)c+"\033[00m");
+        consumed++;
+
+        if (Parser.DEBUG != null)
+            System.out.print("\033[00;37m"+(char)c+"\033[00m");
 
         result = delegate(c);
+        if (result == ParseResult.FAILED)
+            result.setConsumedCharCount(consumed);
         return result;
     }
 
@@ -111,6 +118,33 @@ public class DocumentFactory extends AbstractFactory { // DocumentFactory
         }
     }
 
+    // Récolte les cibles potientielles des liens intégrés au texte
+    public List getHyperlinks(Element e) {
+        if (e instanceof Title) { // les titres sont par défaut des liens potentiels
+            ArrayList result = new ArrayList();
+            result.add(e);
+            return result;
+        }else if (e instanceof Hyperlink) {
+            ArrayList result = new ArrayList();
+            result.add(e);
+            return result;
+        }else{
+            ArrayList resultat = null;
+            for(Iterator i=e.getChilds().iterator(); i.hasNext();){
+                List result = getHyperlinks((Element)i.next());
+                if ( result != null ) {
+                    if (resultat == null) {
+                        resultat = (ArrayList)result;
+                    }else{
+                        resultat.addAll(result);
+                    }
+                }
+            }
+            return resultat;
+        }
+    }
+
+
 
     public ParseResult parseEnd(int c){
         Document myDoc = (Document)getElement();
@@ -134,6 +168,13 @@ public class DocumentFactory extends AbstractFactory { // DocumentFactory
             myDoc.setContents(e);
         }else{
             System.err.println("Problem with contents");
+        }
+
+        List h = getHyperlinks(myDoc);
+        if (h != null) {
+            myDoc.setHyperlinks(h);
+        }else{
+            System.err.println("Problem with hyperlinks");
         }
 
         return ParseResult.ACCEPT;

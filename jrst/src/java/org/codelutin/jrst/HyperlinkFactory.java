@@ -63,7 +63,7 @@ public class HyperlinkFactory extends IndentedAbstractFactory { // HyperlinkFact
         SUB_STATE = DOT_DOT_SPACE;
         unique    = true;
         oneLiner  = true;
-        headRegExpr = "\\.\\. [^ ][\\w _]*:";
+        headRegExpr = "\\.\\. [^ ][\\w \\.\\(\\)_]*:";
         super.init();
     }
 
@@ -96,6 +96,7 @@ public class HyperlinkFactory extends IndentedAbstractFactory { // HyperlinkFact
                 }else{
                     Term t = new Term(text);
                     getElement().addChild(t);
+                    getHyperlink().setText(text.toString());
                     text.delete(0, text.length());
                     SUB_STATE = COLON;
                 }

@@ -54,11 +54,12 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
     public void generate(Document e){
         doc = e;
 
-        os.println("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
+        //os.println("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
+        os.println("<?xml version=\"1.0\" encoding=\"iso-8859-15\" ?>");
         os.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
         os.println("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">");
         os.println("<head>");
-        os.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+        os.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-15\" />");
         os.println("<meta name=\"generator\" content=\"JRST http://www.codelutin.org/\" />");
         if (e.getTitle() != null)
             os.println("<title>"+inlineMarkup(e.getTitle().getText())+"</title>");
@@ -115,11 +116,11 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
     public void generate(BulletList e){
         os.println(getIndent()+"<ul>");
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
-            os.print("<li>");
             indentation ++;
+            os.print(getIndent()+"<li>");
             visit((Element)i.next());
+            os.println(getIndent()+"</li>");
             indentation --;
-            os.println("</li>");
         }
         os.println(getIndent()+"</ul>");
    }
@@ -261,6 +262,30 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
            List contents = doc.getContents();
            generateContents(contents);
            os.println(getIndent()+ "</div>");
+
+       // une image
+       }else if (e.getType() == Directive.KIND_IMAGE) {
+           if (e.getChilds().size() > 0) {
+               String img  = getIndent()+ "<img src=\""+((Term)e.getChilds().get(0)).getText()+"\" ";
+               String comment = null;
+
+               for(int i=1; i<e.getChilds().size(); i++){
+                   Term child = (Term)e.getChilds().get(i);
+                   if (child.getText().matches(":height: (\\d*)"))
+                       img = img + "height=\""+child.getText().replaceAll(":height: (\\d*)","$1")+"\" ";
+                   else if (child.getText().matches(":width: (\\d*)"))
+                       img = img + "width=\""+child.getText().replaceAll(":width: (\\d*)","$1")+"\" ";
+                   else if (child.getText().matches(":comment: (.*)")){
+                       comment = child.getText().replaceAll(":comment: (.*)","$1");
+                       img = img + "alt=\""+comment+"\" ";
+                   }
+
+               }
+               os.println(img+">");
+               if (comment != null) {
+                   os.println(getIndent()+"<p><i>"+comment+"</i></p>");
+               }
+           }
        }else{
            os.println(getIndent()+"<strong>"+inlineMarkup(e.getText())+"</strong>");
        }
@@ -374,48 +399,50 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
    /** table des matières **/
 
    public void generateContents(List e) {
+       final int coef = 256;
        ArrayList stack = new ArrayList(); // pîle des symboles de titre
        int ulCounter = 0;
        int counter = 0;
 
-       if (e != null) {
-           Title prec = null;
-           for(Iterator i=e.iterator(); i.hasNext();){ // liste des titres
-               Title next = (Title)i.next();
-               if (next == doc.getTitle())
-                   continue;
+       if (e == null) return;
 
-               if (prec != null) {
-                   if (prec.getTitleMark() != next.getTitleMark()) {
-                       boolean trouve = false;
-                       int trouveAt = -1;
-                       for(int j=0; j < stack.size(); j++){ // parcous de la pile
-                           if (trouve) {
-                               indentation --;
-                               os.println(getIndent()+"</ul>");
-                           }
-                           if (((Integer)stack.get(j)).intValue() == next.getTitleMark()) {
-                               trouve = true;
-                               trouveAt = j;
-                           }
+       Title prec = null;
+       for(Iterator i=e.iterator(); i.hasNext();){ // liste des titres
+           Title next = (Title)i.next();
+           if (next == doc.getTitle())
+               continue;
+
+           if (prec != null) {
+               if (prec.getTitleMark() != (next.getUpperline()?next.getTitleMark()*coef:next.getTitleMark())) {
+                   boolean trouve = false;
+                   int trouveAt = -1;
+                   for(int j=0; j < stack.size(); j++){ // parcous de la pile
+                       if (trouve) {
+                           indentation --;
+                           os.println(getIndent()+"</ul>");
                        }
-                       if ( !trouve ) {
-                           stack.add(new Integer(next.getTitleMark()));
-                           os.println(getIndent()+ "<ul class=\"simple\">");
-                           ulCounter++;
-                           indentation ++;
-                       }else{
-
-                           while (stack.size()-1 > trouveAt && stack.size()>0 ){
-                               stack.remove(stack.size()-1);
-                           }
+                       if (((Integer)stack.get(j)).intValue() == (next.getUpperline()?next.getTitleMark()*coef:next.getTitleMark())) {
+                           trouve = true;
+                           trouveAt = j;
                        }
                    }
-               }else{
-                   os.println(getIndent()+ "<ul class=\"simple\">");
-                   ulCounter++;
-                   indentation ++;
+                   if ( !trouve ) {
+                       stack.add(new Integer(next.getUpperline()?next.getTitleMark()*coef:next.getTitleMark()));
+                       os.println(getIndent()+ "<ul class=\"simple\">");
+                       indentation ++;
+                   }else{
+
+                       while (stack.size()-1 > trouveAt && stack.size()>0 ){
+                           stack.remove(stack.size()-1);
+                       }
+                   }
                }
+           }else{
+               // 1er tour de boucle
+               stack.add(new Integer(next.getUpperline()?next.getTitleMark()*coef:next.getTitleMark()));
+               os.println(getIndent()+ "<ul class=\"simple\">");
+               indentation ++;
+           }
 
                next.setProfondeur(stack.size());
                next.setId(counter);
@@ -425,11 +452,11 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
                prec = next;
                counter ++;
 
-           }
-           for(int i=0; i<ulCounter; i++){
-               indentation --;
-               os.println(getIndent()+"</ul>");
-           }
+       }
+       for(Iterator j=stack.iterator(); j.hasNext();){
+           j.next();
+           indentation --;
+           os.println(getIndent()+"</ul>");
        }
    }
 
@@ -440,27 +467,11 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
        return text.toLowerCase().trim().replace(' ','-');
    }
 
-   public String inlineMarkup(String text) {
-       // TODO
-       String before = "([ '\"(\\[<])";
-       String after = "([ '\".,:\\;!?)\\]}/\\>])";
-
-       String t = encode(text);
-
-       t = t.replaceAll("([^ ]+@[^ ]+\\.[^ ]+)","<a href=\"mailto:$1\">$1</a>"); // courriel
-       t = t.replaceAll("(((http[s]?)|ftp|mailto|telnet|news|skype|e2k|ssh)://[^ \\)]+\\.[^ \\)]+)","<a href=\"$1\">$1</a>"); // URL
-
-       t = t.replaceAll(before+"[\\`][\\`]([^ ]*.*[^ ]*)[\\`][\\`]"+after,"$1<code>$2</code>$3"); // inline literal
-       t = t.replaceAll(before+"[\\`]([^ ]*.*[^ ]*)[\\`]"+after,"$1<i>$2</i>$3"); // interpreted text
-
-       t = t.replaceAll(before+"[\\*][\\*]([^ ]*.*[^ ]*)[\\*][\\*]"+after,"$1<strong>$2</strong>$3"); // strong emphasis
-       t = t.replaceAll(before+"[\\*]([^ ]*.*[^ ]*)[\\*]"+after,"$1<em>$2</em>$3"); // emphasis
-
-       //String reference = getHtmlName(t.replaceAll(before+"(`(.*)`_)|(([^ ]*)_)"+after,"$3$4")); // reference
-       //t = t.replaceAll(before+"(`(.*)`_)|(([^ ]*)_)"+after,"$1<a href=\"#"+reference+"\">$3$4</a>$4");
-
-
-       return t;
+   /**
+    * Encode pour les expressions régulières
+    */
+   public String encodeSpecChar(String text) {
+       return text.replaceAll("\\(", "\\\\(").replaceAll("\\)","\\\\)").replaceAll("\\[","\\\\[").replaceAll("\\]","\\\\]");
    }
 
    /**
@@ -469,9 +480,48 @@ public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
    protected String encode(String s){
        s = s.replaceAll("<", "&lt;");
        s = s.replaceAll(">", "&gt;");
-       // TODO: faire les autres :)
        return s;
    }
+
+   public String inlineMarkup(String text) {
+       String before = "(^|[ '\"(\\[<])";
+       String after = "([ '\".,:\\;!?)\\]}/\\>]|$)";
+
+       String t = encode(text);
+
+       t = t.replaceAll("([^ ]+@[^ ]+\\.[^ ]+)","<a href=\"mailto:$1\">$1</a>"); // courriel
+       t = t.replaceAll("(((http[s]?)|ftp|mailto|telnet|news|e2k|ssh)://[^ \\)]+\\.[^ \\)]+)","<a href=\"$1\">$1</a>"); // URL
+
+       t = t.replaceAll(before+"[\\`][\\`]([^ ]*?.*?[^ ]*?)[\\`][\\`]"+after,"$1<code>$2</code>$3"); // inline literal
+       t = t.replaceAll(before+"[\\`]([^ ]*?.*?[^ ]*?)[\\`]"+after,"$1<i>$2</i>$3"); // interpreted text
+
+       t = t.replaceAll(before+"[\\*][\\*]([^ ]*?.*?[^ ]*?)[\\*][\\*]"+after,"$1<strong>$2</strong>$3"); // strong emphasis
+       t = t.replaceAll(before+"[\\*]([^ ]*?.*?[^ ]*?)[\\*]"+after,"$1<em>$2</em>$3"); // emphasis
+
+       //  String quotedReference = t.replaceFirst("^.*`(.+?)`_.*$","$1");//getHtmlName(); // reference
+       String quotedReference = t.replaceFirst("^.*"+before+"`(.+?)`_"+after+".*$","$2");//getHtmlName(); // reference
+       while (! quotedReference.equals(t)) {
+           String link = getHtmlName(doc.findLink(quotedReference));
+           //  t = t.replaceFirst("(`"+quotedReference+"`_)","<a href=\""+link+"\">"+quotedReference+"</a>");
+           t = t.replaceFirst(before+"(`"+encodeSpecChar(quotedReference)+"`_)"+after,"$1<a href=\""+link+"\">"+quotedReference+"</a>$3");
+           //  quotedReference = t.replaceFirst("^.*`(.+?)`_.*$","$1");
+           quotedReference = t.replaceFirst("^.*"+before+"`(.+?)`_"+after+".*$","$2");
+       }
+
+       //  String simpleReference = t.replaceFirst("^.*([^ ]+)_.*$","$1");
+       String simpleReference = t.replaceFirst("^.*"+before+"([^ ]+)_"+after+".*$","$2");
+       while(! simpleReference.equals(t)) {
+           String link = getHtmlName(doc.findLink(simpleReference));
+           // t = t.replaceFirst("("+simpleReference+"_)","<a href=\""+link+"\">"+simpleReference+"</a>");
+           t = t.replaceFirst(before+"("+encodeSpecChar(simpleReference)+"_)"+after,"$1<a href=\""+link+"\">"+simpleReference+"</a>$3");
+           // simpleReference = t.replaceFirst("^.*([^ ]+)_.*$","$1");
+           simpleReference = t.replaceFirst("^.*"+before+"([^ ]+)_"+after+".*$","$2");
+       }
+
+
+       return t;
+   }
+
 
 
 } // HtmlGenerator

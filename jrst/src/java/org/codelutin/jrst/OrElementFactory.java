@@ -90,7 +90,6 @@ public class OrElementFactory extends AbstractFactory { // DocumentFactory
                 currentChildIndex++;
             }
 
-            //if ( currentChildIndex <=  childs.size() ){
             if ( currentChild != null ){
                 for(int i=0; i<buffer.length(); i++) {
                     result = currentChild.parse((int)buffer.charAt(i));
@@ -100,16 +99,6 @@ public class OrElementFactory extends AbstractFactory { // DocumentFactory
 
             }
 
-                /*
-                for(int i=currentChildIndex; i<buffer.length(); i++) {
-                    ElementFactory element = ((ElementFactory)childs.get(i));
-                    ParseResult result = element.accept(c);
-                    if (result == ParseResult.ACCEPT)
-                        element.parse(c);
-
-                }
-            }
-                */
         }
         // System.out.println("current Child : " + currentChild);
 
@@ -128,55 +117,15 @@ public class OrElementFactory extends AbstractFactory { // DocumentFactory
         boolean dodelegate = true;
         consumedCharCount++;
 
-       // System.out.print("\033[00;32m"+(char)c+"\033[00m");
+        //System.out.print("\033[00;32m"+(char)c+"\033[00m"); // vert
 
-/*
-        // le Child Courant tout en bas de l'arborescence
-        AbstractFactory lastChild = (AbstractFactory)currentChild;
-        while (lastChild != null && lastChild.currentChild != null) {
-            lastChild = (AbstractFactory)lastChild.currentChild;
-        }
-
-        // pour les formes litterales
-        if (lastlastc==':' && lastc==':' && c=='\n') { // ::
-            if (currentChild instanceof ParaFactory) {
-                if (isMultiple()) {
-                    CHILD_STATE = SEARCH_CHILD;
-                    buffer.delete(0, buffer.length()-2);
+        if (result != ParseResult.FINISHED){
+            if (lastc=='\n' && c=='\n') {
+                if (lastlastc=='\n') { // double ligne blanche
+                    //dodelegate = false;
+                    result = parseEnd(c);
                 }
             }
-        }
-*/
-        if (result != ParseResult.FINISHED){
-           if (lastc=='\n' && c=='\n') {
-               if (lastlastc=='\n') { // double ligne blanche
-                   //dodelegate = false;
-                   result = parseEnd(c);
-               }
-                  /* if (!(lastChild instanceof LitteralFactory)) {
-                       // System.out.println(" Double Ligne blanche " + this + "-" +
-                       // currentChild + " == " + lastChild);
-                       result = delegate(c);
-                       if (result != ParseResult.FINISHED)
-                           result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount);
-                       dodelegate = false;
-                   }else{
-                       // ne passe pas là quand il fodrai !!! BUG BUG BUG :(
-                       // TODO
-                       System.out.println("Coucou !!! ");
-                       dodelegate = false;
-                   }
-
-               }else if (currentChild instanceof ParaFactory) {
-                   if (isMultiple()) {
-                       CHILD_STATE = SEARCH_CHILD;
-                       buffer.delete(0, buffer.length());
-                       dodelegate = false;
-                       System.out.println("Ligne Blanche \n\n");
-                   }
-               }
-               */
-           }
         }
 
         if (dodelegate) result = delegate(c);

@@ -41,6 +41,9 @@ public class DirectiveFactory extends IndentedAbstractFactory { // DirectiveFact
     final static Object COLONS = new Object(); // on enleve les "::"
     final static Object AFTER_COLONS = new Object(); // après les colons
 
+
+    final static Object THE_HEAD = new Object(); // après les colons
+
     /** Attributs **/
 
     StringBuffer text = null;
@@ -60,78 +63,60 @@ public class DirectiveFactory extends IndentedAbstractFactory { // DirectiveFact
     public void init(){
         text        = new StringBuffer();
         counter     = 0;
-        SUB_STATE   = DOT_DOT_SPACE;
+        //SUB_STATE   = DOT_DOT_SPACE;
+        SUB_STATE   = THE_HEAD;
         unique      = true;
         oneLiner    = true;
-        headRegExpr = "\\.\\. \\w+::";
+        headRegExpr = "\\.\\. (\\w+)::";
         super.init();
     }
 
-    // parse l'entete de la directive
+
     public ParseResult parseHead(int c) {
         ParseResult result = ParseResult.IN_PROGRESS;
 
-        if (SUB_STATE == DOT_DOT_SPACE) {
-            if ((char)c == '.') {
-                counter++;
-                if (counter > 2) {
-                    result = ParseResult.FAILED.setError("expected only double-dot '..'");
-                }
-            }else if ((char)c == ' ' && counter == 2) {
-                    counter++;
-                    if (counter == 3) {
-                        SUB_STATE = TERM;
-                        counter = 0;
-                        text.delete(0, text.length());
-                    }
-            }else{
-                result = ParseResult.FAILED.setError("expected double-dot '..'");
-            }
-        }else if (SUB_STATE == TERM) {
-            if((char)c == ' ') {
-                result = ParseResult.FAILED.setError("there should be no space (' ') in the name of the directive");
-            }else if((char)c != '\\'){
-                if((char)c != ':' || ((char)c == ':' && (char)lastc == '\\')){
-                    text.append((char)c);
-                }else{
-                    //Term t = new Term(text);
-                    //getElement().addChild(t);
-                    ((Directive)getElement()).setText(text.toString());
-                    text.delete(0, text.length());
-                    SUB_STATE = COLONS;
-                    counter = 1;
-                }
-            }
-        }else if (SUB_STATE == COLONS) {
-            if ((char)c == ':') {
-                counter ++;
-            }else{
-                result = ParseResult.FAILED.setError("character illegal");
-            }
-            if (counter != 1 ) {
-                if (counter > 2) {
-                    result = ParseResult.FAILED.setError("only double semi-colons allowed '::'");
-                }else{
-                    counter = 0;
-                    SUB_STATE = AFTER_COLONS;
-                }
-            }
-        }else if (SUB_STATE == AFTER_COLONS) {
-            if ((char)c == ' ') {
+        if (SUB_STATE == THE_HEAD) {
+            text.append((char)c);
+            if ( headREMatcher.matches(text.toString()) ) {
+
+                Directive di = getDirective();
+
+                di.setText(headREMatcher.group(1));
+
+                text.delete(0,text.length());
                 INDENT_STATE = READING_BODY;
-                SUB_STATE = FINISHED;
-                result = parseEnd(c);
-            }else if ((char)c == '\n') {
-                INDENT_STATE = INDENT_COUNT;
-                SUB_STATE = FINISHED;
-                result = parseEnd(c);
-            }else{
-                result = ParseResult.FAILED.setError("need a space or carriage return");
+                if (di.getType() == Directive.KIND_IMAGE){
+                    counter = 0;
+                    noEndBody   = true;
+                }else{
+                    //result = delegate(c);
+                }
+            }else if (! headREMatcher.matchesPrefix()) {
+                result = ParseResult.FAILED;
             }
         }
 
         return result;
     }
 
+    public ParseResult parseBody(int c) {
+        if (getDirective().getType() == Directive.KIND_IMAGE) {
+            if (c == '\n') {
+                if (text.length() > 0) {
+                    getDirective().addChild(new Term(text));
+                    text.delete(0,text.length());
+                    //counter = 2;
+                }
+            }else if (counter == 0 && c == ' ') {
+                counter ++;
+            }else if (counter == 1) {
+                text.append((char)c);
+            }
+            return ParseResult.IN_PROGRESS;
+
+        }else{
+            return delegate(c);
+        }
+    }
 } // DirectiveFactory
 

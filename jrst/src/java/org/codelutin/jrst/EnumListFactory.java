@@ -179,7 +179,7 @@ public class EnumListFactory extends IndentedAbstractFactory { // EnumListFactor
                 }else{
                     if (myList.getFormateur() == null) {
                         myList.setFormateur(EnumList.KIND_PARA);
-                        System.out.println("PARA");
+                        //System.out.println("PARA");
                     }
                     ok = true;
                 }

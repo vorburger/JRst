@@ -31,14 +31,22 @@
 
 package org.codelutin.jrst;
 
+import jregex.Pattern;
+import jregex.Matcher;
+
 public class TitleFactory extends AbstractFactory { // TitleFactory
 
-    static final String ACCEPTED_CHAR = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+    static final String ACCEPTED_CHAR_ALL = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+    static final String ACCEPTED_CHAR = "\\*\\+\\-\\:\\=\\_\\~\\`";
 
     static final Object BEFORE = new Object();
     static final Object IN = new Object();
     static final Object AFTER = new Object();
     static final Object FINISHED = new Object();
+
+
+    Pattern titlePattern = new Pattern("(["+ACCEPTED_CHAR+"]+\\n)?(.+)\\n(["+ACCEPTED_CHAR+"]+)\\n");
+    Matcher titleMatcher = titlePattern.matcher();
 
     StringBuffer titleText = null;
 
@@ -46,16 +54,9 @@ public class TitleFactory extends AbstractFactory { // TitleFactory
     int countMarkBefore = 0;
     int countMarkAfter = 0;
 
-    protected AbstractFactory factoryNew(){
-        return new TitleFactory();
-    }
-    protected Element elementNew(){
-        return new Title();
-    }
-
-    protected Title getTitle(){
-        return (Title)getElement();
-    }
+    protected AbstractFactory factoryNew(){ return new TitleFactory(); }
+    protected Element elementNew(){ return new Title(); }
+    protected Title getTitle(){ return (Title)getElement(); }
 
     public void init(){
         super.init();
@@ -64,17 +65,41 @@ public class TitleFactory extends AbstractFactory { // TitleFactory
 
         countMarkBefore = 0;
         countMarkAfter = 0;
+
         STATE = BEFORE;
     }
 
     public ParseResult accept(int c) {
-        ParseResult result = parse(c);
-        if(result == ParseResult.FINISHED){
-            System.out.print("\033[01;32mTitle \033[00m ");
-            result = ParseResult.ACCEPT;
-        }else if (result == ParseResult.FAILED) {
-            System.out.print("\033[01;31mTitle \033[00m");
+
+        ParseResult result = ParseResult.IN_PROGRESS; //parse(c);
+
+        titleText.append((char) c);
+
+        if (titleMatcher.matches(titleText.toString())){
+/*            for(int i = 1; i != 4; i++)
+                System.out.print("\033[00;35m"+titleMatcher.group(i)+"\033[00m");
+*/
+            if ( ((titleMatcher.group(1) != null) && (titleMatcher.group(1).length() < titleMatcher.group(2).length())) ||
+            (titleMatcher.group(3).length() < titleMatcher.group(2).length())) {
+                result = ParseResult.FAILED;
+            }else{
+                result = ParseResult.ACCEPT;
+            }
+
+        }else if (! titleMatcher.matchesPrefix()){
+            result = ParseResult.FAILED;
         }
+
+        if (Parser.DEBUG != null){
+            if(result == ParseResult.ACCEPT){
+                System.out.print("\033[01;32m[Title] \033[00m ");
+                result = ParseResult.ACCEPT;
+            }else if (result == ParseResult.FAILED) {
+                if (Parser.DEBUG == Parser.DEBUG_LEVEL2)
+                    System.out.print("\033[01;31m[Title] \033[00m");
+            }
+        }
+
         return result;
     }
 
@@ -87,6 +112,11 @@ public class TitleFactory extends AbstractFactory { // TitleFactory
     * Lorsqu'il retourne false, la factory est capable de savoir si l'élement est convenable ou non, pour cela il faut appeler la méthode {@link getParseResult}.
     */
     public ParseResult parse(int c) {
+        if (STATE == FINISHED) {
+                System.out.print("\033[01;31m TITLE DEJA FINISHED \033[00m ");
+                return ParseResult.FINISHED;
+        }
+
         ParseResult result = ParseResult.IN_PROGRESS;
         consumedCharCount++;
 
@@ -99,7 +129,8 @@ public class TitleFactory extends AbstractFactory { // TitleFactory
                 }
             }else if(countMarkBefore == 0){
                 if(ACCEPTED_CHAR.indexOf((char)c) == -1 ){
-                    titleText.append((char)c);
+                    if ((char)c != ' ')
+                        titleText.append((char)c);
                     STATE = IN;
                 }else{
                     titleMark = c;
@@ -114,28 +145,40 @@ public class TitleFactory extends AbstractFactory { // TitleFactory
             }
         }else if(STATE == IN){
             if((char)c == '\n'){
-                if(countMarkBefore >= titleText.length() || countMarkBefore == 0){
+                if((countMarkBefore >= titleText.length() || countMarkBefore == 0) && titleText.length() > 0){
                     STATE = AFTER;
                 }else{
                     result = ParseResult.FAILED.setError("Title and upperline don't have same length");
                 }
+            }else if ((char)c == ' ') {
+                if (titleText.toString().trim().length() != 0)
+                    titleText.append((char)c);
             }else{
                 titleText.append((char)c);
             }
-        }else{
+        }else if (STATE == AFTER){
             if (titleMark == -1 || titleMark == c){
                 titleMark = c;
                 countMarkAfter++;
             }
-            if (countMarkAfter < titleText.length() && (char)c == '\n'){
+            if (countMarkAfter < titleText.length() &&  (char)c == '\n'){
                 result = ParseResult.FAILED.setError("Title and underline don't have same length: "+titleText.length()+ "underline length: "+countMarkAfter);
             }else if((char)c == '\n' && countMarkAfter >= titleText.length()){
                 getTitle().setText(titleText.toString());
-                getTitle().setTitleMark(titleMark);
-                getTitle().setMarkLength(countMarkAfter);
-                getTitle().setUpperline(countMarkBefore!=0);
-                STATE = FINISHED;
-                result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount);
+                // if (getTitle().getText().length() > 0) {
+                    getTitle().setTitleMark(titleMark);
+                    getTitle().setMarkLength(countMarkAfter);
+                    getTitle().setUpperline(countMarkBefore!=0);
+                    if (Parser.DEBUG == Parser.DEBUG_LEVEL2)
+                        System.out.print("\033[01;35m["+(char)titleMark+" "+countMarkAfter+" "+countMarkBefore+"] \033[00m ");
+                    countMarkAfter = 0;
+                    countMarkBefore = 0;
+                    titleText.delete(0,titleText.length());
+                    titleMark = -1;
+                    STATE = FINISHED;
+                    result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount);
+                //}else
+                //    result = ParseResult.FAILED.setError("Bad Title from the swamp");
             }
         }
 

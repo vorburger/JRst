@@ -53,6 +53,8 @@ public abstract class AbstractGenerator implements Generator { // AbstractGenera
     /** Génération des éléments **/
     public void visit(Element e){
         if(e != null){
+            /*if (Parser.DEBUG == Parser.DEBUG_LEVEL3)
+                System.out.println(((AbstractElement)e).Name()+" ");*/
             callGenerate(e);
         }
     }

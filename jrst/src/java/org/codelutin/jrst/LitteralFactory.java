@@ -79,16 +79,16 @@ public class LitteralFactory extends AbstractFactory { // LitteralFactory
 
     // Accept ce qui arrive ?
     public ParseResult accept(int c) {
-        ParseResult result = ParseResult.IN_PROGRESS;
+        ParseResult result = parseHead(c);
 
-        if ((char) c == ':') {
-            sb.append((char)c);
-            if (sb.length() == 2) {
-                result = ParseResult.ACCEPT;
-                sb.delete(0,2);
-            }
+        if (result == ParseResult.FINISHED) {
+            if (Parser.DEBUG != null)
+                System.out.print("\033[01;32m[Litteral] \033[00m ");
+
+            result = ParseResult.ACCEPT;
         }else{
-            result = ParseResult.FAILED.setError("not a ':'");
+            if (Parser.DEBUG == Parser.DEBUG_LEVEL2)
+                System.out.print("\033[01;31m[Litteral] \033[00m");
         }
 
         return result;
@@ -104,6 +104,7 @@ public class LitteralFactory extends AbstractFactory { // LitteralFactory
     // Parse Head
     public ParseResult parseHead(int c) {
         ParseResult result = ParseResult.IN_PROGRESS;
+        //System.out.print("\033[00;33m"+(char)c+"\033[00m");
 
         if((char)c == '\n' && (char)lastc == ':' && (char)lastlastc == ':') {
             result = ParseResult.FINISHED.setConsumedCharCount(3);
@@ -158,7 +159,7 @@ public class LitteralFactory extends AbstractFactory { // LitteralFactory
                 }
                 if (INDENT_STATE == VERIFY_INDENT) {
                     INDENT_STATE = READING_BODY;
-                    if (indentRead < indentLength || (indentRead == 0 && indentLength != -2)) {
+                    if ((indentRead < indentLength) || (indentRead == 0 && indentLength != -2)) {
                         // indentation terminée, le bloc est à fermer
                         INDENT_STATE = FINISHED;
                     }

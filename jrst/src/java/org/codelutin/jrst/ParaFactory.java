@@ -57,10 +57,12 @@ public class ParaFactory extends AbstractFactory { // ParaFactory
     // Acceptation
     public ParseResult accept(int c) {
         if((char)c != ' ' && (char)c != '\n'){
-            //System.out.print("\033[01;32mPara\033[00m ");
+            if (Parser.DEBUG != null)
+                System.out.print("\033[01;32m[Para] \033[00m ");
             return ParseResult.ACCEPT;
         }else{
-            //System.out.print("\033[01;31mPara\033[00m");
+            if (Parser.DEBUG == Parser.DEBUG_LEVEL2)
+                System.out.print("\033[01;31m[Para] \033[00m");
             return ParseResult.FAILED;
         }
     }
@@ -89,6 +91,7 @@ public class ParaFactory extends AbstractFactory { // ParaFactory
             result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
         }else if((char)c == '\n' && (char)lastc == ':' && (char)lastlastc == ':') {
             // il s'agit d'un bloc literal
+            //System.out.print("\033[01;31mLitteral in para !\033[00m");
             getPara().setText(buffer.substring(0,buffer.length()-1));
             result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-3); // on laisse les "::"
         }else{

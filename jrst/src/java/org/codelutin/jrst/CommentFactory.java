@@ -31,55 +31,44 @@
 
 package org.codelutin.jrst;
 
-public class CommentFactory extends AbstractFactory { // CommentFactory
+public class CommentFactory extends IndentedAbstractFactory { // CommentFactory
 
-    /** les différents états d'avancenement de la recherche de bloc litteral **/
+    // les différents états d'avancenement de la recherche de bloc litteral
     final static Object DOT_DOT_SPACE = new Object(); // pour enlever le ".. " du début
-    final static Object SEARCH_INDENT = new Object(); // on compte l'indentation
-    final static Object FIND_INDENT = new Object(); // on cherche l'indentation minimum pour rester dans le bloc
-    final static Object READING = new Object(); // on lit ce qu'il y a après l'indentation
+    final static Object TEXT = new Object(); // on lit le nom de la directive
 
-    //StringBuffer buffer = null;
-    int lastc = -1;
-    int lastlastc = -1;
-    int indentRead = 0;   // indentation en cours de lecture
-    int indentLength = 0; // indentation de base trouvée avec INDENT_SEARCH
-    StringBuffer fieldText = null;
+    int counter = 0;
 
-    protected AbstractFactory factoryNew(){
-        return  new CommentFactory();
-    }
-    protected Element elementNew(){
-        return new Comment();
-    }
-    protected Comment getComment(){
-        return (Comment)getElement();
-    }
+    protected AbstractFactory factoryNew(){ return  new CommentFactory(); }
+    protected Element elementNew(){ return new Comment(); }
+    protected Comment getComment(){ return (Comment)getElement(); }
 
     public void init(){
+        text = new StringBuffer();
+        SUB_STATE = DOT_DOT_SPACE;
+        unique    = true;
+        oneLiner  = true;
+        counter = 0;
+        headRegExpr = "\\.\\.[ \\n]";
         super.init();
-        fieldText = new StringBuffer();
-        STATE = DOT_DOT_SPACE;
-        indentRead = 0;
     }
 
-    public ParseResult accept(int c) {
-        ParseResult result = parse(c);
-        if(result == ParseResult.FINISHED){
-            result = ParseResult.ACCEPT;
+    public ParseResult parseHead(int c) {
+        ParseResult result = ParseResult.IN_PROGRESS;
+
+        counter ++;
+        if (counter == 3) {
+            INDENT_STATE = READING_BODY; // pour 'parse'
+            result = ParseResult.FINISHED.setConsumedCharCount(counter);
         }
-        return result;
-    }
 
-    public ParseResult parseEnd(int c){
-        // TODO a faire
-        return null;
+        return result;
     }
 
     /**
     * Retourne true tant que l'objet n'a pas fini de parser son élément.
     * Lorsqu'il retourne false, la factory est capable de savoir si l'élement est convenable ou non, pour cela il faut appeler la méthode {@link getParseResult}.
-    */
+    *
     public ParseResult parse(int c) {
         ParseResult result = ParseResult.IN_PROGRESS;
         consumedCharCount++;
@@ -150,6 +139,7 @@ public class CommentFactory extends AbstractFactory { // CommentFactory
         lastc = c;
         return result;
     }
+*/
 
 } // CommentFactory
 

@@ -35,7 +35,7 @@ public class Title extends AbstractElement { // Title
 
     static int numbered = 0;
 
-    String text    = null;
+    public String text    = null;
     int titleMark  = -1;
     int markLength = -1;
     boolean upperline = false;

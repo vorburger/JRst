@@ -47,6 +47,16 @@ import java.io.FileWriter;
 
 public abstract class Parser { // Parser
 
+    // Nivos de débuggage
+    public static final Object DEBUG_LEVEL0 = null;
+    public static final Object DEBUG_LEVEL1 = new Object();
+    public static final Object DEBUG_LEVEL2 = new Object();
+    public static final Object DEBUG_LEVEL3 = new Object();
+
+    // pour activer le mode debugage
+    public static Object DEBUG = DEBUG_LEVEL0; // null; //
+
+    // formats de sortie
     static final Object TYPE_RST = new Object();
     static final Object TYPE_HTML = new Object();
     static final Object TYPE_XDOC = new Object();
@@ -63,6 +73,7 @@ public abstract class Parser { // Parser
             System.out.println("--xml        ");
             System.out.println("--rst        generate with the selected format");
             System.out.println("-o file      output file (--output)");
+            System.out.println("-v #         verbosity : 0 <= # <= 3");
     }
 
 
@@ -72,18 +83,11 @@ public abstract class Parser { // Parser
         String fileOut = null;
         Object type = null;
 
-        boolean nextIsOutPut = false;
-
         if(args.length > 0){
             for(int i = 0; i < args.length; i ++) {
-                if (nextIsOutPut) {
-                    nextIsOutPut = false;
-                    fileOut = args[i];
-                }else if ("-h".equals(args[i]) || "--help".equals(args[i])) {
+                if ("-h".equals(args[i]) || "--help".equals(args[i])) {
                     help();
                     return;
-                }else if ( "-o".equals(args[i]) || "--output".equals(args[i]) ) {
-                    nextIsOutPut = true;
                 }else if ( "--html".equals(args[i]) ) {
                     type = TYPE_HTML;
                 }else if ( "--xdoc".equals(args[i]) ) {
@@ -94,6 +98,16 @@ public abstract class Parser { // Parser
                     type = TYPE_RST;
                 }else if ( "-o".equals(args[i]) ) {
                     fileOut = args[++i];
+                }else if ( "-v".equals(args[i]) ) {
+                    String value = args[++i];
+                    if ( "0".equals(value) )
+                        DEBUG = DEBUG_LEVEL0;
+                    else if ( "1".equals(value) )
+                        DEBUG = DEBUG_LEVEL1;
+                    else if ( "2".equals(value) )
+                        DEBUG = DEBUG_LEVEL2;
+                    else if ( "3".equals(value) )
+                        DEBUG = DEBUG_LEVEL3;
                 }else if (args[i].matches("\\-+.*")) {
                     System.out.println("Unknown argument : " +args[i]+ "\n");
                     help();
@@ -115,7 +129,13 @@ public abstract class Parser { // Parser
     }
 
     static public void parse(Object type, String fileIn, String fileOut)  throws Exception{
-        Reader in = new LineNumberReader(new FileReader(fileIn));
+        Reader in = null;
+        try{
+            in = new LineNumberReader(new FileReader(fileIn));
+        }catch (IOException ioe) {
+            System.err.println("Error with outfile ("+fileIn+") : "+ioe.getMessage());
+            return;
+        }
         Writer out = null;
 
         // Instanciation du Générateur
@@ -148,7 +168,7 @@ public abstract class Parser { // Parser
                 out = new BufferedWriter(new FileWriter(fileOut));
                 gen.setOs(out);
             }catch ( IOException ioe) {
-                System.err.println("Error with outfile ("+fileOut+") : "+ioe.getMessage());
+                System.err.println("Error with infile ("+fileOut+") : "+ioe.getMessage());
             }
         }
 
@@ -159,6 +179,8 @@ public abstract class Parser { // Parser
         document = (DocumentFactory)fp.getInstance();
 
         /** PARSAGE **/
+        if (DEBUG != null)
+            System.out.println("\033[00;31mParsing...\033[00m");
         ParseResult result = ParseResult.IN_PROGRESS;
         // on considère qu'avant le document il y a une ligne blanche
         int c = (int)'\n';
@@ -170,11 +192,13 @@ public abstract class Parser { // Parser
             result = document.parse((int)'\n');
             result = document.parseEnd((int)'D'); // 'D' like DAT green
         }else{
-            result = document.parseEnd((int)'D'); // 'D' like DAT green
-//            document.getBuffer().delete(0,result.getConsumedCharCount());
+//            result = document.parseEnd((int)'D'); // 'D' like DAT green
+            document.getBuffer().delete(0,result.getConsumedCharCount()-50);
         }
 
         /** GENERATION **/
+        if (DEBUG != null)
+            System.out.println("\033[00;31mGenerating...\033[00m");
         // lancement de la génération du document de sortie
         Element e = document.getElement();
         gen.visit(e);

@@ -37,24 +37,26 @@ public class Directive extends AbstractElement { // Directive
 
     final static Object KIND_NOTE = new Object(); // la directive est une note
     final static Object KIND_CONTENTS = new Object(); // la table des matières
+    final static Object KIND_IMAGE = new Object(); // une image
+    final static Object KIND_FIGURE = new Object(); // une figure
 
     // attributs
 
     String text = null;
-    boolean is_directive;
+    //boolean is_directive;
     Object type = null;
 
     public Directive(){
-        is_directive = false;
+      //  is_directive = false;
     }
 
-    public boolean isDirective() {
-        return is_directive;
-    }
+ //   public boolean isDirective() {
+  //      return is_directive;
+//    }
 
-    public void setDirective(boolean b) {
-        is_directive = b;
-    }
+//    public void setDirective(boolean b) {
+ //       is_directive = b;
+ //   }
 
     public String getText(){
         return text.trim();
@@ -65,6 +67,10 @@ public class Directive extends AbstractElement { // Directive
             type = KIND_NOTE;
         }else if ( "contents".equals(t.toLowerCase()) ) {
             type = KIND_CONTENTS;
+        }else if ( "image".equals(t.toLowerCase()) ) {
+            type = KIND_IMAGE;
+        }else if ( "figure".equals(t.toLowerCase()) ) {
+            type = KIND_FIGURE;
         }
 
         this.text = t;
@@ -75,5 +81,6 @@ public class Directive extends AbstractElement { // Directive
     public Object getType() {
         return type;
     }
+
 } // Directive
 

@@ -92,7 +92,7 @@ public class BulletListFactory extends IndentedAbstractFactory { // BulletListFa
                 countSpace = 0;
                 SUB_STATE = AFTER_SYMBOLE;
             }else
-                result = ParseResult.FAILED.setError("Illegal symbole for bullet list: '"+(char)c+"'");
+                result = ParseResult.FINISHED.setError("Illegal symbole for bullet list: '"+(char)c+"'");
         }else if(SUB_STATE == SYMBOLE_SEARCH){
             if(c == symbole){
                 countSpace = 0;
@@ -103,7 +103,7 @@ public class BulletListFactory extends IndentedAbstractFactory { // BulletListFa
         }else if(SUB_STATE == AFTER_SYMBOLE){
             if(((char)c != ' ' && countSpace == 0)||
                ((char)c == ' ' && countSpace > 1)){
-                   result = ParseResult.FAILED.setError("List must have one space after symbole");
+                   result = ParseResult.FINISHED.setError("List must have one space after symbole");
             }else if((char)c == ' ' && countSpace == 0){
                 countSpace++;
             }else{

@@ -55,6 +55,7 @@ public abstract class IndentedAbstractFactory extends AbstractFactory {// Indent
     boolean unique      = false; // est ce que l'élément est unique ou bien forme une liste
     boolean oneLiner    = false; // est ce que l'élément peut être sur une seule ligne
     boolean noEndHead   = false; // est ce qu'il faut envoyer \n à parseHead pour identifier la tete
+    boolean noEndBody   = false; // est ce qu'il faut envoyer \n à parseBody pour identifier les éléments
 
     Object INDENT_STATE = null;  // état dans le mécanisme de gestion de l'indentation
     Object ACCEPT_STATE = null;  // état dans le mécanisme de gestion de l'acceptance par expression régulière
@@ -180,12 +181,16 @@ public abstract class IndentedAbstractFactory extends AbstractFactory {// Indent
             ACCEPT_STATE = FIRST_LINE;
         }
 
-        if (result == ParseResult.ACCEPT){
-            //System.out.print("\033[01;32m["+Name()+"]\033[00m ");
-        }else if (result == ParseResult.FAILED){
-            //System.out.print("\033[01;31m["+Name()+"]\033[00m ");
-        }else if (result == ParseResult.IN_PROGRESS){
-            //System.out.print("\033[00;35m["+Name()+"]\033[00m ");
+        if (Parser.DEBUG != null) {
+            if (result == ParseResult.ACCEPT){
+                System.out.print("\033[01;32m["+Name()+"]\033[00m ");
+            }else if (result == ParseResult.FAILED){
+                if (Parser.DEBUG == Parser.DEBUG_LEVEL2)
+                    System.out.print("\033[01;31m["+Name()+"]\033[00m ");
+            }else if (result == ParseResult.IN_PROGRESS){
+                if (Parser.DEBUG == Parser.DEBUG_LEVEL3)
+                    System.out.print("\033[00;35m["+Name()+"]\033[00m ");
+            }
         }
 
         return result;
@@ -265,8 +270,12 @@ public abstract class IndentedAbstractFactory extends AbstractFactory {// Indent
                 if ( noEndHead && (INDENT_STATE == READING_HEAD))
                     result = parseHead(c);
 
+                // lorsqu'on se base sur '\n' pour séparer les éléments du body
+                if (noEndBody && (INDENT_STATE == READING_BODY))
+                    result = parseBody(c);
+                else
+                    result = delegate(c);
 
-                result = delegate(c);
                 if (indentLength == -1) {
                     INDENT_STATE = INDENT_COUNT;
                 }else{
