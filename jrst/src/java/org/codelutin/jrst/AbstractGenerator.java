@@ -1,0 +1,67 @@
+/*##%
+ * Copyright (C) 2002, 2003 Code Lutin
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *##%*/
+
+/*
+ * AbstractGenerator.java
+ *
+ * Created: Oct 8, 2003
+ *
+ * @author Benjamin Poussin <poussin@codelutin.com>
+ * Copyright Code Lutin
+ * @version $Revision$
+ *
+ * Mise a jour: $Date$
+ * par : $Author$
+ */
+
+package org.codelutin.jrst;
+
+import java.util.Iterator;
+import java.lang.reflect.Method;
+
+public abstract class AbstractGenerator implements Generator { // AbstractGenerator
+
+    public void visit(Element e){
+        if(e != null){
+            callGenerate(e);
+            for(Iterator i=e.getChilds().iterator(); i.hasNext();){
+                this.visit((Element)i.next());
+            }
+        }
+    }
+
+    protected void callGenerate(Element e){
+        try{
+            Class eclass = e.getClass();
+            while(!eclass.equals(Element.class)){
+                try{
+                    Method m = getClass().getMethod("generate", new Class[]{eclass});
+                    m.invoke(this, new Object[]{e});
+                    return;
+                }catch(NoSuchMethodException eee){
+                    eclass = eclass.getSuperclass();
+                }
+            }
+            generate(e);
+        }catch(Exception eee){
+            eee.printStackTrace();
+        }
+    }
+
+} // AbstractGenerator
+

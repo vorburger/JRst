@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<project name="jrst" basedir="." default="build">
+
+  <!-- definition des differents repertoire -->
+  <property value="${basedir}" name="rootdir"/>
+
+  <property value="ActiveLogsCodeFilter" name="logfilter"/>
+  <property value="${rootdir}/lib" name="libdir"/>
+  <property value="${rootdir}/binlib" name="binlibdir"/>
+  <property value="${binlibdir}/LutinBuilder.jar" name="local.lutinbuilder.jar"/>
+  <property value="${libdir}" name="javacchome"/>
+  <property value="${rootdir}/src" name="srcdir"/>
+  <property value="${srcdir}/resource" name="resourcedir"/>
+  <property value="java" name="javadir"/>
+  <property value="model" name="modeldir"/>
+  <property value="ui" name="uidir"/>
+  <property value="template" name="templatedir"/>
+  <property value="web" name="webdir"/>
+  <property value="${rootdir}/gen" name="gendir"/>
+  <property value="${rootdir}/build" name="builddir"/>
+  <property value="${rootdir}/dist" name="distdir"/>
+  <property value="${rootdir}/doc" name="docdir"/>
+  <property value="${docdir}/api" name="javadocdir"/>
+
+  <property file="build.properties"/>
+
+  <!-- definition du classpath -->
+  <path id="classpath">
+    <pathelement location="${builddir}/${javadir}"/>
+    <pathelement location="${local.lutinbuilder.jar}"/>
+    <fileset dir="${libdir}/">
+      <include name="**/*.jar"/>
+      <include name="**/*.zip"/>
+    </fileset>
+    <fileset dir="${binlibdir}/">
+      <include name="**/*.jar"/>
+      <include name="**/*.zip"/>
+    </fileset>
+    <pathelement location="/opt/repository/j2sdk1.4.2_02/lib/tools.jar"/>
+  </path>
+
+  <!-- regles qui étaient precedement des scripts shell-->
+
+  <target name="help">
+    <java jar="${local.lutinbuilder.jar}" fork="true" failonerror="true" maxmemory="128m" classpathref="classpath">
+      <arg line="help"/>
+    </java>
+  </target>
+
+  <target name="run">
+    <echo message="execution de ${run.main.class}"/>
+    <java classname="${run.main.class}" fork="true" failonerror="true"
+          maxmemory="128m" classpathref="classpath"/>
+  </target>
+
+  <target name="update" depends="getLutinBuilder">
+    <cvs command="update -dP" compression="true" failonerror="false"/>
+    <java jar="${local.lutinbuilder.jar}" fork="true" failonerror="true"
+          maxmemory="128m" classpathref="classpath">
+      <arg line="update"/>
+    </java>
+  </target>
+
+  <target name="getLutinBuilder" depends="test"
+          unless="local.lutinbuilder.jar.available">
+    <get src="${lutinbuilder.jar}" verbose="true" ignoreerrors="false"
+         usetimestamp="true" dest="${local.lutinbuilder.jar}"/>
+  </target>
+
+  <!-- les appels au autres fichiers build-*.xml -->
+
+  <target name="build-start" depends="test" if="build-start.available">
+    <ant dir="${rootdir}" antfile="build-start.xml"/>
+  </target>
+
+  <target name="build-gen-pre" depends="test" if="build-gen-pre.available">
+    <ant dir="${rootdir}" antfile="build-gen-pre.xml"/>
+  </target>
+
+  <target name="build-gen-post" depends="test" if="build-gen-post.available">
+    <ant dir="${rootdir}" antfile="build-gen-post.xml"/>
+  </target>
+
+  <target name="build-compile-pre" depends="test" if="build-compile-pre.available">
+    <ant dir="${rootdir}" antfile="build-compile-pre.xml"/>
+  </target>
+
+  <target name="build-compile-post" depends="test" if="build-compile-post.available">
+    <ant dir="${rootdir}" antfile="build-compile-post.xml"/>
+  </target>
+
+  <target name="build-dist-pre" depends="test" if="build-dist-pre.available">
+    <ant dir="${rootdir}" antfile="build-dist-pre.xml"/>
+  </target>
+
+  <target name="build-dist-post" depends="test" if="build-dist-post.available">
+    <ant dir="${rootdir}" antfile="build-dist-post.xml"/>
+  </target>
+
+  <target name="build-end" depends="test" if="build-end.available">
+    <ant dir="${rootdir}" antfile="build-end.xml"/>
+  </target>
+
+  <!-- les targets -->
+
+  <target name="build" depends="build-start,init,test,taskdef,rewriter,read-properties,build-gen-pre,javacc,processor,processorCopy,build-gen-post,build-compile-pre,compile,build-compile-post,build-dist-pre,dist,build-dist-post,build-end">
+  </target>
+
+  <target name="init" description="Crée les répertoires obligatoires et défini la propriété antclasspath">
+    <mkdir dir="${libdir}"/>
+    <mkdir dir="${binlibdir}"/>
+    <mkdir dir="${builddir}/${javadir}"/>
+    <property name="antclasspath" refid="classpath"/>
+  </target>
+
+  <target name="test" depends="init" description="Test la présence de librairie pour pouvoir faire des targets conditionnel par la suite (tjdo, processor, jostraca)">
+      <available property="build-start.available" type="file"
+                 file="build-start.xml"/>
+      <available property="build-gen-pre.available" type="file"
+                 file="build-gen-pre.xml"/>
+      <available property="build-gen-post.available" type="file"
+                 file="build-gen-post.xml"/>
+      <available property="build-compile-pre.available" type="file"
+                 file="build-compile-pre.xml"/>
+      <available property="build-compile-post.available" type="file"
+                 file="build-compile-post.xml"/>
+      <available property="build-dist-pre.available" type="file"
+                 file="build-dist-pre.xml"/>
+      <available property="build-dist-post.available" type="file"
+                 file="build-dist-post.xml"/>
+      <available property="build-end.available" type="file"
+                 file="build-end.xml"/>
+
+      <available property="local.lutinbuilder.jar.available" type="file"
+                 file="${local.lutinbuilder.jar}" classpathref="classpath"/>
+      <available property="tjdo.available" classpathref="classpath"
+                 classname="com.triactive.jdo.enhance.SunReferenceEnhancer"/>
+      <available property="processor.available" classpathref ="classpath"
+                 classname="org.codelutin.processor.ant.ProcessorTask"/>
+      <available property="jostraca.available" classpathref ="classpath"
+                 classname="org.jostraca.JostracaTask"/>
+  </target>
+
+  <target name="taskdef" depends="init" description="Définit des taches qui seront utilisés plus tard">
+    <taskdef name="outputRewriter" classname="org.codelutin.lutinbuilder.ant.OutputRewriterTask"
+      classpathref = "classpath" onerror="report"/>
+    <taskdef name="updateBuildProperties" classname="org.codelutin.lutinbuilder.ant.UpdateBuildPropertiesTask"
+      classpathref = "classpath" onerror="report"/>
+    <taskdef name="processor" classname="org.codelutin.processor.ant.ProcessorTask"
+      classpathref = "classpath" onerror="report"/>
+    <taskdef name="jostraca" classname="org.jostraca.JostracaTask"
+      classpathref = "classpath" onerror="report"/>
+    <taskdef name="javacctask" classname="org.codelutin.lutinbuilder.ant.JavaCCTask"
+      classpathref="classpath" onerror="report"/>
+   </target>
+
+  <target name="rewriter" depends="taskdef" description="permet de convertir les messages pour que n'apparaisse pas le répertoire gen mais le répertoire src et ainsi que les outils graphiques de compilation fonctionne convenablement (ou presque)">
+    <outputRewriter/>
+  </target>
+
+  <target name="read-properties" depends="taskdef">
+    <updateBuildProperties/>
+    <property file="${rootdir}/build.properties"/>
+  </target>
+
+  <target name="javacc" depends="taskdef">
+    <mkdir dir="${gendir}/${javadir}"/>
+    <javacctask javacchome="${javacchome}" destdir="${gendir}/${javadir}" srcdir="${srcdir}/${javadir}" />
+  </target>
+
+  <target name="processor" depends="taskdef" description="Applique des filtres du processor sur les fichiers sources Java" if="processor.available">
+    <processor filters="org.codelutin.processor.filters.GeneratorTemplatesFilter, org.codelutin.processor.filters.${logfilter}" destdir="${gendir}/${javadir}" srcdir="${srcdir}/${javadir}" includes="**/*.java"/>
+  </target>
+
+  <target name="processorCopy" description="Copie les fichiers sources Java du répertoire src/java vers le répertoire gen/java" unless="processor.available">
+    <copy todir="${gendir}/${javadir}" preservelastmodified="true">
+      <fileset dir="${srcdir}/${javadir}" includes="**/*.java"/>
+    </copy>
+  </target>
+
+  <target name="compile" depends="compile-java,compile-jdo">
+  </target>
+
+  <target name="compile-java" description="Compile les fichiers Java de gen et place les fichiers .class dans build">
+    <mkdir dir="${gendir}/${javadir}"/>
+    <mkdir dir="${builddir}/${javadir}"/>
+    <javac includes="**" destdir="${builddir}/${javadir}" srcdir="${gendir}/${javadir}" source="${javac.source}"
+      nowarn="${javac.nowarn}" debug="${javac.debug}"
+      optimize="${javac.optimize}" deprecation="${javac.deprecation}"
+      verbose="${javac.verbose}">
+      <classpath refid="classpath"/>
+    </javac>
+  </target>
+
+  <target name="compile-jdo" depends="tjdo" description="Cette règle ne fait qu'appeler d'autre règle dont l'exécution est conditionnée au librairie présente.">
+  </target>
+
+  <target name="tjdo" depends="compile-java, test" if="tjdo.available" description="Utilise tjdo pour la presistence JDO">
+    <copy todir="${builddir}/${javadir}">
+      <fileset dir="${srcdir}/${javadir}" includes="**/*.jdo"/>
+    </copy>
+    <apply executable="java" parallel="true" failonerror="true">
+      <arg value="-classpath"/>
+      <arg value="${antclasspath}"/>
+      <arg value="com.triactive.jdo.enhance.SunReferenceEnhancer"/>
+      <arg value="-d"/>
+      <arg value="${builddir}/${javadir}"/>
+      <fileset dir="${builddir}/${javadir}" includes="**/*.jdo"/>
+    </apply>
+  </target>
+
+  <!-- classe vers jar -->
+
+  <target name="dist-only" description="Cette règle ne fait que la création du jar">
+    <mkdir dir="${distdir}"/>
+    <jar jarfile="${distdir}/${ant.project.name}.jar" >
+      <fileset includes="**" dir="${builddir}/${javadir}"/>    </jar>
+  </target>
+
+  <target name="dist" depends="read-properties,compile" description="Cette règle appel la compile et crée le fichier jar et si nécessaire war">
+    <antcall target="dist-only"/>
+  </target>
+
+  <!-- javadoc -->
+  <target name="javadoc" description="Cette règle permet la génération de la javadoc">
+    <mkdir dir="${javadocdir}"/>
+    <copy todir="${gendir}/${javadir}">
+      <fileset dir="${srcdir}/${javadir}">
+        <include name="**/package.html"/>
+        <include name="**/doc-files/**"/>
+      </fileset>
+    </copy>
+    <javadoc sourcepath="${gendir}/${javadir}" packagenames="org.codelutin.jrst" destdir="${javadocdir}" Splitindex="yes">
+      <classpath refid="classpath"/>
+    </javadoc>
+  </target>
+
+  <!-- release -->
+
+  <target name="release" depends="read-properties,compile,javadoc" description="Cette règle permet la création de plusieurs fichiers qui servent à faire une release. Les fichiers généré sont la documentatio, les sources, et les binaires">
+    <mkdir dir="${distdir}"/>
+    <!-- documentation -->
+     <zip zipfile="${distdir}/${ant.project.name}-doc-${release.version}.zip">
+      <fileset dir="${rootdir}">
+        <include name="LICENSE.txt"/>
+        <include name="COPYRIGHT.txt"/>
+      </fileset>
+      <fileset dir="${rootdir}/doc">
+        <include name="**/*.pdf"/>
+        <include name="**/*.rst"/>
+        <include name="LutinBuilder.resources"/>
+        <include name="api/**"/>
+      </fileset>
+    </zip>
+
+    <!-- source -->
+    <zip zipfile="${distdir}/${ant.project.name}-src-${release.version}.zip">
+      <fileset dir="${rootdir}">
+        <exclude name="**/CVS"/>
+        <include name="**/*.resources"/>
+        <include name="*.properties"/>
+        <include name="changelog"/>
+        <include name="*.sh"/>
+        <include name="LICENSE.txt"/>
+        <include name="COPYRIGHT.txt"/>
+        <include name="doc/**/*.rst"/>
+        <include name="src/**"/>
+      </fileset>
+    </zip>
+
+    <!-- binaire -->
+    <jar jarfile="${distdir}/${ant.project.name}-${release.version}.jar" >
+      <fileset dir="${rootdir}">
+        <include name="LICENSE.txt"/>
+        <include name="COPYRIGHT.txt"/>
+        <include name="changelog"/>
+      </fileset>
+      <fileset dir="${builddir}/${javadir}">
+        <include name="**"/>
+      </fileset>
+      
+    </jar>
+
+    <!-- lib util pour l'execution -->
+    <zip zipfile="${distdir}/${ant.project.name}-lib-${release.version}.zip">
+      <fileset dir="${libdir}">
+        <include name="**"/>
+      </fileset>
+    </zip>
+
+    <!-- lib util pour la compilation -->
+    <zip zipfile="${distdir}/${ant.project.name}-binlib-${release.version}.zip">
+      <fileset dir="${binlibdir}">
+        <include name="**"/>
+      </fileset>
+    </zip>
+
+    <!-- all in one -->
+
+    <!-- Permet de créer un jar sans dépendance vis a vis des librairies, tout ce qu'il faut au programme est inclus dans le jar -->
+    <jar jarfile="${distdir}/${ant.project.name}-nodeps-${release.version}.jar" >
+      <fileset includes="**" dir="${builddir}/${javadir}"/>
+    </jar>
+  </target>
+
+
+  <!-- nettoyage -->
+  <target name="clean" description="nettoie le projet">
+    <delete>
+      <fileset defaultexcludes="off" dir="." includes="**/*~,**/*.bak,**/#*#"/>
+    </delete>
+    <delete dir="${builddir}"/>
+    <delete dir="${gendir}"/>
+    <delete dir="${distdir}"/>
+  </target>
+
+
+  <!-- autre -->
+
+  <target name="dtd" depends="taskdef" description="génère la dtd du fichier build.xml">
+    <antstructure output="ant-build.dtd"/>
+  </target>
+</project>
