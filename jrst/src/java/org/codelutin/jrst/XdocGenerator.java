@@ -39,16 +39,16 @@ public class XdocGenerator extends HtmlGenerator { // XdocGenerator
         if (e.getTitle() != null)
             os.println("<title>"+e.getTitle().getText()+"</title>");
         os.println("</properties>\n<body>");
+        os.println("<section name=\""+getHtmlName(e.getTitle().getText().trim())+"\">");
 
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
             visit((Element)i.next());
         }
-        os.println("</body></document>");
+        os.println("</section></body></document>");
     }
 
     public void generate(Title e){
         if (e == doc.getTitle()) {
-            os.println("<section name=\""+getHtmlName(e.getText().trim())+"\">"+e.getText().trim()+"</section>");
         }else if ( e.getUpperline()) {
             os.print("<h1><a class=\"toc-backref\"  name=\""+getHtmlName(e.getText())+"\"> ");//href=\"#id"+e.getId()+"\"
             os.println(e.getText()+"</a></h1>");
