@@ -20,7 +20,7 @@
   <description>Parser RST en Java.</description>
   <shortDescription>Parser RST en Java</shortDescription>
 
-  <issueTrackingUrl>http://labs.libre-entreprise.org/tracker/?group_id=0#LABS_ID#</issueTrackingUrl>
+  <issueTrackingUrl>http://labs.libre-entreprise.org/tracker/?group_id=54</issueTrackingUrl>
 
   <dependencies>
     <dependency>
