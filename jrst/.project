@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <projectDescription>
-  <name>jrst</name>
+  <name>Lutin RST processor for Java</name>
   <comment/>
-  <projects/>
+  <projects>
+  </projects>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>
-      <arguments/>
+      <arguments>
+      </arguments>
     </buildCommand>
   </buildSpec>
   <natures>
