@@ -17,7 +17,7 @@
  *##%*/
 
 /* *
- * RstList.java
+ * Param.java
  *
  * Created: 17 janv. 2004
  *
@@ -31,32 +31,19 @@
 
 package org.codelutin.jrst;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+public class Para extends AbstractElement { // Param
+    String text = null;
 
-public class RstList  extends RootElement implements Element { // RstList
-
-    /** liste de chaine de caratere */
-    LinkedList list;
-    int indentLenght = 0;
-    int symbole = -1;
-
-    public RstList(LinkedList list, int indentLenght, int symbole){
-        this.list = list;
-        this.indentLenght = indentLenght;
-        this.symbole = symbole;
+    public Para(){
     }
 
-    public int getSymbole(){
-        return symbole;
+    public String getText(){
+        return text;
     }
 
-    public int getIndentLenght(){
-        return indentLenght;
+    public void setText(String text){
+        this.text = text;
     }
 
-    public Iterator getList(){
-        return list.iterator();
-    }
-} // RstList
+} // Param
 

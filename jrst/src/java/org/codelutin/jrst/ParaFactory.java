@@ -31,41 +31,54 @@
 
 package org.codelutin.jrst;
 
-public class RstParaFactory extends RootFactory implements ElementFactory { // ParaFactory
-    StringBuffer buffer = new StringBuffer();
-    ParseResult parseResult = null;
+public class ParaFactory extends AbstractFactory { // ParaFactory
+    StringBuffer buffer = null;
     int lastc = -1;
 
+    protected AbstractFactory factoryNew(){
+        return  new ParaFactory();
+    }
+    protected Element elementNew(){
+        return new Para();
+    }
+
+    protected Para getPara(){
+        return (Para)getElement();
+    }
+
     public void init(){
+        super.init();
         lastc = -1;
-        element = null;
         buffer = new StringBuffer();
-        parseResult = PARSE_IN_PROGRESS.create();
+    }
+
+    public ParseResult accept(int c) {
+        if((char)c != ' ' && (char)c != '\n'){
+            return ParseResult.ACCEPT;
+        }else{
+            return ParseResult.FAILED;
+        }
     }
 
     /**
     * Retourne true tant que l'objet n'a pas fini de parser son élément.
     * Lorsqu'il retourne false, la factory est capable de savoir si l'élement est convenable ou non, pour cela il faut appeler la méthode {@link getParseResult}.
     */
-    public ParseResult accept(int c) {
+    public ParseResult parse(int c) {
+        ParseResult result = ParseResult.IN_PROGRESS;
+        consumedCharCount++;
         if(lastc == -1 && (char)c == ' '){
-            parseResult = PARSE_FAILED.create();
-            parseResult.text = "Para must begin at column 0";
+            result = ParseResult.FAILED.setError("Para must begin at column 0");
         }else if((char)c == '\n' && (char)lastc =='\n'){
-            element = createElement();
-            parseResult = PARSE_FINISHED.create();
+            getPara().setText(buffer.toString());
+            result = ParseResult.FINISHED.setConsumedCharCount(consumedCharCount-1);
         }else{
             lastc = c;
             buffer.append((char)c);
+            getPara().setText(buffer.toString());
         }
-        return parseResult;
+        return result;
     }
 
-    /**
-    * Si le résultat du parsage est ok alors retourne l'element, sinon retourne null
-    */
-    protected Element createElement(){
-        return new RstPara(buffer.toString());
-    }
 } // ParaFactory
 

@@ -1,4 +1,4 @@
-/*##%
+/* *##%
  * Copyright (C) 2002, 2003 Code Lutin
  *
  * This program is free software; you can redistribute it and/or
@@ -16,10 +16,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *##%*/
 
-/*
- * AbstractGenerator.java
+/* *
+ * BulletList.java
  *
- * Created: Oct 8, 2003
+ * Created: 17 janv. 2004
  *
  * @author Benjamin Poussin <poussin@codelutin.com>
  * Copyright Code Lutin
@@ -32,33 +32,23 @@
 package org.codelutin.jrst;
 
 import java.util.Iterator;
-import java.lang.reflect.Method;
+import java.util.LinkedList;
 
-public abstract class AbstractGenerator implements Generator { // AbstractGenerator
+public class BulletList  extends AbstractElement { // BulletList
 
-    public void visit(Element e){
-        if(e != null){
-            callGenerate(e);
-        }
+    /** liste de chaine de caratere */
+    int symbole = -1;
+
+    public BulletList(){
     }
 
-    protected void callGenerate(Element e){
-        try{
-            Class eclass = e.getClass();
-            while(eclass != null && !eclass.equals(Element.class)){
-                try{
-                    Method m = getClass().getMethod("generate", new Class[]{eclass});
-                    m.invoke(this, new Object[]{e});
-                    return;
-                }catch(NoSuchMethodException eee){
-                    eclass = eclass.getSuperclass();
-                }
-            }
-            generate(e);
-        }catch(Exception eee){
-            eee.printStackTrace();
-        }
+    public String getSymbole(){
+        return String.valueOf((char)symbole);
     }
 
-} // AbstractGenerator
+    public void setSymbole(int symbole){
+        this.symbole = symbole;
+    }
+
+} // BulletList
 

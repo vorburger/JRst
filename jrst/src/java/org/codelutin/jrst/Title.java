@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *##%*/
+ *##%**/
 
 /*
- * RootElement.java
+ * Title.java
  *
- * Created: Oct 8, 2003
+ * Created: 7 oct. 2003
  *
  * @author Benjamin Poussin <poussin@codelutin.com>
  * Copyright Code Lutin
@@ -31,26 +31,37 @@
 
 package org.codelutin.jrst;
 
-import java.util.ArrayList;
-import java.util.List;
+public class Title extends AbstractElement { // Title
 
-public class RootElement implements Element { // RootElement
+    String text = null;
+    int titleMark = -1;
+    boolean upperline = false;
 
-    protected ArrayList childs = new ArrayList();
-
-    public RootElement(){}
-
-    public void visit(Generator generator){
-        generator.generate(this);
+    public Title(){
     }
 
-    public void addChild(Element e){
-        childs.add(e);
+    public int getTitleMark(){
+        return titleMark;
     }
 
-    public List getChilds(){
-        return childs;
+    public void setTitleMark(int titleMark){
+        this.titleMark = titleMark;
     }
 
-} // RootElement
+    public String getText(){
+        return text;
+    }
+
+    public void setText(String text){
+        this.text = text;
+    }
+
+    public boolean getUpperline(){
+        return upperline;
+    }
+
+    public void setUpperline(boolean upperline){
+        this.upperline = upperline;
+    }
+} // Title
 

@@ -17,9 +17,9 @@
  *##%*/
 
 /* *
- * RstGenerator.java
+ * HtmlGenerator.java
  *
- * Created: 17 janv. 2004
+ * Created: 24 janv. 2004
  *
  * @author Benjamin Poussin <poussin@codelutin.com>
  * Copyright Code Lutin
@@ -33,63 +33,55 @@ package org.codelutin.jrst;
 
 import java.util.Iterator;
 
-public class RstGenerator extends AbstractGenerator { // RstGenerator
+public class HtmlGenerator extends AbstractGenerator { // HtmlGenerator
     public void generate(Element e){
-        System.out.println("default generate: "+e.getClass().getName());
+        System.out.println("<!-- default generate: " + e.getClass().getName() + "-->");
     }
 
     public void generate(Document e){
-        System.out.println("<Document>");
+        System.out.println("<html><body>");
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
             this.visit((Element)i.next());
         }
+        System.out.println("</body></html>");
     }
 
     public void generate(Title e){
-        System.out.println("<Title>");
-        String title = e.getText();
-        if(e.getUpperline()){
-            for(int i=0; i<title.length(); i++){
-                System.out.print((char)e.getTitleMark());
-            }
-            System.out.println();
-        }
-
-        System.out.println(title);
-
-        for(int i=0; i<title.length(); i++){
-            System.out.print((char)e.getTitleMark());
-        }
-        System.out.println();
-        System.out.println();
+        System.out.println("<h1>");
+        System.out.println(e.getText());
+        System.out.println("</h1>");
     }
 
     public void generate(Para e){
-        System.out.println("<Para>");
+        System.out.println("<p>");
         System.out.println(e.getText());
+        System.out.println("</p>");
     }
 
     public void generate(BulletList e){
-        System.out.println("<BulletList>");
+        System.out.println("<ul>");
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
-            System.out.print(e.getSymbole()+" ");
+            System.out.print("<li>");
             visit((Element)i.next());
+            System.out.print("</li>");
         }
-        System.out.println();
+        System.out.println("</ul>");
    }
 
    public void generate(FieldList e){
-       System.out.println("<FieldList>");
+       System.out.println("<dl>");
        for(int i=0; i<e.getChilds().size(); i++){
            Object child = e.getChilds().get(i);
            if(child instanceof String){
-               System.out.print(":"+child+": ");
+               System.out.print("<dt>"+child+"<dt>");
            }else{
+               System.out.print("<dd>");
                visit((Element)child);
+               System.out.print("</dd>");
            }
        }
-       System.out.println();
+       System.out.println("</dl>");
    }
 
-} // RstGenerator
+} // HtmlGenerator
 

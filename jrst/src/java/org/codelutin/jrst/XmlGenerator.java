@@ -17,9 +17,9 @@
  *##%*/
 
 /* *
- * RstGenerator.java
+ * XmlGenerator.java
  *
- * Created: 17 janv. 2004
+ * Created: 24 janv. 2004
  *
  * @author Benjamin Poussin <poussin@codelutin.com>
  * Copyright Code Lutin
@@ -33,63 +33,55 @@ package org.codelutin.jrst;
 
 import java.util.Iterator;
 
-public class RstGenerator extends AbstractGenerator { // RstGenerator
+public class XmlGenerator extends AbstractGenerator { // XmlGenerator
     public void generate(Element e){
         System.out.println("default generate: "+e.getClass().getName());
     }
 
     public void generate(Document e){
-        System.out.println("<Document>");
+        System.out.println("<document>");
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
             this.visit((Element)i.next());
         }
+        System.out.println("</document>");
     }
 
     public void generate(Title e){
-        System.out.println("<Title>");
-        String title = e.getText();
-        if(e.getUpperline()){
-            for(int i=0; i<title.length(); i++){
-                System.out.print((char)e.getTitleMark());
-            }
-            System.out.println();
-        }
-
-        System.out.println(title);
-
-        for(int i=0; i<title.length(); i++){
-            System.out.print((char)e.getTitleMark());
-        }
-        System.out.println();
-        System.out.println();
+        System.out.println("<title>");
+        System.out.println(e.getText());
+        System.out.println("</title>");
     }
 
     public void generate(Para e){
-        System.out.println("<Para>");
+        System.out.println("<para>");
         System.out.println(e.getText());
+        System.out.println("</para>");
     }
 
     public void generate(BulletList e){
-        System.out.println("<BulletList>");
+        System.out.println("<bulletlist>");
         for(Iterator i=e.getChilds().iterator(); i.hasNext();){
-            System.out.print(e.getSymbole()+" ");
+            System.out.print("<item>");
             visit((Element)i.next());
+            System.out.print("</item>");
         }
-        System.out.println();
+        System.out.println("<bulletlist>");
    }
 
    public void generate(FieldList e){
-       System.out.println("<FieldList>");
+       System.out.println("<fieldlist>");
        for(int i=0; i<e.getChilds().size(); i++){
            Object child = e.getChilds().get(i);
            if(child instanceof String){
-               System.out.print(":"+child+": ");
+               System.out.print("<term>"+child+"<term>");
            }else{
+               System.out.print("<decription>");
                visit((Element)child);
+               System.out.print("</decription>");
            }
        }
-       System.out.println();
+       System.out.println("</fieldlist>");
    }
 
-} // RstGenerator
+} // XmlGenerator
 

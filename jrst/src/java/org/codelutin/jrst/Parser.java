@@ -39,7 +39,7 @@ import java.io.FileReader;
 
 public abstract class Parser { // Parser
 
-    static String TEXT = "coucou\n======\n\nun\n\ndeux\n";
+    static String TEXT = "======\ncoucou\n======\n\nun\n\ndeux\n";
 
     static public void main(String [] args) throws Exception {
         Reader in;
@@ -50,27 +50,43 @@ public abstract class Parser { // Parser
             in = new LineNumberReader(new StringReader(TEXT));
         }
 
-        ElementFactory factory = new RstDocumentFactory();
-        factory.addChild(new RstTitleFactory());
-        factory.addChild(new RstParaFactory());
-        factory.addChild(new RstListFactory());
+        DocumentFactory document = new DocumentFactory();
+        ElementFactory title = new TitleFactory();
+        ElementFactory bulletList = new BulletListFactory();
+        ElementFactory fieldList = new FieldListFactory();
+        ElementFactory para = new ParaFactory();
 
-        factory.init();
+        document.addChild(title);
+        document.addChild(bulletList);
+        document.addChild(fieldList);
+        document.addChild(para); // mettre le paragraphe a la fin car il mange tout
 
+        bulletList.addChild(fieldList);
+        bulletList.addChild(bulletList);
+        bulletList.addChild(para); // mettre le paragraphe a la fin car il mange tout
+
+        fieldList.addChild(fieldList);
+        fieldList.addChild(bulletList);
+        fieldList.addChild(para); // mettre le paragraphe a la fin car il mange tout
+
+        ParseResult result = ParseResult.IN_PROGRESS;
         int c = in.read();
-        while(c != -1 && factory.accept(c).equals(factory.PARSE_IN_PROGRESS)){
+        while(c != -1 && ((result = document.parse(c)) == ParseResult.IN_PROGRESS)){
             c = in.read();
         }
 
-        // on ajoute toujours 2 retours chariot pour être sur que la lecture est terminé.
-        factory.accept((int)'\n');
-        factory.accept((int)'\n');
+        Element e = document.getElement();
 
-        Element e = factory.getElement();
-
-        System.out.println(e);
-        Generator gen = new RstGenerator();
+        Generator gen = new HtmlGenerator();
         gen.visit(e);
+
+        if(result == ParseResult.FAILED){
+            System.out.println(result.getError());
+            System.out.println("buffer was:'''");
+            System.out.println(document.getBuffer().toString());
+            System.out.println("'''");
+        }
+
     }
 
 } // Parser

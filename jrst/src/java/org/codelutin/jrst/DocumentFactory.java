@@ -17,7 +17,7 @@
  *##%*/
 
 /*
- * RstDocumentFactory.java
+ * DocumentFactory.java
  *
  * Created: 7 oct. 2003
  *
@@ -31,11 +31,22 @@
 
 package org.codelutin.jrst;
 
-public class RstDocumentFactory extends RootFactory implements ElementFactory { // RstDocumentFactory
+public class DocumentFactory extends AbstractFactory { // DocumentFactory
 
-   public Element createElement(){
-        return new RstDocument();
+    protected AbstractFactory factoryNew(){
+        return new DocumentFactory();
+    }
+    protected Element elementNew(){
+        return new Document();
+    }
+    public ParseResult accept(int c){
+        return ParseResult.ACCEPT;
+    }
+    public ParseResult parse(int c){
+        ParseResult result = ParseResult.IN_PROGRESS;
+        result = delegate(c);
+        return result;
     }
 
-} // RstDocumentFactory
+} // DocumentFactory
 

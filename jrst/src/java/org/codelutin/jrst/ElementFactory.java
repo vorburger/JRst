@@ -33,30 +33,7 @@ package org.codelutin.jrst;
 
 public interface ElementFactory { // ElementFactory
 
-    public final static class ParseResult{
-        protected String name;
-        /** variable utilisable par les Factories pour conserver des etat internes */
-        public Object STATE = null;
-        /** variable utilisable par les Factories pour mettre un message */
-        public String text = "";
-        protected ParseResult(String name){
-            this.name = name;
-        }
-        public ParseResult create(){
-            ParseResult result = new ParseResult(name);
-            return result;
-        }
-        public boolean equals(Object o){
-            if(o == this)
-                return true;
-            return o instanceof ParseResult && ((ParseResult)o).name.equals(name);
-        }
-    }
-    public final static ParseResult PARSE_FINISHED = new ParseResult("PARSE_FINISHED");
-    public final static ParseResult PARSE_FAILED = new ParseResult("PARSE_FAILED");
-    public final static ParseResult PARSE_IN_PROGRESS = new ParseResult("PARSE_IN_PROGRESS");
-
-    public void init();
+    public ElementFactory create();
 
     /**
      * Tant que l'élément accept les caractères, on continu a lui envoyer.
@@ -66,7 +43,7 @@ public interface ElementFactory { // ElementFactory
      *      caractère.
      */
     public ParseResult accept(int c);
-
+    public ParseResult parse(int c);
     /**
      * Retourne l'élement représenté créé après la lecture de l'élément.
      *

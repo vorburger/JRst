@@ -17,7 +17,7 @@
  *##%**/
 
 /*
- * RstTitle.java
+ * Document.java
  *
  * Created: 7 oct. 2003
  *
@@ -31,23 +31,7 @@
 
 package org.codelutin.jrst;
 
-public class RstTitle extends RootElement implements Element { // RstTitle
+public class Document extends AbstractElement { // Document
 
-    String title = null;
-    int titleMark = -1;
-
-    public RstTitle(String title, int titleMark){
-        this.title = title;
-        this.titleMark = titleMark;
-    }
-
-    public int getTitleMark(){
-        return titleMark;
-    }
-
-    public String getTitle(){
-        return title;
-    }
-
-} // RstTitle
+} // Document
 

@@ -45,15 +45,15 @@ fi
 
 if [ -z "$LUTIN_BUILDER_JAR" ]; then
         echo "impossible de trouver l'emplacement de LutinBuilder.jar"
-        echo "essai de récupération de LutinBuilder.jar grâce à ant"
+        echo "essai de r?cup?ration de LutinBuilder.jar gr?ce ? ant"
         result=`ant -f $rep/build.xml getLutinBuilder 2>&1`
         retour=$?
         if [ "$retour" = "0" ]; then
                 LUTIN_BUILDER_JAR=$rep/binlib/LutinBuilder.jar
         else
-                echo "impossible de récupérer LutinBuilder.jar, vous avez deux solution:"
-                echo " - installer ant sur votre système"
-                echo " - placer LutinBuilder.jar dans le répertoire binlib"
+                echo "impossible de r?cup?rer LutinBuilder.jar, vous avez deux solution:"
+                echo " - installer ant sur votre syst?me"
+                echo " - placer LutinBuilder.jar dans le r?pertoire binlib"
                 exit 1
         fi
 fi

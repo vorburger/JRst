@@ -1,4 +1,4 @@
-/*##%
+/* *##%
  * Copyright (C) 2002, 2003 Code Lutin
  *
  * This program is free software; you can redistribute it and/or
@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *##%**/
+ *##%*/
 
-/*
- * RstDocument.java
+/* *
+ * FieldList.java
  *
- * Created: 7 oct. 2003
+ * Created: 24 janv. 2004
  *
  * @author Benjamin Poussin <poussin@codelutin.com>
  * Copyright Code Lutin
@@ -31,7 +31,27 @@
 
 package org.codelutin.jrst;
 
-public class RstDocument extends RootElement implements Element { // RstDocument
+import java.util.ArrayList;
 
-} // RstDocument
+/**
+* Represente une liste de champs
+* <pre>
+* :field1: text
+* :field2: text
+* ...
+* </pre>
+* la liste childs contient alors des Strings qui represente le nom du champs
+* puis ensuite les elements constituants le texte pour le champs jusqu'au
+* prochain objet de type String ou la fin de la liste.
+*/
+public class FieldList extends AbstractElement { // FieldList
+
+    public FieldList(){
+    }
+
+    public void addFieldText(String fieldText){
+        this.childs.add(fieldText);
+    }
+
+} // FieldList
 

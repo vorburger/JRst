@@ -17,9 +17,9 @@
  *##%*/
 
 /* *
- * RstParam.java
+ * ParseResult.java
  *
- * Created: 17 janv. 2004
+ * Created: 22 janv. 2004
  *
  * @author Benjamin Poussin <poussin@codelutin.com>
  * Copyright Code Lutin
@@ -31,16 +31,31 @@
 
 package org.codelutin.jrst;
 
-public class RstPara extends RootElement implements Element { // RstParam
-    String text = null;
+public class ParseResult { // ParseResult
 
-    public RstPara(String text){
-        this.text = text;
+    int consumedCharCount = -1;
+    String error = "";
+
+    public final static ParseResult ACCEPT = new ParseResult();
+    public final static ParseResult FINISHED = new ParseResult();
+    public final static ParseResult FAILED = new ParseResult();
+    public final static ParseResult IN_PROGRESS = new ParseResult();
+
+    public ParseResult setConsumedCharCount(int consumedCharCount) {
+        this.consumedCharCount = consumedCharCount;
+        return this;
+    }
+    public int getConsumedCharCount() {
+        return consumedCharCount;
     }
 
-    public String getText(){
-        return text;
+    public String getError() {
+        return error;
+    }
+    public ParseResult setError(String error) {
+        this.error = error;
+        return this;
     }
 
-} // RstParam
+} // ParseResult
 

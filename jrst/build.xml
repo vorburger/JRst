@@ -16,7 +16,7 @@
   <property value="ui" name="uidir"/>
   <property value="template" name="templatedir"/>
   <property value="web" name="webdir"/>
-  <property value="${rootdir}/gen" name="gendir"/>
+  <property value="${srcdir}" name="gendir"/>
   <property value="${rootdir}/build" name="builddir"/>
   <property value="${rootdir}/dist" name="distdir"/>
   <property value="${rootdir}/doc" name="docdir"/>
@@ -39,7 +39,7 @@
     <pathelement location="/opt/repository/j2sdk1.4.2_02/lib/tools.jar"/>
   </path>
 
-  <!-- regles qui étaient precedement des scripts shell-->
+  <!-- regles qui ?taient precedement des scripts shell-->
 
   <target name="help">
     <java jar="${local.lutinbuilder.jar}" fork="true" failonerror="true" maxmemory="128m" classpathref="classpath">
@@ -103,17 +103,18 @@
 
   <!-- les targets -->
 
-  <target name="build" depends="build-start,init,test,taskdef,rewriter,read-properties,build-gen-pre,javacc,processor,processorCopy,build-gen-post,build-compile-pre,compile,build-compile-post,build-dist-pre,dist,build-dist-post,build-end">
+  <target name="build" depends="build-start,init,test,taskdef,rewriter,read-properties,build-gen-pre,javacc,build-gen-post,build-compile-pre,compile,build-compile-post,build-dist-pre,dist,build-dist-post,build-end">
   </target>
 
-  <target name="init" description="Crée les répertoires obligatoires et défini la propriété antclasspath">
+  <target name="init" description="Cr?e les r?pertoires obligatoires et d?fini la propri?t? antclasspath">
     <mkdir dir="${libdir}"/>
     <mkdir dir="${binlibdir}"/>
+    <mkdir dir="${gendir}/${javadir}"/>
     <mkdir dir="${builddir}/${javadir}"/>
     <property name="antclasspath" refid="classpath"/>
   </target>
 
-  <target name="test" depends="init" description="Test la présence de librairie pour pouvoir faire des targets conditionnel par la suite (tjdo, processor, jostraca)">
+  <target name="test" depends="init" description="Test la pr?sence de librairie pour pouvoir faire des targets conditionnel par la suite (tjdo, processor, jostraca)">
       <available property="build-start.available" type="file"
                  file="build-start.xml"/>
       <available property="build-gen-pre.available" type="file"
@@ -141,20 +142,20 @@
                  classname="org.jostraca.JostracaTask"/>
   </target>
 
-  <target name="taskdef" depends="init" description="Définit des taches qui seront utilisés plus tard">
+  <target name="taskdef" depends="init" description="D?finit des taches qui seront utilis?s plus tard">
     <taskdef name="outputRewriter" classname="org.codelutin.lutinbuilder.ant.OutputRewriterTask"
-      classpathref = "classpath" onerror="report"/>
+      classpathref = "classpath" onerror="ignore"/>
     <taskdef name="updateBuildProperties" classname="org.codelutin.lutinbuilder.ant.UpdateBuildPropertiesTask"
-      classpathref = "classpath" onerror="report"/>
+      classpathref = "classpath" onerror="ignore"/>
     <taskdef name="processor" classname="org.codelutin.processor.ant.ProcessorTask"
-      classpathref = "classpath" onerror="report"/>
+      classpathref = "classpath" onerror="ignore"/>
     <taskdef name="jostraca" classname="org.jostraca.JostracaTask"
-      classpathref = "classpath" onerror="report"/>
+      classpathref = "classpath" onerror="ignore"/>
     <taskdef name="javacctask" classname="org.codelutin.lutinbuilder.ant.JavaCCTask"
-      classpathref="classpath" onerror="report"/>
+      classpathref="classpath" onerror="ignore"/>
    </target>
 
-  <target name="rewriter" depends="taskdef" description="permet de convertir les messages pour que n'apparaisse pas le répertoire gen mais le répertoire src et ainsi que les outils graphiques de compilation fonctionne convenablement (ou presque)">
+  <target name="rewriter" depends="taskdef" description="permet de convertir les messages pour que n'apparaisse pas le r?pertoire gen mais le r?pertoire src et ainsi que les outils graphiques de compilation fonctionne convenablement (ou presque)">
     <outputRewriter/>
   </target>
 
@@ -164,14 +165,14 @@
   </target>
 
   <target name="javacc" depends="taskdef">
-    <javacctask javacchome="${javacchome}" destdir="${gendir}" srcdir="${srcdir}" />
+    <javacctask javacchome="${javacchome}" destdir="${gendir}/${javadir}" srcdir="${srcdir}/${javadir}" />
   </target>
 
   <target name="processor" depends="taskdef" description="Applique des filtres du processor sur les fichiers sources Java" if="processor.available">
     <processor filters="org.codelutin.processor.filters.GeneratorTemplatesFilter, org.codelutin.processor.filters.${logfilter}" destdir="${gendir}/${javadir}" srcdir="${srcdir}/${javadir}" includes="**/*.java"/>
   </target>
 
-  <target name="processorCopy" description="Copie les fichiers sources Java du répertoire src/java vers le répertoire gen/java" unless="processor.available">
+  <target name="processorCopy" description="Copie les fichiers sources Java du r?pertoire src/java vers le r?pertoire gen/java" unless="processor.available">
     <copy todir="${gendir}/${javadir}" preservelastmodified="true">
       <fileset dir="${srcdir}/${javadir}" includes="**/*.java"/>
     </copy>
@@ -191,7 +192,7 @@
     </javac>
   </target>
 
-  <target name="compile-jdo" depends="tjdo" description="Cette règle ne fait qu'appeler d'autre règle dont l'exécution est conditionnée au librairie présente.">
+  <target name="compile-jdo" depends="tjdo" description="Cette r?gle ne fait qu'appeler d'autre r?gle dont l'ex?cution est conditionn?e au librairie pr?sente.">
   </target>
 
   <target name="tjdo" depends="compile-java, test" if="tjdo.available" description="Utilise tjdo pour la presistence JDO">
@@ -210,25 +211,19 @@
 
   <!-- classe vers jar -->
 
-  <target name="dist-only" description="Cette règle ne fait que la création du jar">
+  <target name="dist-only" description="Cette r?gle ne fait que la cr?ation du jar">
     <mkdir dir="${distdir}"/>
     <jar jarfile="${distdir}/${ant.project.name}.jar" >
       <fileset includes="**" dir="${builddir}/${javadir}"/>    </jar>
   </target>
 
-  <target name="dist" depends="read-properties,compile" description="Cette règle appel la compile et crée le fichier jar et si nécessaire war">
+  <target name="dist" depends="read-properties,compile" description="Cette r?gle appel la compile et cr?e le fichier jar et si n?cessaire war">
     <antcall target="dist-only"/>
   </target>
 
   <!-- javadoc -->
-  <target name="javadoc" description="Cette règle permet la génération de la javadoc">
+  <target name="javadoc" description="Cette r?gle permet la g?n?ration de la javadoc">
     <mkdir dir="${javadocdir}"/>
-    <copy todir="${gendir}/${javadir}">
-      <fileset dir="${srcdir}/${javadir}">
-        <include name="**/package.html"/>
-        <include name="**/doc-files/**"/>
-      </fileset>
-    </copy>
     <javadoc sourcepath="${gendir}/${javadir}" packagenames="org.codelutin.jrst" destdir="${javadocdir}" Splitindex="yes">
       <classpath refid="classpath"/>
     </javadoc>
@@ -236,7 +231,7 @@
 
   <!-- release -->
 
-  <target name="release" depends="read-properties,compile,javadoc" description="Cette règle permet la création de plusieurs fichiers qui servent à faire une release. Les fichiers généré sont la documentatio, les sources, et les binaires">
+  <target name="release" depends="read-properties,compile,javadoc" description="Cette r?gle permet la cr?ation de plusieurs fichiers qui servent ? faire une release. Les fichiers g?n?r? sont la documentatio, les sources, et les binaires">
     <mkdir dir="${distdir}"/>
     <!-- documentation -->
      <zip zipfile="${distdir}/${ant.project.name}-doc-${release.version}.zip">
@@ -296,7 +291,7 @@
 
     <!-- all in one -->
 
-    <!-- Permet de créer un jar sans dépendance vis a vis des librairies, tout ce qu'il faut au programme est inclus dans le jar -->
+    <!-- Permet de cr?er un jar sans d?pendance vis a vis des librairies, tout ce qu'il faut au programme est inclus dans le jar -->
     <jar jarfile="${distdir}/${ant.project.name}-nodeps-${release.version}.jar" >
       <fileset includes="**" dir="${builddir}/${javadir}"/>
     </jar>
@@ -309,14 +304,13 @@
       <fileset defaultexcludes="off" dir="." includes="**/*~,**/*.bak,**/#*#"/>
     </delete>
     <delete dir="${builddir}"/>
-    <delete dir="${gendir}"/>
     <delete dir="${distdir}"/>
   </target>
 
 
   <!-- autre -->
 
-  <target name="dtd" depends="taskdef" description="génère la dtd du fichier build.xml">
+  <target name="dtd" depends="taskdef" description="g?n?re la dtd du fichier build.xml">
     <antstructure output="ant-build.dtd"/>
   </target>
 </project>
