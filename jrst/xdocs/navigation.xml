@@ -12,6 +12,7 @@
     <menu name="JRst">
       <item href="/JRst.html" name="About"></item>
       <item href="/Todo.html" name="Todo"></item>
+      <item href="http://lutinbuilder.labs.libre-entreprise.org/maven/lutinlib/jars/" name="Téléchargement"></item>
     </menu>
   </body>
 </project>
