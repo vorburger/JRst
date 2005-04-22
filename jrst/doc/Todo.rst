@@ -17,3 +17,7 @@ a une idée à proposer il ne faut pas hésiter.
   cette extension
 
 - un export vers pretion, magic, ou autre outil de presentation.
+
+- finir l'export en rst (tableau)
+- permettre l'import de d'autre format que rst, par exemple .sxw
+  ce qui permettra de convertir simple du .sxw en rst.

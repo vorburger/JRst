@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.PrintWriter;
 
 public abstract class Parser { // Parser
 
@@ -57,10 +58,10 @@ public abstract class Parser { // Parser
     public static Object DEBUG = DEBUG_LEVEL0; // null; //
 
     // formats de sortie
-    static final Object TYPE_RST = new Object();
-    static final Object TYPE_HTML = new Object();
-    static final Object TYPE_XDOC = new Object();
-    static final Object TYPE_XML = new Object();
+    static final public Object TYPE_RST = new Object();
+    static final public Object TYPE_HTML = new Object();
+    static final public Object TYPE_XDOC = new Object();
+    static final public Object TYPE_XML = new Object();
 
     static protected boolean overwrite = true;
 
@@ -143,12 +144,39 @@ public abstract class Parser { // Parser
 
         Reader in = null;
         try{
-            in = new LineNumberReader(new FileReader(fileIn));
+            in = new FileReader(fileIn);
         }catch (IOException ioe) {
             System.err.println("Error with outfile ("+fileIn+") : "+ioe.getMessage());
             return;
         }
+
         Writer out = null;
+
+        // fichier de sortie
+        if (fileOut != null){
+            File foout = new File(fileOut);
+
+            if ( foout.getParent() != null) {
+                File parent = foout.getParentFile();
+                if (! parent.mkdirs()){
+                    System.err.println("Path "+foout.getParent()+" not created");
+                }
+            }
+
+            try {
+                out = new FileWriter(fileOut);
+            }catch ( IOException ioe) {
+                System.err.println("Error with infile ("+fileOut+") : "+ioe.getMessage());
+            }
+        } else {
+            out = new PrintWriter(System.out);
+        }
+        parse(type, in, out);
+    }
+
+    static public void parse(Object type, Reader in, Writer out)  throws Exception{
+        in = new LineNumberReader(in);
+        out = new BufferedWriter(out);
 
         // Instanciation du Générateur
         Generator gen = null;
@@ -165,23 +193,8 @@ public abstract class Parser { // Parser
             gen = new HtmlGenerator();
         }
 
-        // fichier de sortie
-        if (fileOut != null){
-            File foout = new File(fileOut);
-
-            if ( foout.getParent() != null) {
-                File parent = foout.getParentFile();
-                if (! parent.mkdirs()){
-                    System.err.println("Path "+foout.getParent()+" not created");
-                }
-            }
-
-            try {
-                out = new BufferedWriter(new FileWriter(fileOut));
-                gen.setOs(out);
-            }catch ( IOException ioe) {
-                System.err.println("Error with infile ("+fileOut+") : "+ioe.getMessage());
-            }
+        if(out != null){
+            gen.setOs(out);
         }
 
 
