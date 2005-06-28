@@ -21,3 +21,5 @@ a une idée à proposer il ne faut pas hésiter.
 - finir l'export en rst (tableau)
 - permettre l'import de d'autre format que rst, par exemple .sxw
   ce qui permettra de convertir simple du .sxw en rst.
+
+- Faire une doclet qui permette d'ecrire les Javadocs en RST

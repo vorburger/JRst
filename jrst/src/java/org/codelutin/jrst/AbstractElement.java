@@ -15,7 +15,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *##%*/
-
 /*
  * AbstractElement.java
  *
@@ -28,37 +27,51 @@
  * Mise a jour: $Date$
  * par : $Author$
  */
-
 package org.codelutin.jrst;
 
 import java.util.ArrayList;
 import java.util.List;
-import jregex.Pattern;
 import jregex.Matcher;
+import jregex.Pattern;
 
+/** DOCUMENTME Description of the Class */
 public class AbstractElement implements Element { // AbstractElement
-    ArrayList childs = new ArrayList();
 
-    public Element addChild(Element e){
-        childs.add(e);
-        return this;
-    }
-    public List getChilds(){
-        return childs;
-    }
-
+    // pour récuperer le nom des factories
+    /** DOCUMENTME Description of the Field */
+    Pattern ElementName  = new Pattern("org\\.codelutin\\.jrst\\.(.*)");
+    /** DOCUMENTME Description of the Field */
+    ArrayList childs     = new ArrayList();
 
     /**
      *  le petit nom véritable de la factory
+     *
+     * @return   DOCUMENTME Description of the Return Value
      */
-
-    // pour récuperer le nom des factories
-    Pattern ElementName = new Pattern("org\\.codelutin\\.jrst\\.(.*)");
-
     public String Name() {
-        Matcher myM = ElementName.matcher(getClass().getName());
+        Matcher myM  = ElementName.matcher(getClass().getName());
         myM.matches();
         return myM.group(1);
+    }
+
+    /**
+     * Adds a feature to the Child attribute of the AbstractElement object
+     *
+     * @param e  The feature to be added to the Child attribute
+     * @return   DOCUMENTME Description of the Return Value
+     */
+    public Element addChild(Element e) {
+        childs.add(e);
+        return this;
+    }
+
+    /**
+     * Gets the childs attribute of the AbstractElement object
+     *
+     * @return   The childs value
+     */
+    public List getChilds() {
+        return childs;
     }
 
 } // AbstractElement
