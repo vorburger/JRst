@@ -38,7 +38,7 @@
     <dependency>
       <groupId>lutinlib</groupId>
       <artifactId>lutinutil</artifactId>
-      <version>0.15</version>
+      <version>0.17</version>
     </dependency>
     <dependency>
       <groupId>lutinlib</groupId>
