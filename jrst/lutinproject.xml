@@ -14,7 +14,7 @@
   </organization>
 
   <!-- the project home page -->
-  <url>http://labs.libre-entreprise.org/${pom.artifactId}</url>
+  <url>http://labs.libre-entreprise.org/projects/${pom.artifactId}</url>
 
   <issueTrackingUrl>http://labs.libre-entreprise.org/tracker/</issueTrackingUrl>
 
@@ -34,6 +34,12 @@
 
   <!-- any mailing lists for the project -->
   <mailingLists>
+    <mailingList>
+      <name>${pom.artifactId}-cvscommit</name>
+      <subscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/${pom.artifactId}-cvscommit</subscribe>
+      <unsubscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/${pom.artifactId}-cvscommit</unsubscribe>
+      <archive>http://lists.labs.libre-entreprise.org/pipermail/${pom.artifactId}-cvscommit/</archive>
+    </mailingList>
     <mailingList>
       <name>${pom.artifactId}-devel</name>
       <subscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/${pom.artifactId}-devel</subscribe>
@@ -88,7 +94,7 @@
   <reports>
     <report>maven-changelog-plugin</report>
     <report>maven-changes-plugin</report>
-    <report>maven-checkstyle-plugin</report>
+<!--    <report>maven-checkstyle-plugin</report> -->
     <report>maven-developer-activity-plugin</report>
     <report>maven-file-activity-plugin</report>
     <report>maven-javadoc-plugin</report>
@@ -96,10 +102,9 @@
     <report>maven-junit-report-plugin</report>
     <report>maven-jxr-plugin</report>
     <report>maven-license-plugin</report>
-<!--    <report>maven-linkcheck-plugin</report> -->
-    <report>maven-pmd-plugin</report>
+<!--    <report>maven-pmd-plugin</report> -->
     <report>maven-statcvs-plugin</report>
-    <report>maven-simian-plugin</report>
+<!--    <report>maven-simian-plugin</report> -->
     <report>maven-tasklist-plugin</report>
   </reports>
 
@@ -130,8 +135,19 @@
       <resource>
         <directory>${maven.src.dir}/resources</directory>
         <includes>
+          <include>**/*.properties</include>
+          <include>**/*.png</include>
+          <include>**/*.gif</include>
           <include>**/*.jpg</include>
           <include>**/*.xml</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>${maven.src.dir}/uimodel</directory>
+        <includes>
+          <include>**/*.xml</include>
+          <include>**/*.xgl</include>
+          <include>**/*.bsh</include>
         </includes>
       </resource>
       <resource>
