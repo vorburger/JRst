@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<!--The version of maven's project object model-->
+	<modelVersion>4.0.0</modelVersion>
+	
+	<!--lutinproject.xml-->
+	<parent>
+		<groupId>lutinlib</groupId>
+		<artifactId>lutinproject</artifactId>
+		<version>2.0</version>
+	</parent>
+	
+	<!--A unique name for this project-->
+	<groupId>lutinplugin</groupId>
+	<artifactId>maven-jrst-plugin</artifactId>
+	<name>Plugin maven JRst</name>
+	
+	<!--ejb, jar, war...-->
+	<packaging>maven-plugin</packaging>
+	
+	<!--Version-->
+	<version>0.6</version>
+	
+	<!--Description-->
+	<inceptionYear>2006</inceptionYear>
+	
+	<!--Tracking-->
+	<issueManagement>
+		<!--<url>http://labs.libre-entreprise.org/tracker/?group_id=54</url>-->
+	</issueManagement>
+	
+	<!--who the developers are for the project-->
+	<contributors>
+		<contributor>
+			<name>Julien Ruchaud</name>
+			<email>ruchaud@codelutin.com</email>
+			<organization>Code Lutin</organization>
+			<timezone>+2</timezone>
+			<roles>
+				<role>Développeur</role>
+			</roles>
+		</contributor>
+	</contributors>
+	
+	<!--Librairies-->
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+			<version>2.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>lutinlib</groupId>
+			<artifactId>jrst</artifactId>
+			<version>0.6</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+</project>
