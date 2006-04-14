@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="MavenJRstPlugin">
+	
+  <bannerLeft>
+      <name>Maven-JRst-Plugin</name>
+  </bannerLeft>
+	
+  <bannerRight>
+      <src>http://www.codelutin.com/images/lutinorange-codelutin.png</src>
+	  <href>http://www.codelutin.com</href>
+  </bannerRight>
+
+  <body>
+    <links>
+      <item name="Labs" href="http://labs.libre-entreprise.org/"/>
+      <item name="Code Lutin" href="http://www.codelutin.com/"/>
+    </links>
+
+    ${reports}
+	  
+    <menu name="Utilisateur">
+      <item href="http://lutinbuilder.labs.libre-entreprise.org/maven2/lutinplugin/maven-jrst-plugin/" name="Téléchargement"/>
+    </menu>
+
+	<!--<menu name="Developpeur">
+      <item name="Todo" href="Todo.html"/>
+    </menu>-->
+
+  </body>
+</project>

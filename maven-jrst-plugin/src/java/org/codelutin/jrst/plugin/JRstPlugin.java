@@ -1,3 +1,34 @@
+/* *##%
+ * Copyright (C) 2006
+ *     Code Lutin, Cédric Pineau, Benjamin Poussin
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *##%*/
+
+/* *
+ * JRstPlugin.java
+ *
+ * Created: 14 avril 2006
+ *
+ * @author ruchaud
+ * @version $Revision$
+ *
+ * Last update: $Date$
+ * by : $Author$
+ */
+
 package org.codelutin.jrst.plugin;
 
 import java.io.File;
@@ -8,41 +39,51 @@ import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.NoBannerLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Copy;
-import org.apache.tools.ant.taskdefs.Expand;
 import org.apache.tools.ant.types.FileSet;
 import org.codelutin.jrst.Parser;
 import org.codelutin.util.FileUtil;
 import org.codelutin.util.FileUtil.FileAction;
 
 /**
+ * Génére du xdoc à partir de fichiers Rst
+ *  
  * @goal jrst
- * @description Generate xdoc with rst
  */
-public class JrstPlugin extends AbstractMojo implements FileAction {    
+public class JRstPlugin extends AbstractMojo implements FileAction {    
     /**
-     * @parameter alias="directory"
+     * Répertoire source des fichiers Rst
+     * 
+     * @parameter
      * @required
      */
     private String directoryIn;
     
     /**
-     * @parameter alias="directory"
+     * Répertoire cible des fichiers xdoc générée
+     * 
+     * @parameter
      * @required
      */
     private String directoryOut;
 
     /**
-     * @parameter
+     * Arrête la génération en cas d'erreurs
+     * 
+     * @parameter default-value="true"
      */
     private boolean ignoreErrors = true;
     
     /**
-     * @parameter
+     * Ecrase les fichiers générés
+     * 
+     * @parameter default-value="false"
      */
     private boolean overwrite = false;
     
     /**
-     * @parameter
+     * Permet d'obtenir plus d'information
+     * 
+     * @parameter default-value="false"
      */
     private boolean verbose = false;
     
@@ -73,6 +114,9 @@ public class JrstPlugin extends AbstractMojo implements FileAction {
         String fileOut = null;
         
         /* Rst file */
+        /* TODO: Voir pourquoi, les fichiers avec un un nom commençant par une
+         * majuscule fonctionne et pas les autres
+         */
         if (fileIn.matches(".*/[A-Z].*\\.rst")) {
             fileOut = fileIn.replace(directoryIn,directoryOut).replace(".rst",".xml");
             try {

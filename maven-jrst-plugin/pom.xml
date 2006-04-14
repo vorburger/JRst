@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -24,11 +24,14 @@
 	<version>0.6</version>
 	
 	<!--Description-->
+	<description>
+		Plugin pour maven 2 pour la génération de xdoc à partir de fichier Rst.
+	</description>
 	<inceptionYear>2006</inceptionYear>
 	
 	<!--Tracking-->
 	<issueManagement>
-		<!--<url>http://labs.libre-entreprise.org/tracker/?group_id=54</url>-->
+		<url>http://labs.libre-entreprise.org/tracker/?group_id=54</url>
 	</issueManagement>
 	
 	<!--who the developers are for the project-->
@@ -39,10 +42,33 @@
 			<organization>Code Lutin</organization>
 			<timezone>+2</timezone>
 			<roles>
-				<role>D�veloppeur</role>
+				<role>Développeur</role>
 			</roles>
 		</contributor>
 	</contributors>
+	
+	<!--Ajout de reports spécials plugin-->
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-plugin-plugin</artifactId>
+				<version>2.1</version>
+				<executions>
+					<execution>
+						<id>jrst</id>
+						<phase>pre-site</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<outputDirectory>target/site-build/xdoc</outputDirectory>					
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	
 	<!--Librairies-->
 	<dependencies>
@@ -60,5 +86,39 @@
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
+	
+<!--
+ | surcharge des valeurs par defaut
+ +-->
+	<mailingLists>
+		<mailingList>
+			<name>jrst-cvscomit</name>
+            <subscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/jrst-cvscommit</subscribe>
+			<unsubscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/jrst-cvscommit</unsubscribe>
+			<archive>http://lists.labs.libre-entreprise.org/pipermail/jrst-cvscommit/</archive>
+		</mailingList>
+		
+		<mailingList>
+			<name>jrst-devel</name>
+			<subscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/jrst-devel</subscribe>
+			<unsubscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/jrst-devel</unsubscribe>
+			<archive>http://lists.labs.libre-entreprise.org/pipermail/jrst-devel/</archive>
+		</mailingList>
+		
+		<mailingList>
+			<name>jrst-user</name>
+			<subscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/jrst-user</subscribe>
+			<unsubscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/jrst-user</unsubscribe>
+			<archive>http://lists.labs.libre-entreprise.org/pipermail/jrst-user/</archive>
+		</mailingList>
+	</mailingLists>
+
+	<scm>
+		<url>http://cvs.labs.libre-entreprise.org/cgi-bin/cvsweb.cgi/?cvsroot=jrst</url>
+		<connection>scm:cvs:pserver:anonymous@cvs.labs.libre-entreprise.org:/cvsroot/jrst:${pom.artifactId}</connection>
+	</scm>
+<!--
+ | fin de surcharge
+ +-->
 
 </project>
