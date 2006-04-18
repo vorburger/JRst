@@ -46,30 +46,7 @@
 			</roles>
 		</contributor>
 	</contributors>
-	
-	<!--Ajout de reports spécials plugin-->
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-plugin-plugin</artifactId>
-				<version>2.1</version>
-				<executions>
-					<execution>
-						<id>jrst</id>
-						<phase>pre-site</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<outputDirectory>target/site-build/xdoc</outputDirectory>					
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-	
+		
 	<!--Librairies-->
 	<dependencies>
 		<dependency>
