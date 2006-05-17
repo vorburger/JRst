@@ -113,11 +113,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
         String fileIn = file.getAbsoluteFile().toString();
         String fileOut = null;
         
-        /* Rst file */
-        /* TODO: Voir pourquoi, les fichiers avec un un nom commençant par une
-         * majuscule fonctionne et pas les autres
-         */
-        if (fileIn.matches(".*/[A-Z].*\\.rst")) {
+        if (fileIn.matches(".*\\.rst")) {
             fileOut = fileIn.replace(directoryIn,directoryOut).replace(".rst",".xml");
             try {
                 Parser.parse(Parser.TYPE_XDOC, fileIn, fileOut, overwrite);
