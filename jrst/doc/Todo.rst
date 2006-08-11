@@ -7,7 +7,7 @@ a une idée à proposer il ne faut pas hésiter.
 
 - utiliser dom4j pour la génération du XML et HTML
 - ecrire la class RstTokenizer qui fait le decoupage du texte en element
-  (equivalent du lexer)
+  (equivalent du lexer) peut-etre utiliser http://freshmeat.net/projects/jtokeniser/
 - La documentation utilisateur
 - La documentation développeur
 - faire une regle ant pour aider à la génération

@@ -1,164 +1,152 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project>
-
-  <!-- the version of maven's project object model -->
-  <pomVersion>3</pomVersion>
-
-  <groupId>lutinlib</groupId>
-
-  <!-- details about the organization that 'owns' the project -->
-  <organization>
-    <name>Code Lutin</name>
-    <url>http://www.codelutin.com/</url>
-    <logo>http://www.codelutin.com/cl-images/mini-lutin.png</logo>
-  </organization>
-
-  <!-- the project home page -->
-  <url>http://labs.libre-entreprise.org/projects/${pom.artifactId}</url>
-
-  <issueTrackingUrl>http://labs.libre-entreprise.org/tracker/</issueTrackingUrl>
-
-  <siteAddress>labs.libre-entreprise.org</siteAddress>
-  <siteDirectory>/home/groups/${pom.artifactId}/htdocs/</siteDirectory>
-
-  <distributionSite>labs.libre-entreprise.org</distributionSite>
-  <distributionDirectory>/home/groups/lutinbuilder/htdocs/maven</distributionDirectory>
-
-  <!-- the version control repository and http url for online access
+    <!-- the version of maven's project object model -->
+    <pomVersion>3</pomVersion>
+    <id>lutinlib:null</id>
+    <groupId>lutinlib</groupId>
+    <!-- details about the organization that 'owns' the project -->
+    <organization>
+        <name>Code Lutin</name>
+        <url>http://www.codelutin.com/</url>
+        <logo>http://www.codelutin.com/cl-images/mini-lutin.png</logo>
+    </organization>
+    <!-- the project home page -->
+    <url>http://labs.libre-entreprise.org/projects/${pom.artifactId}</url>
+    <issueTrackingUrl>http://labs.libre-entreprise.org/tracker/</issueTrackingUrl>
+    <siteAddress>labs.libre-entreprise.org</siteAddress>
+    <siteDirectory>/home/groups/${pom.artifactId}/htdocs/</siteDirectory>
+    <distributionSite>labs.libre-entreprise.org</distributionSite>
+    <distributionDirectory>/home/groups/lutinbuilder/htdocs/maven</distributionDirectory>
+    <!-- the version control repository and http url for online access
        the connection element has the form:
        scm:<system>:<system specific connection string> -->
-  <repository>
-    <connection>scm:cvs:pserver:anonymous@cvs.labs.libre-entreprise.org:/cvsroot/${pom.artifactId}:${pom.artifactId}</connection>
-    <url>http://cvs.labs.libre-entreprise.org/cgi-bin/cvsweb.cgi/?cvsroot=${pom.artifactId}</url>
-  </repository>
+    <repository>
+        <connection>scm:cvs:pserver:anonymous@cvs.labs.libre-entreprise.org:/cvsroot/${pom.artifactId}:${pom.artifactId}</connection>
+        <url>http://cvs.labs.libre-entreprise.org/cgi-bin/cvsweb.cgi/?cvsroot=${pom.artifactId}</url>
+    </repository>
 
-  <!-- any mailing lists for the project -->
-  <mailingLists>
-    <mailingList>
-      <name>${pom.artifactId}-cvscommit</name>
-      <subscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/${pom.artifactId}-cvscommit</subscribe>
-      <unsubscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/${pom.artifactId}-cvscommit</unsubscribe>
-      <archive>http://lists.labs.libre-entreprise.org/pipermail/${pom.artifactId}-cvscommit/</archive>
-    </mailingList>
-    <mailingList>
-      <name>${pom.artifactId}-devel</name>
-      <subscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/${pom.artifactId}-devel</subscribe>
-      <unsubscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/${pom.artifactId}-devel</unsubscribe>
-      <archive>http://lists.labs.libre-entreprise.org/pipermail/${pom.artifactId}-devel/</archive>
-    </mailingList>
-    <mailingList>
-      <name>${pom.artifactId}-user</name>
-      <subscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/${pom.artifactId}-user</subscribe>
-      <unsubscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/${pom.artifactId}-user</unsubscribe>
-      <archive>http://lists.labs.libre-entreprise.org/pipermail/${pom.artifactId}-user/</archive>
-    </mailingList>
-  </mailingLists>
+    <!-- who the developers are for the project -->
+    <developers>
+        <developer>
+            <name>Benjamin Poussin</name>
+            <id>bpoussin</id>
+            <email>poussin@codelutin.com</email>
+            <organization>Code Lutin</organization>
+            <timezone>+2</timezone>
+        </developer>
+        <developer>
+            <name>CÃ©dric Pineau</name>
+            <id>pineau</id>
+            <email>pineau@codelutin.com</email>
+            <organization>Code Lutin</organization>
+            <timezone>+2</timezone>
+        </developer>
+    </developers>
 
-  <licenses>
-    <license>
-      <name>GPL</name>
-      <url>http://www.gnu.org/copyleft/gpl.html</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
-
-  <!-- who the developers are for the project -->
-  <developers>
-    <developer>
-      <name>Benjamin Poussin</name>
-      <id>bpoussin</id>
-      <email>poussin@codelutin.com</email>
-      <organization>Code Lutin</organization>
-      <timezone>+2</timezone>
-      <roles>
-        <role>Développeur</role>
-        <role>Debian packager</role>
-      </roles>
-     </developer>
-    <developer>
-      <name>Cédric Pineau</name>
-      <id>pineau</id>
-      <email>pineau@codelutin.com</email>
-      <organization>Code Lutin</organization>
-       <timezone>+2</timezone>
-      <roles>
-        <role>Développeur</role>
-      </roles>
-   </developer>
-  </developers>
-
-
-  <!-- jar files the project is dependent on -->
-  <dependencies/>
-
-  <reports>
-    <report>maven-changelog-plugin</report>
-    <report>maven-changes-plugin</report>
-<!--    <report>maven-checkstyle-plugin</report> -->
-    <report>maven-developer-activity-plugin</report>
-    <report>maven-file-activity-plugin</report>
-    <report>maven-javadoc-plugin</report>
-    <report>maven-jdepend-plugin</report>
-    <report>maven-junit-report-plugin</report>
-    <report>maven-jxr-plugin</report>
-    <report>maven-license-plugin</report>
-<!--    <report>maven-pmd-plugin</report> -->
-    <report>maven-statcvs-plugin</report>
-<!--    <report>maven-simian-plugin</report> -->
-    <report>maven-tasklist-plugin</report>
-  </reports>
-
-  <!-- build information for the project -->
-  <build>
-    <nagEmailAddress>poussin+${pom.artifactId}@codelutin.org</nagEmailAddress>
-    <sourceDirectory>${maven.src.dir}/java</sourceDirectory>
-    <unitTestSourceDirectory>${maven.src.dir}/test</unitTestSourceDirectory>
-
-    <unitTest>
-      <includes>
-        <include>**/*Test.java</include>
-      </includes>
-      <excludes>
-        <exclude>**/NaughtyTest.java</exclude>
-      </excludes>
-    </unitTest>
-
-    <resources>
+    <!-- any mailing lists for the project -->
+    <mailingLists>
+        <mailingList>
+            <name>${pom.artifactId}-cvscommit</name>
+            <subscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/${pom.artifactId}-cvscommit</subscribe>
+            <unsubscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/${pom.artifactId}-cvscommit</unsubscribe>
+            <archive>http://lists.labs.libre-entreprise.org/pipermail/${pom.artifactId}-cvscommit/</archive>
+        </mailingList>
+        <mailingList>
+            <name>${pom.artifactId}-devel</name>
+            <subscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/${pom.artifactId}-devel</subscribe>
+            <unsubscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/${pom.artifactId}-devel</unsubscribe>
+            <archive>http://lists.labs.libre-entreprise.org/pipermail/${pom.artifactId}-devel/</archive>
+        </mailingList>
+        <mailingList>
+            <name>${pom.artifactId}-user</name>
+            <subscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/${pom.artifactId}-user</subscribe>
+            <unsubscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/${pom.artifactId}-user</unsubscribe>
+            <archive>http://lists.labs.libre-entreprise.org/pipermail/${pom.artifactId}-user/</archive>
+        </mailingList>
+    </mailingLists>
+    <licenses>
+        <license>
+            <name>GPL</name>
+            <url>http://www.gnu.org/copyleft/gpl.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <!-- jar files the project is dependent on -->
+    <reports>
+        <report>maven-changelog-plugin</report>
+        <report>maven-changes-plugin</report>
+        <!--    <report>maven-checkstyle-plugin</report> -->
+        <report>maven-developer-activity-plugin</report>
+        <report>maven-file-activity-plugin</report>
+        <report>maven-javadoc-plugin</report>
+        <report>maven-jdepend-plugin</report>
+        <report>maven-junit-report-plugin</report>
+        <report>maven-jxr-plugin</report>
+        <report>maven-license-plugin</report>
+        <!--    <report>maven-pmd-plugin</report> -->
+        <report>maven-statcvs-plugin</report>
+        <!--    <report>maven-simian-plugin</report> -->
+        <report>maven-tasklist-plugin</report>
+    </reports>
+    <!-- build information for the project -->
+    <build>
+        <nagEmailAddress>poussin+${pom.artifactId}@codelutin.org</nagEmailAddress>
+        <sourceDirectory>${maven.src.dir}/java</sourceDirectory>
+        <unitTestSourceDirectory>${maven.src.dir}/test</unitTestSourceDirectory>
+        <unitTest>
+            <includes>
+                <include>**/*Test.java</include>
+            </includes>
+            <excludes>
+                <exclude>**/NaughtyTest.java</exclude>
+            </excludes>
+        </unitTest>
+        <resources>
+            <resource>
+                <directory>${maven.src.dir}/java</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.jdo</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>${maven.src.dir}/resources</directory>
+                <includes>
+                    <include>**/*.ssx</include>
+                    <include>**/*.shp</include>
+                    <include>**/*.properties</include>
+                    <include>**/*.png</include>
+                    <include>**/*.gif</include>
+                    <include>**/*.jpg</include>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>${maven.src.dir}/uimodel</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.xgl</include>
+                    <include>**/*.bsh</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>${maven.src.dir}/xsl</directory>
+                <includes>
+                    <include>**/*.xsl</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
       <resource>
         <directory>${maven.src.dir}/java</directory>
         <includes>
-          <include>**/*.properties</include>
-          <include>**/*.xml</include>
-          <include>**/*.jdo</include>
-         </includes>
-      </resource>
-      <resource>
-        <directory>${maven.src.dir}/resources</directory>
-        <includes>
-          <include>**/*.properties</include>
-          <include>**/*.png</include>
-          <include>**/*.gif</include>
-          <include>**/*.jpg</include>
-          <include>**/*.xml</include>
+          <include>**/*.hbm.xml</include>
         </includes>
       </resource>
-      <resource>
-        <directory>${maven.src.dir}/uimodel</directory>
-        <includes>
-          <include>**/*.xml</include>
-          <include>**/*.xgl</include>
-          <include>**/*.bsh</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>${maven.src.dir}/xsl</directory>
-        <includes>
-          <include>**/*.xsl</include>
-        </includes>
-      </resource>
-    </resources>
-
-  </build>
-
+        </resources>
+    </build>
 </project>
 

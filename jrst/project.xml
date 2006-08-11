@@ -19,7 +19,7 @@
   <contributors>
     <contributor>
       <name>Jean-François Bucas</name>
-      <id>bucas</id>
+      <!-- <id>bucas</id> -->
       <email>bucas@codelutin.com</email>
       <organization>Code Lutin</organization>
        <timezone>+2</timezone>
@@ -53,4 +53,3 @@
   </dependencies>
 
 </project>
-
