@@ -5,9 +5,17 @@ Todo
 Voici la liste des tâches qui reste à faire. Si quelqu'un souhaite aider, ou
 a une idée à proposer il ne faut pas hésiter.
 
-- utiliser dom4j pour la génération du XML et HTML
-- ecrire la class RstTokenizer qui fait le decoupage du texte en element
-  (equivalent du lexer) peut-etre utiliser http://freshmeat.net/projects/jtokeniser/
+- Utiliser pour le Lexer ces propres TAG et non pas ceux de ReStructuredText.java
+- Mettre les noms d'attributs en CONSTANTE
+- implanter la lecture des tableaux
+- implanter la lecture des images, reference interne, 
+- implanter la lecture des footnotes, citations, ...
+- implanter la lecture des notes, dangers, cautions, ...
+- implanter la lecture des options
+- faire une feuille de style de conversion de RST en Docbook
+- faire une feuille de style de conversion de RST en xhtml
+- faire une feuille de style de conversion de RST en xdoc
+
 - La documentation utilisateur
 - La documentation développeur
 - faire une regle ant pour aider à la génération
