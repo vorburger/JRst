@@ -31,10 +31,18 @@
 
 package org.codelutin.jrst;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.stream.StreamSource;
 
 import junit.framework.TestCase;
 
@@ -51,6 +59,9 @@ import org.dom4j.io.XMLWriter;
 
 public class JRSTGeneratorTest extends TestCase {
 
+    String dn2dbkx = "/xslt/dn2dbk.xsl";
+    String dbkx2xhtml = "/usr/share/xml/docbook/stylesheet/nwalsh/xhtml/docbook.xsl";
+    
     public void testRstToHtml() throws Exception {
         URL url = JRSTReaderTest.class.getResource("/org/codelutin/jrst/text.rst");
         Reader in = new InputStreamReader(url.openStream());
@@ -60,13 +71,17 @@ public class JRSTGeneratorTest extends TestCase {
         
         XMLWriter out = new XMLWriter(System.out, new OutputFormat("  ", true));
         out.write(doc);
-
-        URL stylesheet = JRSTReaderTest.class.getResource("/xslt/rst2html.xsl");
-        JRSTGenerator gen = new JRSTGenerator();
-        Document html = gen.transform(doc, stylesheet);
         
-        HTMLWriter outhtml = new HTMLWriter(System.out, new OutputFormat("  ", true));
-        outhtml.write(html);
+        URL stylesheet = JRSTReaderTest.class.getResource(dn2dbkx);
+        JRSTGenerator gen = new JRSTGenerator();
+        Document dbkx = gen.transform(doc, stylesheet);
+        
+        stylesheet = new File(dbkx2xhtml).toURL();
+        gen = new JRSTGenerator();
+        Document xhtml = gen.transform(dbkx, stylesheet);
+        
+        HTMLWriter outSystem = new HTMLWriter(System.out, new OutputFormat("  ", true));
+        outSystem.write(xhtml);
     }
 
 }

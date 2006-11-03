@@ -33,14 +33,18 @@ package org.codelutin.jrst;
 
 import static org.codelutin.jrst.ReStructuredText.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
 
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -82,11 +86,27 @@ public class JRSTGenerator implements DocumentHandler {
     protected String listType = "bullet|enumerated|...";
     protected int enumStart = 1; 
     
+    protected URIResolver uriResolver = null;
+    
     public JRSTGenerator() {
     }
     
     public JRSTGenerator(Writer out) {
         this.out = out;
+    }
+    
+    /**
+     * @return the uriResolver
+     */
+    public URIResolver getUriResolver() {
+        return this.uriResolver;
+    }
+    
+    /**
+     * @param uriResolver the uriResolver to set
+     */
+    public void setUriResolver(URIResolver uriResolver) {
+        this.uriResolver = uriResolver;
     }
     
     /**
@@ -117,6 +137,9 @@ public class JRSTGenerator implements DocumentHandler {
     public void generate(Document doc, ContentHandler handler) throws IOException, TransformerException {
         // load the transformer using JAXP
         TransformerFactory factory = TransformerFactory.newInstance();
+        if (uriResolver != null) {
+            factory.setURIResolver(uriResolver);
+        }
         Transformer transformer = factory.newTransformer();
 
         // now lets style the given document
@@ -149,6 +172,11 @@ public class JRSTGenerator implements DocumentHandler {
     public void generate(Document doc, URL stylesheet, Writer out) throws IOException, TransformerException {
         // load the transformer using JAXP
         TransformerFactory factory = TransformerFactory.newInstance();
+        if (uriResolver != null) {
+            factory.setURIResolver(uriResolver);
+        } else {
+            factory.setURIResolver(new DocumentResolver(stylesheet));
+        }
         Transformer transformer = factory.newTransformer( 
             new StreamSource( stylesheet.openStream() ) 
         );
@@ -173,6 +201,11 @@ public class JRSTGenerator implements DocumentHandler {
     public Document transform(Document doc, URL stylesheet) throws TransformerException, IOException {
         // load the transformer using JAXP
         TransformerFactory factory = TransformerFactory.newInstance();
+        if (uriResolver != null) {
+            factory.setURIResolver(uriResolver);
+        } else {
+            factory.setURIResolver(new DocumentResolver(stylesheet));
+        }
         Transformer transformer = factory.newTransformer( 
             new StreamSource( stylesheet.openStream() ) 
         );
@@ -186,6 +219,39 @@ public class JRSTGenerator implements DocumentHandler {
         Document transformedDoc = result.getDocument();
         return transformedDoc;
     }
+
+    static public class DocumentResolver implements URIResolver {
+        
+        URL baseURL = null;
+        
+        private DocumentResolver() {}
+        
+        public DocumentResolver(URL url) throws MalformedURLException {
+            String path = new File(url.getPath()).getParent();
+            baseURL = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
+        }
+        
+        public Source resolve(String href, String base) throws TransformerException {
+            try {
+                URL url = null;
+                if (href == null) {
+                    url = baseURL;
+                } else {
+                    url = new URL(baseURL.toString() + "/" + href);
+                }
+                Source result = new StreamSource(url.openStream());
+                return result;
+            } catch (MalformedURLException eee) {
+                throw new TransformerException("Can't create url ", eee);
+            } catch (IOException eee) {
+                throw new TransformerException("Can't read url", eee);
+            }
+        }            
+
+    }
+
+    
+    
     
     protected String string(String s, int number) {
         String result = "";
