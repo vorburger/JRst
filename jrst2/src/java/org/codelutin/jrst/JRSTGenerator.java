@@ -73,7 +73,7 @@ public class JRSTGenerator implements DocumentHandler {
 
     static boolean DEBUG = true;
     
-    static private Log log = LogFactory.getLog(JRSTGenerator.class);
+    static private Log log = LogFactory.getLog(JRSTGeneratorTest.class);
     
     protected Writer out = null;
     protected int sectionLevel = 0;

@@ -56,8 +56,8 @@ plusieurs lignes** mais sans gras``
 - et la suite de la liste
 - pour finir
 
-1. et meme
-2. des enum
+3. et meme
+4. des enum
 #. pour voir
 
 I) de tout
@@ -136,6 +136,12 @@ True   True   True
 | body row 1, column 1   | column 2   | column 3 | column 4 |
 +------------------------+------------+----------+----------+
 | body row 2             | Cells may span columns.          |
++------------------------+------------+---------------------+
+| body row 3             | Cells may  | - Table cells       |
++------------------------+ span rows. | - contain           |
+| body row 4             |            | - body elements.    |
++------------------------+------------+---------------------+
+
 +------------------------+------------+---------------------+
 | body row 3             | Cells may  | - Table cells       |
 +------------------------+ span rows. | - contain           |

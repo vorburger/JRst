@@ -18,9 +18,9 @@
  *##%*/
 
 /* *
- * JRSTReaderTest.java
+ * JRSTGenerator.java
  *
- * Created: 27 oct. 06 12:11:44
+ * Created: 31 oct. 06 11:14:19
  *
  * @author poussin
  * @version $Revision$
@@ -39,6 +39,7 @@ import java.net.URL;
 import junit.framework.TestCase;
 
 import org.dom4j.Document;
+import org.dom4j.io.HTMLWriter;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
@@ -48,26 +49,24 @@ import org.dom4j.io.XMLWriter;
  *
  */
 
-public class JRSTReaderTest extends TestCase {
+public class JRSTGeneratorTest extends TestCase {
 
-    public void testRead() throws Exception {
+    public void testRstToHtml() throws Exception {
         URL url = JRSTReaderTest.class.getResource("/org/codelutin/jrst/text.rst");
         Reader in = new InputStreamReader(url.openStream());
         
         JRSTReader jrst = new JRSTReader();
         Document doc = jrst.read(in);
         
-        {
-            XMLWriter out = new XMLWriter(System.out, new OutputFormat("  ", true));
-            out.write(doc);
-        }
+        XMLWriter out = new XMLWriter(System.out, new OutputFormat("  ", true));
+        out.write(doc);
+
+        URL stylesheet = JRSTReaderTest.class.getResource("/xslt/rst2html.xsl");
+        JRSTGenerator gen = new JRSTGenerator();
+        Document html = gen.transform(doc, stylesheet);
         
-//        {
-//            StringWriter out = new StringWriter(); 
-//            JRSTGenerator gen = new JRSTGenerator(out);
-//            gen.generate(doc);
-//            System.out.println(out.toString());
-//        }
+        HTMLWriter outhtml = new HTMLWriter(System.out, new OutputFormat("  ", true));
+        outhtml.write(html);
     }
 
 }

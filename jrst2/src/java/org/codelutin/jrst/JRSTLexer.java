@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
@@ -54,33 +56,50 @@ import org.dom4j.Element;
  * remove alors il peut relire autant de fois qu'il veut le meme element, ou
  * essayer d'en lire un autre.
  * <p>
- * Pour mettre en place ce mecanisme le plus simple est d'utiliser les methodes 
- * {@link JRSTLexer#beginPeek()} et {@link JRSTLexer#endPeek()} 
- * 
+ * Pour mettre en place ce mecanisme le plus simple est d'utiliser les methodes
+ * {@link JRSTLexer#beginPeek()} et {@link JRSTLexer#endPeek()}
+ *
  * @author poussin
  */
 public class JRSTLexer {
+    
+    /** to use log facility, just put in your code: log.info(\"...\"); */
+    static private Log log = LogFactory.getLog(JRSTLexer.class);
+
+   static final protected String TABLE = "table";
+   static final protected String ROW = "row";
+   static final protected String CELL = "cell";
+
+   static final protected String TABLE_HEADER = "header";
+   static final protected String TABLE_WIDTH = "width";
+
+   static final protected String ROW_END_HEADER = "endHeader";
+
+   static final protected String CELL_INDEX_START = "indexStart";
+   static final protected String CELL_INDEX_END = "indexEnd";
+   static final protected String CELL_BEGIN = "begin";
+   static final protected String CELL_END = "end";
 
     /**
-     * retient le niveau du titre, pour un titre de type double, on met 
+     * retient le niveau du titre, pour un titre de type double, on met
      * deux fois le caratere dans la chaine, sinon on le met une seul fois.
-     * 
+     *
      * <pre>
      * =====
      * Super
      * =====
-     * 
+     *
      * titre
      * -----
      * </pre>
-     * 
+     *
      * donnera dans la liste ["==", "-"]
      */
     private List<String> titleLevels = null;
     private AdvancedReader in = null;
     /** length of the last element returned (number of char need to this element) */
     private int elementLength = 0;
-    
+
     public JRSTLexer(Reader reader) {
         titleLevels = new ArrayList<String>();
         this.in = new AdvancedReader(reader);
@@ -98,37 +117,37 @@ public class JRSTLexer {
         in.reset();
         return result;
     }
-    
+
     /**
      * remove one element from list of element already read
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     public void remove() throws IOException {
         in.skip(elementLength);
     }
-        
+
     private void beginPeek() throws IOException {
         elementLength = 0;
         in.mark();
     }
-    
+
     private void endPeek() throws IOException {
         elementLength = in.readSinceMark();
         in.reset();
     }
-    
+
     /**
      * Read block text, block text have same indentation and is continu (no
      * blank line)
-     * 
+     *
      * @param minLeftMargin min left blank needed to accept to read block
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     private String [] readBlock(int minLeftMargin) throws IOException {
-        String [] result = new String[0]; 
-        String firstLine = in.readLine();        
+        String [] result = new String[0];
+        String firstLine = in.readLine();
         if (firstLine != null) {
             in.unread(firstLine, true);
             int level = level(firstLine);
@@ -136,13 +155,13 @@ public class JRSTLexer {
                 result = in.readWhile("^ {"+level+"}\\S+.*");
             }
         }
-        
+
         return result;
     }
-    
+
     /**
-     * All lines are joined and left and right spaces are removed during join 
-     * 
+     * All lines are joined and left and right spaces are removed during join
+     *
      * @param lines
      * @return
      */
@@ -150,7 +169,7 @@ public class JRSTLexer {
         String result = joinBlock(lines, " ", true);
         return result;
     }
-    
+
     private String joinBlock(String [] lines, String joinSep, boolean trim) {
         String result = "";
         String sep = "";
@@ -163,7 +182,7 @@ public class JRSTLexer {
         }
         return result;
     }
-    
+
     /**
      * Return title or para
      * @return
@@ -176,22 +195,22 @@ public class JRSTLexer {
         }
         if (result == null) {
             result = peekBodyElement();
-        }        
-        
-        return result;        
+        }
+
+        return result;
     }
 
     /**
      * read doc info author, date, version, ... or field list element
      * <pre>
      * :author: Benjamin Poussin
-     * :address: 
+     * :address:
      *   Quelque part
      *   Dans le monde
      * </pre>
-     * 
+     *
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     public Element peekDocInfo() throws IOException {
         Element result = null;
@@ -200,12 +219,12 @@ public class JRSTLexer {
         }
         if (result == null) {
             result = peekFieldList();
-        }        
-        
-        return result;        
+        }
+
+        return result;
 
     }
-    
+
     /**
      * Return para
      * @return
@@ -233,17 +252,17 @@ public class JRSTLexer {
         }
         if (result == null) {
             result = peekLiteralBlock();
-        }        
+        }
         if (result == null) {
             result = peekPara();
-        }        
-        
+        }
+
         return result;
     }
-    
+
     public Element peekTransition() throws IOException {
         beginPeek();
-        
+
         Element result = null;
 
         // must have one blank line before
@@ -260,52 +279,52 @@ public class JRSTLexer {
                 }
             }
         }
-        
-        endPeek();        
+
+        endPeek();
         return result;
     }
 
     /**
      * read paragraph with attribut level that represente the space numbers
-     * at left side 
-     * 
+     * at left side
+     *
      * @return &lt;paragraph level="[int]"&gt[text]&lt;/paragraph&gt;
-     * @throws IOException 
+     * @throws IOException
      */
     public Element peekPara() throws IOException {
         beginPeek();
-        
+
         Element result = null;
         in.skipBlankLines();
-        
+
         String [] lines = readBlock(0);
-        if (lines.length > 0) {            
+        if (lines.length > 0) {
             int level = level(lines[0]);
             String para = joinBlock(lines);
-            
+
             if (para.endsWith(": ::")) {
                 para = para.substring(0, para.length() - " ::".length());
                 in.unread("::", true);
             } else if (para.endsWith("::")) {
                 para = para.substring(0, para.length() - ":".length()); // keep one :
-                in.unread("::", true);                
+                in.unread("::", true);
             }
-            
+
             result = DocumentHelper.createElement(PARAGRAPH)
             .addAttribute("level", String.valueOf(level))
             .addText(para);
         }
 
-        endPeek();        
+        endPeek();
         return result;
     }
 
     public Element peekLiteralBlock() throws IOException {
         beginPeek();
-        
+
         Element result = null;
         in.skipBlankLines();
-        
+
         String [] prefix = in.readLines(2);
         if (prefix.length == 2 &&
                 prefix[0].matches("::\\s*") && prefix[1].matches("\\s*")) {
@@ -314,24 +333,24 @@ public class JRSTLexer {
             if (para != null) {
                 int level = level(para);
                 para = para.substring(level) + "\n";
-                
-                // it's literal block until level is down 
+
+                // it's literal block until level is down
                 String [] lines = in.readWhile("^ {"+level+"}.*");
                 while (lines.length > 0) {
                     for (String line : lines) {
                         para += line.substring(level) + "\n";
-                    }                    
+                    }
                     in.skipBlankLines();
                     lines = in.readWhile("^ {"+level+"}.*");
                 }
-                
+
                 result = DocumentHelper.createElement(LITERAL_BLOCK)
                 .addAttribute("level", String.valueOf(level))
                 .addText(para);
             }
         }
 
-        endPeek();        
+        endPeek();
         return result;
     }
 
@@ -339,13 +358,13 @@ public class JRSTLexer {
      * read doc info author, date, version, ...
      * <pre>
      * :author: Benjamin Poussin
-     * :address: 
+     * :address:
      *   Quelque part
      *   Dans le monde
      * </pre>
-     * 
+     *
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     public Element peekDocInfoItem() throws IOException {
         beginPeek();
@@ -358,16 +377,16 @@ public class JRSTLexer {
             result = DocumentHelper.createElement(DOCINFO);
             result.addAttribute("level", "0");
             String infotype = line.substring(1, line.indexOf(":", 1));
-            
+
             if (!in.eof()) {
                 String [] content = readBlock(1);
                 line += joinBlock(content);
-            }            
+            }
             String text = line.substring(line.indexOf(":", 1) + 1).trim();
-            
+
             // CVS, RCS support
             text = text.replaceAll("\\$\\w+: (.+?)\\$", "$1");
-            
+
             result.addAttribute("type", infotype).addText(text);
         }
 
@@ -385,42 +404,209 @@ public class JRSTLexer {
         in.skipBlankLines();
         String line = in.readLine();
 
-        if (line != null && line.matches("^\\s*(\\+-+)+\\+\\s*$")) { // complexe table 
-            result = DocumentHelper.createElement(TABLE);
-            result.addAttribute("level", String.valueOf(level(line)));
+        if (line != null) {
+            Pattern pTableBegin = Pattern.compile("^\\s*(\\+-+)+\\+\\s*$");
+            Matcher matcher = null;
+            
+            matcher = pTableBegin.matcher(line);
+            if (matcher.matches()) { // complexe table
+                result = DocumentHelper.createElement(TABLE);
+                result.addAttribute(TABLE_HEADER, "false");
+                int level = level(line);
+                result.addAttribute("level", String.valueOf(level));            
+                line = line.trim();
+                int tableWidth = line.length();
+                result.addAttribute(TABLE_WIDTH, String.valueOf(tableWidth));
+                
+                Pattern pCellEnd = Pattern.compile("^\\s{"+level+"}(\\+-+\\+|\\|(?:[^+]+))([^+]+(?:\\+|\\|\\s*$)|-+\\+)*\\s*"); // fin de ligne
+                Pattern pCell =    Pattern.compile("^\\s{"+level+"}(\\|[^|]+)+\\|\\s*$"); // une ligne
+                Pattern pHeader =  Pattern.compile("^\\s{"+level+"}(\\+=+)+\\+\\s*$"); // fin du header
+                Pattern pEnd =     Pattern.compile("^\\s{"+level+"}(\\+-+)+\\+\\s*$"); // fin de table
+                
+                // used to know if | is cell separator or not
+                String lastSeparationLine = line;
+                String lastLine = line;
+    
+                Element row = DocumentHelper.createElement(ROW);
+                String [] table = in.readUntilBlank();
+                boolean done = false;
+                for (String l : table) {
+                    done =false;
+                    l = l.trim();
+                    if (l.length() != tableWidth) {
+                        // Erreur dans la table, peut-etre lever une exception ?
+                        result = null;
+                        break;
+                    }                
+                    matcher = pEnd.matcher(l);
+                    if (!done && matcher.matches()) {
+                        // fin normale de ligne, on peut directement l'assigner
+                        lastSeparationLine = l;
+                        for (Element cell : (List<Element>)row.elements()) {
+                            cell.addAttribute(CELL_END, "true");
+                        }
+                        row.addAttribute(ROW_END_HEADER, "false");
+                        result.add(row);
+                        row = DocumentHelper.createElement(ROW);
+                        done =true;
+                    }
+                    matcher = pHeader.matcher(l);
+                    if (!done && matcher.matches()) {
+                        // fin de du header, on peut directement l'assigner
+                        lastSeparationLine = l;
+                        for (Element cell : (List<Element>)row.elements()) {
+                            cell.addAttribute(CELL_END, "true");
+                        }
+                        row.addAttribute(ROW_END_HEADER, "true");
+                        result.add(row);
+                        result.addAttribute(TABLE_HEADER, "true");
+                        row = DocumentHelper.createElement(ROW);
+                        done =true;
+                    }
+                    matcher = pCell.matcher(l);
+                    if (!done && matcher.matches()) {
+                        //debug
+                        row.addAttribute("debug", "pCell");
+                        // recuperation des textes des cellules
+                        int start = -1;
+                        String content = "";
+                        matcher = Pattern.compile("([^|]+)\\|").matcher(l);
+                        for (int cellNumber=0; matcher.find(); cellNumber++) {
+                            int tmpstart = matcher.start(1);
+                            int end = matcher.end(1);
+                            String tmpcontent = matcher.group(1);
+                            // on a forcement un | ou un + au dessus du +
+                            // et forcement un + sur lastSeparationLine
+                            // sinon ca veut dire qu'il y avait un | dans la cell
+                            if ((lastLine.charAt(end) == '|' || lastLine.charAt(end) == '+')
+                                    && lastSeparationLine.charAt(end) == '+') {
+                                if ("".equals(content)) {
+                                    content = tmpcontent;
+                                }
+                                if (start == -1) {
+                                    start = tmpstart;
+                                }
+                                Element cell = null;
+                                if (row.nodeCount() <= cellNumber) {
+                                    cell = row.addElement(CELL);
+                                    cell.addAttribute(CELL_END, "false");                                    
+                                } else {
+                                    cell = (Element)row.node(cellNumber);
+                                    
+                                }
+                                cell.addAttribute(CELL_INDEX_START, String.valueOf(start));
+                                cell.addAttribute(CELL_INDEX_END, String.valueOf(end));
+                                cell.setText(cell.getText() + "\n" + content);
+                                start = end + 1; // +1 to pass + or | at end of cell
+                                content = "";
+                            } else {
+//                                start = tmpstart;
+                                content += tmpcontent + "|";
+                            }
+                        }
+                        done =true;
+                    }
+                    matcher = pCellEnd.matcher(l);
+                    if (!done && matcher.matches()) {
+                        //debug
+                        row.addAttribute("debug", "pCellEnd");
+                        // fin d'une ligne, on ne peut pas l'assigner directement
+                        // pour chaque continuation de cellule, il faut copier
+                        // l'ancienne valeur
 
-            String [] table = in.readUntilBlank();
-            line += "\n" + joinBlock(table, "\n", false);
-            
-            result.addText(line);
-        } else if (line != null && line.matches("^\\s*(=+ +)+=+\\s*$")) { // simple table
-            // dans les tables simples il peut y avoir des lignes blanches au
-            // milieu. Mais la premiere et la derniere lignes sont identiques
-            String first = line;
-            
-            result = DocumentHelper.createElement(TABLE);
-            result.addAttribute("level", String.valueOf(level(line)));
+                        // mais on commence tout de meme par fermer tout les cells
+                        for (Element cell : (List<Element>)row.elements()) {
+                            cell.addAttribute(CELL_END, "true");
+                        }
 
-            String [] table = in.readUntil(first);
-            line += "\n" + joinBlock(table, "\n", false);
-            String next = in.readLine();
-            line += "\n" + next;
-            
-            next = in.readLine();
-            if (line != null) {
-                if (next.matches("\\s*")) {
-                    // no header
-                    in.unread(next, true);
-                } else {
-                    // read body table
-                    table = in.readUntil(first);
-                    line += "\n" + joinBlock(table, "\n", false);                
-                    next = in.readLine();
-                    line += "\n" + next;
+                        StringBuffer tmp = new StringBuffer(l);            
+                        int start = -1;
+                        String content = "";
+                        matcher = Pattern.compile("([^+|]+|-+)([+|])").matcher(l);
+                        for (int cellNumber=0; matcher.find(); cellNumber++) {
+                            int tmpstart = matcher.start(1);
+                            int end = matcher.end(1);
+                            String tmpcontent = matcher.group(1);
+                            String ender = matcher.group(2);
+                            if (!tmpcontent.matches("-+")) {
+                                // on a forcement un | au dessus du + ou du |
+                                // sinon ca veut dire qu'il y avait un + dans la cell
+                                if (lastLine.charAt(end) == '|') {
+                                    if (start == -1) {
+                                        start = tmpstart;
+                                    }
+                                    // -1 and +1 to take the + or | at begin and end
+                                    String old = lastSeparationLine.substring(start -1 , end + 1);
+                                    tmp.replace(start - 1, end + 1, old);
+                                    if ("".equals(content)) {
+                                        content = tmpcontent;
+                                    }
+                                    Element cell = null;
+                                    if (row.nodeCount() <= cellNumber) {
+                                        cell = row.addElement(CELL);
+                                    } else {
+                                        cell = (Element)row.node(cellNumber);
+                                        
+                                    }
+                                    cell.setText(cell.getText() + "\n" + content);
+                                    // on a ajouter des choses dans la cell, donc
+                                    // ce n'est pas la fin
+                                    cell.addAttribute(CELL_END, "false");
+                                    cell.addAttribute(CELL_INDEX_START, String.valueOf(start));
+                                    cell.addAttribute(CELL_INDEX_END, String.valueOf(end));
+                                    start = end + 1; // +1 to pass + or | at end of cell
+                                    content = "";
+                                } else {
+//                                    start = tmpstart;
+                                    content += tmpcontent + ender;
+                                }
+                            }
+                        }
+                        lastSeparationLine = tmp.toString();
+                        row.addAttribute(ROW_END_HEADER, "false");
+                        result.add(row);
+                        row = DocumentHelper.createElement(ROW);
+                        done = true;
+                    }
+                    if (!done) {
+                        log.warn("Bad table format line " + in.getLineNumber());
+                    }
+                    lastLine = l;
                 }
+    
+    //
+    //            line += "\n" + joinBlock(table, "\n", false);
+    //
+    //            result.addText(line);
+            } else if (line.matches("^\\s*(=+ +)+=+\\s*$")) { // simple table
+                // dans les tables simples il peut y avoir des lignes blanches au
+                // milieu. Mais la premiere et la derniere lignes sont identiques
+                // TODO cela ne parse pas la table, il faut le faire
+                String first = line;
+    
+                result = DocumentHelper.createElement(LITERAL_BLOCK);
+                result.addAttribute("level", String.valueOf(level(line)));
+    
+                String [] table = in.readUntil(first);
+                line += "\n" + joinBlock(table, "\n", false);
+                String next = in.readLine();
+                line += "\n" + next;
+    
+                next = in.readLine();
+                if (line != null) {
+                    if (next.matches("\\s*")) {
+                        // no header
+                        in.unread(next, true);
+                    } else {
+                        // read body table
+                        table = in.readUntil(first);
+                        line += "\n" + joinBlock(table, "\n", false);
+                        next = in.readLine();
+                        line += "\n" + next;
+                    }
+                }
+                result.addText(line);
             }
-            
-            result.addText(line);
         }
 
         endPeek();
@@ -434,9 +620,9 @@ public class JRSTLexer {
      * - first line
      * - next line
      * </pre>
-     * 
+     *
      * @return &lt;bullet_list level="[int]" bullet="char"&gt;&lt;[text];&lt;/bullet_list&gt;
-     * @throws IOException 
+     * @throws IOException
      */
     public Element peekBulletList() throws IOException {
         beginPeek();
@@ -451,13 +637,13 @@ public class JRSTLexer {
             result = DocumentHelper.createElement(BULLET_LIST)
             .addAttribute("level", String.valueOf(level))
             .addAttribute("bullet", bullet);
-            
+
             if (!in.eof()) {
                 String [] content = readBlock(level + 1);
                 line += " " + joinBlock(content);
-            }            
+            }
             String text = line.substring(level + 1).trim();
-            
+
             result.addText(text);
         }
 
@@ -473,9 +659,9 @@ public class JRSTLexer {
      *   and other text
      * :last empty:
      * </pre>
-     * 
+     *
      * @return &lt;field_list level="[int]" name="[text]"&gt;[text]&lt;/field_list&gt;
-     * @throws IOException 
+     * @throws IOException
      */
     public Element peekFieldList() throws IOException {
         beginPeek();
@@ -498,13 +684,13 @@ public class JRSTLexer {
                 if (!in.eof()) {
                     String [] content = readBlock(level + 1);
                     line += " " + joinBlock(content);
-                }            
+                }
                 String text = line.substring(begin).trim();
 
                 result.addText(text);
             }
         }
-        
+
         endPeek();
         return result;
     }
@@ -521,9 +707,9 @@ public class JRSTLexer {
      * le mot : la classe 1 : la classe 2
      *   la definition
      * </pre>
-     * 
+     *
      * @return &lt;definition_list level="[int]" term="[text]" classifiers="[text]"&gt;[text]&lt;/definition_list&gt;
-     * @throws IOException 
+     * @throws IOException
      */
     public Element peekDefinitionList() throws IOException {
         beginPeek();
@@ -541,7 +727,7 @@ public class JRSTLexer {
                 if (matcher.matches()) {
                     String term = matcher.group(1);
                     String classifiers = matcher.group(2);
-                    
+
                     result = DocumentHelper.createElement(DEFINITION_LIST)
                     .addAttribute("level", String.valueOf(level))
                     .addAttribute("term", term)
@@ -555,14 +741,14 @@ public class JRSTLexer {
                 }
             }
         }
-        
+
         endPeek();
         return result;
     }
-    
+
     /**
      * read enumarted list
-     * 
+     *
      * can be:
      * <li> 1, 2, 3, ...
      * <li> a, b, c, ...
@@ -571,15 +757,15 @@ public class JRSTLexer {
      * <li> I, II, III, IV, ...
      *
      * or # for auto-numbered
-     * 
+     *
      * <pre>
      * 1. next line
      * 1) next line
      * (1) first line
      * </pre>
-     * 
+     *
      * @return &lt;enumerated_list level="[int]" start="[number]" prefix="[char]" suffix="[char]" enumtype="[(arabic|loweralpha|upperalpha|lowerroman|upperroman]"&gt;[text]&lt;/enumerated_list&gt;
-     * @throws IOException 
+     * @throws IOException
      */
     public Element peekEnumeratedList() throws IOException {
         beginPeek();
@@ -596,8 +782,8 @@ public class JRSTLexer {
                 String start = matcher.group(2);
                 String suffix = matcher.group(3);
                 int begin = matcher.end(3);
-                
-                // arabic|loweralpha|upperalpha|lowerroman|upperroman                
+
+                // arabic|loweralpha|upperalpha|lowerroman|upperroman
                 String enumtype = "auto";
                 if (start.matches("\\d+")) {
                     enumtype = "arabic";
@@ -614,7 +800,7 @@ public class JRSTLexer {
                     enumtype = "upperalpha";
                     start = String.valueOf((int)start.charAt(0) -(int)'A');
                 }
-                
+
                 result = DocumentHelper.createElement(ENUMERATED_LIST)
                 .addAttribute("level", String.valueOf(level))
                 .addAttribute("start", start)
@@ -625,7 +811,7 @@ public class JRSTLexer {
                 if (!in.eof()) {
                     String [] content = readBlock(level + 1);
                     line += " " + joinBlock(content);
-                }            
+                }
                 String text = line.substring(begin).trim();
 
                 result.addText(text);
@@ -638,22 +824,22 @@ public class JRSTLexer {
 
     /**
      * Parse un titre simple ou double
-     * 
+     *
      * simple:
      * <pre>
      * Le titre
      * ========
      * </pre>
-     * 
+     *
      * double:
      * <pre>
      * ============
      *   le titre
      * ============
      * </pre>
-     * 
+     *
      * @return &lt;title level="[int]" type="[simple|double]" char="[underline char]"&gt;
-     * @throws IOException 
+     * @throws IOException
      */
     public Element peekTitle() throws IOException {
         beginPeek();
@@ -683,12 +869,12 @@ public class JRSTLexer {
                 .addText(line);
             }
         }
-        
+
         if (result != null) {
             // add level information
             String titleLevel = result.attributeValue("char");
             if ("double".equals(result.attributeValue("type"))) {
-                titleLevel += titleLevel; 
+                titleLevel += titleLevel;
             }
             int level = titleLevels.indexOf(titleLevel);
             if (level == -1) {
@@ -697,7 +883,7 @@ public class JRSTLexer {
             }
             result.addAttribute("level", String.valueOf(JRSTReader.MAX_SECTION_DEPTH + level));
         }
-        
+
         endPeek();
         return result;
     }
@@ -716,7 +902,7 @@ public class JRSTLexer {
         boolean result = line.matches("(["+escapeRegex(TITLE_CHAR)+"])\\1+");
         return result;
     }
-    
+
     /**
      * @param title_char
      * @return
@@ -727,13 +913,13 @@ public class JRSTLexer {
     }
 
     private int level(String line) {
-        int result = 0;        
+        int result = 0;
         while (line.length() > result && line.charAt(result) == ' ') {
             result++;
         }
         return result;
     }
-    
+
 }
 
 

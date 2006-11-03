@@ -35,6 +35,10 @@ import static org.codelutin.jrst.ReStructuredText.*;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -159,7 +163,7 @@ import org.dom4j.VisitorSupport;
  * <p>
  * On construit un arbre XML representant le RST au fur et a mesure, on peut
  * ensuite appliquer une fueille de style ou autre chose avec
- * {@link JRSTGenerator}
+ * {@link JRSTGeneratorTest}
  * 
  * <p>
  * Tous les elements ont un attribut level qui permet de savoir on il est dans
@@ -317,13 +321,15 @@ public class JRSTReader {
                 Element para = parent.addElement(LITERAL_BLOCK);
                 copyLevel(item, para);
                 para.setText(item.getText());
-            } else if (itemEquals(TABLE, item)) {
+            } else if (itemEquals(JRSTLexer.TABLE, item)) {
                 // TODO now we take table as LITERAL_BLOCK, but in near
                 // futur we must parse correctly TABLE (show JRSTGenerator and JRSTLexer too)
                 lexer.remove();
-                Element para = parent.addElement(TABLE);
-                copyLevel(item, para);
-                para.setText(item.getText());
+                Element table = composeTable(lexer, item);
+                parent.add(table);
+                //                Element para = parent.addElement(TABLE);
+//                copyLevel(item, para);
+//                para.setText(item.getText());
              } else if (itemEquals(BULLET_LIST, item)) {
                 Element list = composeBulletList(lexer);
                 parent.add(list);
@@ -346,6 +352,104 @@ public class JRSTReader {
             item = lexer.peekTitleOrBodyElement();
         }
         return parent;
+    }
+
+    /**
+     * @param lexer
+     * @param item
+     * @return
+     */
+    private Element composeTable(JRSTLexer lexer, Element item) throws IOException, DocumentException {
+        Element result = DocumentHelper.createElement(TABLE);
+        
+        int tableWidth = Integer.parseInt(item.attributeValue(JRSTLexer.TABLE_WIDTH));
+        
+        TreeSet<Integer> beginCellList = new TreeSet<Integer>();
+        
+        for (Element cell : (List<Element>)item.selectNodes(JRSTLexer.ROW+"/"+JRSTLexer.CELL)) {
+            Integer begin = Integer.valueOf(cell.attributeValue(JRSTLexer.CELL_INDEX_START)); 
+            beginCellList.add(begin);
+        }
+        
+        int [] beginCell = new int[beginCellList.size() + 1]; // + 1 to put table width to simulate new cell
+        int [] lengthCell = new int[beginCellList.size()];
+
+        int cellNumber = 0;
+        for (int b : beginCellList) {
+            beginCell[cellNumber] = b;
+            if (cellNumber > 0) {
+                lengthCell[cellNumber - 1] = beginCell[cellNumber] - beginCell[cellNumber - 1];
+            }
+            cellNumber++;
+        }
+        beginCell[cellNumber] = tableWidth;
+        lengthCell[cellNumber - 1] = beginCell[cellNumber] - beginCell[cellNumber - 1];
+        
+        
+        Element tgroup = result.addElement(TGROUP).addAttribute("cols", String.valueOf(cellNumber));
+        for (int width : lengthCell) {
+            tgroup.addElement(COLSPEC).addAttribute("colwidth", String.valueOf(width));
+        }
+        
+        Element rowList = null;
+        if ("true".equals(item.attributeValue(JRSTLexer.TABLE_HEADER))) {
+            rowList = tgroup.addElement(THEAD);
+        } else {
+            rowList = tgroup.addElement(TBODY);
+        }
+        List<Element> rows = (List<Element>)item.selectNodes(JRSTLexer.ROW); 
+        for (int r=0; r<rows.size(); r++) {
+            Element row = rowList.addElement(ROW);
+            List<Element> cells = (List<Element>)rows.get(r).selectNodes(JRSTLexer.CELL); 
+            for (int c=0; c<cells.size(); c++) {
+                Element cell = cells.get(c);
+                // si la cellule a ete utilisé pour un regroupement vertical on la passe
+                if (!"true".equals(cell.attributeValue("used"))) {
+                    Element entry = row.addElement(ENTRY);
+                    String text = "";
+                    
+                    // on regroupe les cellules verticalement
+                    int morerows = -1;
+                    Element tmpCell = null;
+                    String cellStart = cell.attributeValue(JRSTLexer.CELL_INDEX_START);
+                    do {
+                        morerows++;
+                        tmpCell = (Element)rows.get(r + morerows).selectSingleNode(
+                                JRSTLexer.CELL+"[@"+JRSTLexer.CELL_INDEX_START+"="+cellStart+"]");
+                        text += tmpCell.getText();
+                        // on marque la cellule comme utilisé
+                        tmpCell.addAttribute("used", "true");
+                    } while (!"true".equals(tmpCell.attributeValue(JRSTLexer.CELL_END)));
+                                 
+                    if (morerows > 0) {
+                        entry.addAttribute("morerows", String.valueOf(morerows));
+                    }
+
+                    // on compte le nombre de cellules regroupees horizontalement
+                    int morecols = 0;
+                    tmpCell = cells.get(c + morecols);
+                    int cellEnd = Integer.parseInt(tmpCell.attributeValue(JRSTLexer.CELL_INDEX_END));
+                    while (cellEnd + 1 != beginCell[c + morecols + 1]) {
+                        morecols++;
+//                        tmpCell = cells.get(c + morecols);
+//                        cellEnd = Integer.parseInt(tmpCell.attributeValue(JRSTLexer.CELL_INDEX_END));                       
+                    }
+                    if (morecols > 0) {
+                        entry.addAttribute("morecols", String.valueOf(morecols));
+                    }
+                    
+//                    JRSTReader reader = new JRSTReader();
+//                    Document doc = reader.read(new StringReader(text));
+//                    entry.appendContent(doc.getRootElement());
+                    entry.setText(text);
+                }
+            }
+            if ("true".equals(rows.get(r).attributeValue(JRSTLexer.ROW_END_HEADER))) {
+                rowList = tgroup.addElement(TBODY);
+            }
+        }
+                
+        return result;
     }
 
     private Element composeBulletList(JRSTLexer lexer) throws IOException, DocumentException {
