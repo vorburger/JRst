@@ -59,6 +59,8 @@ import org.dom4j.Element;
  * Pour mettre en place ce mecanisme le plus simple est d'utiliser les methodes
  * {@link JRSTLexer#beginPeek()} et {@link JRSTLexer#endPeek()}
  *
+ *
+ *
  * @author poussin
  */
 public class JRSTLexer {
@@ -66,20 +68,24 @@ public class JRSTLexer {
     /** to use log facility, just put in your code: log.info(\"...\"); */
     static private Log log = LogFactory.getLog(JRSTLexer.class);
 
-   static final protected String TABLE = "table";
-   static final protected String ROW = "row";
-   static final protected String CELL = "cell";
+   static final public String TABLE = "table";
+   static final public String ROW = "row";
+   static final public String CELL = "cell";
 
-   static final protected String TABLE_HEADER = "header";
-   static final protected String TABLE_WIDTH = "width";
+   static final public String TABLE_HEADER = "header";
+   static final public String TABLE_WIDTH = "width";
 
-   static final protected String ROW_END_HEADER = "endHeader";
+   static final public String ROW_END_HEADER = "endHeader";
 
-   static final protected String CELL_INDEX_START = "indexStart";
-   static final protected String CELL_INDEX_END = "indexEnd";
-   static final protected String CELL_BEGIN = "begin";
-   static final protected String CELL_END = "end";
+   static final public String CELL_INDEX_START = "indexStart";
+   static final public String CELL_INDEX_END = "indexEnd";
+   static final public String CELL_BEGIN = "begin";
+   static final public String CELL_END = "end";
 
+   static final public String DIRECTIVE = "directive";
+   static final public String DIRECTIVE_TYPE = "type";
+   static final public String DIRECTIVE_VALUE = "value";
+   
     /**
      * retient le niveau du titre, pour un titre de type double, on met
      * deux fois le caratere dans la chaine, sinon on le met une seul fois.
@@ -233,6 +239,9 @@ public class JRSTLexer {
     public Element peekBodyElement() throws IOException {
         Element result = null;
         if (result == null) {
+            result = peekDirectiveOrReference();
+        }
+        if (result == null) {
             result = peekTransition();
         }
         if (result == null) {
@@ -260,11 +269,55 @@ public class JRSTLexer {
         return result;
     }
 
+    /**
+     * @return
+     * @throws IOException
+     */
+    public Element peekDirectiveOrReference() throws IOException {
+        beginPeek();
+
+        Element result = null;
+        in.skipBlankLines();
+
+        String line = in.readLine();
+        if (line != null) {
+            Pattern pImage = Pattern.compile("^\\.\\.\\s*(?:\\|([^|]+)\\|)?\\s*(\\w+)::\\s*(.*)$");
+            Matcher matcher = pImage.matcher(line);
+            if (matcher.matches()) {
+                String ref = matcher.group(1);
+                String directiveType = matcher.group(2);
+                String directiveValue = matcher.group(3);
+                Element directive = null;
+                if (ref != null && !"".equals(ref)) {
+                    result = DocumentHelper.createElement(SUBSTITUTION_DEFINITION);
+                    result.addAttribute("name", ref);
+                    directive = result.addElement(DIRECTIVE);
+                } else {
+                    result = DocumentHelper.createElement(DIRECTIVE);
+                    directive = result;
+                }
+                result.addAttribute("level", "0");
+                
+                directive.addAttribute(DIRECTIVE_TYPE, directiveType);
+                directive.addAttribute(DIRECTIVE_VALUE, directiveValue);
+                
+                String [] lines = readBlock(2);
+                String text = joinBlock(lines, "\n", false);
+                
+                directive.setText(text);
+            }
+        }
+        
+        endPeek();
+        return result;
+    }
+    
     public Element peekTransition() throws IOException {
         beginPeek();
 
         Element result = null;
-
+        // no eat blank line, see next comment
+        
         // must have one blank line before
         String line = in.readLine();
         if (line != null && line.matches("\\s*")) {

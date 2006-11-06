@@ -7,14 +7,13 @@ a une idée à proposer il ne faut pas hésiter.
 
 - Utiliser pour le Lexer ces propres TAG et non pas ceux de ReStructuredText.java
 - Mettre les noms d'attributs en CONSTANTE
-- implanter la lecture des tableaux
+- implanter la lecture des tableaux simple
 - implanter la lecture des images, reference interne, 
 - implanter la lecture des footnotes, citations, ...
 - implanter la lecture des notes, dangers, cautions, ...
 - implanter la lecture des options
-- faire une feuille de style de conversion de RST en Docbook
-- faire une feuille de style de conversion de RST en xhtml
-- faire une feuille de style de conversion de RST en xdoc
+- faire une feuille de style de conversion de RST en xhtml (plus rapide que dn2dbk -> dbk2xhtml)
+- faire une feuille de style de conversion de xhtml -> xdoc
 
 - La documentation utilisateur
 - La documentation développeur

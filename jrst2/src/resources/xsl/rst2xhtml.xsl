@@ -24,6 +24,10 @@
        </xsl:element>
 	</xsl:template>
 
+	<!-- just eat it -->
+	<xsl:template match="substitution_definition">
+	</xsl:template>
+	
 	<xsl:template match="docinfo">
 	  <div class="docinfo"><xsl:apply-templates/></div>
 	</xsl:template>
@@ -69,10 +73,6 @@
 	</xsl:template>
 	
 	<xsl:template match="literal_block">
-		<pre><xsl:value-of select="text()"/></pre>
-	</xsl:template>
-
-	<xsl:template match="table">
 		<pre><xsl:value-of select="text()"/></pre>
 	</xsl:template>
 
@@ -149,5 +149,55 @@
 	<xsl:template match="definition">
 		<dd class="definition"><xsl:apply-templates/></dd>
 	</xsl:template>
+
+	<xsl:template match="image">
+		<image alt="{@alt}" href="{@uri}"><xsl:apply-templates/></image>
+	</xsl:template>
+
+	<!--
+	 | Table
+	 +-->
+	 
+	<xsl:template match="table">
+		<table border="1">
+			<colgroup>
+				<xsl:apply-templates select="tgroup/colspec"/>
+			</colgroup>
+			<xsl:apply-templates select="./tgroup/thead|./tgroup/tbody"/>
+		</table>
+	</xsl:template>
+
+	<xsl:template match="tgroup/colspec">
+		<col width="{@colwidth}%"/>
+	</xsl:template>
+
+	<xsl:template match="row">
+		<tr><xsl:apply-templates/></tr>
+	</xsl:template>
+
+	<xsl:template match="thead">
+		<thead><xsl:apply-templates/></thead>
+	</xsl:template>
+
+	<xsl:template match="thead/row/entry">
+		<th>
+			<xsl:if test="@morecols"><xsl:attribute name="colspan"><xsl:value-of select="@morecols+1"/></xsl:attribute></xsl:if>
+			<xsl:if test="@morerows"><xsl:attribute name="rowspan"><xsl:value-of select="@morerows+1"/></xsl:attribute></xsl:if>
+			<xsl:apply-templates/>
+		</th>
+	</xsl:template>
+
+	<xsl:template match="tbody">
+		<tbody><xsl:apply-templates/></tbody>
+	</xsl:template>
+
+	<xsl:template match="tbody/row/entry">
+		<td>
+			<xsl:if test="@morecols"><xsl:attribute name="colspan"><xsl:value-of select="@morecols+1"/></xsl:attribute></xsl:if>
+			<xsl:if test="@morerows"><xsl:attribute name="rowspan"><xsl:value-of select="@morerows+1"/></xsl:attribute></xsl:if>
+			<xsl:apply-templates/>
+		</td>
+	</xsl:template>
+
 
 </xsl:stylesheet>

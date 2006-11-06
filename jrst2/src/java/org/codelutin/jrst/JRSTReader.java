@@ -37,17 +37,24 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.codelutin.jrst.directive.DateDirective;
+import org.codelutin.jrst.directive.ImageDirective;
 import org.codelutin.util.StringUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.Node;
 import org.dom4j.VisitorSupport;
 
 
@@ -173,12 +180,124 @@ import org.dom4j.VisitorSupport;
  * de cette facon les methods isUpperLevel et isSameLevel fonctionne pour
  * tous les elements de la meme facon
  * 
+ * </pre>
+ * abbreviation
+ * acronym
+ * address (done)
+ * admonition
+ * attention
+ * attribution
+ * author (done)
+ * authors (partialy done)
+ * block_quote
+ * bullet_list (done)
+ * caption
+ * caution
+ * citation
+ * citation_reference
+ * classifier (done)
+ * colspec (done)
+ * comment
+ * compound
+ * contact (done)
+ * container
+ * copyright (done)
+ * danger
+ * date (done)
+ * decoration
+ * definition (done)
+ * definition_list (done)
+ * definition_list_item (done)
+ * description (done)
+ * docinfo (done)
+ * doctest_block
+ * document (done)
+ * emphasis (done)
+ * entry (done)
+ * enumerated_list (done)
+ * error
+ * field (done)
+ * field_body (done)
+ * field_list (done)
+ * field_name (done)
+ * figure
+ * footer
+ * footnote
+ * footnote_reference
+ * generated
+ * header
+ * hint
+ * image (done)
+ * important
+ * inline
+ * label
+ * legend
+ * line
+ * line_block
+ * list_item (done)
+ * literal (done)
+ * literal_block (done)
+ * note
+ * option
+ * option_argument
+ * option_group
+ * option_list
+ * option_list_item
+ * option_string
+ * organization (done)
+ * paragraph (done)
+ * pending
+ * problematic
+ * raw
+ * reference (partialy done)
+ * revision (done)
+ * row (done)
+ * rubric
+ * section (done)
+ * sidebar
+ * status (done)
+ * strong (done)
+ * subscript
+ * substitution_definition
+ * substitution_reference
+ * subtitle (done)
+ * superscript
+ * system_message
+ * table (done, only complexe table in lexer)
+ * target
+ * tbody (done)
+ * term (done)
+ * tgroup (done)
+ * thead (done)
+ * tip
+ * title (done)
+ * title_reference
+ * topic
+ * transition (done)
+ * version (done)
+ * warning
+ * </pre>
+ * 
  * @author poussin
  */
 public class JRSTReader {
     
+    /** to use log facility, just put in your code: log.info(\"...\"); */
+    static private Log log = LogFactory.getLog(JRSTReader.class);
+
     boolean ERROR_MISSING_ITEM = false;
     static int MAX_SECTION_DEPTH = -1000;
+    
+    static protected Map<String, JRSTDirective> defaultDirectives = null;
+    protected Map<String, JRSTDirective> directives = new HashMap<String, JRSTDirective>();
+    
+    static {
+        defaultDirectives = new HashMap<String, JRSTDirective>();
+        defaultDirectives.put(IMAGE, new ImageDirective());
+        defaultDirectives.put(DATE, new DateDirective());
+        defaultDirectives.put("time", new DateDirective());
+        // TODO put here all other directive
+    }
     
     /**
      * 
@@ -186,6 +305,34 @@ public class JRSTReader {
     public JRSTReader() {
     }
 
+    
+    /**
+     * @return the defaultDirectives
+     */
+    public static JRSTDirective getDefaultDirective(String name) {
+        return defaultDirectives.get(name);
+    }
+    
+    /**
+     * @param defaultDirectives the defaultDirectives to set
+     */
+    public static void addDefaultDirectives(String name, JRSTDirective directive) {
+        JRSTReader.defaultDirectives.put(name, directive);
+    }
+    
+    /**
+     * @return the defaultDirectives
+     */
+    public JRSTDirective getDirective(String name) {
+        return directives.get(name);
+    }
+    
+    /**
+     * @param defaultDirectives the defaultDirectives to set
+     */
+    public void addDirectives(String name, JRSTDirective directive) {
+        directives.put(name, directive);
+    }
     
     /**
      * On commence par decouper tout le document en Element, puis on construit
@@ -200,15 +347,26 @@ public class JRSTReader {
                
         Element root = composeDocument(lexer);
         
+        Document result = DocumentHelper.createDocument();
+        result.setRootElement(root);
+
         // remove all level attribute
         root.accept(new VisitorSupport() {
             public void visit(Element e) {
                 e.addAttribute("level", null);
+                if ("true".equalsIgnoreCase(e.attributeValue("inline"))) {
+                    e.addAttribute("inline", null);
+                    try {
+                        inline(e);
+                    } catch (DocumentException eee) {
+                        if (log.isWarnEnabled()) {
+                            log.warn("Can inline text for " + e, eee);
+                        }
+                    }
+                }
             }
         });
         
-        Document result = DocumentHelper.createDocument();
-        result.setRootElement(root);
         
         return result;
     }
@@ -231,7 +389,7 @@ public class JRSTReader {
             lexer.remove();
             Element title = result.addElement(TITLE);
             copyLevel(item, title);
-            title.appendContent(inline(item.getText()));
+            title.addAttribute("inline", "true").setText(item.getText());
         }
         
         // le sous titre du doc
@@ -240,7 +398,7 @@ public class JRSTReader {
             lexer.remove();
             Element subtitle = result.addElement(SUBTITLE);
             copyLevel(item, subtitle);
-            subtitle.appendContent(inline(item.getText()));
+            subtitle.addAttribute("inline", "true").setText(item.getText());
         }
         
         // les infos du doc
@@ -256,23 +414,23 @@ public class JRSTReader {
                 documentinfo.add(field);
             } else {
                 if ("author".equalsIgnoreCase(item.attributeValue("type"))) {
-                    documentinfo.addElement(AUTHOR).appendContent(inline(item.getText()));
+                    documentinfo.addElement(AUTHOR).addAttribute("inline", "true").setText(item.getText());
                 } else if ("date".equalsIgnoreCase(item.attributeValue("type"))) {
-                    documentinfo.addElement(DATE).appendContent(inline(item.getText()));
+                    documentinfo.addElement(DATE).addAttribute("inline", "true").setText(item.getText());
                 } else if ("organization".equalsIgnoreCase(item.attributeValue("type"))) {
-                    documentinfo.addElement(ORGANIZATION).appendContent(inline(item.getText()));
+                    documentinfo.addElement(ORGANIZATION).addAttribute("inline", "true").setText(item.getText());
                 } else if ("contact".equalsIgnoreCase(item.attributeValue("type"))) {
-                    documentinfo.addElement(CONTACT).appendContent(inline(item.getText()));
+                    documentinfo.addElement(CONTACT).addAttribute("inline", "true").setText(item.getText());
                 } else if ("address".equalsIgnoreCase(item.attributeValue("type"))) {
-                    documentinfo.addElement(ADDRESS).appendContent(inline(item.getText()));
+                    documentinfo.addElement(ADDRESS).addAttribute("inline", "true").setText(item.getText());
                 } else if ("version".equalsIgnoreCase(item.attributeValue("type"))) {
-                    documentinfo.addElement(VERSION).appendContent(inline(item.getText()));
+                    documentinfo.addElement(VERSION).addAttribute("inline", "true").setText(item.getText());
                 } else if ("revision".equalsIgnoreCase(item.attributeValue("type"))) {
-                    documentinfo.addElement(REVISION).appendContent(inline(item.getText()));
+                    documentinfo.addElement(REVISION).addAttribute("inline", "true").setText(item.getText());
                 } else if ("status".equalsIgnoreCase(item.attributeValue("type"))) {
-                    documentinfo.addElement(STATUS).appendContent(inline(item.getText()));
+                    documentinfo.addElement(STATUS).addAttribute("inline", "true").setText(item.getText());
                 } else if ("copyright".equalsIgnoreCase(item.attributeValue("type"))) {
-                    documentinfo.addElement(COPYRIGHT).appendContent(inline(item.getText()));
+                    documentinfo.addElement(COPYRIGHT).addAttribute("inline", "true").setText(item.getText());
                 } // TODO authors
 
                 lexer.remove();
@@ -311,7 +469,15 @@ public class JRSTReader {
                 lexer.remove();
                 Element para = parent.addElement(PARAGRAPH);
                 copyLevel(item,para);
-                para.appendContent(inline(item.getText()));
+                para.addAttribute("inline", "true").setText(item.getText());
+            } else if (itemEquals(JRSTLexer.DIRECTIVE, item)) {
+                lexer.remove();
+                Node directive = composeDirective(item);
+                parent.add(directive);
+            } else if (itemEquals(SUBSTITUTION_DEFINITION, item)) {
+                lexer.remove();
+                Element subst = composeSubstitutionDefinition(item);
+                parent.add(subst);
             } else if (itemEquals(TRANSITION, item)) {
                 lexer.remove();
                 Element para = parent.addElement(TRANSITION);
@@ -353,6 +519,41 @@ public class JRSTReader {
         }
         return parent;
     }
+
+    /**
+     * @param item
+     * @return
+     */
+    private Node composeDirective(Element item) {
+        Node result = item;
+        String type = item.attributeValue(JRSTLexer.DIRECTIVE_TYPE);
+        JRSTDirective directive = getDirective(type);
+        if (directive == null) {
+            directive = getDefaultDirective(type);
+        }
+        if (directive != null) {
+            result = directive.parse(item);
+        } else {
+            log.warn("Unknow directive type '" + type + "' in: " + item);
+        }
+        return result;
+    }
+
+
+    /**
+     * @param lexer
+     * @param item
+     * @return
+     */
+    private Element composeSubstitutionDefinition(Element item) {
+        Element result = item;
+        Element child = (Element)item.selectSingleNode("*");
+        Node newChild = composeDirective(child);
+        result.remove(child); // remove old after composeDirective, because directive can be used this parent
+        result.add(newChild);
+        return result;
+    }
+
 
     /**
      * @param lexer
@@ -462,7 +663,7 @@ public class JRSTReader {
             lexer.remove();
             Element bullet = result.addElement(LIST_ITEM);
             copyLevel(item, bullet);
-            bullet.addElement(PARAGRAPH).appendContent(inline(item.getText()));
+            bullet.addElement(PARAGRAPH).addAttribute("inline", "true").setText(item.getText());
             composeBody(lexer, bullet);
             
             item = lexer.peekBulletList();
@@ -485,7 +686,7 @@ public class JRSTReader {
             lexer.remove();
             Element e = result.addElement(LIST_ITEM);
             copyLevel(item, e);
-            e.addElement(PARAGRAPH).appendContent(inline(item.getText()));
+            e.addElement(PARAGRAPH).addAttribute("inline", "true").setText(item.getText());
             composeBody(lexer, e);
             
             item = lexer.peekEnumeratedList();
@@ -504,17 +705,17 @@ public class JRSTReader {
             
             Element term = def.addElement(TERM);
             copyLevel(item, term);        
-            term.appendContent(inline(item.attributeValue("term")));
+            term.addAttribute("inline", "true").setText(item.attributeValue("term"));
             
             String [] classifiers = StringUtil.split(item.attributeValue("classifiers"), " : ");
             for (String classifierText : classifiers) {
                 Element classifier = def.addElement("classifier");
                 copyLevel(item, classifier);
-                classifier.appendContent(inline(classifierText));
+                classifier.addAttribute("inline", "true").setText(classifierText);
             }
             
             Element defintion = def.addElement(DEFINITION);
-            defintion.addElement(PARAGRAPH).appendContent(inline(item.getText()));
+            defintion.addElement(PARAGRAPH).addAttribute("inline", "true").setText(item.getText());
             copyLevel(item, defintion);        
             
             composeBody(lexer, defintion);
@@ -544,9 +745,9 @@ public class JRSTReader {
             copyLevel(item, field);        
             Element fieldName = field.addElement(FIELD_NAME);
             copyLevel(item, fieldName);        
-            fieldName.appendContent(inline(item.attributeValue("name")));
+            fieldName.addAttribute("inline", "true").setText(item.attributeValue("name"));
             Element fieldBody = field.addElement(FIELD_BODY);
-            fieldBody.addElement(PARAGRAPH).appendContent(inline(item.getText()));
+            fieldBody.addElement(PARAGRAPH).addAttribute("inline", "true").setText(item.getText());
             copyLevel(item, fieldBody);        
             composeBody(lexer, fieldBody);
             
@@ -579,7 +780,7 @@ public class JRSTReader {
             copyLevel(item, result);
             copyLevel(item, title);
             
-            title.appendContent(inline(item.getText()));
+            title.addAttribute("inline", "true").setText(item.getText());
         }
         
         // le contenu de la section
@@ -680,8 +881,30 @@ public class JRSTReader {
         return result;
     }    
     
-    private Element inline(String text) throws DocumentException {
+    /**
+     * Parse text in element and replace text with parse result 
+     * @param text
+     * @return
+     * @throws DocumentException
+     */
+    private void inline(Element e) throws DocumentException {
+        String text = e.getText();
         text = StringEscapeUtils.escapeXml(text);
+        
+        // search all LITERAL and replace it with special mark
+        // this prevent substitution in literal, example **something** must not
+        // change in literal
+        ArrayList<String> literals = new ArrayList<String>();
+        Matcher matcher = REGEX_LITERAL.matcher(text);
+        while(matcher.find()) {
+            int start =  matcher.start();
+            int end = matcher.end();
+            String literal = matcher.group(1);
+            literals.add(literal);
+
+            text = text.substring(0, start) + "``" + (literals.size() - 1) + "``" + text.substring(end);
+        }
+
         
         // do all substitution inline
         text = REGEX_EMAIL.matcher(text).replaceAll("$1<"+REFERENCE+" refuri='mailto:$2'>$2</"+REFERENCE+">$3");        
@@ -689,21 +912,42 @@ public class JRSTReader {
         text = REGEX_EMPHASIS.matcher(text).replaceAll("<"+EMPHASIS+">$1</"+EMPHASIS+">");
         text = REGEX_REFERENCE.matcher(text).replaceAll("<"+REFERENCE+" refuri='$1'>$1</"+REFERENCE+">$2");
         
+        // substitution reference
+        matcher = REGEX_SUBSTITUTION_REFERENCE.matcher(text);
+        int begin = 0;
+        while(matcher.find(begin)) {
+            String start = text.substring(0, matcher.start());
+            String end = text.substring(matcher.end());
+            String ref = matcher.group(1);
+
+            Node subst = e.selectSingleNode(
+                    "//"+SUBSTITUTION_DEFINITION+"[@name='"+ref+"']/child::node()");
+            
+            if (subst == null) {
+                text = start + "|" + ref + "|";
+            } else {
+                text = start + subst.asXML();
+            }
+            
+            begin = text.length();
+            text += end;
+            matcher = REGEX_SUBSTITUTION_REFERENCE.matcher(text);
+        }
+        
         // undo substitution in LITERAL
-        Matcher matcher = REGEX_LITERAL.matcher(text);
+        matcher = REGEX_LITERAL.matcher(text);
         while(matcher.find()) {
             String start = text.substring(0, matcher.start());
             String end = text.substring(matcher.end());
 
-            String literal = matcher.group(1);
-            literal = literal.replaceAll("</?"+STRONG+"[^>]*>", "**");
-            literal = literal.replaceAll("</?"+EMPHASIS+"[^>]*>", "**");
-            text = start + "<"+LITERAL+">" + literal + "</"+LITERAL+">" + end;
+            int literalIndex = Integer.parseInt(matcher.group(1));
+            text = start + "<"+LITERAL+">" + literals.get(literalIndex) + "</"+LITERAL+">" + end;
         }
         
         Element result = DocumentHelper.parseText("<TMP>"+text+"</TMP>").getRootElement();
         
-        return result;
+        e.setText("");
+        e.appendContent(result);
     }
 }
 

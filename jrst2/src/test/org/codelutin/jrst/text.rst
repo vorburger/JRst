@@ -147,3 +147,9 @@ True   True   True
 +------------------------+ span rows. | - contain           |
 | body row 4             |            | - body elements.    |
 +------------------------+------------+---------------------+
+
+The |the big: biohazard| symbol in |date| must be used on containers used to dispose of medical waste.
+
+.. |the big: biohazard| image:: biohazard.png 
+.. |date| date::
+

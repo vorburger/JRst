@@ -40,6 +40,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
 
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -58,6 +59,10 @@ import org.dom4j.Text;
 import org.dom4j.io.DocumentResult;
 import org.dom4j.io.DocumentSource;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.ext.EntityResolver2;
 
 
 /**
@@ -198,7 +203,7 @@ public class JRSTGenerator implements DocumentHandler {
      * @throws TransformerException
      * @throws IOException
      */
-    public Document transform(Document doc, URL stylesheet) throws TransformerException, IOException {
+    public Document transform(Document doc, URL stylesheet, String ... args) throws TransformerException, IOException {
         // load the transformer using JAXP
         TransformerFactory factory = TransformerFactory.newInstance();
         if (uriResolver != null) {
@@ -210,6 +215,25 @@ public class JRSTGenerator implements DocumentHandler {
             new StreamSource( stylesheet.openStream() ) 
         );
 
+        // DEBUG To see where is the probleme with the dtd locator :(
+//        transformer.setErrorListener(new ErrorListener() {
+//            public void error(TransformerException exception) throws TransformerException {
+//                exception.printStackTrace();
+//            }
+//            public void fatalError(TransformerException exception) throws TransformerException {
+//                exception.printStackTrace();
+//            }
+//            public void warning(TransformerException exception) throws TransformerException {
+//                exception.printStackTrace();
+//            }
+//            
+//        });
+        
+        // TODO
+//        for (int i=0; i<args.length; i+=2) {
+//            transformer.
+//        }
+
         // now lets style the given document
         DocumentSource source = new DocumentSource( doc );
         DocumentResult result = new DocumentResult();
@@ -220,7 +244,7 @@ public class JRSTGenerator implements DocumentHandler {
         return transformedDoc;
     }
 
-    static public class DocumentResolver implements URIResolver {
+    static public class DocumentResolver implements URIResolver, EntityResolver {
         
         URL baseURL = null;
         
@@ -237,16 +261,31 @@ public class JRSTGenerator implements DocumentHandler {
                 if (href == null) {
                     url = baseURL;
                 } else {
-                    url = new URL(baseURL.toString() + "/" + href);
+                    String path = baseURL.getPath();
+                    if (path.startsWith("file:")) {
+                        path = "file:" + new File(path.substring("file:".length()), href).getCanonicalPath();
+                    } else {
+                        path = new File(path, href).getCanonicalPath();                        
+                    }
+                    url = new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(), path);
                 }
+                log.debug("** resolve href: '" + href +  "' base: '"+base + "' return: '"+ url + "'");
                 Source result = new StreamSource(url.openStream());
-                return result;
+               return result;
             } catch (MalformedURLException eee) {
                 throw new TransformerException("Can't create url ", eee);
             } catch (IOException eee) {
                 throw new TransformerException("Can't read url", eee);
             }
-        }            
+        }
+
+        /* (non-Javadoc)
+         * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String, java.lang.String)
+         */
+        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+            System.err.println("## resolveEntity publicId '" + publicId + "' systemId: '" + systemId + "'");
+            return null;
+        }
 
     }
 

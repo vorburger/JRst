@@ -45,13 +45,21 @@
 			</roles>
 		</contributor>
 	</contributors>
-		
+	
+        <repositories>
+                <repository>
+                        <id>codelutin-repository</id>
+                        <name>CodeLutinRepository</name>
+                        <url>http://lutinbuilder.labs.libre-entreprise.org/maven2</url>
+                </repository>
+        </repositories>
+	
 	<!--Librairies-->
 	<dependencies>
 		<dependency>
 			<groupId>lutinlib</groupId>
-			<artifactId>lutini18n</artifactId>
-			<version>0.19</version>
+			<artifactId>lutinutil</artifactId>
+			<version>0.23</version>
 			<scope>compile</scope>
 		</dependency>
 					
@@ -63,9 +71,51 @@
 		</dependency>
 
 		<dependency>
-			<groupId>externallib</groupId>
-			<artifactId>jregex</artifactId>
-			<version>1.2_01</version>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-primitives</groupId>
+			<artifactId>commons-primitives</artifactId>
+			<version>1.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>jewelcli</groupId>
+			<artifactId>jewelcli</artifactId>
+			<version>0.41</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>nwalsh</groupId>
+			<artifactId>docbook-xsl-nwalsh</artifactId>
+			<version>1.71.1</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
