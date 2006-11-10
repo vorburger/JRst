@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="JRst">
+	
+  <bannerLeft>
+      <name>Java ReStructuredText parser</name>
+  </bannerLeft>
+	
+  <bannerRight>
+      <src>http://www.codelutin.com/images/lutinorange-codelutin.png</src>
+	  <href>http://www.codelutin.com</href>
+  </bannerRight>
+
+  <body>
+    <links>
+      <item name="Labs" href="http://labs.libre-entreprise.org/projects/jrst/"/>
+      <item name="Code Lutin" href="http://www.codelutin.com/"/>
+    </links>
+
+
+    <menu name="User">
+      <item href="/index.html" name="About"></item>
+      <item href="http://labs.libre-entreprise.org/frs/?group_id=54&amp;release_id=252" name="Download"/>
+    </menu>
+
+	<menu name="Dev">
+      <item name="Todo" href="Todo.html"/>
+    </menu>
+
+    ${reports}
+
+  </body>
+</project>
