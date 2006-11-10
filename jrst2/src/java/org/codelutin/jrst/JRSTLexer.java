@@ -426,7 +426,7 @@ public class JRSTLexer {
         in.skipBlankLines();
         String line = in.readLine();
         // (?i) case inensitive on docinfo item
-        if (line.matches("^:((?i)"+DOCINFO_ITEM+"):.*$")) {
+        if (line != null && line.matches("^:((?i)"+DOCINFO_ITEM+"):.*$")) {
             result = DocumentHelper.createElement(DOCINFO);
             result.addAttribute("level", "0");
             String infotype = line.substring(1, line.indexOf(":", 1));
@@ -549,7 +549,7 @@ public class JRSTLexer {
                                 }
                                 cell.addAttribute(CELL_INDEX_START, String.valueOf(start));
                                 cell.addAttribute(CELL_INDEX_END, String.valueOf(end));
-                                cell.setText(cell.getText() + "\n" + content);
+                                cell.setText(cell.getText() + content + "\n");
                                 start = end + 1; // +1 to pass + or | at end of cell
                                 content = "";
                             } else {
@@ -601,7 +601,7 @@ public class JRSTLexer {
                                         cell = (Element)row.node(cellNumber);
                                         
                                     }
-                                    cell.setText(cell.getText() + "\n" + content);
+                                    cell.setText(cell.getText() + content + "\n");
                                     // on a ajouter des choses dans la cell, donc
                                     // ce n'est pas la fin
                                     cell.addAttribute(CELL_END, "false");
@@ -900,26 +900,28 @@ public class JRSTLexer {
         Element result = null;
         in.skipBlankLines();
         String line = in.readLine();
-        if (startsWithTitleChar(line)) {
-            String [] titles = in.readLines(2);
-            if (titles.length == 2
-                    && line.length() >= titles[0].length()
-                    && line.length() == titles[1].length()
-                    && line.equals(titles[1])) {
-                result = DocumentHelper.createElement(TITLE)
-                .addAttribute("type", "double")
-                .addAttribute("char", titles[1].substring(0, 1))
-                .addText(titles[0]);
-            }
-        } else {
-            String title = in.readLine();
-            if (title != null &&
-                    startsWithTitleChar(title) &&
-                    line.length() == title.length()) {
-                result = DocumentHelper.createElement(TITLE)
-                .addAttribute("type", "simple")
-                .addAttribute("char", title.substring(0, 1))
-                .addText(line);
+        if (line != null) {
+            if (startsWithTitleChar(line)) {
+                String [] titles = in.readLines(2);
+                if (titles.length == 2
+                        && line.length() >= titles[0].length()
+                        && line.length() == titles[1].length()
+                        && line.equals(titles[1])) {
+                    result = DocumentHelper.createElement(TITLE)
+                    .addAttribute("type", "double")
+                    .addAttribute("char", titles[1].substring(0, 1))
+                    .addText(titles[0]);
+                }
+            } else {
+                String title = in.readLine();
+                if (title != null &&
+                        startsWithTitleChar(title) &&
+                        line.length() == title.length()) {
+                    result = DocumentHelper.createElement(TITLE)
+                    .addAttribute("type", "simple")
+                    .addAttribute("char", title.substring(0, 1))
+                    .addText(line);
+                }
             }
         }
 

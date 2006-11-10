@@ -40,7 +40,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
 
-import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -62,7 +61,6 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.ext.EntityResolver2;
 
 
 /**
@@ -82,7 +80,7 @@ public class JRSTGenerator implements DocumentHandler {
 
     static boolean DEBUG = true;
     
-    static private Log log = LogFactory.getLog(JRSTGeneratorTest.class);
+    static private Log log = LogFactory.getLog(JRSTGenerator.class);
     
     protected Writer out = null;
     protected int sectionLevel = 0;

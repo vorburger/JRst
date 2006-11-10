@@ -276,7 +276,7 @@ public class AdvancedReader {
      * @throws IOException 
      */
     public void skipBlankLines() throws IOException {
-        readUntil("\\s*\\S+.*");
+        readUntil("^\\s*\\S+.*");
     }
     
     /**

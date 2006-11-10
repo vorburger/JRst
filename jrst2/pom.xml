@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>lutinlib</groupId>
 		<artifactId>lutinproject</artifactId>
-		<version>2.0</version>
+		<version>2.1</version>
 	</parent>
 	
 	<!--A unique name for this project-->
@@ -20,7 +20,7 @@
 	<packaging>jar</packaging>
 	
 	<!--Version-->
-	<version>0.6</version>
+	<version>0.7</version>
 	
 	<!--Description-->
 	<description>
@@ -34,18 +34,6 @@
 	</issueManagement>
 	
 	<!--who the developers are for the project-->
-	<contributors>
-		<contributor>
-			<name>Jean-François Bucas</name>
-			<email>bucas@codelutin.com</email>
-			<organization>Code Lutin</organization>
-			<timezone>+2</timezone>
-			<roles>
-				<role>Développeur</role>
-			</roles>
-		</contributor>
-	</contributors>
-	
         <repositories>
                 <repository>
                         <id>codelutin-repository</id>
@@ -97,6 +85,13 @@
 			<version>1.6.1</version>
 			<scope>compile</scope>
 		</dependency>
+
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+      <version>1.1-beta-6</version>
+      <scope>compile</scope>
+    </dependency>
 
 		<dependency>
 			<groupId>jewelcli</groupId>

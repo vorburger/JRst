@@ -464,6 +464,10 @@ public class JRSTReader {
      */
     private Element composeBody(JRSTLexer lexer, Element parent) throws DocumentException, IOException {
         Element item = lexer.peekTitleOrBodyElement();
+        if (item == null && !lexer.eof()) {
+            item = lexer.peekTitleOrBodyElement();
+            System.out.println(item);
+        }
         while (!lexer.eof() && itemNotEquals(TITLE, item) && isUpperLevel(item, parent)) {
             if (itemEquals(PARAGRAPH, item)) {
                 lexer.remove();
@@ -639,10 +643,11 @@ public class JRSTReader {
                         entry.addAttribute("morecols", String.valueOf(morecols));
                     }
                     
-//                    JRSTReader reader = new JRSTReader();
-//                    Document doc = reader.read(new StringReader(text));
-//                    entry.appendContent(doc.getRootElement());
-                    entry.setText(text);
+                    // FIXME parse entry text in table
+                    JRSTReader reader = new JRSTReader();
+                    Document doc = reader.read(new StringReader(text));
+                    entry.appendContent(doc.getRootElement());
+//                    entry.setText(text);
                 }
             }
             if ("true".equals(rows.get(r).attributeValue(JRSTLexer.ROW_END_HEADER))) {
