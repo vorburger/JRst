@@ -643,11 +643,10 @@ public class JRSTReader {
                         entry.addAttribute("morecols", String.valueOf(morecols));
                     }
                     
-                    // FIXME parse entry text in table
+                    // parse entry text in table
                     JRSTReader reader = new JRSTReader();
                     Document doc = reader.read(new StringReader(text));
                     entry.appendContent(doc.getRootElement());
-//                    entry.setText(text);
                 }
             }
             if ("true".equals(rows.get(r).attributeValue(JRSTLexer.ROW_END_HEADER))) {

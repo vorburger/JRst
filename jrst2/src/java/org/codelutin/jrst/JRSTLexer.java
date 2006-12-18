@@ -449,8 +449,6 @@ public class JRSTLexer {
     }
 
     public Element peekTable() throws IOException {
-        // TODO now we take table as LITERAL_BLOCK, but in near
-        // futur we must parse correctly TABLE (show JRSTGenerator and JRSTReader too)
         beginPeek();
 
         Element result = null;
@@ -632,6 +630,10 @@ public class JRSTLexer {
     //
     //            result.addText(line);
             } else if (line.matches("^\\s*(=+ +)+=+\\s*$")) { // simple table
+                // TODO now we take table as LITERAL_BLOCK, but in near
+                // futur we must parse correctly TABLE (show JRSTGenerator and JRSTReader too)
+
+                
                 // dans les tables simples il peut y avoir des lignes blanches au
                 // milieu. Mais la premiere et la derniere lignes sont identiques
                 // TODO cela ne parse pas la table, il faut le faire

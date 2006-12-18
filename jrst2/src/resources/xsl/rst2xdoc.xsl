@@ -8,11 +8,25 @@
 
   <xsl:template match="/document">
     <document>
-    	<section name="">
+    	<section>
+          <xsl:attribute name="name"><xsl:value-of select="title"/></xsl:attribute>
 	      <xsl:apply-templates /> 
 		</section>
     </document>
   </xsl:template>
+
+  <xsl:template match="title">
+    <xsl:choose>
+      <xsl:when test="count(ancestor::section) = 0">
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:element name="h{count(ancestor::section) + 1}">
+          <xsl:apply-templates/>
+        </xsl:element>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
 
 </xsl:transform>
 
