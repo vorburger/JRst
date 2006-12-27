@@ -40,7 +40,7 @@ import org.apache.tools.ant.NoBannerLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.types.FileSet;
-import org.codelutin.jrst.Parser;
+import org.codelutin.jrst.JRST;
 import org.codelutin.util.FileUtil;
 import org.codelutin.util.FileUtil.FileAction;
 
@@ -116,7 +116,8 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
         if (fileIn.matches(".*\\.rst")) {
             fileOut = fileIn.replace(directoryIn,directoryOut).replace(".rst",".xml");
             try {
-                Parser.parse(Parser.TYPE_XDOC, fileIn, fileOut, overwrite);
+                JRST.generate(JRST.TYPE_XDOC,
+                        new File(fileIn), new File(fileOut), overwrite);
                 numberFilesGenerates ++;
             } catch (Exception e) {
                 getLog().error(e);
