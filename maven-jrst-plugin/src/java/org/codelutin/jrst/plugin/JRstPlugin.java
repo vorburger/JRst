@@ -48,23 +48,24 @@ import org.codelutin.util.FileUtil.FileAction;
  * Génére du xdoc à partir de fichiers Rst
  *  
  * @goal jrst
+ * @phase pre-site
  */
 public class JRstPlugin extends AbstractMojo implements FileAction {    
     /**
      * Répertoire source des fichiers Rst
      * 
-     * @parameter
+     * @parameter default-value="doc"
      * @required
      */
-    private String directoryIn;
+    private String directoryIn = "doc";
     
     /**
      * Répertoire cible des fichiers xdoc générée
      * 
-     * @parameter
+     * @parameter default-value="target/site-build/xdoc"
      * @required
      */
-    private String directoryOut;
+    private String directoryOut = "target/site-build/xdoc";
 
     /**
      * Arrête la génération en cas d'erreurs

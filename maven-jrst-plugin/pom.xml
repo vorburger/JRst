@@ -6,12 +6,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<!--lutinproject.xml-->
+<!--
 	<parent>
 		<groupId>lutinlib</groupId>
 		<artifactId>lutinproject</artifactId>
-		<version>2.0</version>
+		<version>2.2</version>
 	</parent>
-	
+-->
+
 	<!--A unique name for this project-->
 	<groupId>lutinplugin</groupId>
 	<artifactId>maven-jrst-plugin</artifactId>
@@ -29,6 +31,26 @@
 	</description>
 	<inceptionYear>2006</inceptionYear>
 	
+
+<!-- debut de ce qui devrait etre dans le pere -->
+        <build>
+		<sourceDirectory>${maven.src.dir}/java</sourceDirectory>
+		<testSourceDirectory>${maven.src.dir}/test</testSourceDirectory>
+        </build>
+        <distributionManagement>
+                <repository>
+                        <id>labs</id>
+                        <url>scp://labs.libre-entreprise.org/home/groups/lutinbuilder/htdocs/maven2</url>
+                </repository>
+                
+                <site>
+                        <id>labs</id>
+                        <url>scp://labs.libre-entreprise.org/home/groups/jrst/htdocs/${pom.artifactId}</url>
+                </site>
+        </distributionManagement>
+<!-- fin de ce qui devrait etre dans le pere -->
+
+        
 	<!--Tracking-->
 	<issueManagement>
 		<url>http://labs.libre-entreprise.org/tracker/?group_id=54</url>
@@ -59,7 +81,7 @@
 		<dependency>
 			<groupId>lutinlib</groupId>
 			<artifactId>jrst</artifactId>
-			<version>0.7</version>
+			<version>[0.7,)</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
