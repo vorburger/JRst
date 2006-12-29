@@ -68,14 +68,14 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
     private String directoryOut = "target/site-build/xdoc";
 
     /**
-     * ArrÃªte la gÃ©nÃ©ration en cas d'erreurs
+     * Arrête la génération en cas d'erreurs
      * 
      * @parameter default-value="true"
      */
     private boolean ignoreErrors = true;
     
     /**
-     * Ecrase les fichiers gÃ©nÃ©rÃ©s
+     * Ecrase les fichiers générés
      * 
      * @parameter default-value="false"
      */
@@ -104,7 +104,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
     }
     
     private void actionGenerate(){
-        getLog().info("GÃ©nÃ©ration des fichier xdocs Ã  partir des fichiers rst");
+        getLog().info("Génération des fichier xdocs à  partir des fichiers rst");
         numberFilesGenerates = 0;
         FileUtil.walkAfter(new File(directoryIn), this);
         getLog().info("Generating " + numberFilesGenerates + " files to " + directoryOut);
@@ -155,7 +155,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
         copy.setTaskName("Copy images");
 
         /* Configuration */
-        copy.setTodir(new File(directoryOut));
+        copy.setTodir(new File(directoryOut + "/resources")); // with maven2 site plugin images must be in resources
         copy.setPreserveLastModified(true);
         copy.setOverwrite(overwrite);
         
