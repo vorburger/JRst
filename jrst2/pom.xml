@@ -115,4 +115,11 @@
 		</dependency>
 	</dependencies>
 	
+        <distributionManagement>
+                <site>
+                        <id>labs</id>
+                        <url>scp://labs.libre-entreprise.org/home/groups/${pom.artifactId}/htdocs/</url>
+                </site>
+        </distributionManagement>
+
 </project>
