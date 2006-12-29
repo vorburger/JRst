@@ -32,6 +32,7 @@
 package org.codelutin.jrst;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -156,6 +157,9 @@ public class JRST {
                     stylesheet = file.toURL();
                 } else {
                     stylesheet = JRST.class.getResource(xsl);
+                }
+                if (stylesheet == null) {
+                    throw new FileNotFoundException("Can't find stylesheet: " + xsl);
                 }
                 doc = gen.transform(doc, stylesheet);
             }

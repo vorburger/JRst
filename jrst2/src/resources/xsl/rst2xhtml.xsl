@@ -151,7 +151,7 @@
 	</xsl:template>
 
 	<xsl:template match="image">
-		<image alt="{@alt}" href="{@uri}"><xsl:apply-templates/></image>
+		<img alt="{@alt}" src="{@uri}"><xsl:apply-templates/></img>
 	</xsl:template>
 
 	<!--

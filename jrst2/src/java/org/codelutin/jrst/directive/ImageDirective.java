@@ -61,7 +61,7 @@ public class ImageDirective implements JRSTDirective {
     public Node parse(Element e) {
         Element result = DocumentHelper.createElement(IMAGE);
         
-        if (SUBSTITUTION_DEFINITION.equals(e.getParent().getName())) {
+        if (e.getParent() != null && SUBSTITUTION_DEFINITION.equals(e.getParent().getName())) {
             String ref = e.getParent().attributeValue("name");
             result.addAttribute("alt", ref);
         }
