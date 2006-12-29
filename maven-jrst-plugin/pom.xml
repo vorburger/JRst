@@ -6,13 +6,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<!--lutinproject.xml-->
-<!--
+
 	<parent>
 		<groupId>lutinlib</groupId>
 		<artifactId>lutinproject</artifactId>
 		<version>2.2</version>
 	</parent>
--->
+
 
 	<!--A unique name for this project-->
 	<groupId>lutinplugin</groupId>
