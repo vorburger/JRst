@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="JRst">
 	
+  <skin>                                                                                                                                                                                                                 
+    <groupId>lutinlib</groupId>                                                                                                                                                                            
+    <artifactId>lutin-site-skin</artifactId>
+    <version>0.1</version>
+  </skin>                 
+	
   <bannerLeft>
       <name>Java ReStructuredText parser</name>
   </bannerLeft>
@@ -10,12 +16,18 @@
 	  <href>http://www.codelutin.com</href>
   </bannerRight>
 
+  <poweredBy>
+     <logo href="http://maven.apache.org" name="Maven" img="images/logos/maven-feather.png"/>
+      <logo href="http://jrst.labs.libre-entreprise.org" name="JRst" img="images/jrst-logo.png"/>
+      <logo href="http://docutils.sourceforge.net/rst.html" name="ReStructuredText" img="images/restructuredtext-logo.png"/>
+  </poweredBy>    
+
   <body>
     <links>
-      <item name="Labs" href="http://labs.libre-entreprise.org/projects/jrst/"/>
+      <item name="Maven-jrst-plugin" href="http://jrst.labs.libre-entreprise.org/maven-jrst-plugin/"/>
+      <item name="Labs" href="http://labs.libre-entreprise.org/"/>
       <item name="Code Lutin" href="http://www.codelutin.com/"/>
     </links>
-
 
     <menu name="User">
       <item href="/index.html" name="About"></item>
