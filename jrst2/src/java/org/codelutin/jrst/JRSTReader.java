@@ -33,6 +33,8 @@ package org.codelutin.jrst;
 
 import static org.codelutin.jrst.ReStructuredText.*;
 
+import static org.codelutin.i18n.I18n._;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -342,42 +344,45 @@ public class JRSTReader {
      * @throws IOException
      * @throws DocumentException 
      */
-    public Document read(Reader reader) throws IOException, DocumentException {
+    public Document read(Reader reader) throws Exception {
         JRSTLexer lexer = new JRSTLexer(reader);
-               
-        Element root = composeDocument(lexer);
-        
-        Document result = DocumentHelper.createDocument();
-        result.setRootElement(root);
-
-        // remove all level attribute
-        root.accept(new VisitorSupport() {
-            public void visit(Element e) {
-                e.addAttribute("level", null);
-                if ("true".equalsIgnoreCase(e.attributeValue("inline"))) {
-                    e.addAttribute("inline", null);
-                    try {
-                        inline(e);
-                    } catch (DocumentException eee) {
-                        if (log.isWarnEnabled()) {
-                            log.warn("Can inline text for " + e, eee);
+        try {            
+            Element root = composeDocument(lexer);
+            
+            Document result = DocumentHelper.createDocument();
+            result.setRootElement(root);
+            
+            // remove all level attribute
+            root.accept(new VisitorSupport() {
+                public void visit(Element e) {
+                    e.addAttribute("level", null);
+                    if ("true".equalsIgnoreCase(e.attributeValue("inline"))) {
+                        e.addAttribute("inline", null);
+                        try {
+                            inline(e);
+                        } catch (DocumentException eee) {
+                            if (log.isWarnEnabled()) {
+                                log.warn("Can inline text for " + e, eee);
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
+            
         
-        
-        return result;
+            return result;
+        } catch (Exception eee) {
+            log.error(_("JRST parsing error line {0} char {1}:\n{2}", lexer.getLineNumber(), lexer.getCharNumber(), lexer.readNotBlanckLine()));
+            throw eee;
+        }
     }
 
     /**
      * @param in
      * @param root
-     * @throws IOException 
-     * @throws DocumentException 
+     * @throws Exception
      */
-    private Element composeDocument(JRSTLexer lexer) throws IOException, DocumentException {
+    private Element composeDocument(JRSTLexer lexer) throws Exception {
         Element result = DocumentHelper.createElement(DOCUMENT);
         result.addAttribute("level", String.valueOf(MAX_SECTION_DEPTH - 1));
 
@@ -462,7 +467,7 @@ public class JRSTReader {
      * @throws DocumentException 
      * @throws IOException 
      */
-    private Element composeBody(JRSTLexer lexer, Element parent) throws DocumentException, IOException {
+    private Element composeBody(JRSTLexer lexer, Element parent) throws Exception {
         Element item = lexer.peekTitleOrBodyElement();
         if (item == null && !lexer.eof()) {
             item = lexer.peekTitleOrBodyElement();
@@ -564,7 +569,7 @@ public class JRSTReader {
      * @param item
      * @return
      */
-    private Element composeTable(JRSTLexer lexer, Element item) throws IOException, DocumentException {
+    private Element composeTable(JRSTLexer lexer, Element item) throws Exception {
         Element result = DocumentHelper.createElement(TABLE);
         
         int tableWidth = Integer.parseInt(item.attributeValue(JRSTLexer.TABLE_WIDTH));
@@ -657,7 +662,7 @@ public class JRSTReader {
         return result;
     }
 
-    private Element composeBulletList(JRSTLexer lexer) throws IOException, DocumentException {
+    private Element composeBulletList(JRSTLexer lexer) throws Exception {
         Element item = lexer.peekBulletList();
         Element result = DocumentHelper.createElement(BULLET_LIST);
         copyLevel(item, result);        
@@ -675,7 +680,7 @@ public class JRSTReader {
         return result;
     }
 
-    private Element composeEnumeratedList(JRSTLexer lexer) throws IOException, DocumentException {
+    private Element composeEnumeratedList(JRSTLexer lexer) throws Exception {
         Element item = lexer.peekEnumeratedList();
         Element result = DocumentHelper.createElement(ENUMERATED_LIST);
         copyLevel(item, result);        
@@ -698,7 +703,7 @@ public class JRSTReader {
         return result;
     }
 
-    private Element composeDefinitionList(JRSTLexer lexer) throws IOException, DocumentException {
+    private Element composeDefinitionList(JRSTLexer lexer) throws Exception {
         Element item = lexer.peekBodyElement();
         Element result = DocumentHelper.createElement(DEFINITION_LIST);
         copyLevel(item, result);        
@@ -718,18 +723,18 @@ public class JRSTReader {
                 classifier.addAttribute("inline", "true").setText(classifierText);
             }
             
-            Element defintion = def.addElement(DEFINITION);
-            defintion.addElement(PARAGRAPH).addAttribute("inline", "true").setText(item.getText());
-            copyLevel(item, defintion);        
+            Element definition = def.addElement(DEFINITION);
+            definition.addElement(PARAGRAPH).addAttribute("inline", "true").setText(item.getText());
+            copyLevel(item, definition);        
             
-            composeBody(lexer, defintion);
+            composeBody(lexer, definition);
             
             item = lexer.peekBodyElement();
         }
         return result;
     }
 
-    private Element composeFieldList(JRSTLexer lexer) throws IOException, DocumentException {
+    private Element composeFieldList(JRSTLexer lexer) throws Exception {
         Element item = lexer.peekBodyElement();
         Element result = DocumentHelper.createElement(FIELD_LIST);
         copyLevel(item, result);        
@@ -741,7 +746,7 @@ public class JRSTReader {
         return result;
     }
 
-    private Element composeFieldItemList(JRSTLexer lexer) throws IOException, DocumentException {
+    private Element composeFieldItemList(JRSTLexer lexer) throws Exception {
         Element item = lexer.peekFieldList();
         if (itemEquals(FIELD_LIST, item)) {
             lexer.remove();
@@ -769,7 +774,7 @@ public class JRSTReader {
      * @throws DocumentException 
      * @throws IOException 
      */
-    private Element composeSection(JRSTLexer lexer) throws DocumentException, IOException {
+    private Element composeSection(JRSTLexer lexer) throws Exception {
         Element result = DocumentHelper.createElement(SECTION);
         Element firstTitle = null;
         

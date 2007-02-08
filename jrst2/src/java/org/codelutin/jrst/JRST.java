@@ -45,6 +45,7 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codelutin.util.FileUtil;
 import org.codelutin.util.StringUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -67,6 +68,12 @@ import uk.co.flamingpenguin.jewel.cli.Unparsed;
 @CommandLineInterface(application="JRST")
 public class JRST {
 
+    public static enum Overwrite {
+        NEVER,
+        IFNEWER,
+        ALLTIME
+    }
+    
     /** to use log facility, just put in your code: log.info(\"...\"); */
     static private Log log = LogFactory.getLog(JRST.class);
 
@@ -118,12 +125,14 @@ public class JRST {
             xslList = option.getOutType();            
         }
 
-        generate(xslList, option.getFile(), option.getOutFile(), option.isForce());
+        generate(xslList, option.getFile(), option.getOutFile(), option.isForce()?Overwrite.ALLTIME:Overwrite.NEVER);
     }
     
     public static void generate(String xslListOrOutType, File fileIn, File fileOut,
-            boolean overwrite) throws Exception {
-        if (fileOut != null && fileOut.exists() && overwrite == false) {
+            Overwrite overwrite) throws Exception {
+        if (fileOut != null && fileOut.exists() && 
+                (overwrite == Overwrite.NEVER || 
+                        (overwrite == Overwrite.IFNEWER && FileUtil.isNewer(fileIn, fileOut)))) {
             log.info("Don't generate file "+fileOut+", because already exists");
         } else {
             // search xsl file list to apply

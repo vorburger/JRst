@@ -270,6 +270,30 @@ public class JRSTLexer {
     }
 
     /**
+     * Lit les premieres ligne non vide et les retourne, rien n'est modifier par rapport
+     * aux positions dans le fichier. Util pour afficher a l'utilisateur les lignes
+     * qui ont produit une erreur
+     * 
+     * @return
+     * @throws IOException
+     */
+    public String readNotBlanckLine() throws IOException {
+        beginPeek();
+        in.skipBlankLines();
+        String line = joinBlock(in.readUntilBlank(), "\n", false);
+        endPeek();
+        return line;
+    }
+    
+    public int getLineNumber() {
+        return in.getLineNumber();
+    }
+    
+    public int getCharNumber() {
+        return in.getCharNumber();
+    }
+    
+    /**
      * @return
      * @throws IOException
      */
@@ -788,11 +812,13 @@ public class JRSTLexer {
                     .addAttribute("term", term)
                     .addAttribute("classifiers", classifiers);
 
-                    if (!in.eof()) {
-                        String [] content = readBlock(level + 1);
-                        String text = joinBlock(content);
-                        result.addText(text);
-                    }
+                    // poussin 20070207 don't read block here because can't 
+                    // interpret it correctly in JRSTReader
+//                    if (!in.eof()) {
+//                        String [] content = readBlock(level + 1);
+//                        String text = joinBlock(content);
+//                        result.addText(text);
+//                    }
                 }
             }
         }
