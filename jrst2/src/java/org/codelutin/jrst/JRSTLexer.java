@@ -68,24 +68,26 @@ public class JRSTLexer {
     /** to use log facility, just put in your code: log.info(\"...\"); */
     static private Log log = LogFactory.getLog(JRSTLexer.class);
 
-   static final public String TABLE = "table";
-   static final public String ROW = "row";
-   static final public String CELL = "cell";
-
-   static final public String TABLE_HEADER = "header";
-   static final public String TABLE_WIDTH = "width";
-
-   static final public String ROW_END_HEADER = "endHeader";
-
-   static final public String CELL_INDEX_START = "indexStart";
-   static final public String CELL_INDEX_END = "indexEnd";
-   static final public String CELL_BEGIN = "begin";
-   static final public String CELL_END = "end";
-
-   static final public String DIRECTIVE = "directive";
-   static final public String DIRECTIVE_TYPE = "type";
-   static final public String DIRECTIVE_VALUE = "value";
-   
+    static final public String BLANK_LINE = "blankLine";
+    
+    static final public String TABLE = "table";
+    static final public String ROW = "row";
+    static final public String CELL = "cell";
+    
+    static final public String TABLE_HEADER = "header";
+    static final public String TABLE_WIDTH = "width";
+    
+    static final public String ROW_END_HEADER = "endHeader";
+    
+    static final public String CELL_INDEX_START = "indexStart";
+    static final public String CELL_INDEX_END = "indexEnd";
+    static final public String CELL_BEGIN = "begin";
+    static final public String CELL_END = "end";
+    
+    static final public String DIRECTIVE = "directive";
+    static final public String DIRECTIVE_TYPE = "type";
+    static final public String DIRECTIVE_VALUE = "value";
+    
     /**
      * retient le niveau du titre, pour un titre de type double, on met
      * deux fois le caratere dans la chaine, sinon on le met une seul fois.
@@ -263,6 +265,9 @@ public class JRSTLexer {
             result = peekLiteralBlock();
         }
         if (result == null) {
+            result = peekBlankLine();
+        }
+        if (result == null) {
             result = peekPara();
         }
 
@@ -293,6 +298,22 @@ public class JRSTLexer {
         return in.getCharNumber();
     }
     
+    public Element peekBlankLine() throws IOException {
+        beginPeek();
+        Element result = null;
+        
+        // must have one blank line before
+        String line = in.readLine();
+        if (line != null && line.matches("\\s*")) {
+            int level = level(line);
+            result = DocumentHelper.createElement(BLANK_LINE)
+            .addAttribute("level", String.valueOf(level));
+        }
+        
+        endPeek();
+        return result;
+    }
+    
     /**
      * @return
      * @throws IOException
@@ -301,7 +322,7 @@ public class JRSTLexer {
         beginPeek();
 
         Element result = null;
-        in.skipBlankLines();
+//        in.skipBlankLines();
 
         String line = in.readLine();
         if (line != null) {
@@ -345,7 +366,7 @@ public class JRSTLexer {
         // must have one blank line before
         String line = in.readLine();
         if (line != null && line.matches("\\s*")) {
-            in.skipBlankLines();
+//            in.skipBlankLines();
             line = in.readLine();
             if (line != null && line.matches("-{3,}\\s*")) {
                 line = in.readLine();
@@ -372,25 +393,40 @@ public class JRSTLexer {
         beginPeek();
 
         Element result = null;
-        in.skipBlankLines();
-
-        String [] lines = readBlock(0);
-        if (lines.length > 0) {
-            int level = level(lines[0]);
-            String para = joinBlock(lines);
-
-            if (para.endsWith(": ::")) {
-                para = para.substring(0, para.length() - " ::".length());
-                in.unread("::", true);
-            } else if (para.endsWith("::")) {
-                para = para.substring(0, para.length() - ":".length()); // keep one :
-                in.unread("::", true);
+//        in.skipBlankLines();
+        
+        String [] lines;
+        do {
+            lines = readBlock(0);
+            if (lines.length > 0) {
+                int level = level(lines[0]);
+                String para = joinBlock(lines);
+                
+                boolean literal = false;
+                if (para.endsWith(": ::")) {
+                    para = para.substring(0, para.length() - " ::".length());
+                    in.unread("::", true);
+                    literal = true;
+                } else if (para.endsWith("::")) {
+                    para = para.substring(0, para.length() - ":".length()); // keep one :
+                    in.unread("::", true);
+                    literal = true;
+                }
+                
+                if (para.length() == 0 || ":".equals(para)) {
+                    if (literal) {
+                        in.readLine(); // eat "::"
+                    }
+                } else {
+                    // if para is empty, there are error and possible 
+                    // infiny loop on para, force read next line
+                    result = DocumentHelper.createElement(PARAGRAPH)
+                    .addAttribute("level", String.valueOf(level))
+                    .addText(para);
+                }
             }
+        } while (result == null && lines.length > 0);
 
-            result = DocumentHelper.createElement(PARAGRAPH)
-            .addAttribute("level", String.valueOf(level))
-            .addText(para);
-        }
 
         endPeek();
         return result;
@@ -400,7 +436,7 @@ public class JRSTLexer {
         beginPeek();
 
         Element result = null;
-        in.skipBlankLines();
+//        in.skipBlankLines();
 
         String [] prefix = in.readLines(2);
         if (prefix.length == 2 &&
@@ -447,7 +483,7 @@ public class JRSTLexer {
         beginPeek();
 
         Element result = null;
-        in.skipBlankLines();
+//        in.skipBlankLines();
         String line = in.readLine();
         // (?i) case inensitive on docinfo item
         if (line != null && line.matches("^:((?i)"+DOCINFO_ITEM+"):.*$")) {
@@ -476,7 +512,7 @@ public class JRSTLexer {
         beginPeek();
 
         Element result = null;
-        in.skipBlankLines();
+//        in.skipBlankLines();
         String line = in.readLine();
 
         if (line != null) {
@@ -707,7 +743,7 @@ public class JRSTLexer {
         beginPeek();
 
         Element result = null;
-        in.skipBlankLines();
+//        in.skipBlankLines();
         String line = in.readLine();
         if (line != null && line.matches("^\\s*["+escapeRegex(BULLET_CHAR)+"] \\S.*")) {
             int level = level(line);
@@ -746,7 +782,7 @@ public class JRSTLexer {
         beginPeek();
 
         Element result = null;
-        in.skipBlankLines();
+//        in.skipBlankLines();
         String line = in.readLine();
         if (line != null) {
             Pattern pattern = Pattern.compile("^\\s*:([^:]+): [^\\s].*");
@@ -794,7 +830,7 @@ public class JRSTLexer {
         beginPeek();
 
         Element result = null;
-        in.skipBlankLines();
+//        in.skipBlankLines();
         String [] lines = in.readLines(2);
         if (lines.length == 2) {
             int level = level(lines[0]);
@@ -852,7 +888,7 @@ public class JRSTLexer {
         beginPeek();
 
         Element result = null;
-        in.skipBlankLines();
+//        in.skipBlankLines();
         String line = in.readLine();
         if (line != null) {
             Pattern pattern = Pattern.compile("^\\s*(\\(?)(#|\\d+|[a-z]|[A-Z]|[ivxlcdm]+|[IVXLCDM]+)([\\.)]) [^\\s].*");
@@ -926,7 +962,7 @@ public class JRSTLexer {
         beginPeek();
 
         Element result = null;
-        in.skipBlankLines();
+//        in.skipBlankLines();
         String line = in.readLine();
         if (line != null) {
             if (startsWithTitleChar(line)) {

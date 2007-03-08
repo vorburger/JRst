@@ -153,3 +153,13 @@ The |the big: biohazard| symbol in |date| must be used on containers used to dis
 .. |the big: biohazard| image:: biohazard.png 
 .. |date| date::
 
+
+Une *petit* phare `pour avoir <http://www.free.fr>`_ un lien inline
+
+:field1: def1
+:field2: def2
+
+:field1: autre def1
+:field2: autre def2
+
+la derniere ligne.

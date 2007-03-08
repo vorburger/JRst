@@ -362,7 +362,7 @@ public class JRSTReader {
                             inline(e);
                         } catch (DocumentException eee) {
                             if (log.isWarnEnabled()) {
-                                log.warn("Can inline text for " + e, eee);
+                                log.warn("Can't inline text for " + e, eee);
                             }
                         }
                     }
@@ -474,7 +474,10 @@ public class JRSTReader {
             System.out.println(item);
         }
         while (!lexer.eof() && itemNotEquals(TITLE, item) && isUpperLevel(item, parent)) {
-            if (itemEquals(PARAGRAPH, item)) {
+            if (itemEquals(JRSTLexer.BLANK_LINE, item)) {
+                // go to the next element
+                lexer.remove();
+            } else if (itemEquals(PARAGRAPH, item)) {
                 lexer.remove();
                 Element para = parent.addElement(PARAGRAPH);
                 copyLevel(item,para);
@@ -903,15 +906,32 @@ public class JRSTReader {
         // search all LITERAL and replace it with special mark
         // this prevent substitution in literal, example **something** must not
         // change in literal
-        ArrayList<String> literals = new ArrayList<String>();
+        Map<String, String> temporaries = new HashMap<String, String>();
         Matcher matcher = REGEX_LITERAL.matcher(text);
+        int index = 0;
         while(matcher.find()) {
             int start =  matcher.start();
             int end = matcher.end();
-            String literal = matcher.group(1);
-            literals.add(literal);
+            String literal = "<"+LITERAL+">" + matcher.group(1) + "</"+LITERAL+">";
+            String key = "literal" + index++;            
+            temporaries.put(key, literal);
+            
+            text = text.substring(0, start) + "``" + key + "``" + text.substring(end);
+        }
 
-            text = text.substring(0, start) + "``" + (literals.size() - 1) + "``" + text.substring(end);
+        // search all REGEX_INLINE_REFERENCE and replace it with special mark
+        // this prevent substitution of URL with REGEX_REFERENCE. Use same
+        // mechanisme as literal for that
+        matcher = REGEX_INLINE_REFERENCE.matcher(text);
+        index = 0;
+        while(matcher.find()) {
+            int start =  matcher.start();
+            int end = matcher.end();
+            String reference = "<"+REFERENCE+" refuri='"+matcher.group(2)+"'>"+matcher.group(1)+"</"+REFERENCE+">";
+            String key = "inlineReference" + index++;            
+            temporaries.put(key, reference);
+            
+            text = text.substring(0, start) + "``" + key + "``" + text.substring(end);
         }
 
         
@@ -949,8 +969,8 @@ public class JRSTReader {
             String start = text.substring(0, matcher.start());
             String end = text.substring(matcher.end());
 
-            int literalIndex = Integer.parseInt(matcher.group(1));
-            text = start + "<"+LITERAL+">" + literals.get(literalIndex) + "</"+LITERAL+">" + end;
+            String tempKey = matcher.group(1);
+            text = start + temporaries.get(tempKey) + end;
         }
         
         Element result = DocumentHelper.parseText("<TMP>"+text+"</TMP>").getRootElement();
