@@ -31,8 +31,6 @@
 
 package org.codelutin.jrst;
 
-import static org.codelutin.jrst.ReStructuredText.*;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -67,26 +65,65 @@ public class JRSTLexer {
     
     /** to use log facility, just put in your code: log.info(\"...\"); */
     static private Log log = LogFactory.getLog(JRSTLexer.class);
+    static final public String BULLET_CHAR = "*" + "+" + "-" + "\u2022" + "\u2023" + "\u2043";
+    static final public String TITLE_CHAR = "-=-~'`^+:!\"#$%&*,./;|?@\\_[\\]{}<>()";
+    static final public String DOCINFO_ITEM =
+        "author|authors|organization|address|contact|version|revision|status|date|copyright";
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Title Elements
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    static final public String TITLE = "title";
+    
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Bibliographic Elements
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    static final public String DOCINFO = "docinfo";
+  
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Structural Elements
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+    static final public String TRANSITION = "transition";
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Body Elements
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+    static final public String LITERAL_BLOCK = "literal_block";
+    static final public String PARAGRAPH = "paragraph";
     static final public String BLANK_LINE = "blankLine";
+    static final public String SUBSTITUTION_DEFINITION = "substitution_definition";
+    static final public String BULLET_LIST = "bullet_list";
+    static final public String FIELD_LIST = "field_list";
+    static final public String DEFINITION_LIST = "definition_list";
+    static final public String ENUMERATED_LIST = "enumerated_list";
+  
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Table Elements
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
     static final public String TABLE = "table";
     static final public String ROW = "row";
     static final public String CELL = "cell";
-    
     static final public String TABLE_HEADER = "header";
     static final public String TABLE_WIDTH = "width";
-    
     static final public String ROW_END_HEADER = "endHeader";
-    
     static final public String CELL_INDEX_START = "indexStart";
     static final public String CELL_INDEX_END = "indexEnd";
     static final public String CELL_BEGIN = "begin";
     static final public String CELL_END = "end";
-    
+     
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Directive Elements
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
     static final public String DIRECTIVE = "directive";
     static final public String DIRECTIVE_TYPE = "type";
     static final public String DIRECTIVE_VALUE = "value";
+  
     
     /**
      * retient le niveau du titre, pour un titre de type double, on met

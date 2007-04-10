@@ -3,15 +3,15 @@
 	<classpathentry kind="src" path="src/java"/>
 	<classpathentry kind="src" path="src/test"/>
 	<classpathentry kind="src" path="src/resources"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/lutinxml"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/lutinutil"/>
-	<classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.1/commons-lang-2.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-primitives/commons-primitives/1.0/commons-primitives-1.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1/commons-logging-1.1.jar" sourcepath="/tmp/commons-logging-1.1-src/src/java"/>
-	<classpathentry kind="var" path="M2_REPO/nwalsh/docbook-xsl-nwalsh/1.71.1/docbook-xsl-nwalsh-1.71.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/jewelcli/jewelcli/0.41/jewelcli-0.41.jar" sourcepath="/LOCAL_SRC/jewelcli/src/main/java"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
+	<classpathentry exported="true" kind="var" path="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"/>
+	<classpathentry exported="true" kind="var" path="M2_REPO/commons-lang/commons-lang/2.1/commons-lang-2.1.jar"/>
+	<classpathentry exported="true" kind="var" path="M2_REPO/commons-primitives/commons-primitives/1.0/commons-primitives-1.0.jar"/>
+	<classpathentry exported="true" sourcepath="/tmp/commons-logging-1.1-src/src/java" kind="var" path="M2_REPO/commons-logging/commons-logging/1.1/commons-logging-1.1.jar"/>
+	<classpathentry exported="true" kind="var" path="M2_REPO/nwalsh/docbook-xsl-nwalsh/1.71.1/docbook-xsl-nwalsh-1.71.1.jar"/>
+	<classpathentry exported="true" sourcepath="/LOCAL_SRC/jewelcli/src/main/java" kind="var" path="M2_REPO/jewelcli/jewelcli/0.41/jewelcli-0.41.jar"/>
+	<classpathentry kind="var" path="M2_REPO/lutinlib/lutinutil/0.24/lutinutil-0.24.jar"/>
+	<classpathentry kind="var" path="M2_REPO/jaxen/jaxen/1.1-beta-6/jaxen-1.1-beta-6.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
