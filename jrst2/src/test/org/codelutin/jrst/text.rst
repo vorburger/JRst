@@ -120,14 +120,7 @@ un para 0
   un para pluie
   de 2
 
-=====  =====  =======
-  A      B    A and B
-=====  =====  =======
-False  False  False
-True   False  False
-False  True   False
-True   True   True
-=====  =====  =======
+
 
 +------------------------+------------+----------+----------+
 | Header row, column 1   | Header 2   | Header 3 | Header 4 |
@@ -147,6 +140,30 @@ True   True   True
 +------------------------+ span rows. | - contain           |
 | body row 4             |            | - body elements.    |
 +------------------------+------------+---------------------+
+
+================  ============================================================
+Bullet list       * items begin with "-", "+", or "*"
+Enumerated list   1. items use any variation of "1.", "A)", and "(i)"
+                  #. also auto-enumerated
+Definition list   Term is flush-left : optional classifier
+                      Definition is indented, no blank line between
+Field list        :field name: field body
+Option list       -o  at least 2 spaces between option & description
+================  ============================================================
+
+=====  =====  ======
+   Inputs     Output
+------------  ------
+  A      B    A or B
+------------  ------
+  A      B    A or B
+=====  =====  ======
+False  False  Second column of row 1.
+True   False  Second column of row 2.
+True   2      - Second column of row 3.
+              - Second item in bullet
+                list (row 3, column 2).
+=====  =====  ======
 
 The |the big: biohazard| symbol in |date| must be used on containers used to dispose of medical waste.
 

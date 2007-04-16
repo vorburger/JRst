@@ -265,7 +265,7 @@ import org.dom4j.VisitorSupport;
  * subtitle (done)
  * superscript
  * system_message
- * table (done, only complexe table in lexer)
+ * table (done)
  * target
  * tbody (done)
  * term (done)
@@ -528,6 +528,12 @@ public class JRSTReader {
                 }
             }
             item = lexer.peekTitleOrBodyElement();
+            
+            // Pour afficher le "PseudoXML"
+            
+            /*if (item!=null)
+            	System.out.println(item.asXML());*/
+            
         }
         return parent;
     }
@@ -573,6 +579,7 @@ public class JRSTReader {
      * @return
      */
     private Element composeTable(JRSTLexer lexer, Element item) throws Exception {
+    	
         Element result = DocumentHelper.createElement(TABLE);
         
         int tableWidth = Integer.parseInt(item.attributeValue(JRSTLexer.TABLE_WIDTH));

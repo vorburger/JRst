@@ -34,6 +34,8 @@ package org.codelutin.jrst;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -577,6 +579,7 @@ public class JRSTLexer {
     
                 Element row = DocumentHelper.createElement(ROW);
                 String [] table = in.readUntilBlank();
+                
                 boolean done = false;
                 for (String l : table) {
                     done =false;
@@ -726,41 +729,170 @@ public class JRSTLexer {
     //            line += "\n" + joinBlock(table, "\n", false);
     //
     //            result.addText(line);
-            } else if (line.matches("^\\s*(=+ +)+=+\\s*$")) { // simple table
-                // TODO now we take table as LITERAL_BLOCK, but in near
-                // futur we must parse correctly TABLE (show JRSTGenerator and JRSTReader too)
+            } else if (line.matches("^\\s*(=+ +)+=+\\s*$")) { 
+            	// Les donnees de la table peuvent depasser de celle-ci
+            	/*
+            	=====  =====  ======
+            	   Inputs     Output
+            	------------  ------
+            	  A      B    A or B
+            	=====  =====  ======
+            	False  False  Second column of row 1.
+            	True   False  Second column of row 2.
 
+            	True   2      - Second column of row 3.
+
+            	              - Second item in bullet
+            	                list (row 3, column 2).
+            	============  ======
+            	*/
                 
-                // dans les tables simples il peut y avoir des lignes blanches au
-                // milieu. Mais la premiere et la derniere lignes sont identiques
-                // TODO cela ne parse pas la table, il faut le faire
-                String first = line;
-    
-                result = DocumentHelper.createElement(LITERAL_BLOCK);
-                result.addAttribute("level", String.valueOf(level(line)));
-    
-                String [] table = in.readUntil(first);
-                line += "\n" + joinBlock(table, "\n", false);
-                String next = in.readLine();
-                line += "\n" + next;
-    
-                next = in.readLine();
-                if (line != null) {
-                    if (next.matches("\\s*")) {
-                        // no header
-                        in.unread(next, true);
-                    } else {
-                        // read body table
-                        table = in.readUntil(first);
-                        line += "\n" + joinBlock(table, "\n", false);
-                        next = in.readLine();
-                        line += "\n" + next;
-                    }
+                result = DocumentHelper.createElement(TABLE);
+                line = line.trim();
+                Pattern pBordersEquals = Pattern.compile("^\\s*(=+ +)+=+\\s*$");	// Separation =
+                Pattern pBordersTiret = Pattern.compile("^\\s*(-+ +)+-+\\s*$");		// Separation -
+                Pattern pBorders = Pattern.compile("^\\s*([=-]+ +)+[=-]+\\s*$");	// = ou -
+                String [] table = in.readUntilBlank();	// Recuperation de la table
+                            
+                int tableWidth=line.length();
+                int nbSeparations=0;
+                for (String l : table){
+                	if(l.length()>tableWidth)tableWidth=l.length();	// Determination de la longueur max
+                	matcher = pBordersEquals.matcher(l);
+                	if(matcher.matches())nbSeparations++;
+                		
                 }
-                result.addText(line);
+                // Header if the table contains 3 equals separations
+                result.addAttribute(TABLE_HEADER,""+(nbSeparations==2));
+                int level = level(line);
+                result.addAttribute("level", String.valueOf(level));
+                result.addAttribute(TABLE_WIDTH, String.valueOf(tableWidth+1));
+                Element row = DocumentHelper.createElement(ROW);
+                // Determination of the columns positions  
+                List columns = new LinkedList();
+                matcher = Pattern.compile("=+\\s+").matcher(line);
+                for (int cellNumber=0; matcher.find(); cellNumber++) {
+                	columns.add(matcher.end());
+                }
+                columns.add(tableWidth);
+                
+                // Traitement du tbl
+                /*
+				=====  =====  ======
+            	   Inputs     Output
+            	------------  ------
+            	  A      B    A or B
+            	=====  =====  ======
+            	False  False  Second column of row 1.
+            	True   False  Second column of row 2.
+
+            	True   2      - Second column of row 3.
+
+            	              - Second item in bullet
+            	                list (row 3, column 2).
+            	============  ======
+                devient l'équivalent :
+                =====  =====  ======
+            	   Inputs     Output
+            	------------  ------
+            	  A      B    A or B
+            	=====  =====  ======
+            	False  False  Second column of row 1.
+            	-----  -----  ------
+            	True   False  Second column of row 2.
+				-----  -----  ------
+            	True   2      - Second column of row 3.
+            	              - Second item in bullet
+            	                list (row 3, column 2).
+            	============  ======
+				*/
+                String lineRef = line.replace('=','-');
+                Matcher matcher2;
+                List tableTmp = new LinkedList();
+               
+                for (int i=0;i<table.length-1;i++){
+                	tableTmp.add(table[i]);
+        	        if (!table[i].equals("")){
+        	        	if (!table[i+1].substring(0,(Integer)columns.get(0)).matches("\\s*")){
+        		        	matcher = pBorders.matcher(table[i]);
+        		        	matcher2 = pBorders.matcher(table[i+1]);
+        		        	if (!matcher.matches() && !matcher2.matches() && !table[i+1].equals("")){
+        		        		tableTmp.add(lineRef);
+        		        	}
+        	        	}
+        	        }
+        	       
+                }
+                tableTmp.add(table[table.length-1]);
+                table = new String[tableTmp.size()];
+                for (int i=0;i<tableTmp.size();i++){
+                	table[i]=(String)tableTmp.get(i);
+                } 
+                
+                boolean done = false;
+                LinkedList lastLines = new LinkedList();
+                int separation = 1;
+                for (String l : table){
+                	if (l!=null){
+	                	done = false;
+	                	matcher = pBordersTiret.matcher(l);
+	                	matcher2 = pBordersEquals.matcher(l);
+	                	if (matcher.matches() || matcher2.matches()){ // Intermediate separation 
+	                		while (!lastLines.isEmpty()) {
+		                		matcher = Pattern.compile("[-=]+\\s*").matcher(l);
+		                		String tmpLine = (String)lastLines.getLast();
+		                		lastLines.removeLast();
+		                		int cellNumber;
+			                	for (cellNumber=0; matcher.find(); cellNumber++) {
+			                		Element cell = null;
+		                            if (row.nodeCount() <= cellNumber) {
+		                                cell = row.addElement(CELL);
+		                            } else {cell = (Element)row.node(cellNumber);} 
+		                            
+		                            if (columns.size()-1==cellNumber)
+		                            	cell.setText(tmpLine.substring(matcher.start(),tmpLine.length())+ "\n");
+		                            else{
+		                            	cell.setText(tmpLine.substring(matcher.start(),matcher.end()) + "\n");
+		                            	
+		                            }
+		                            if (lastLines.size()==0){
+		                            	row.addAttribute("debug", "pCell");
+		                            	cell.addAttribute(CELL_END, "true");
+		                            }
+		                            else{
+		                            	row.addAttribute("debug", "pCellEnd");
+		                            	cell.addAttribute(CELL_END, "false");
+		                            }
+		                            cell.addAttribute(CELL_INDEX_START, String.valueOf(matcher.start()+1));
+		                            if (line.length()==matcher.end())
+		                            	cell.addAttribute(CELL_INDEX_END, String.valueOf(columns.get(columns.size()-1)));
+		                            else
+		                            	cell.addAttribute(CELL_INDEX_END, String.valueOf(matcher.end()));
+			                	}   	
+			                   
+			                	if (matcher2.matches()){
+			                		separation++;
+			                		row.addAttribute(ROW_END_HEADER, ""+(separation==2));
+			                	}
+			                	else
+			                		row.addAttribute(ROW_END_HEADER, "false");
+			                	
+			                	result.add(row);
+		                        row = DocumentHelper.createElement(ROW);
+		                        done=true;
+	                		}
+	                	}
+	                	if (!done && l.matches("^\\s*(.+ +)+.+\\s*$")){
+	                		// Data
+	                		lastLines.addFirst(l);	// Les donnees sont stoquee dans une file d'attente lastLines (FIFO)
+	                	}
+	                	if (!done) {
+	                        log.warn("Bad table format line " + in.getLineNumber());
+	                    }
+	                }
+	            }
             }
         }
-
         endPeek();
 
         return result;

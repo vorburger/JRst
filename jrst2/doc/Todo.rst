@@ -5,8 +5,6 @@ Todo
 Voici la liste des tâches qui reste à faire. Si quelqu'un souhaite aider, ou
 a une idée à proposer il ne faut pas hésiter.
 
-- Mettre les noms d'attributs en CONSTANTE
-- implanter la lecture des tableaux simple
 - implanter la lecture des images, référence interne,
 - implanter la lecture des footnotes, citations, ...
 - implanter la lecture des notes, dangers, cautions, ...
