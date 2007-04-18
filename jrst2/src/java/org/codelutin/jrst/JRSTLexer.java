@@ -71,7 +71,8 @@ public class JRSTLexer {
     static final public String TITLE_CHAR = "-=-~'`^+:!\"#$%&*,./;|?@\\_[\\]{}<>()";
     static final public String DOCINFO_ITEM =
         "author|authors|organization|address|contact|version|revision|status|date|copyright";
-
+    public static final String ADMONITION = "admonition|attention|caution|danger|error|hint|important|note|tip|warning";
+    
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Title Elements
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -263,6 +264,7 @@ public class JRSTLexer {
         Element result = null;
         if (result == null) {
             result = peekDocInfoItem();
+            
         }
         if (result == null) {
             result = peekFieldList();
@@ -279,6 +281,9 @@ public class JRSTLexer {
      */
     public Element peekBodyElement() throws IOException {
         Element result = null;
+        if (result == null) {
+            result = peekAdmonition();
+        }
         if (result == null) {
             result = peekDirectiveOrReference();
         }
@@ -306,14 +311,97 @@ public class JRSTLexer {
         if (result == null) {
             result = peekBlankLine();
         }
-        if (result == null) {
+         if (result == null) {
             result = peekPara();
         }
+        
 
         return result;
     }
 
-    /**
+    private Element peekAdmonition() throws IOException {
+    	beginPeek();
+    	/*.. Tip:: Roles based on "raw" should clearly indicate their origin, so
+   			they are not mistaken for reStructuredText markup.  Using a "raw-"
+   			prefix for role names is recommended.*/
+    	
+    	/*.. WARNING::
+
+			   The "raw" role is a stop-gap measure allowing the author to bypass
+			   reStructuredText's markup.  It is a "power-user" feature that
+			   should not be overused or abused.  The use of "raw" ties documents
+			   to specific output formats and makes them less portable.
+			
+			   If you often need to use "raw"-derived interpreted text roles or
+			   the "raw" directive, that is a sign either of overuse/abuse or that
+			   functionality may be missing from reStructuredText.  Please
+			   describe your situation in a message to the Docutils-users_ mailing
+			   list.
+
+   				.. _Docutils-users: ../../user/mailing-lists.html#docutils-user*/
+    	
+        Element result = null;
+//        in.skipBlankLines();
+        
+        String line = in.readLine();
+        if (line != null) {
+            String lineTest = line.toLowerCase();
+            Pattern pAdmonition = Pattern.compile("^\\.\\.\\s*\\s*("+ADMONITION+")::\\s*(.*)$");
+            Matcher matcher = pAdmonition.matcher(lineTest);
+            if (matcher.matches()) {
+            	boolean admonition=false;
+            	matcher = Pattern.compile(ADMONITION).matcher(lineTest);
+                matcher.find();
+                result = DocumentHelper.createElement("admonition").addAttribute("level", String.valueOf(0));
+            	if (matcher.group().equals("admonition")){
+            		admonition=true;
+            		result.addAttribute("type", "admonition");
+            		String title=line.substring(matcher.end()+2,line.length());
+            		result.addAttribute("title", title);
+            		
+            		
+                }
+            	else{
+            		result.addAttribute("type",matcher.group());
+            	}
+            	matcher = Pattern.compile(ADMONITION).matcher(lineTest);
+                matcher.find();
+                String firstLine="";
+                line=line.trim();
+            	if (!admonition && matcher.end()+2 < line.length())
+            		firstLine=line.substring(matcher.end()+2,line.length());
+            	in.skipBlankLines();
+            	line = in.readLine();
+                int level = level(line);
+                if (level>0){
+                	String txt = firstLine.trim() + "\n" + line.trim() + "\n";
+	                String [] lines = in.readWhile("(^ {"+level+"}.*)|(\\s*)");
+                    while (lines.length > 0) {
+                        for (String l : lines) {
+                        	l=l.trim();
+                        	if (l.matches("\\s*")){
+                        		txt += l + "\n";
+                        	}
+                        	else{
+                        		txt += l + "\n";
+                        	}
+                        }
+                        lines = in.readWhile("(^ {"+level+"}.*)|(\\s*)");
+                    }
+
+	                result.setText(txt);
+                }
+                else
+	                result.setText(firstLine);
+            }
+        }
+        
+        endPeek();
+        return result;
+    	
+	}
+
+	/**
      * Lit les premieres ligne non vide et les retourne, rien n'est modifier par rapport
      * aux positions dans le fichier. Util pour afficher a l'utilisateur les lignes
      * qui ont produit une erreur
@@ -526,7 +614,7 @@ public class JRSTLexer {
         String line = in.readLine();
         // (?i) case inensitive on docinfo item
         if (line != null && line.matches("^:((?i)"+DOCINFO_ITEM+"):.*$")) {
-            result = DocumentHelper.createElement(DOCINFO);
+        	result = DocumentHelper.createElement(DOCINFO);
             result.addAttribute("level", "0");
             String infotype = line.substring(1, line.indexOf(":", 1));
 
@@ -541,11 +629,12 @@ public class JRSTLexer {
 
             result.addAttribute("type", infotype).addText(text);
         }
-
+        
         endPeek();
-
+       
         return result;
     }
+    
 
     public Element peekTable() throws IOException {
         beginPeek();
@@ -821,14 +910,12 @@ public class JRSTLexer {
         		        	}
         	        	}
         	        }
-        	       
                 }
                 tableTmp.add(table[table.length-1]);
                 table = new String[tableTmp.size()];
-                for (int i=0;i<tableTmp.size();i++){
+                for (int i=0;i<tableTmp.size();i++)
                 	table[i]=(String)tableTmp.get(i);
-                } 
-                
+                                
                 boolean done = false;
                 LinkedList lastLines = new LinkedList();
                 int separation = 1;
@@ -851,10 +938,9 @@ public class JRSTLexer {
 		                            
 		                            if (columns.size()-1==cellNumber)
 		                            	cell.setText(tmpLine.substring(matcher.start(),tmpLine.length())+ "\n");
-		                            else{
+		                            else
 		                            	cell.setText(tmpLine.substring(matcher.start(),matcher.end()) + "\n");
-		                            	
-		                            }
+		                            		                            
 		                            if (lastLines.size()==0){
 		                            	row.addAttribute("debug", "pCell");
 		                            	cell.addAttribute(CELL_END, "true");
@@ -885,6 +971,7 @@ public class JRSTLexer {
 	                	if (!done && l.matches("^\\s*(.+ +)+.+\\s*$")){
 	                		// Data
 	                		lastLines.addFirst(l);	// Les donnees sont stoquee dans une file d'attente lastLines (FIFO)
+	                		done=true;
 	                	}
 	                	if (!done) {
 	                        log.warn("Bad table format line " + in.getLineNumber());
@@ -1133,7 +1220,9 @@ public class JRSTLexer {
         Element result = null;
 //        in.skipBlankLines();
         String line = in.readLine();
+        
         if (line != null) {
+        	//System.out.println("peekTitle line :"+line);
             if (startsWithTitleChar(line)) {
                 String [] titles = in.readLines(2);
                 if (titles.length == 2
@@ -1150,6 +1239,7 @@ public class JRSTLexer {
                 if (title != null &&
                         startsWithTitleChar(title) &&
                         line.length() == title.length()) {
+
                     result = DocumentHelper.createElement(TITLE)
                     .addAttribute("type", "simple")
                     .addAttribute("char", title.substring(0, 1))
@@ -1161,6 +1251,7 @@ public class JRSTLexer {
         if (result != null) {
             // add level information
             String titleLevel = result.attributeValue("char");
+
             if ("double".equals(result.attributeValue("type"))) {
                 titleLevel += titleLevel;
             }
@@ -1207,6 +1298,7 @@ public class JRSTLexer {
         }
         return result;
     }
+
 
 }
 

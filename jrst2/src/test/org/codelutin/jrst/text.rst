@@ -2,14 +2,15 @@
 Le grand titre
 ==============
 
-:author: Benjamin POUSSIN <poussin@codelutin>
+:authors: Benjamin POUSSIN <poussin@codelutin> ; Sylvain LETELLIER <letellier@codelutin>
 :address:
   6 chemin des Orans
   44240 La Chapelle sur Erdre
 :date: $date: 28/10/2006$
+
 :Un champs: au milieu
   de null part
-  
+
   avec meme un para
 :date: $date: 28/10/2006$
 
@@ -151,6 +152,7 @@ Field list        :field name: field body
 Option list       -o  at least 2 spaces between option & description
 ================  ============================================================
 
+
 =====  =====  ======
    Inputs     Output
 ------------  ------
@@ -178,5 +180,28 @@ Une *petit* phare `pour avoir <http://www.free.fr>`_ un lien inline
 
 :field1: autre def1
 :field2: autre def2
+
+.. admonition:: And, by the way...
+
+   You can make up your own admonition too.
+   
+   :field1: autre def1
+   :field2: autre def2
+
+.. Attention:: All your base are belong to us.
+ You can make
+
+.. WARNING::The "raw" role is a stop-gap measure allowing the author to bypass::
+   reStructuredText's markup.  It is a "power-user" feature that
+   should not be overused or abused.  The use of "raw" ties documents
+   to specific output formats and makes them less portable.
+
+   If you often need to use "raw"-derived interpreted text roles or
+   the "raw" directive, that is a sign either of overuse/abuse or that
+   functionality may be missing from reStructuredText.  Please
+   describe your situation in a message to the Docutils-users_ mailing
+   list.
+
+   .. |the big: biohazard| image:: biohazard.png 
 
 la derniere ligne.

@@ -40,10 +40,12 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -186,15 +188,15 @@ import org.dom4j.VisitorSupport;
  * abbreviation
  * acronym
  * address (done)
- * admonition
- * attention
+ * admonition (done)
+ * attention (done)
  * attribution
  * author (done)
- * authors (partialy done)
+ * authors (done)
  * block_quote
  * bullet_list (done)
  * caption
- * caution
+ * caution (done)
  * citation
  * citation_reference
  * classifier (done)
@@ -204,7 +206,7 @@ import org.dom4j.VisitorSupport;
  * contact (done)
  * container
  * copyright (done)
- * danger
+ * danger (done)
  * date (done)
  * decoration
  * definition (done)
@@ -217,7 +219,7 @@ import org.dom4j.VisitorSupport;
  * emphasis (done)
  * entry (done)
  * enumerated_list (done)
- * error
+ * error (done)
  * field (done)
  * field_body (done)
  * field_list (done)
@@ -228,9 +230,9 @@ import org.dom4j.VisitorSupport;
  * footnote_reference
  * generated
  * header
- * hint
+ * hint (done)
  * image (done)
- * important
+ * important (done)
  * inline
  * label
  * legend
@@ -239,7 +241,7 @@ import org.dom4j.VisitorSupport;
  * list_item (done)
  * literal (done)
  * literal_block (done)
- * note
+ * note (done)
  * option
  * option_argument
  * option_group
@@ -271,13 +273,13 @@ import org.dom4j.VisitorSupport;
  * term (done)
  * tgroup (done)
  * thead (done)
- * tip
+ * tip (done)
  * title (done)
  * title_reference
  * topic
  * transition (done)
  * version (done)
- * warning
+ * warning (done)
  * </pre>
  * 
  * @author poussin
@@ -388,6 +390,9 @@ public class JRSTReader {
 
         Element item = null;
         
+        // skip blank line
+        skipBlankLine(lexer);
+
         // le titre du doc
         item = lexer.peekTitle();
         if (itemEquals(TITLE, item)) {
@@ -396,6 +401,9 @@ public class JRSTReader {
             copyLevel(item, title);
             title.addAttribute("inline", "true").setText(item.getText());
         }
+        
+        // skip blank line
+        skipBlankLine(lexer);
         
         // le sous titre du doc
         item = lexer.peekTitle();
@@ -406,14 +414,18 @@ public class JRSTReader {
             subtitle.addAttribute("inline", "true").setText(item.getText());
         }
         
+        // skip blank line
+        skipBlankLine(lexer);        
+        
         // les infos du doc
         item = lexer.peekDocInfo();
+        
         Element documentinfo = null;
         while (itemEquals(DOCINFO, item) || itemEquals(FIELD_LIST, item)) {
-            if (documentinfo == null) {
+        	if (documentinfo == null) {
                 documentinfo = result.addElement(DOCINFO);
             }
-            
+        	skipBlankLine(lexer);  
             if (itemEquals(FIELD_LIST, item)) {
                 Element field = composeFieldItemList(lexer);
                 documentinfo.add(field);
@@ -436,10 +448,24 @@ public class JRSTReader {
                     documentinfo.addElement(STATUS).addAttribute("inline", "true").setText(item.getText());
                 } else if ("copyright".equalsIgnoreCase(item.attributeValue("type"))) {
                     documentinfo.addElement(COPYRIGHT).addAttribute("inline", "true").setText(item.getText());
-                } // TODO authors
-
+                } else if ("authors".equalsIgnoreCase(item.attributeValue("type"))){
+                	Element authors = documentinfo.addElement(AUTHORS);
+            		int t=0;
+            		String line = item.getText();
+            		for (int i=0;i<line.length();i++){
+            			if (line.charAt(i)==';' || line.charAt(i)==','){
+            				authors.addElement(AUTHOR).addAttribute("inline", "true").setText(line.substring(t,i).trim());
+            				t=i+1;
+            			}
+            			
+            		}
+            		authors.addElement(AUTHOR).addAttribute("inline", "true").setText(line.substring(t,line.length()).trim());
+    			}
                 lexer.remove();
             }
+            // skip blank line
+            skipBlankLine(lexer);
+            
             item = lexer.peekDocInfo();
         }
         
@@ -460,19 +486,31 @@ public class JRSTReader {
         
         return result;
     }
+	
+	private void skipBlankLine(JRSTLexer lexer) throws IOException, DocumentException {
+        Element item = lexer.peekBlankLine(); 
+        // skip blank line
+        while (itemEquals(JRSTLexer.BLANK_LINE, item)) {
+        	// go to the next element
+        	lexer.remove();
+            item = lexer.peekBlankLine(); 
+        }
+	}
 
-    /**
+
+	/**
      * *@param root
      * @return
      * @throws DocumentException 
      * @throws IOException 
      */
     private Element composeBody(JRSTLexer lexer, Element parent) throws Exception {
+    	
         Element item = lexer.peekTitleOrBodyElement();
         if (item == null && !lexer.eof()) {
             item = lexer.peekTitleOrBodyElement();
-            System.out.println(item);
         }
+        
         while (!lexer.eof() && itemNotEquals(TITLE, item) && isUpperLevel(item, parent)) {
             if (itemEquals(JRSTLexer.BLANK_LINE, item)) {
                 // go to the next element
@@ -500,8 +538,6 @@ public class JRSTReader {
                 copyLevel(item, para);
                 para.setText(item.getText());
             } else if (itemEquals(JRSTLexer.TABLE, item)) {
-                // TODO now we take table as LITERAL_BLOCK, but in near
-                // futur we must parse correctly TABLE (show JRSTGenerator and JRSTLexer too)
                 lexer.remove();
                 Element table = composeTable(lexer, item);
                 parent.add(table);
@@ -520,6 +556,12 @@ public class JRSTReader {
             } else if (itemEquals(FIELD_LIST, item)) {
                 Element list = composeFieldList(lexer);
                 parent.add(list);
+            } else if (itemEquals(ADMONITION, item)) {
+            	lexer.remove();
+            	Element list = composeAdmonition(lexer, item);
+            	parent.add(list);
+            	
+                
             } else {
                 if (ERROR_MISSING_ITEM) {
                     throw new DocumentException("Unknow item type: " + item.getName()); 
@@ -527,18 +569,44 @@ public class JRSTReader {
                     lexer.remove();
                 }
             }
-            item = lexer.peekTitleOrBodyElement();
-            
+
             // Pour afficher le "PseudoXML"
-            
             /*if (item!=null)
             	System.out.println(item.asXML());*/
+            
+            item = lexer.peekTitleOrBodyElement();
+            
+           
             
         }
         return parent;
     }
 
-    /**
+ 
+	private Element composeAdmonition(JRSTLexer lexer, Element item) throws Exception {
+		Element result = null;
+		if (item.attributeValue("type").equalsIgnoreCase("admonition")){
+			result=DocumentHelper.createElement(ADMONITION);
+			String title = item.attributeValue("title");
+			String admonitionClass="admonition_"+title;
+			admonitionClass=admonitionClass.toLowerCase().replaceAll("\\p{Punct}","");
+			admonitionClass=admonitionClass.replace(' ', '-');
+    		result.addAttribute("class", admonitionClass);
+    		result.addElement("title").setText(title.trim());
+			
+		}
+		else{
+			result=DocumentHelper.createElement(item.attributeValue("type").toLowerCase());
+		}
+        JRSTReader reader = new JRSTReader();
+        String text = item.getText();
+        Document doc = reader.read(new StringReader(text));
+	    result.appendContent(doc.getRootElement());
+	    return result;
+	}
+
+
+	/**
      * @param item
      * @return
      */
@@ -657,7 +725,6 @@ public class JRSTReader {
                     if (morecols > 0) {
                         entry.addAttribute("morecols", String.valueOf(morecols));
                     }
-                    
                     // parse entry text in table
                     JRSTReader reader = new JRSTReader();
                     Document doc = reader.read(new StringReader(text));

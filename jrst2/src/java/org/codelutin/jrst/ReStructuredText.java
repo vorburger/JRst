@@ -48,7 +48,7 @@ public class ReStructuredText {
     public static final String BULLET_CHAR = "*" + "+" + "-" + "\u2022" + "\u2023" + "\u2043";
     public static final String DOCINFO_ITEM =
         "author|authors|organization|address|contact|version|revision|status|date|copyright";
-    
+   // public static final String ADMONITION = "admonition|caution|danger|error|hint|important|note|tip|warning";
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Root Element
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
