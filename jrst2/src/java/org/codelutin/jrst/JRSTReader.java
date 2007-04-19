@@ -193,7 +193,7 @@ import org.dom4j.VisitorSupport;
  * attribution
  * author (done)
  * authors (done)
- * block_quote
+ * block_quote (done)
  * bullet_list (done)
  * caption
  * caution (done)
@@ -562,7 +562,13 @@ public class JRSTReader {
             } else if (itemEquals(FIELD_LIST, item)) {
                 Element list = composeFieldList(lexer);
                 parent.add(list);
-            } else {
+            } else if (itemEquals(BLOCK_QUOTE, item)) {
+                lexer.remove();
+            	Element list =composeBlockQuote(lexer, item);
+            	parent.add(list);
+            }
+            	
+            	else {
                 if (ERROR_MISSING_ITEM) {
                     throw new DocumentException("Unknow item type: " + item.getName()); 
                 } else {
@@ -571,8 +577,8 @@ public class JRSTReader {
             }
 
             // Pour afficher le "PseudoXML"
-            /*if (item!=null)
-            	System.out.println(item.asXML());*/
+            if (item!=null)
+            	System.out.println(item.asXML());
             
             item = lexer.peekTitleOrBodyElement();
             
@@ -583,9 +589,22 @@ public class JRSTReader {
     }
 
  
+	private Element composeBlockQuote(JRSTLexer lexer, Element item) throws Exception {
+		Element result = null;
+		result=DocumentHelper.createElement(BLOCK_QUOTE);
+		JRSTReader reader = new JRSTReader();
+        String text = item.getText();
+        Document doc = reader.read(new StringReader(text)); 
+	    result.appendContent(doc.getRootElement());
+	    Element attribution = result.addElement(ATTRIBUTION);
+	    attribution.setText(item.attributeValue(ATTRIBUTION));
+		return result;
+	}
+
+
 	private Element composeAdmonition(JRSTLexer lexer, Element item) throws Exception {
 		Element result = null;
-		if (item.attributeValue("type").equalsIgnoreCase("admonition")){
+		if (item.attributeValue("type").equalsIgnoreCase(ADMONITION)){
 			result=DocumentHelper.createElement(ADMONITION);
 			String title = item.attributeValue("title");
 			String admonitionClass="admonition_"+title;

@@ -122,7 +122,6 @@ un para 0
   de 2
 
 
-
 +------------------------+------------+----------+----------+
 | Header row, column 1   | Header 2   | Header 3 | Header 4 |
 | (header rows optional) |            |          |          |
@@ -225,4 +224,10 @@ la derniere ligne.
 .. admonition:: Ceci est un avertissement.
 
    Je vous demande de vous arrêtez.
-  
+
+As a great paleontologist once said,
+
+    This theory, that is mine, is mine.
+
+    -- Anne Elk (Miss)
+

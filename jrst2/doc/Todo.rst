@@ -9,7 +9,6 @@ a une idée à proposer il ne faut pas hésiter.
 - implanter la lecture des footnotes, citations, ...
 - implanter la lecture des options
 - intégrer une date multiformat
-- implanter le sommaire // sauf s'il est regénèré après le xml....?
 - faire une feuille de style de conversion de RST en xhtml (plus rapide que dn2dbk -> dbk2xhtml)
 - faire une feuille de style de conversion de xhtml -> xdoc
 - corriger le "::" qui est considéré comme un titre lorsqu'il est tous seul

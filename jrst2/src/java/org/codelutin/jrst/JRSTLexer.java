@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -311,15 +312,56 @@ public class JRSTLexer {
         if (result == null) {
             result = peekBlankLine();
         }
-         if (result == null) {
+        if (result == null) {
+         	result = peekBlockQuote();
+        }
+        if (result == null) {
             result = peekPara();
         }
+        
         
 
         return result;
     }
 
-    private Element peekAdmonition() throws IOException {
+    private Element peekBlockQuote() throws IOException {
+    	beginPeek();
+    	Element result = null;
+    	String line = in.readLine();
+    	if (line != null){
+    		int level = level(line);
+    		String txt=line;
+    		boolean done=(level==0);
+    		String blockQuote = null;
+            while (!done) {
+            	line = in.readLine();
+            	if (line!=null){
+            		if (line.matches("(^ {"+level+"}.*)|(\\s*)")){
+	            		if (line.matches("^ {"+level+"}--\\s.*")){
+	            			done=true;
+	            			blockQuote=line;
+	            			blockQuote = blockQuote.replaceAll("--","").trim();
+	            		}
+	            		else
+	            			txt += "\n" + line;
+	            	}
+	            	else
+	            		done=true;
+	            }
+            	else
+            		done=true;
+            }
+            if (blockQuote!=null){
+            	result = DocumentHelper.createElement("block_quote").addAttribute("level", String.valueOf(level));
+            	result.addAttribute("attribution", blockQuote);
+            	result.setText(txt.trim());
+            }
+    	}
+    	endPeek();
+		return result;
+	}
+
+	private Element peekAdmonition() throws IOException {
     	beginPeek();
     	Element result = null;
         String line = in.readLine();
@@ -376,12 +418,8 @@ public class JRSTLexer {
          while (lines.length > 0) {
              for (String l : lines) {
              	l=l.trim();
-             	if (l.matches("\\s*")){
-             		txt += l + "\n";
-             	}
-             	else{
-             		txt += l + "\n";
-             	}
+             	txt += l + "\n";
+             	
              }
              lines = in.readWhile("(^ {"+level+"}.*)|(\\s*)");
          }
