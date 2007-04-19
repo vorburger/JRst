@@ -204,4 +204,25 @@ Une *petit* phare `pour avoir <http://www.free.fr>`_ un lien inline
 
    .. |the big: biohazard| image:: biohazard.png 
 
+.. admonition:: The "raw" role is a stop-gap measure allowing the author to bypass::
+   reStructuredText's markup.  It is a "power-user" feature that
+   should not be overused or abused.  The use of "raw" ties documents
+   to specific output formats and makes them less portable.
+
+   If you often need to use "raw"-derived interpreted text roles or
+   the "raw" directive, that is a sign either of overuse/abuse or that
+   functionality may be missing from reStructuredText.  Please
+   describe your situation in a message to the Docutils-users_ mailing
+   list.
+
+   .. |the big: biohazard| image:: biohazard.png 
+
 la derniere ligne.
+
+.. Attention:: Derrière toi c'est horrible !
+
+.. admonition:: And, by the way...
+.. admonition:: Ceci est un avertissement.
+
+   Je vous demande de vous arrêtez.
+  

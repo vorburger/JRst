@@ -515,6 +515,12 @@ public class JRSTReader {
             if (itemEquals(JRSTLexer.BLANK_LINE, item)) {
                 // go to the next element
                 lexer.remove();
+            } else if (itemEquals(ADMONITION, item)) {
+            	lexer.remove();
+            	Element list = composeAdmonition(lexer, item);
+            	parent.add(list);
+            	
+                
             } else if (itemEquals(PARAGRAPH, item)) {
                 lexer.remove();
                 Element para = parent.addElement(PARAGRAPH);
@@ -556,12 +562,6 @@ public class JRSTReader {
             } else if (itemEquals(FIELD_LIST, item)) {
                 Element list = composeFieldList(lexer);
                 parent.add(list);
-            } else if (itemEquals(ADMONITION, item)) {
-            	lexer.remove();
-            	Element list = composeAdmonition(lexer, item);
-            	parent.add(list);
-            	
-                
             } else {
                 if (ERROR_MISSING_ITEM) {
                     throw new DocumentException("Unknow item type: " + item.getName()); 
@@ -591,8 +591,13 @@ public class JRSTReader {
 			String admonitionClass="admonition_"+title;
 			admonitionClass=admonitionClass.toLowerCase().replaceAll("\\p{Punct}","");
 			admonitionClass=admonitionClass.replace(' ', '-');
+			admonitionClass=admonitionClass.replace('\n', '-');
     		result.addAttribute("class", admonitionClass);
-    		result.addElement("title").setText(title.trim());
+    		Element eTitle= result.addElement("title");
+    		title=title.trim();
+    		JRSTReader reader = new JRSTReader();	// Le titre doit etre parsé
+            Document doc = reader.read(new StringReader(title));
+            eTitle.appendContent(doc.getRootElement());
 			
 		}
 		else{
@@ -600,7 +605,7 @@ public class JRSTReader {
 		}
         JRSTReader reader = new JRSTReader();
         String text = item.getText();
-        Document doc = reader.read(new StringReader(text));
+        Document doc = reader.read(new StringReader(text));  // Ainsi que le txt
 	    result.appendContent(doc.getRootElement());
 	    return result;
 	}
