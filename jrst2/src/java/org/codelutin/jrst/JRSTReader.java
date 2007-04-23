@@ -214,7 +214,7 @@ import org.dom4j.VisitorSupport;
  * definition_list_item (done)
  * description (done)
  * docinfo (done)
- * doctest_block
+ * doctest_block (done)
  * document (done)
  * emphasis (done)
  * entry (done)
@@ -229,21 +229,21 @@ import org.dom4j.VisitorSupport;
  * footnote
  * footnote_reference
  * generated
- * header
+ * header (parcialy done)
  * hint (done)
  * image (done)
  * important (done)
  * inline
  * label
  * legend
- * line
- * line_block
+ * line (done)
+ * line_block (done)
  * list_item (done)
  * literal (done)
  * literal_block (done)
  * note (done)
  * option
- * option_argument
+ * option_argument (dtd)
  * option_group
  * option_list
  * option_list_item
@@ -258,7 +258,7 @@ import org.dom4j.VisitorSupport;
  * row (done)
  * rubric
  * section (done)
- * sidebar
+ * sidebar (done)
  * status (done)
  * strong (done)
  * subscript
@@ -276,7 +276,7 @@ import org.dom4j.VisitorSupport;
  * tip (done)
  * title (done)
  * title_reference
- * topic
+ * topic (done)
  * transition (done)
  * version (done)
  * warning (done)
@@ -392,7 +392,21 @@ public class JRSTReader {
         
         // skip blank line
         skipBlankLine(lexer);
-
+        
+        // le header
+        item = lexer.peekHeader();
+        if (itemEquals(HEADER, item)){
+        	// TODO elever la ligne pour quelle ne soit pas lu 2 fois
+        	lexer.removeLine(Integer.valueOf(item.attributeValue("line")));
+        	Element decoration = result.addElement(DECORATION);
+        	Element header = decoration.addElement(HEADER);
+        	JRSTReader reader = new JRSTReader();
+            String text = item.getText();
+            Document doc = reader.read(new StringReader(text)); 
+            header.appendContent(doc.getRootElement());
+        	
+        }
+        
         // le titre du doc
         item = lexer.peekTitle();
         if (itemEquals(TITLE, item)) {
@@ -515,12 +529,22 @@ public class JRSTReader {
             if (itemEquals(JRSTLexer.BLANK_LINE, item)) {
                 // go to the next element
                 lexer.remove();
-            } else if (itemEquals(ADMONITION, item)) {
+            } else if (itemEquals(DOCTEST_BLOCK, item)) {
+            	lexer.remove();
+            	Element list = composeDoctestBlock(lexer, item);
+            	parent.add(list);
+            }  else if (itemEquals(ADMONITION, item)) {
             	lexer.remove();
             	Element list = composeAdmonition(lexer, item);
             	parent.add(list);
-            	
-                
+            } else if (itemEquals(SIDEBAR, item)) {
+            	lexer.remove();
+            	Element list = composeSidebar(lexer, item);
+            	parent.add(list);
+            }  else if (itemEquals(TOPIC, item)) {
+            	lexer.remove();
+            	Element list = composeTopic(lexer, item);
+            	parent.add(list);
             } else if (itemEquals(PARAGRAPH, item)) {
                 lexer.remove();
                 Element para = parent.addElement(PARAGRAPH);
@@ -550,7 +574,11 @@ public class JRSTReader {
                 //                Element para = parent.addElement(TABLE);
 //                copyLevel(item, para);
 //                para.setText(item.getText());
-             } else if (itemEquals(BULLET_LIST, item)) {
+             }else if (itemEquals(LINE_BLOCK, item)) {
+            	 lexer.remove();
+                 Element list = composeLineBlock(lexer,item);
+                 parent.add(list);
+             }  else if (itemEquals(BULLET_LIST, item)) {
                 Element list = composeBulletList(lexer);
                 parent.add(list);
             } else if (itemEquals(ENUMERATED_LIST, item)) {
@@ -577,8 +605,8 @@ public class JRSTReader {
             }
 
             // Pour afficher le "PseudoXML"
-            if (item!=null)
-            	System.out.println(item.asXML());
+            /*if (item!=null)
+            	System.out.println(item.asXML());*/
             
             item = lexer.peekTitleOrBodyElement();
             
@@ -589,6 +617,109 @@ public class JRSTReader {
     }
 
  
+	private Element composeTopic(JRSTLexer lexer, Element item) throws Exception {
+		Element result = null;
+		result=DocumentHelper.createElement(TOPIC);
+		Element title = result.addElement("title");
+		JRSTReader reader = new JRSTReader();
+        String text = item.attributeValue("title");
+        Document doc = reader.read(new StringReader(text)); 
+	    title.appendContent(doc.getRootElement());
+		reader = new JRSTReader();
+        text = item.getText();
+        doc = reader.read(new StringReader(text)); 
+	    result.appendContent(doc.getRootElement());
+		
+		return result;
+	}
+
+
+	private Element composeSidebar(JRSTLexer lexer, Element item) throws Exception {
+		Element result = null;
+		result=DocumentHelper.createElement(SIDEBAR);
+		Element title = result.addElement("title");
+		JRSTReader reader = new JRSTReader();
+        String text = item.attributeValue("title");
+        Document doc = reader.read(new StringReader(text)); 
+	    title.appendContent(doc.getRootElement());
+		if (item.attributeValue("subExiste").equals("true")){
+			Element subtitle = result.addElement("title");
+			reader = new JRSTReader();
+	        text = item.attributeValue("subtitle");
+	        doc = reader.read(new StringReader(text)); 
+		    subtitle.appendContent(doc.getRootElement());
+		}
+		reader = new JRSTReader();
+        text = item.getText();
+        doc = reader.read(new StringReader(text)); 
+	    result.appendContent(doc.getRootElement());
+		
+		return result;
+	}
+
+
+	private Element composeLineBlock(JRSTLexer lexer, Element item) throws Exception {
+		Element result = null;
+		result=DocumentHelper.createElement(LINE_BLOCK);
+		List<Element> lines = (List<Element>)item.selectNodes(LINE); 
+		int[] levels=new int[lines.size()];
+		int cnt=0;
+		for (Element l : lines){
+			levels[cnt]=Integer.parseInt(l.attributeValue("level"));
+			cnt++;
+		}
+		cnt=0;
+		boolean[] lineDone = new boolean [lines.size()];
+		for (int i=0;i<lineDone.length;i++)
+			lineDone[i]=false;
+		for (Element l : lines){
+			if (levels[cnt]==0){
+				Element eLine= result.addElement(LINE);
+				JRSTReader reader = new JRSTReader();
+		        String text = l.getText();
+		        Document doc = reader.read(new StringReader(text)); 
+			    eLine.appendContent(doc.getRootElement());
+			}
+			else{
+				if (!lineDone[cnt]){
+					Element newItem = DocumentHelper.createElement(LINE_BLOCK);
+					Boolean done = false;
+					for (int i=cnt;i<lines.size() && !done;i++){
+	
+						if (levels[i]>0){
+							Element eLine = newItem.addElement("line");
+							eLine.addAttribute("level", ""+(levels[i]-1));
+							eLine.setText(lines.get(i).getText());
+							lineDone[i]=true;
+						}
+						else
+							done=true;
+						
+					}
+					Element eLineBlock= result.addElement(LINE_BLOCK);
+					eLineBlock.appendContent(composeLineBlock(lexer,newItem));
+				}
+			}
+			cnt++;	
+		
+		}
+		
+		
+		/*result=DocumentHelper.createElement(LINE_BLOCK);
+		JRSTReader reader = new JRSTReader();
+        String text = item.getText();
+        Document doc = reader.read(new StringReader(text)); 
+	    result.appendContent(doc.getRootElement());*/
+	    
+		return result;
+	}
+
+
+	private Element composeDoctestBlock(JRSTLexer lexer, Element item) {
+		return item;
+	}
+
+
 	private Element composeBlockQuote(JRSTLexer lexer, Element item) throws Exception {
 		Element result = null;
 		result=DocumentHelper.createElement(BLOCK_QUOTE);
