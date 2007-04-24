@@ -91,7 +91,9 @@ public class JRSTLexer {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
     static final public String TRANSITION = "transition";
-
+    public static final String SIDEBAR = "sidebar";
+    public static final String TOPIC = "topic";
+    
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Body Elements
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -104,6 +106,7 @@ public class JRSTLexer {
     static final public String FIELD_LIST = "field_list";
     static final public String DEFINITION_LIST = "definition_list";
     static final public String ENUMERATED_LIST = "enumerated_list";
+    static final public String OPTION_LIST = "option_list";
   
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Table Elements
@@ -175,7 +178,9 @@ public class JRSTLexer {
     public void remove() throws IOException {
         in.skip(elementLength);
     }
-
+    public void removeLine(int l) throws IOException {
+    	// TODO
+    }
     private void beginPeek() throws IOException {
         elementLength = 0;
         in.mark();
@@ -231,7 +236,27 @@ public class JRSTLexer {
         }
         return result;
     }
-
+    public Element peekHeader() throws IOException {
+    	beginPeek(); // TODO elever la ligne pour quelle ne soit pas lu 2 fois
+    	Element result = null;
+    	String[] line = in.readAll();
+		if (line != null){
+			int i=0;
+			for (String l : line){
+				i++;
+				if (l.matches("^\\s*.. header:: .*")){
+					int level = level(l);
+					l=l.replaceAll("^\\s*.. header:: ", "");
+					result = DocumentHelper.createElement("header").addAttribute("level", String.valueOf(level));
+					result.addAttribute("line", ""+i);
+					result.setText(l);
+				}
+			}
+		}
+		endPeek();
+		return result;
+    	
+    }
     /**
      * Return title or para
      * @return
@@ -283,7 +308,16 @@ public class JRSTLexer {
     public Element peekBodyElement() throws IOException {
         Element result = null;
         if (result == null) {
+        	result = peekDoctestBlock();
+        }
+        if (result == null) {
             result = peekAdmonition();
+        }
+        if (result == null) {
+        	result = peekSidebar();
+        }
+        if (result == null) {
+        	result = peekTopic();
         }
         if (result == null) {
             result = peekDirectiveOrReference();
@@ -293,6 +327,12 @@ public class JRSTLexer {
         }
         if (result == null) {
             result = peekTable();
+        }
+        if (result == null) {
+            result = peekLineBlock();
+        }
+        if (result == null) {
+        	result = peekOption();
         }
         if (result == null) {
             result = peekBulletList();
@@ -324,6 +364,221 @@ public class JRSTLexer {
         return result;
     }
 
+    public Element peekOption() throws IOException {
+    	beginPeek();
+    	Element result = null;
+    	String line = in.readLine();
+		if (line != null){
+			if (line.matches("^\\s*-{1,2}.\\s+.*$")){
+				result = DocumentHelper.createElement(OPTION_LIST).addAttribute("level", ""+level(line));
+				char delimiter;
+				do{
+					Matcher matcher = Pattern.compile("-{1,2}.+").matcher(line);
+	                matcher.find();
+	                Element option=result.addElement("option");
+	                String option_stringTmp=matcher.group();
+	                matcher = Pattern.compile("^-{1,2}\\w+").matcher(option_stringTmp);
+	                matcher.find();
+	                String option_string=matcher.group();
+	                option.addAttribute("option_string", option_string);
+	                delimiter=option_stringTmp.charAt(matcher.end());
+	                option_stringTmp=option_stringTmp.substring(matcher.end()+1, option_stringTmp.length());
+	                option.addAttribute("delimiterExiste", "false");
+	                boolean done=false;
+	                if (delimiter==' '){
+	                	
+	                	if (option_stringTmp.charAt(0)==' '){
+	                		done=true;
+	                	}
+	                }
+	                
+	                if ((delimiter=='=' || delimiter==' ')&&!done){
+	                	option.addAttribute("delimiterExiste", "true");
+	                	option.addAttribute("delimiter", ""+delimiter);
+	                	matcher = Pattern.compile("[ =]\\w+").matcher(option_stringTmp);
+	                	String option_argument;
+	                	if (matcher.find()){
+	                		option_argument= matcher.group().substring(1, matcher.group().length());
+	                	
+		                	option.addAttribute("option_argument", option_argument);
+		                	if (option_stringTmp.charAt(option_argument.length())==','){
+		                		delimiter = ',';
+		                		line=line.substring(option_string.length()+option_argument.length()+3,line.length());
+		                		
+		                	}
+		                	else if (option_stringTmp.charAt(option_argument.length())==' ')
+		                		done=true;
+	                	}
+	                	else{
+	                		option_argument=option_stringTmp;
+	                		option.addAttribute("option_argument", option_argument);
+	                		line = in.readLine();
+	                		result.setText(line.trim());
+	                	}
+	                }
+	              
+	                if (done)
+	                	result.setText(option_stringTmp.substring(matcher.end(),option_stringTmp.length()).trim());
+	               
+               	}while (delimiter==',');
+		
+				
+				
+				
+            }
+		}
+		
+		endPeek();
+		return result;
+	}
+
+	private Element peekTopic() throws IOException {
+    	beginPeek();
+    	Element result = null;
+    	String line = in.readLine();
+		if (line != null){
+			if (line.matches("^\\.\\.\\s*("+TOPIC+")::\\s*(.*)$")){
+				Matcher matcher = Pattern.compile(TOPIC+"::").matcher(line);
+                matcher.find();
+                result = DocumentHelper.createElement(TOPIC).addAttribute("level", ""+level(line));
+            	String title = line.substring(matcher.end(),line.length());
+                result.addAttribute("title",title);
+                line = in.readLine();
+				String txt = joinBlock(readBlock(level(line)));
+				result.setText(txt);
+				
+			}
+		}
+		
+		endPeek();
+		return result;
+	}
+
+	private Element peekSidebar() throws IOException {
+    	beginPeek();
+    	Element result = null;
+    	String line = in.readLine();
+		if (line != null){
+			if (line.matches("^\\.\\.\\s*("+SIDEBAR+")::\\s*(.*)$")){
+				Matcher matcher = Pattern.compile(SIDEBAR+"::").matcher(line);
+                matcher.find();
+                result = DocumentHelper.createElement(SIDEBAR).addAttribute("level", ""+level(line));
+            	String title = line.substring(matcher.end(),line.length());
+                result.addAttribute("title",title);
+                line = in.readLine();
+				if (line.matches("^\\s+:subtitle:\\s*(.*)$*")){
+					matcher = Pattern.compile(":subtitle:\\s*").matcher(line);
+	                matcher.find();
+	                String subTitle=line.substring(matcher.end(),line.length());
+	                result.addAttribute("subExiste", "true");
+	                result.addAttribute("subtitle",subTitle);
+	                line = in.readLine();
+	            }
+				else
+					result.addAttribute("subExiste", "false");
+				String txt = joinBlock(readBlock(level(line)));
+				result.setText(txt);
+				
+			}
+		}
+		
+		endPeek();
+		return result;
+	}
+
+	private Element peekLineBlock() throws IOException {
+    	beginPeek();
+    	Element result = null;
+    	String line = in.readLine();
+		if (line != null){
+			if (line.matches("\\|\\s.*")){
+				String[] linesTmp = readBlock(0);
+				String[] lines = new String[linesTmp.length+1];
+				lines[0]=line;
+				for (int i=0;i<linesTmp.length;i++)
+					lines[i+1]=linesTmp[i];
+				
+				int[] levelsTmp = new int[lines.length];
+				
+				int levelmin=999;
+				
+				result = DocumentHelper.createElement("line_block").addAttribute("level",0+"");
+				for (int i=0;i<levelsTmp.length;i++) // on enleve |
+					lines[i]=lines[i].replaceAll("\\|\\s?", "");
+				for (int i=0;i<levelsTmp.length;i++) // determination des levels
+					levelsTmp[i]=level(lines[i]);
+				for (int i : levelsTmp) // level minimal
+					levelmin=Math.min(levelmin, i);
+				int cnt=0;
+				String lineAv="";
+				int[] levels=new int[levelsTmp.length];
+				for (String l : lines){
+					if (!l.matches("\\s*")){
+						int level=levelsTmp[cnt]-levelmin;
+						if (level!=0){
+							if (cnt!=0){
+								if (!lineAv.matches("\\s*")){
+									int levelAv=levelsTmp[cnt-1]-levelmin;
+									if (levelAv<level){
+										levels[cnt]=levels[cnt-1]+1;
+										if (cnt!=levels.length){
+											int levelAp=levelsTmp[cnt+1]-levelmin;
+											if (levelAp<level && levelAv<levelAp)
+												levels[cnt]++;
+										}
+									}
+									else{
+										levels[cnt]=levels[cnt-1]-1;
+									}
+									
+								}
+								else
+									levels[cnt]=1;
+							}
+							else
+								levels[cnt]=1;
+						}
+						else
+							levels[cnt]=0;
+					}
+					else{
+						if (cnt!=0)
+						    levels[cnt]=levels[cnt-1];
+						else
+							levels[cnt]=0;
+					}
+					cnt++;
+					lineAv=l;
+				}
+				for (int i=0;i<levels.length;i++){
+					Element eLine = result.addElement("line");
+					eLine.addAttribute("level", ""+levels[i]);
+					eLine.setText(lines[i].trim());
+				}
+			}
+		}
+		
+		endPeek();
+		return result;
+	}
+
+	private Element peekDoctestBlock() throws IOException {
+    	// A voir les >>> sont transforme en &gt;&gt;&gt;
+    	beginPeek();
+    	Element result = null;
+    	String line = in.readLine();
+		if (line != null){
+			if (line.matches("^\\s*>>>\\s.*")){
+				int level = level(line);
+				result = DocumentHelper.createElement("doctest_block").addAttribute("level", String.valueOf(level));
+            	result.addAttribute("xml:space", "preserve");
+            	line += "\n"+joinBlock(readBlock(level));
+            	result.setText(line);
+			}
+		}
+		endPeek();
+		return result;
+	}
     private Element peekBlockQuote() throws IOException {
     	beginPeek();
     	Element result = null;
@@ -367,7 +622,7 @@ public class JRSTLexer {
         String line = in.readLine();
         if (line != null) {
             String lineTest = line.toLowerCase();
-            Pattern pAdmonition = Pattern.compile("^\\.\\.\\s*\\s*("+ADMONITION+")::\\s*(.*)$");
+            Pattern pAdmonition = Pattern.compile("^\\.\\.\\s*("+ADMONITION+")::\\s*(.*)$");
             Matcher matcher = pAdmonition.matcher(lineTest);
             if (matcher.matches()) {
             	boolean admonition=false;

@@ -135,6 +135,7 @@ public class AdvancedReader {
         return this.lineNumber;
     }
     
+  
     /**
      * remove number of char in buffer
      * 
@@ -270,7 +271,6 @@ public class AdvancedReader {
             return result.toString();
         }
     }
-    
     /**
      * passe les lignes blanches
      * @throws IOException 

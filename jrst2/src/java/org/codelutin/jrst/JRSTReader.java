@@ -242,12 +242,12 @@ import org.dom4j.VisitorSupport;
  * literal (done)
  * literal_block (done)
  * note (done)
- * option
- * option_argument (dtd)
- * option_group
- * option_list
- * option_list_item
- * option_string
+ * option (done)
+ * option_argument (done)
+ * option_group (done)
+ * option_list (done)
+ * option_list_item (done)
+ * option_string (done)
  * organization (done)
  * paragraph (done)
  * pending
@@ -594,6 +594,9 @@ public class JRSTReader {
                 lexer.remove();
             	Element list =composeBlockQuote(lexer, item);
             	parent.add(list);
+            }  else if (itemEquals(OPTION_LIST, item)) {
+                Element list =composeOptionList(lexer);
+            	parent.add(list);
             }
             	
             	else {
@@ -617,6 +620,39 @@ public class JRSTReader {
     }
 
  
+	private Element composeOptionList(JRSTLexer lexer) throws Exception {
+		Element item = lexer.peekOption();
+        Element result = DocumentHelper.createElement(OPTION_LIST);
+        while (itemEquals(OPTION_LIST, item) ) {
+            lexer.remove();
+            Element optionListItem = result.addElement(OPTION_LIST_ITEM);
+        
+            
+            Element optionGroup = optionListItem.addElement(OPTION_GROUP);
+       
+            List<Element> option = (List<Element>)item.selectNodes("option");
+                   
+            for (Element e : option){
+            	Element eOption = optionGroup.addElement(OPTION);
+            	eOption.addElement("option_string").setText(e.attributeValue("option_string"));
+            	if (e.attributeValue("delimiterExiste").equals("true")){
+            		eOption.addElement("option_argument").addAttribute("delimiter", e.attributeValue("delimiter")).setText(e.attributeValue("option_argument"));
+            	}
+            	
+            		
+            }
+            JRSTReader reader = new JRSTReader();
+            String text = item.getText();
+            Document doc = reader.read(new StringReader(text)); 
+            optionListItem.addElement("description").appendContent(doc.getRootElement());
+            
+            
+            item = lexer.peekOption();
+        }
+        return result;
+	}
+
+
 	private Element composeTopic(JRSTLexer lexer, Element item) throws Exception {
 		Element result = null;
 		result=DocumentHelper.createElement(TOPIC);
