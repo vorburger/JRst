@@ -32,21 +32,15 @@
 package org.codelutin.jrst;
 
 import static org.codelutin.jrst.ReStructuredText.*;
-
 import static org.codelutin.i18n.I18n._;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
@@ -282,7 +276,7 @@ import org.dom4j.VisitorSupport;
  * warning (done)
  * </pre>
  * 
- * @author poussin
+ * @author poussin, letellier
  */
 public class JRSTReader {
     
@@ -380,8 +374,8 @@ public class JRSTReader {
     }
 
     /**
-     * @param in
-     * @param root
+     * @param lexer
+     * @return Element
      * @throws Exception
      */
     private Element composeDocument(JRSTLexer lexer) throws Exception {
@@ -396,8 +390,6 @@ public class JRSTReader {
         // le header
         item = lexer.peekHeader();
         if (itemEquals(HEADER, item)){
-        	// TODO elever la ligne pour quelle ne soit pas lu 2 fois
-        	lexer.removeLine(Integer.valueOf(item.attributeValue("line")));
         	Element decoration = result.addElement(DECORATION);
         	Element header = decoration.addElement(HEADER);
         	JRSTReader reader = new JRSTReader();
@@ -406,7 +398,10 @@ public class JRSTReader {
             header.appendContent(doc.getRootElement());
         	
         }
-        
+        item = lexer.peekRemove();
+        if (itemEquals("remove", item))
+        	lexer.remove();
+       
         // le titre du doc
         item = lexer.peekTitle();
         if (itemEquals(TITLE, item)) {
@@ -500,7 +495,11 @@ public class JRSTReader {
         
         return result;
     }
-	
+    /**
+     * @param lexer
+     * @throws DocumentException 
+     * @throws IOException 
+     */
 	private void skipBlankLine(JRSTLexer lexer) throws IOException, DocumentException {
         Element item = lexer.peekBlankLine(); 
         // skip blank line
@@ -513,8 +512,10 @@ public class JRSTReader {
 
 
 	/**
-     * *@param root
-     * @return
+     * *
+     * @param lexer
+     * @param root
+     * @return Element
      * @throws DocumentException 
      * @throws IOException 
      */
@@ -529,21 +530,23 @@ public class JRSTReader {
             if (itemEquals(JRSTLexer.BLANK_LINE, item)) {
                 // go to the next element
                 lexer.remove();
-            } else if (itemEquals(DOCTEST_BLOCK, item)) {
+            }else if (itemEquals("remove", item)) {
+            	lexer.remove();            	
+            }  else if (itemEquals(DOCTEST_BLOCK, item)) {
             	lexer.remove();
-            	Element list = composeDoctestBlock(lexer, item);
+            	Element list = composeDoctestBlock(item);
             	parent.add(list);
             }  else if (itemEquals(ADMONITION, item)) {
             	lexer.remove();
-            	Element list = composeAdmonition(lexer, item);
+            	Element list = composeAdmonition(item);
             	parent.add(list);
             } else if (itemEquals(SIDEBAR, item)) {
             	lexer.remove();
-            	Element list = composeSidebar(lexer, item);
+            	Element list = composeSidebar(item);
             	parent.add(list);
             }  else if (itemEquals(TOPIC, item)) {
             	lexer.remove();
-            	Element list = composeTopic(lexer, item);
+            	Element list = composeTopic(item);
             	parent.add(list);
             } else if (itemEquals(PARAGRAPH, item)) {
                 lexer.remove();
@@ -569,7 +572,7 @@ public class JRSTReader {
                 para.setText(item.getText());
             } else if (itemEquals(JRSTLexer.TABLE, item)) {
                 lexer.remove();
-                Element table = composeTable(lexer, item);
+                Element table = composeTable(item);
                 parent.add(table);
                 //                Element para = parent.addElement(TABLE);
 //                copyLevel(item, para);
@@ -592,7 +595,7 @@ public class JRSTReader {
                 parent.add(list);
             } else if (itemEquals(BLOCK_QUOTE, item)) {
                 lexer.remove();
-            	Element list =composeBlockQuote(lexer, item);
+            	Element list =composeBlockQuote(item);
             	parent.add(list);
             }  else if (itemEquals(OPTION_LIST, item)) {
                 Element list =composeOptionList(lexer);
@@ -612,48 +615,45 @@ public class JRSTReader {
             	System.out.println(item.asXML());*/
             
             item = lexer.peekTitleOrBodyElement();
-            
-           
-            
         }
         return parent;
     }
-
- 
-	private Element composeOptionList(JRSTLexer lexer) throws Exception {
+    /**
+     * @param lexer
+     * @return Element
+     * @throws Exception 
+     * @throws DocumentException 
+     */
+ 	private Element composeOptionList(JRSTLexer lexer) throws DocumentException, Exception{
 		Element item = lexer.peekOption();
         Element result = DocumentHelper.createElement(OPTION_LIST);
         while (itemEquals(OPTION_LIST, item) ) {
             lexer.remove();
             Element optionListItem = result.addElement(OPTION_LIST_ITEM);
-        
-            
             Element optionGroup = optionListItem.addElement(OPTION_GROUP);
-       
             List<Element> option = (List<Element>)item.selectNodes("option");
-                   
             for (Element e : option){
             	Element eOption = optionGroup.addElement(OPTION);
             	eOption.addElement("option_string").setText(e.attributeValue("option_string"));
             	if (e.attributeValue("delimiterExiste").equals("true")){
             		eOption.addElement("option_argument").addAttribute("delimiter", e.attributeValue("delimiter")).setText(e.attributeValue("option_argument"));
             	}
-            	
-            		
             }
             JRSTReader reader = new JRSTReader();
             String text = item.getText();
             Document doc = reader.read(new StringReader(text)); 
             optionListItem.addElement("description").appendContent(doc.getRootElement());
-            
-            
             item = lexer.peekOption();
         }
         return result;
 	}
+	/**
+     * @param Element item
+     * @return Element
+     * @throws Exception 
+     */
 
-
-	private Element composeTopic(JRSTLexer lexer, Element item) throws Exception {
+	private Element composeTopic(Element item) throws Exception {
 		Element result = null;
 		result=DocumentHelper.createElement(TOPIC);
 		Element title = result.addElement("title");
@@ -668,9 +668,13 @@ public class JRSTReader {
 		
 		return result;
 	}
+	/**
+	 * @param Element item
+     * @return Element
+     * @throws Exception 
+     */
 
-
-	private Element composeSidebar(JRSTLexer lexer, Element item) throws Exception {
+	private Element composeSidebar(Element item) throws Exception {
 		Element result = null;
 		result=DocumentHelper.createElement(SIDEBAR);
 		Element title = result.addElement("title");
@@ -692,7 +696,12 @@ public class JRSTReader {
 		
 		return result;
 	}
-
+	/**
+     * @param lexer
+     * @param item
+     * @return Element
+     * @throws Exception 
+     */
 
 	private Element composeLineBlock(JRSTLexer lexer, Element item) throws Exception {
 		Element result = null;
@@ -721,7 +730,6 @@ public class JRSTReader {
 					Element newItem = DocumentHelper.createElement(LINE_BLOCK);
 					Boolean done = false;
 					for (int i=cnt;i<lines.size() && !done;i++){
-	
 						if (levels[i]>0){
 							Element eLine = newItem.addElement("line");
 							eLine.addAttribute("level", ""+(levels[i]-1));
@@ -733,30 +741,29 @@ public class JRSTReader {
 						
 					}
 					Element eLineBlock= result.addElement(LINE_BLOCK);
+					// Appel recursif
 					eLineBlock.appendContent(composeLineBlock(lexer,newItem));
 				}
 			}
 			cnt++;	
 		
 		}
-		
-		
-		/*result=DocumentHelper.createElement(LINE_BLOCK);
-		JRSTReader reader = new JRSTReader();
-        String text = item.getText();
-        Document doc = reader.read(new StringReader(text)); 
-	    result.appendContent(doc.getRootElement());*/
-	    
 		return result;
 	}
-
-
-	private Element composeDoctestBlock(JRSTLexer lexer, Element item) {
+	/**
+     * @param Element item
+     * @return Element
+     */
+	private Element composeDoctestBlock(Element item) {
 		return item;
 	}
+	/**
+     * @param Element item
+     * @return Element
+     * @throws Exception 
+     */
 
-
-	private Element composeBlockQuote(JRSTLexer lexer, Element item) throws Exception {
+	private Element composeBlockQuote(Element item) throws Exception {
 		Element result = null;
 		result=DocumentHelper.createElement(BLOCK_QUOTE);
 		JRSTReader reader = new JRSTReader();
@@ -767,9 +774,12 @@ public class JRSTReader {
 	    attribution.setText(item.attributeValue(ATTRIBUTION));
 		return result;
 	}
-
-
-	private Element composeAdmonition(JRSTLexer lexer, Element item) throws Exception {
+	   /**
+     * @param Element item
+     * @return Element
+     * @throws Exception 
+     */
+	private Element composeAdmonition(Element item) throws Exception {
 		Element result = null;
 		if (item.attributeValue("type").equalsIgnoreCase(ADMONITION)){
 			result=DocumentHelper.createElement(ADMONITION);
@@ -799,7 +809,7 @@ public class JRSTReader {
 
 	/**
      * @param item
-     * @return
+     * @return Node
      */
     private Node composeDirective(Element item) {
         Node result = item;
@@ -818,9 +828,8 @@ public class JRSTReader {
 
 
     /**
-     * @param lexer
-     * @param item
-     * @return
+     * @param Element item
+     * @return Element
      */
     private Element composeSubstitutionDefinition(Element item) {
         Element result = item;
@@ -833,11 +842,10 @@ public class JRSTReader {
 
 
     /**
-     * @param lexer
-     * @param item
-     * @return
+     * @param Element item
+     * @return Element 
      */
-    private Element composeTable(JRSTLexer lexer, Element item) throws Exception {
+    private Element composeTable(Element item) throws Exception {
     	
         Element result = DocumentHelper.createElement(TABLE);
         
@@ -929,7 +937,11 @@ public class JRSTReader {
                 
         return result;
     }
-
+    /**
+     * @param lexer
+     * @return Element
+     * @throws Exception 
+     */
     private Element composeBulletList(JRSTLexer lexer) throws Exception {
         Element item = lexer.peekBulletList();
         Element result = DocumentHelper.createElement(BULLET_LIST);
@@ -947,7 +959,11 @@ public class JRSTReader {
         }
         return result;
     }
-
+    /**
+     * @param lexer
+     * @return Element
+     * @throws Exception 
+     */
     private Element composeEnumeratedList(JRSTLexer lexer) throws Exception {
         Element item = lexer.peekEnumeratedList();
         Element result = DocumentHelper.createElement(ENUMERATED_LIST);
@@ -970,7 +986,11 @@ public class JRSTReader {
         }
         return result;
     }
-
+    /**
+     * @param lexer
+     * @return Element
+     * @throws Exception 
+     */
     private Element composeDefinitionList(JRSTLexer lexer) throws Exception {
         Element item = lexer.peekBodyElement();
         Element result = DocumentHelper.createElement(DEFINITION_LIST);
@@ -1001,7 +1021,11 @@ public class JRSTReader {
         }
         return result;
     }
-
+    /**
+     * @param lexer
+     * @return Element
+     * @throws Exception 
+     */
     private Element composeFieldList(JRSTLexer lexer) throws Exception {
         Element item = lexer.peekBodyElement();
         Element result = DocumentHelper.createElement(FIELD_LIST);
@@ -1013,7 +1037,11 @@ public class JRSTReader {
         }
         return result;
     }
-
+    /**
+     * @param lexer
+     * @return Element
+     * @throws Exception 
+     */
     private Element composeFieldItemList(JRSTLexer lexer) throws Exception {
         Element item = lexer.peekFieldList();
         if (itemEquals(FIELD_LIST, item)) {
@@ -1037,10 +1065,9 @@ public class JRSTReader {
     
     
     /**
-     * @param items
-     * @return
-     * @throws DocumentException 
-     * @throws IOException 
+     * @param lexer
+     * @return Element
+     * @throws Exception  
      */
     private Element composeSection(JRSTLexer lexer) throws Exception {
         Element result = DocumentHelper.createElement(SECTION);
@@ -1085,7 +1112,7 @@ public class JRSTReader {
      * 
      * @param item
      * @param firstTitle
-     * @return
+     * @return boolean
      * @throws DocumentException 
      */
     private boolean isUpperLevel(Element subSection, Element section) throws DocumentException {
@@ -1105,7 +1132,7 @@ public class JRSTReader {
      * 
      * @param item
      * @param firstTitle
-     * @return
+     * @return boolean
      * @throws DocumentException 
      */
     private boolean isSameLevel(Element subSection, Element section) throws DocumentException {
@@ -1118,7 +1145,12 @@ public class JRSTReader {
         boolean result = subSectionLevel == sectionLevel;
         return result;
     }
-    
+    /**
+     * @param Element e1
+     * @param Element e2
+     * @param String ... attnames
+     * @return boolean
+     */
     private boolean hasSameAttribute(Element e1, Element e2, String ... attnames) {
         boolean result = true;
         for (String attname : attnames) {
@@ -1131,7 +1163,11 @@ public class JRSTReader {
         }
         return result;
     }
-
+    /**
+     * @param Element from
+     * @param Element to 
+     * @throws DocumentException 
+     */
     private void copyLevel(Element from, Element to) throws DocumentException {
         String level = from.attributeValue("level");
         if (level == null) {
@@ -1139,12 +1175,24 @@ public class JRSTReader {
         }
         to.addAttribute("level", level);
     }
-
+    /**
+     * @param String name
+     * @param Element e
+     * @return boolean 
+     * @throws DocumentException 
+     */
     private boolean itemEquals(String name, Element e) throws DocumentException {
         boolean result = itemEquals(name, e, false, false);
         return result;
     }
-    
+    /**
+     * @param String name
+     * @param Element e
+     * @param boolean throwError
+     * @param boolean eof
+     * @return boolean
+     * @throws DocumentException 
+     */
     private boolean itemEquals(String name, Element e, boolean throwError, boolean eof) throws DocumentException {
         boolean result = e != null && name.equals(e.getName());
         if (ERROR_MISSING_ITEM && !result && throwError && !eof) {
@@ -1152,7 +1200,11 @@ public class JRSTReader {
         }
         return result;
     }    
-    
+    /**
+     * @param String name
+     * @param Element e
+     * @return boolean 
+     */
     private boolean itemNotEquals(String name, Element e) {
         boolean result = e == null || !name.equals(e.getName());
         return result;
@@ -1160,8 +1212,7 @@ public class JRSTReader {
     
     /**
      * Parse text in element and replace text with parse result 
-     * @param text
-     * @return
+     * @param Element e
      * @throws DocumentException
      */
     private void inline(Element e) throws DocumentException {
@@ -1244,5 +1295,3 @@ public class JRSTReader {
         e.appendContent(result);
     }
 }
-
-

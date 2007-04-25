@@ -148,7 +148,7 @@ Enumerated list   1. items use any variation of "1.", "A)", and "(i)"
 Definition list   Term is flush-left : optional classifier
                       Definition is indented, no blank line between
 Field list        :field name: field body
-Option list       -o   at least 2 spaces between option & description
+Option list       -o  at least 2 spaces between option & description
 ================  ============================================================
 
 
@@ -233,9 +233,7 @@ As a great paleontologist once said,
 
 >>> print 'this is a Doctest block'
 this is a Doctest block
-
-   .. header:: This space for rent. aaaa **aaaa**
-   
+ 
 |        A one, two, a one two three four
 |
 | Half a bee, philosophically,
@@ -263,3 +261,7 @@ this is a Doctest block
 -a            command-line option "a"
 -1 file, --one=file, --two file
               Multiple options with arguments.
+              
+   .. header:: This space for rent. aaaa **aaaa**
+
+-o  at least 2 spaces between option & description

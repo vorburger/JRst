@@ -62,7 +62,7 @@ import org.dom4j.Element;
  *
  *
  *
- * @author poussin
+ * @author poussin, letellier
  */
 public class JRSTLexer {
     
@@ -72,7 +72,7 @@ public class JRSTLexer {
     static final public String TITLE_CHAR = "-=-~'`^+:!\"#$%&*,./;|?@\\_[\\]{}<>()";
     static final public String DOCINFO_ITEM =
         "author|authors|organization|address|contact|version|revision|status|date|copyright";
-    public static final String ADMONITION = "admonition|attention|caution|danger|error|hint|important|note|tip|warning";
+    public static final String ADMONITION_PATTERN = "admonition|attention|caution|danger|error|hint|important|note|tip|warning";
     
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Title Elements
@@ -85,7 +85,14 @@ public class JRSTLexer {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
     static final public String DOCINFO = "docinfo";
-  
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // Decoration Elements
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    public static final String DECORATION = "decoration";
+    public static final String HEADER = "header";
+    
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Structural Elements
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -107,6 +114,12 @@ public class JRSTLexer {
     static final public String DEFINITION_LIST = "definition_list";
     static final public String ENUMERATED_LIST = "enumerated_list";
     static final public String OPTION_LIST = "option_list";
+    public static final String LINE_BLOCK = "line_block";
+    public static final String LINE = "line";
+    public static final String BLOCK_QUOTE = "block_quote";
+    public static final String ATTRIBUTION = "attribution";
+    public static final String DOCTEST_BLOCK = "doctest_block";
+    public static final String ADMONITION = "admonition";
   
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Table Elements
@@ -159,7 +172,7 @@ public class JRSTLexer {
 
     /**
      * true if no more element to read
-     * @return
+     * @return boolean
      * @throws IOException
      */
     public boolean eof() throws IOException {
@@ -178,14 +191,18 @@ public class JRSTLexer {
     public void remove() throws IOException {
         in.skip(elementLength);
     }
-    public void removeLine(int l) throws IOException {
-    	// TODO
-    }
+    /**
+     * start peek
+     * @throws IOException
+     */
     private void beginPeek() throws IOException {
         elementLength = 0;
         in.mark();
     }
-
+    /**
+     * end peek
+     * @throws IOException
+     */
     private void endPeek() throws IOException {
         elementLength = in.readSinceMark();
         in.reset();
@@ -196,7 +213,7 @@ public class JRSTLexer {
      * blank line)
      *
      * @param minLeftMargin min left blank needed to accept to read block
-     * @return
+     * @return String[]
      * @throws IOException
      */
     private String [] readBlock(int minLeftMargin) throws IOException {
@@ -216,14 +233,22 @@ public class JRSTLexer {
     /**
      * All lines are joined and left and right spaces are removed during join
      *
-     * @param lines
-     * @return
+     * @param String[] lines
+     * @return String
      */
     private String joinBlock(String [] lines) {
         String result = joinBlock(lines, " ", true);
         return result;
     }
-
+    /**
+     * All lines are joined whith the String joinSep
+     * and left and right spaces are removed if trim
+     *
+     * @param String[] lines
+     * @param String joinSep
+     * @param Boolean trim 
+     * @return String
+     */
     private String joinBlock(String [] lines, String joinSep, boolean trim) {
         String result = "";
         String sep = "";
@@ -236,18 +261,27 @@ public class JRSTLexer {
         }
         return result;
     }
+    /**
+     * search if the doc have an header
+     * <pre>
+     *    .. header:: This space for rent. aaaa **aaaa**
+     * </pre>
+     *
+     * @return Element
+     * @throws IOException
+     */
     public Element peekHeader() throws IOException {
-    	beginPeek(); // TODO elever la ligne pour quelle ne soit pas lu 2 fois
+    	beginPeek();
     	Element result = null;
     	String[] line = in.readAll();
 		if (line != null){
 			int i=0;
 			for (String l : line){
 				i++;
-				if (l.matches("^\\s*.. header:: .*")){
+				if (l.matches("^\\s*.. "+HEADER+":: .*")){
 					int level = level(l);
-					l=l.replaceAll("^\\s*.. header:: ", "");
-					result = DocumentHelper.createElement("header").addAttribute("level", String.valueOf(level));
+					l=l.replaceAll("^\\s*.. "+HEADER+":: ", "");
+					result = DocumentHelper.createElement(HEADER).addAttribute("level", String.valueOf(level));
 					result.addAttribute("line", ""+i);
 					result.setText(l);
 				}
@@ -259,7 +293,8 @@ public class JRSTLexer {
     }
     /**
      * Return title or para
-     * @return
+     * 
+     * @return Element
      * @throws IOException
      */
     public Element peekTitleOrBodyElement() throws IOException {
@@ -283,7 +318,7 @@ public class JRSTLexer {
      *   Dans le monde
      * </pre>
      *
-     * @return
+     * @return Element
      * @throws IOException
      */
     public Element peekDocInfo() throws IOException {
@@ -302,7 +337,7 @@ public class JRSTLexer {
 
     /**
      * Return para
-     * @return
+     * @return Element
      * @throws IOException
      */
     public Element peekBodyElement() throws IOException {
@@ -356,6 +391,9 @@ public class JRSTLexer {
          	result = peekBlockQuote();
         }
         if (result == null) {
+        	result = peekRemove();
+        }
+        if (result == null) {
             result = peekPara();
         }
         
@@ -363,9 +401,56 @@ public class JRSTLexer {
 
         return result;
     }
-
-    public Element peekOption() throws IOException {
+    /**
+     * Elements already read
+     * 
+     * @return Element
+     * @throws IOException
+     */
+    public Element peekRemove() throws IOException {
     	beginPeek();
+    	Element result = null;
+    	String line = in.readLine();
+    	if (line != null){
+    		// Le header est parsé des le debut 
+    		if (line.matches("^\\s*.. "+HEADER+":: .*")){
+    			result= DocumentHelper.createElement("remove").addAttribute("level", ""+level(line));
+    		}
+    	}
+    	endPeek();
+		return result;
+	}
+    /**
+     * read options
+     * <pre>
+     * -a            command-line option "a"
+	 * -1 file, --one=file, --two file
+     *        Multiple options with arguments.
+     * </pre>
+     *
+     * @return Element
+     * @throws IOException
+     */
+	public Element peekOption() throws IOException {
+		/*
+		 -a            command-line option "a"
+		 -1 file, --one=file, --two file
+         		      Multiple options with arguments.
+		 
+		   ________________________________
+		   v          |                    |
+		-{1,2}\w+ ->|','                   |
+				    |'='-----|-> \w+ --->|','
+				    |' '-----|           |' '---+
+				    |"  " -----> \w+ ---> end   |
+				      ^                         |
+				      |_________________________|
+
+		-{1,2} --> 1 or 2 tirets
+		\w+ ------> word characters one or more times
+			
+	    */
+		beginPeek();
     	Element result = null;
     	String line = in.readLine();
 		if (line != null){
@@ -385,13 +470,11 @@ public class JRSTLexer {
 	                option_stringTmp=option_stringTmp.substring(matcher.end()+1, option_stringTmp.length());
 	                option.addAttribute("delimiterExiste", "false");
 	                boolean done=false;
-	                if (delimiter==' '){
-	                	
+	                if (delimiter==' '){ // S'il ya 2 espace a suivre, l'option est finit
 	                	if (option_stringTmp.charAt(0)==' '){
 	                		done=true;
 	                	}
 	                }
-	                
 	                if ((delimiter=='=' || delimiter==' ')&&!done){
 	                	option.addAttribute("delimiterExiste", "true");
 	                	option.addAttribute("delimiter", ""+delimiter);
@@ -399,39 +482,40 @@ public class JRSTLexer {
 	                	String option_argument;
 	                	if (matcher.find()){
 	                		option_argument= matcher.group().substring(1, matcher.group().length());
-	                	
-		                	option.addAttribute("option_argument", option_argument);
+	                		option.addAttribute("option_argument", option_argument);
 		                	if (option_stringTmp.charAt(option_argument.length())==','){
 		                		delimiter = ',';
 		                		line=line.substring(option_string.length()+option_argument.length()+3,line.length());
-		                		
 		                	}
 		                	else if (option_stringTmp.charAt(option_argument.length())==' ')
 		                		done=true;
 	                	}
-	                	else{
+	                	else{ // Si la description n'est pas sur la meme ligne
 	                		option_argument=option_stringTmp;
 	                		option.addAttribute("option_argument", option_argument);
 	                		line = in.readLine();
 	                		result.setText(line.trim());
 	                	}
 	                }
-	              
 	                if (done)
-	                	result.setText(option_stringTmp.substring(matcher.end(),option_stringTmp.length()).trim());
-	               
-               	}while (delimiter==',');
-		
-				
-				
-				
-            }
+	                	result.setText(option_stringTmp.substring(matcher.end()-1,option_stringTmp.length()).trim());
+	            }while (delimiter==',');
+			}
 		}
-		
 		endPeek();
 		return result;
 	}
-
+	/**
+     * read topic
+     * <pre>
+     * -.. topic:: Title
+     *
+     *     Body.
+     * </pre>
+     *
+     * @return Element
+     * @throws IOException
+     */
 	private Element peekTopic() throws IOException {
     	beginPeek();
     	Element result = null;
@@ -453,7 +537,18 @@ public class JRSTLexer {
 		endPeek();
 		return result;
 	}
-
+	/**
+     * read sidebar
+     * <pre>
+     * .. sidebar:: Title
+     *    :subtitle: If Desired
+     *
+     *    Body.
+     * </pre>
+     *
+     * @return Element
+     * @throws IOException
+     */
 	private Element peekSidebar() throws IOException {
     	beginPeek();
     	Element result = null;
@@ -485,7 +580,20 @@ public class JRSTLexer {
 		endPeek();
 		return result;
 	}
-
+	/**
+     * read line block
+     * <pre>
+     * |        A one, two, a one two three four
+     * |
+     * | Half a bee, philosophically,
+     * |     must, *ipso facto*, half not be.
+     * | But half the bee has got to be,
+     * |               *vis a vis* its entity.  D'you see?
+     * </pre>
+     *
+     * @return Element
+     * @throws IOException
+     */
 	private Element peekLineBlock() throws IOException {
     	beginPeek();
     	Element result = null;
@@ -497,12 +605,9 @@ public class JRSTLexer {
 				lines[0]=line;
 				for (int i=0;i<linesTmp.length;i++)
 					lines[i+1]=linesTmp[i];
-				
 				int[] levelsTmp = new int[lines.length];
-				
 				int levelmin=999;
-				
-				result = DocumentHelper.createElement("line_block").addAttribute("level",0+"");
+				result = DocumentHelper.createElement(LINE_BLOCK).addAttribute("level",0+"");
 				for (int i=0;i<levelsTmp.length;i++) // on enleve |
 					lines[i]=lines[i].replaceAll("\\|\\s?", "");
 				for (int i=0;i<levelsTmp.length;i++) // determination des levels
@@ -513,11 +618,11 @@ public class JRSTLexer {
 				String lineAv="";
 				int[] levels=new int[levelsTmp.length];
 				for (String l : lines){
-					if (!l.matches("\\s*")){
+					if (!l.matches("\\s*")){ // Si la ligne courante n'est pas vide
 						int level=levelsTmp[cnt]-levelmin;
 						if (level!=0){
 							if (cnt!=0){
-								if (!lineAv.matches("\\s*")){
+								if (!lineAv.matches("\\s*")){ // Si la ligne d'avant n'est pas vide
 									int levelAv=levelsTmp[cnt-1]-levelmin;
 									if (levelAv<level){
 										levels[cnt]=levels[cnt-1]+1;
@@ -530,7 +635,6 @@ public class JRSTLexer {
 									else{
 										levels[cnt]=levels[cnt-1]-1;
 									}
-									
 								}
 								else
 									levels[cnt]=1;
@@ -551,26 +655,33 @@ public class JRSTLexer {
 					lineAv=l;
 				}
 				for (int i=0;i<levels.length;i++){
-					Element eLine = result.addElement("line");
+					Element eLine = result.addElement(LINE);
 					eLine.addAttribute("level", ""+levels[i]);
 					eLine.setText(lines[i].trim());
 				}
 			}
 		}
-		
 		endPeek();
 		return result;
 	}
-
+	/**
+     * read doctest block
+     * <pre>
+     * >>> print 'this is a Doctest block'
+     * this is a Doctest block
+     * </pre>
+     *
+     * @return Element
+     * @throws IOException
+     */
 	private Element peekDoctestBlock() throws IOException {
-    	// A voir les >>> sont transforme en &gt;&gt;&gt;
     	beginPeek();
     	Element result = null;
     	String line = in.readLine();
 		if (line != null){
 			if (line.matches("^\\s*>>>\\s.*")){
 				int level = level(line);
-				result = DocumentHelper.createElement("doctest_block").addAttribute("level", String.valueOf(level));
+				result = DocumentHelper.createElement(DOCTEST_BLOCK).addAttribute("level", String.valueOf(level));
             	result.addAttribute("xml:space", "preserve");
             	line += "\n"+joinBlock(readBlock(level));
             	result.setText(line);
@@ -579,6 +690,19 @@ public class JRSTLexer {
 		endPeek();
 		return result;
 	}
+	/**
+     * read block quote
+     * <pre>
+     * As a great paleontologist once said,
+     * 
+     *     This theory, that is mine, is mine.
+     * 
+     *     -- Anne Elk (Miss)
+     * </pre>
+     *
+     * @return Element
+     * @throws IOException
+     */
     private Element peekBlockQuote() throws IOException {
     	beginPeek();
     	Element result = null;
@@ -607,32 +731,43 @@ public class JRSTLexer {
             		done=true;
             }
             if (blockQuote!=null){
-            	result = DocumentHelper.createElement("block_quote").addAttribute("level", String.valueOf(level));
-            	result.addAttribute("attribution", blockQuote);
+            	result = DocumentHelper.createElement(BLOCK_QUOTE).addAttribute("level", String.valueOf(level));
+            	result.addAttribute(ATTRIBUTION, blockQuote);
             	result.setText(txt.trim());
             }
     	}
     	endPeek();
 		return result;
 	}
-
+    /**
+     * read admonitions : admonition|attention|caution|danger|error|hint|important|note|tip|warning 
+     * <pre>
+     * .. Attention:: All your base are belong to us.
+     * .. admonition:: And, by the way...
+     * 
+     *    You can make up your own admonition too.
+     * </pre>
+     *
+     * @return Element
+     * @throws IOException
+     */
 	private Element peekAdmonition() throws IOException {
     	beginPeek();
     	Element result = null;
         String line = in.readLine();
         if (line != null) {
             String lineTest = line.toLowerCase();
-            Pattern pAdmonition = Pattern.compile("^\\.\\.\\s*("+ADMONITION+")::\\s*(.*)$");
+            Pattern pAdmonition = Pattern.compile("^\\.\\.\\s*("+ADMONITION_PATTERN+")::\\s*(.*)$");
             Matcher matcher = pAdmonition.matcher(lineTest);
             if (matcher.matches()) {
             	boolean admonition=false;
-            	matcher = Pattern.compile(ADMONITION).matcher(lineTest);
+            	matcher = Pattern.compile(ADMONITION_PATTERN).matcher(lineTest);
                 matcher.find();
-                result = DocumentHelper.createElement("admonition").addAttribute("level", String.valueOf(0));
+                result = DocumentHelper.createElement(ADMONITION).addAttribute("level", String.valueOf(0));
             	int level;
-                if (matcher.group().equals("admonition")){
+                if (matcher.group().equals(ADMONITION)){ // Il y a un titre pour un admonition general
             		admonition=true;
-            		result.addAttribute("type", "admonition");
+            		result.addAttribute("type", ADMONITION);
             		String title=line.substring(matcher.end()+2,line.length());
             		String tmp=in.readLine();
             		if (!tmp.matches("\\s*")){
@@ -644,7 +779,7 @@ public class JRSTLexer {
             	}
             	else
             		result.addAttribute("type",matcher.group());
-            	matcher = Pattern.compile(ADMONITION).matcher(lineTest);
+            	matcher = Pattern.compile(ADMONITION_PATTERN).matcher(lineTest);
                 matcher.find();
                 line=line.trim();
                 String firstLine="";
@@ -662,48 +797,15 @@ public class JRSTLexer {
 	                result.setText(firstLine);
             }
         }
-        /*if (result!=null)
-        	System.out.println(result.asXML());*/
         endPeek();
         return result;
   	}
-    public String readBlockWithBlankLine(int level) throws IOException{
-    	String txt="";
-    	 String [] lines = in.readWhile("(^ {"+level+"}.*)|(\\s*)");
-         while (lines.length > 0) {
-             for (String l : lines) {
-             	l=l.trim();
-             	txt += l + "\n";
-             	
-             }
-             lines = in.readWhile("(^ {"+level+"}.*)|(\\s*)");
-         }
-         return txt;
-    }
-	/**
-     * Lit les premieres ligne non vide et les retourne, rien n'est modifier par rapport
-     * aux positions dans le fichier. Util pour afficher a l'utilisateur les lignes
-     * qui ont produit une erreur
-     * 
-     * @return
+    /**
+     * read blank line 
+     *
+     * @return Element
      * @throws IOException
      */
-    public String readNotBlanckLine() throws IOException {
-        beginPeek();
-        in.skipBlankLines();
-        String line = joinBlock(in.readUntilBlank(), "\n", false);
-        endPeek();
-        return line;
-    }
-    
-    public int getLineNumber() {
-        return in.getLineNumber();
-    }
-    
-    public int getCharNumber() {
-        return in.getCharNumber();
-    }
-    
     public Element peekBlankLine() throws IOException {
         beginPeek();
         Element result = null;
@@ -721,16 +823,15 @@ public class JRSTLexer {
     }
     
     /**
-     * @return
+     * read directive or reference
+     * 
+     * @return Element
      * @throws IOException
      */
     public Element peekDirectiveOrReference() throws IOException {
         beginPeek();
-
-        Element result = null;
-//        in.skipBlankLines();
-
-        String line = in.readLine();
+      Element result = null;
+      String line = in.readLine();
         if (line != null) {
             Pattern pImage = Pattern.compile("^\\.\\.\\s*(?:\\|([^|]+)\\|)?\\s*(\\w+)::\\s*(.*)$");
             Matcher matcher = pImage.matcher(line);
@@ -758,11 +859,15 @@ public class JRSTLexer {
                 directive.setText(text);
             }
         }
-        
         endPeek();
         return result;
     }
-    
+    /**
+     * read transition
+     * 
+     * @return Element
+     * @throws IOException
+     */
     public Element peekTransition() throws IOException {
         beginPeek();
 
@@ -783,11 +888,9 @@ public class JRSTLexer {
                 }
             }
         }
-
         endPeek();
         return result;
     }
-
     /**
      * read paragraph with attribut level that represente the space numbers
      * at left side
@@ -837,7 +940,18 @@ public class JRSTLexer {
         endPeek();
         return result;
     }
-
+    /**
+     * read literal block
+     * 
+     * <pre>
+     * ::
+     * 
+     *     LiteralBlock
+     * </pre>
+     * 
+     * @return Element
+     * @throws IOException
+     */
     public Element peekLiteralBlock() throws IOException {
         beginPeek();
 
@@ -882,7 +996,7 @@ public class JRSTLexer {
      *   Dans le monde
      * </pre>
      *
-     * @return
+     * @return Element
      * @throws IOException
      */
     public Element peekDocInfoItem() throws IOException {
@@ -913,8 +1027,22 @@ public class JRSTLexer {
        
         return result;
     }
-    
-
+    /**
+     * read table simple and complexe
+     * <pre>
+     * +------------------------+------------+----------+----------+
+     * | Header row, column 1   | Header 2   | Header 3 | Header 4 |
+     * | (header rows optional) |            |          |          |
+     * +========================+============+==========+==========+
+     * | body row 1, column 1   | column 2   | column 3 | column 4 |
+     * +------------------------+------------+----------+----------+
+     * | body row 2             | Cells may span columns.          |
+     * +------------------------+------------+---------------------+
+     * </pre>
+     *
+     * @return Element
+     * @throws IOException
+     */
     public Element peekTable() throws IOException {
         beginPeek();
 
@@ -1545,11 +1673,63 @@ public class JRSTLexer {
         endPeek();
         return result;
     }
-
+    /**
+     * Read block text, block text have same indentation
+     *
+     * @param minLeftMargin min left blank needed to accept to read block
+     * @return String
+     * @throws IOException
+     */
+    private String readBlockWithBlankLine(int level) throws IOException{
+    	String txt="";
+    	 String [] lines = in.readWhile("(^ {"+level+"}.*)|(\\s*)");
+         while (lines.length > 0) {
+             for (String l : lines) {
+             	l=l.trim();
+             	txt += l + "\n";
+             	
+             }
+             lines = in.readWhile("(^ {"+level+"}.*)|(\\s*)");
+         }
+         return txt;
+    }
+	/**
+     * Lit les premieres ligne non vide et les retourne, rien n'est modifier par rapport
+     * aux positions dans le fichier. Util pour afficher a l'utilisateur les lignes
+     * qui ont produit une erreur
+     * 
+     * @return
+     * @throws IOException
+     */
+    public String readNotBlanckLine() throws IOException {
+        beginPeek();
+        in.skipBlankLines();
+        String line = joinBlock(in.readUntilBlank(), "\n", false);
+        endPeek();
+        return line;
+    }
+    /**
+     * return the number of line read
+     * 
+     * @return int
+     * @throws IOException
+     */
+    public int getLineNumber() {
+        return in.getLineNumber();
+    }
+    /**
+     * return the number of char read
+     * 
+     * @return int
+     * @throws IOException
+     */
+    public int getCharNumber() {
+        return in.getCharNumber();
+    }
     /**
      * return true if line can be underline or overline for title
      * @param line
-     * @return
+     * @return boolean
      */
     private boolean startsWithTitleChar(String line) {
         if (line == null || line.length() < 2) {
@@ -1560,16 +1740,19 @@ public class JRSTLexer {
         boolean result = line.matches("(["+escapeRegex(TITLE_CHAR)+"])\\1+");
         return result;
     }
-
     /**
      * @param title_char
-     * @return
+     * @return String
      */
     private String escapeRegex(String text) {
         String result = text.replaceAll("([()[\\\\]*+?.])", "\\\\$1");
         return result;
     }
-
+    /**
+     * @param String line
+     * @return int
+     * @throws IOException
+     */
     private int level(String line) {
         int result = 0;
         while (line.length() > result && line.charAt(result) == ' ') {
@@ -1577,8 +1760,6 @@ public class JRSTLexer {
         }
         return result;
     }
-
-
 }
 
 
