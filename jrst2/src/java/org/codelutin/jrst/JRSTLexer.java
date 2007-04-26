@@ -68,7 +68,7 @@ public class JRSTLexer {
     
     /** to use log facility, just put in your code: log.info(\"...\"); */
     static private Log log = LogFactory.getLog(JRSTLexer.class);
-    static final public String BULLET_CHAR = "*" + "+" + "-" + "\u2022" + "\u2023" + "\u2043";
+    static final public String BULLET_CHAR = "*" + "+" + "-"/* + "\u2022" + "\u2023" + "\u2043"*/;
     static final public String TITLE_CHAR = "-=-~'`^+:!\"#$%&*,./;|?@\\_[\\]{}<>()";
     static final public String DOCINFO_ITEM =
         "author|authors|organization|address|contact|version|revision|status|date|copyright";
@@ -355,6 +355,9 @@ public class JRSTLexer {
         	result = peekTopic();
         }
         if (result == null) {
+        	result = peekRemove();
+        }
+        if (result == null) {
             result = peekDirectiveOrReference();
         }
         if (result == null) {
@@ -389,9 +392,6 @@ public class JRSTLexer {
         }
         if (result == null) {
          	result = peekBlockQuote();
-        }
-        if (result == null) {
-        	result = peekRemove();
         }
         if (result == null) {
             result = peekPara();
@@ -526,7 +526,7 @@ public class JRSTLexer {
                 matcher.find();
                 result = DocumentHelper.createElement(TOPIC).addAttribute("level", ""+level(line));
             	String title = line.substring(matcher.end(),line.length());
-                result.addAttribute("title",title);
+                result.addAttribute(TITLE,title);
                 line = in.readLine();
 				String txt = joinBlock(readBlock(level(line)));
 				result.setText(txt);
@@ -559,7 +559,7 @@ public class JRSTLexer {
                 matcher.find();
                 result = DocumentHelper.createElement(SIDEBAR).addAttribute("level", ""+level(line));
             	String title = line.substring(matcher.end(),line.length());
-                result.addAttribute("title",title);
+                result.addAttribute(TITLE,title);
                 line = in.readLine();
 				if (line.matches("^\\s+:subtitle:\\s*(.*)$*")){
 					matcher = Pattern.compile(":subtitle:\\s*").matcher(line);
@@ -1741,7 +1741,7 @@ public class JRSTLexer {
         return result;
     }
     /**
-     * @param title_char
+     * @param title_charescapeRegex
      * @return String
      */
     private String escapeRegex(String text) {

@@ -279,6 +279,7 @@ import org.dom4j.VisitorSupport;
  * @author poussin, letellier
  */
 public class JRSTReader {
+	
     
     /** to use log facility, just put in your code: log.info(\"...\"); */
     static private Log log = LogFactory.getLog(JRSTReader.class);
@@ -634,15 +635,12 @@ public class JRSTReader {
             List<Element> option = (List<Element>)item.selectNodes("option");
             for (Element e : option){
             	Element eOption = optionGroup.addElement(OPTION);
-            	eOption.addElement("option_string").setText(e.attributeValue("option_string"));
+            	eOption.addElement(OPTION_STRING).setText(e.attributeValue(OPTION_STRING));
             	if (e.attributeValue("delimiterExiste").equals("true")){
-            		eOption.addElement("option_argument").addAttribute("delimiter", e.attributeValue("delimiter")).setText(e.attributeValue("option_argument"));
+            		eOption.addElement(OPTION_ARGUMENT).addAttribute("delimiter", e.attributeValue("delimiter")).setText(e.attributeValue(OPTION_ARGUMENT));
             	}
             }
-            JRSTReader reader = new JRSTReader();
-            String text = item.getText();
-            Document doc = reader.read(new StringReader(text)); 
-            optionListItem.addElement("description").appendContent(doc.getRootElement());
+            optionListItem.addElement(DESCRIPTION).addAttribute("inline", "true").setText(item.getText());
             item = lexer.peekOption();
         }
         return result;
@@ -656,17 +654,9 @@ public class JRSTReader {
 	private Element composeTopic(Element item) throws Exception {
 		Element result = null;
 		result=DocumentHelper.createElement(TOPIC);
-		Element title = result.addElement("title");
-		JRSTReader reader = new JRSTReader();
-        String text = item.attributeValue("title");
-        Document doc = reader.read(new StringReader(text)); 
-	    title.appendContent(doc.getRootElement());
-		reader = new JRSTReader();
-        text = item.getText();
-        doc = reader.read(new StringReader(text)); 
-	    result.appendContent(doc.getRootElement());
-		
-		return result;
+		result.addElement(TITLE).addAttribute("inline", "true").setText(item.attributeValue(TITLE));
+       	result.addElement(PARAGRAPH).addAttribute("inline", "true").setText(item.getText());
+	   	return result;
 	}
 	/**
 	 * @param Element item
@@ -677,21 +667,12 @@ public class JRSTReader {
 	private Element composeSidebar(Element item) throws Exception {
 		Element result = null;
 		result=DocumentHelper.createElement(SIDEBAR);
-		Element title = result.addElement("title");
+		result.addElement(TITLE).addAttribute("inline", "true").setText(item.attributeValue(TITLE));
+	   	if (item.attributeValue("subExiste").equals("true"))
+	   		result.addElement(SUBTITLE).addAttribute("inline", "true").setText(item.attributeValue(SUBTITLE));
 		JRSTReader reader = new JRSTReader();
-        String text = item.attributeValue("title");
+        String text = item.getText();
         Document doc = reader.read(new StringReader(text)); 
-	    title.appendContent(doc.getRootElement());
-		if (item.attributeValue("subExiste").equals("true")){
-			Element subtitle = result.addElement("title");
-			reader = new JRSTReader();
-	        text = item.attributeValue("subtitle");
-	        doc = reader.read(new StringReader(text)); 
-		    subtitle.appendContent(doc.getRootElement());
-		}
-		reader = new JRSTReader();
-        text = item.getText();
-        doc = reader.read(new StringReader(text)); 
 	    result.appendContent(doc.getRootElement());
 		
 		return result;
@@ -718,13 +699,8 @@ public class JRSTReader {
 		for (int i=0;i<lineDone.length;i++)
 			lineDone[i]=false;
 		for (Element l : lines){
-			if (levels[cnt]==0){
-				Element eLine= result.addElement(LINE);
-				JRSTReader reader = new JRSTReader();
-		        String text = l.getText();
-		        Document doc = reader.read(new StringReader(text)); 
-			    eLine.appendContent(doc.getRootElement());
-			}
+			if (levels[cnt]==0)
+				result.addElement(LINE).addAttribute("inline", "true").setText(l.getText());
 			else{
 				if (!lineDone[cnt]){
 					Element newItem = DocumentHelper.createElement(LINE_BLOCK);
@@ -783,25 +759,19 @@ public class JRSTReader {
 		Element result = null;
 		if (item.attributeValue("type").equalsIgnoreCase(ADMONITION)){
 			result=DocumentHelper.createElement(ADMONITION);
-			String title = item.attributeValue("title");
+			String title = item.attributeValue(TITLE);
 			String admonitionClass="admonition_"+title;
 			admonitionClass=admonitionClass.toLowerCase().replaceAll("\\p{Punct}","");
 			admonitionClass=admonitionClass.replace(' ', '-');
 			admonitionClass=admonitionClass.replace('\n', '-');
     		result.addAttribute("class", admonitionClass);
-    		Element eTitle= result.addElement("title");
-    		title=title.trim();
-    		JRSTReader reader = new JRSTReader();	// Le titre doit etre parsé
-            Document doc = reader.read(new StringReader(title));
-            eTitle.appendContent(doc.getRootElement());
-			
+    		result.addElement(TITLE).addAttribute("inline", "true").setText(title.trim());
 		}
-		else{
+		else
 			result=DocumentHelper.createElement(item.attributeValue("type").toLowerCase());
-		}
         JRSTReader reader = new JRSTReader();
         String text = item.getText();
-        Document doc = reader.read(new StringReader(text));  // Ainsi que le txt
+        Document doc = reader.read(new StringReader(text));
 	    result.appendContent(doc.getRootElement());
 	    return result;
 	}
