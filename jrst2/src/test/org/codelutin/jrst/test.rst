@@ -1,3 +1,4 @@
+===============
 Docinfo Example
 ===============
 
@@ -11,9 +12,7 @@ Docinfo Example
 :Address: 123 Example Ave. Example, EX
 :Authors: J. Random Hacker; Jane Doe
 :Organization: Humankind
-:Version: 1
 :Revision: b
-:Status: Work In Progress
 
 Admonition
 ----------

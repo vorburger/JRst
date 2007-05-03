@@ -6,7 +6,7 @@ Voici la liste des tâches qui reste à faire. Si quelqu'un souhaite aider, ou
 a une idée à proposer il ne faut pas hésiter.
 
 - implanter la lecture des images, référence interne,
-- implanter la lecture des footnotes, citations, ...
+- implanter la lecture des citations, ...
 - intégrer une date multiformat
 - faire une feuille de style de conversion de RST en xhtml (plus rapide que dn2dbk -> dbk2xhtml)
 - faire une feuille de style de conversion de xhtml -> xdoc

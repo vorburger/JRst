@@ -1,0 +1,25 @@
+<document source="footnoteTest2.rst">
+	<paragraph>
+		<footnote_reference id="id1" refid="id4">2</footnote_reference> will be &quot;2&quot; (manually numbered),
+		<footnote_reference auto="1" id="id2" refid="id5">3</footnote_reference> will be &quot;3&quot; (anonymous auto-numbered), and
+		<footnote_reference auto="1" id="id3" refid="label">1</footnote_reference> will be &quot;1&quot; (labeled auto-numbered).
+	</paragraph>
+	<footnote backrefs="id1" id="id4" name="2">
+		<label>2</label>
+		<paragraph>This footnote is labeled manually, so its number is fixed.</paragraph>
+	</footnote>
+	<footnote auto="1" backrefs="id3" id="label" name="label">
+		<label>1</label>
+		<paragraph>This autonumber-labeled footnote will be labeled &quot;1&quot;.
+It is the first auto-numbered footnote and no other footnote
+with label &quot;1&quot; exists.  The order of the footnotes is used to
+determine numbering, not the order of the footnote references.
+		</paragraph>
+	</footnote>
+	<footnote auto="1" backrefs="id2" id="id5" name="3">
+		<label>3</label>
+		<paragraph>This footnote will be labeled &quot;3&quot;.  It is the second
+auto-numbered footnote, but footnote label &quot;2&quot; is already used.
+		</paragraph>
+	</footnote>
+</document>

@@ -86,7 +86,8 @@ public class JRST {
     static final private String docbook2javahelp = walshDir + "/javahelp/javahelp.xsl";
 //    static final private String dbkx2html = walshDir + "/html/onechunk.xsl";
     static final private String docbook2htmlhelp = walshDir + "/htmlhelp/htmlhelp.xsl";
-
+    static final private String rst2rst = "/xsl/xml2rst.xsl";
+    
     // Out put type available
     static final public String TYPE_HTML = "html";
     static final public String TYPE_XDOC = "xdoc";
@@ -94,6 +95,7 @@ public class JRST {
     static final public String TYPE_XHTML = "xhtml";
     static final public String TYPE_JAVAHELP = "javahelp";
     static final public String TYPE_HTMLHELP = "htmlhelp";
+    static final public String TYPE_RST = "rst";
     
     /** key, Out type; value: chain of XSL file to provide wanted file for output */
     static private Map<String, String> stylesheets = null;
@@ -106,6 +108,7 @@ public class JRST {
         stylesheets.put(TYPE_XHTML, rst2docbook+","+docbook2xhtml);
         stylesheets.put(TYPE_JAVAHELP, rst2docbook+","+docbook2javahelp);
         stylesheets.put(TYPE_HTMLHELP, rst2docbook+","+docbook2htmlhelp);
+        stylesheets.put(TYPE_RST, rst2rst);
     }
     
     static public void main(String [] args) throws Exception {
@@ -194,7 +197,7 @@ public class JRST {
         public String getXslFile();        
         public boolean isXslFile();
         
-        @Option(shortName="t", pattern = "xhtml|docbook|xml|html|xdoc", // TODO |pdf|rst|odt|rtf",                
+        @Option(shortName="t", pattern = "xhtml|docbook|xml|html|xdoc|rst", // TODO |pdf|rst|odt|rtf",                
                 description = "Output type")
         public String getOutType();
         public boolean isOutType();

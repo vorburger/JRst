@@ -120,7 +120,9 @@ public class JRSTLexer {
     public static final String ATTRIBUTION = "attribution";
     public static final String DOCTEST_BLOCK = "doctest_block";
     public static final String ADMONITION = "admonition";
-  
+    public static final String TARGET = "target";
+    public static final String FOOTNOTE = "footnote";
+    
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Table Elements
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -377,6 +379,12 @@ public class JRSTLexer {
         }
         if (result == null) {
             result = peekEnumeratedList();
+        }
+        if (result == null) {
+            result = peekTarget();
+        }
+        if (result == null) {
+            result = peekFootnote();
         }
         if (result == null) {
             result = peekDefinitionList();
@@ -1674,6 +1682,123 @@ public class JRSTLexer {
         return result;
     }
     /**
+     * .. _frungible doodads: http://www.example.org/
+     *
+     * @return Element
+     * @throws IOException 
+     */
+    private Element peekTarget() throws IOException {
+        beginPeek();
+        Element result = null;
+        String line = in.readLine();
+        if (line!=null){
+	        if (line.matches("^\\s*\\.\\.\\s_.+: .+$")){
+	        	result = DocumentHelper.createElement(TARGET);
+	        	Matcher matcher = Pattern.compile("\\.\\.\\s_").matcher(line);
+	    		if (matcher.find()){
+	    			boolean done=false;
+	    			for (int i=matcher.end();i<line.length() && !done;i++){
+	    				if (line.charAt(i)==':'){
+	    					 result.addAttribute("level", ""+level(line));
+	    					result.addAttribute("id", line.substring(matcher.end(), i).replaceAll("\\W", "-"));
+	    					result.addAttribute("name", line.substring(matcher.end(), i));
+	    					result.addAttribute("refuri", line.substring(i+2,line.length()));
+	    					done=true;
+	    				}
+	    			}
+	    		}
+	        }        
+        }
+        endPeek();
+        return result;
+    }
+    /**
+     * .. _frungible doodads: http://www.example.org/
+     *
+     * @return Element
+     * @throws IOException 
+     */
+    public Element peekFootnote() throws IOException {
+        beginPeek();
+        Element result = null;
+        String line = in.readLine();
+        if (line!=null){
+	        if (line.matches("^\\s*\\.\\.\\s\\[(#|[0-9]).*\\]\\s.+$")){
+	        	result  = DocumentHelper.createElement("footnotes");
+	        	boolean bLine = false;
+		        do{	   
+		        	
+		        	bLine = false;
+		        	Element footnote = result.addElement(FOOTNOTE);
+					Matcher matcher = Pattern.compile("\\.\\.\\s\\[").matcher(line);
+					
+					if (matcher.find()){
+						
+					   	boolean done=false;
+					   for (int i=matcher.end();i<line.length() && !done;i++){
+						   	if (line.charAt(i)==']'){
+						   		
+					   			result.addAttribute("level", ""+level(line));
+					   			String id = line.substring(matcher.end(), i);
+					   			if (id.matches("[0-9]")){
+					   				footnote.addAttribute("type", "num");
+					   				footnote.addAttribute("name", id);
+					   			}
+					   			else if (id.equals("#")){
+					   				footnote.addAttribute("type", "autoNum");
+					   			}
+					   			else{
+					   				footnote.addAttribute("type", "autoNumLabel");
+					   				footnote.addAttribute("name", id.substring(1));
+					   			}
+					   			String text = line.substring(i+2,line.length());
+					   			
+					   			int levelAv = level(line);
+					   			line = in.readLine();
+					   			if (line!=null){
+					   				if (line.matches("^\\s*\\.\\.\\s\\[(#|[0-9]).*\\]\\s.+$")){
+					   					bLine=true;
+					   				}else if (!line.matches("\\s")){
+					   					
+					   					int level = level(line);
+						   				if (levelAv<level){
+							   				String[] lines =readBlock(level);
+							   				text+=" "+line.trim();
+							   				for (String l : lines)
+								   				text += l.trim();
+								   			
+							   			}
+					   				}
+					   				if (!bLine){
+					   					in.skipBlankLines();
+						   				String[] linesTmp = in.readWhile("^\\s*\\.\\.\\s\\[(#|[0-9]).*\\]\\s.+$");
+						   				
+						   				if (linesTmp.length>0){
+						   					line=linesTmp[0];
+						   					bLine=true;
+						   				}
+					   				}
+					   				
+					   				
+						   			
+					   			}
+					   			if (line==null)
+					   				line="";
+					   			footnote.setText(text);	
+					   			done=true;
+					   		}
+					   		
+					   	}
+				   }
+					
+				   	
+				}while(bLine);
+	        }
+	    }
+        endPeek();
+        return result;
+    }
+    /**
      * Read block text, block text have same indentation
      *
      * @param minLeftMargin min left blank needed to accept to read block
@@ -1692,6 +1817,12 @@ public class JRSTLexer {
              lines = in.readWhile("(^ {"+level+"}.*)|(\\s*)");
          }
          return txt;
+    }
+    private String[] readBlockWithBlank(int level) throws IOException{
+    	
+    	 String [] lines = in.readWhile("(^ {"+level+"}.*)|(\\s*)");
+        
+         return lines;
     }
 	/**
      * Lit les premieres ligne non vide et les retourne, rien n'est modifier par rapport

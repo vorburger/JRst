@@ -37,10 +37,13 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
@@ -220,8 +223,8 @@ import org.dom4j.VisitorSupport;
  * field_name (done)
  * figure
  * footer
- * footnote
- * footnote_reference
+ * footnote	(done)
+ * footnote_reference (done)
  * generated
  * header (parcialy done)
  * hint (done)
@@ -289,6 +292,11 @@ public class JRSTReader {
     
     static protected Map<String, JRSTDirective> defaultDirectives = null;
     protected Map<String, JRSTDirective> directives = new HashMap<String, JRSTDirective>();
+    
+    private int idMax = 0;
+    private LinkedList lblFootnotes = new LinkedList();
+    private LinkedList lblFootnotesRef = new LinkedList();
+    private LinkedList eFootnotes = new LinkedList();
     
     static {
         defaultDirectives = new HashMap<String, JRSTDirective>();
@@ -393,11 +401,7 @@ public class JRSTReader {
         if (itemEquals(HEADER, item)){
         	Element decoration = result.addElement(DECORATION);
         	Element header = decoration.addElement(HEADER);
-        	JRSTReader reader = new JRSTReader();
-            String text = item.getText();
-            Document doc = reader.read(new StringReader(text)); 
-            header.appendContent(doc.getRootElement());
-        	
+        	header.addAttribute("inline", "true").setText(item.getText());
         }
         item = lexer.peekRemove();
         if (itemEquals("remove", item))
@@ -420,7 +424,7 @@ public class JRSTReader {
         if (itemEquals(TITLE, item)) {
             lexer.remove();
             Element subtitle = result.addElement(SUBTITLE);
-            copyLevel(item, subtitle);
+            copyLevel(item, subtitle);DocumentHelper.createElement("footnotes");
             subtitle.addAttribute("inline", "true").setText(item.getText());
         }
         
@@ -529,7 +533,7 @@ public class JRSTReader {
         
         while (!lexer.eof() && itemNotEquals(TITLE, item) && isUpperLevel(item, parent)) {
             if (itemEquals(JRSTLexer.BLANK_LINE, item)) {
-                // go to the next element
+                // go t o the next element
                 lexer.remove();
             }else if (itemEquals("remove", item)) {
             	lexer.remove();            	
@@ -601,6 +605,15 @@ public class JRSTReader {
             }  else if (itemEquals(OPTION_LIST, item)) {
                 Element list =composeOptionList(lexer);
             	parent.add(list);
+            } else if (itemEquals(TARGET, item)) { 
+            	lexer.remove();
+                Element list =composeTarget(item);
+            	parent.add(list);
+            }  else if (itemEquals("footnotes", item)) { 
+        		lexer.remove();
+                Element[] list =composeFootnote(item);
+                for (Element l : list)
+                	parent.add(l);
             }
             	
             	else {
@@ -620,6 +633,105 @@ public class JRSTReader {
         return parent;
     }
     /**
+     * @param item
+     * @return Element
+     */
+    private Element composeTarget(Element item) {
+    	return item;
+	}
+    /**
+     * @param item
+     * @return Element
+     * @throws Exception 
+     */
+    private Element[] composeFootnote(Element item) throws Exception {
+    	Element[] result=null;
+    	if (itemEquals("footnotes", item) ) {
+            List<Element> footnotes = (List<Element>)item.selectNodes(FOOTNOTE);
+            result = new Element[footnotes.size()];
+            int cnt=0;
+    		for (Element footnote : footnotes){
+	    		result[cnt] = DocumentHelper.createElement(FOOTNOTE);
+	        	Element efootnote = DocumentHelper.createElement(FOOTNOTE);
+	        	int labelMax=0;
+	        	
+	        	for (int i = 0; i<lblFootnotes.size();i++){
+	        		int lbl = (Integer)lblFootnotes.get(i);
+	        		labelMax = Math.max(lbl, labelMax);
+	           	}
+	        	
+	        	boolean[] labels = new boolean[labelMax];
+	        	for (int i=0;i< labels.length;i++)
+	        		labels[i] = false;
+	        	for (int i=0;i<lblFootnotes.size();i++){
+	        		labels[(Integer)lblFootnotes.get(i)-1]=true;
+	        	}
+	            idMax++;
+		    	String name = null;
+		    	String id = "";
+		    	String label = null;
+		    	String type = footnote.attributeValue("type");
+		    	if (type.equals("autoNum") || type.equals("autoNumLabel")){
+		    		result[cnt].addAttribute("auto", "1");
+		    	}
+		    	result[cnt].addAttribute("backrefs","id"+idMax);
+		    	efootnote.addAttribute("backrefs", "id"+idMax);
+		    	if (type.equals("num") || type.equals("autoNumLabel")){
+		        	name = footnote.attributeValue("name");
+		        	if (type.equals("autoNumLabel"))
+		        		id=name;
+		        	else
+		        		label=name;
+		    	}
+		    	if (type.equals("autoNum") || type.equals("autoNumLabel")){
+		    		boolean done = false;
+		    		
+		    		for (int i = 0;i<labels.length && !done;i++){
+		    			if (!labels[i]){
+		    				done = true;
+		    				label=""+(i+1);
+		    			}
+		    		}
+		    		if (!done)
+		    			label=""+(labels.length+1);
+		    		if (type.equals("autoNum"))
+		    			name = label;
+		    	}
+		    	result[cnt].addAttribute("id", ""+id);
+		    	efootnote.addAttribute("id", ""+id);
+		    	result[cnt].addAttribute("name", ""+name);
+		    	efootnote.addAttribute("name", ""+name);
+		    	result[cnt].addElement("label").setText(""+label);
+		    	efootnote.addAttribute("label", ""+label);
+	    		lblFootnotes.add(Integer.parseInt(label));
+	    		efootnote.addAttribute("type", type);
+	    		eFootnotes.add(efootnote);
+	    		
+	    		
+	    		
+	    		JRSTReader reader = new JRSTReader();
+	            String text = footnote.getText();
+	            Document doc = reader.read(new StringReader(text)); 
+	            result[cnt].appendContent(doc.getRootElement());
+	    		
+	            
+	    		cnt++;
+	        }
+    	}
+    	for (int i=0;i<result.length;i++){
+    		if (result[i].attributeValue("id").equals("")){
+        		idMax++;
+    			result[i].addAttribute("id", "id"+idMax);
+    			((Element)eFootnotes.get(i)).addAttribute("id", "id"+idMax);
+    		}
+    		
+    	}
+    	
+    	
+    	
+		return result;
+	}
+	/**
      * @param lexer
      * @return Element
      * @throws Exception 
@@ -1187,12 +1299,14 @@ public class JRSTReader {
      */
     private void inline(Element e) throws DocumentException {
         String text = e.getText();
+       
+              
         text = StringEscapeUtils.escapeXml(text);
-        
         // search all LITERAL and replace it with special mark
         // this prevent substitution in literal, example **something** must not
         // change in literal
         Map<String, String> temporaries = new HashMap<String, String>();
+        
         Matcher matcher = REGEX_LITERAL.matcher(text);
         int index = 0;
         while(matcher.find()) {
@@ -1216,10 +1330,151 @@ public class JRSTReader {
             String reference = "<"+REFERENCE+" refuri='"+matcher.group(2)+"'>"+matcher.group(1)+"</"+REFERENCE+">";
             String key = "inlineReference" + index++;            
             temporaries.put(key, reference);
-            
             text = text.substring(0, start) + "``" + key + "``" + text.substring(end);
         }
-
+        matcher = REGEX_FOOTNOTE_REFERENCE.matcher(text);
+		while (matcher.find()){
+			String txtDebut=text.substring(0,matcher.start());
+			String txtFin=text.substring(matcher.end(),text.length());
+			Element footnote = DocumentHelper.createElement(FOOTNOTE_REFERENCE);
+        	String sFootnote = matcher.group();
+        	boolean done = false;
+        	for (int i=0;i<sFootnote.length() && !done;i++){
+        		if (sFootnote.charAt(i)==']'){
+        			String id = sFootnote.substring(1,i);
+        			if (id.matches("[1-9]+")){
+        				
+        				for (int j=0; j<eFootnotes.size();j++){
+        					Element eFootnote=(Element)eFootnotes.get(j);
+        					if (eFootnote.attributeValue("label").equals(id)){
+        						footnote.addAttribute("id", eFootnote.attributeValue("backrefs"));
+        						footnote.addAttribute("refid", eFootnote.attributeValue("id"));
+        					}
+        				}
+        				footnote.setText(id);
+        				lblFootnotesRef.add(Integer.parseInt(id));
+        				
+        			}
+        			else if (id.equals("#")){
+        				int lblMax=0;
+        				for (int j=0; j<lblFootnotesRef.size();j++)
+        					lblMax=Math.max(lblMax, (Integer)lblFootnotesRef.get(j));
+        				  				
+        				
+        				boolean[] lbls = new boolean[lblMax];
+        				for (int j=0;j<lbls.length;j++)
+        					lbls[j]=false;
+        				for (int j=0; j<lblFootnotesRef.size();j++)
+        					lbls[(Integer)lblFootnotesRef.get(j)-1]=true;
+        				boolean valide=false;
+        				do{
+	        				boolean trouve = false;
+	    		    		String label=null;
+	    		    		for (int j = 0;j<lbls.length && !trouve;j++){
+	    		    			
+	    		    			if (!lbls[j]){
+	    		    				trouve = true;
+	    		    				label=""+(j+1);
+	    		    			}
+	    		    		}
+	    		    		if (!trouve)
+	    		    			label=""+(lbls.length+1);
+	    		    		footnote.addAttribute("auto", "1");
+	    		    		for (int j=0; j<eFootnotes.size();j++){
+	        					Element eFootnote=(Element)eFootnotes.get(j);
+	        					if (eFootnote.attributeValue("label").equals(label)){
+	        						if (!(eFootnote.attributeValue("type").equals("autoNumLabel"))){
+		        						footnote.addAttribute("id",eFootnote.attributeValue("backrefs"));
+		        						footnote.addAttribute("refid", eFootnote.attributeValue("id"));
+		        						footnote.setText(label);
+		        						lblFootnotesRef.add(Integer.parseInt(label));
+		        						valide=true;
+	        						}
+	        						else{
+	        							valide=false;
+	        							lbls[Integer.parseInt(label)-1]=true;
+	        						}
+	        					}
+	    		    		}
+	    		    	}while(!valide);
+        						
+        			}
+        				
+        			
+        			else {
+        				footnote.addAttribute("auto", "1");
+        				
+        				String name = id.substring(1);
+        				boolean trouve = false;
+        				for (int j=0; j<eFootnotes.size() && !trouve;j++){
+        					Element eFootnote=(Element)eFootnotes.get(j);
+        					if (eFootnote.attributeValue("name").equals(name)){
+        						footnote.addAttribute("id",eFootnote.attributeValue("backrefs"));
+        						footnote.addAttribute("refid", eFootnote.attributeValue("id"));
+        						String label = eFootnote.attributeValue("label");
+        						footnote.setText(label);
+        						lblFootnotesRef.add(Integer.parseInt(label));
+        						trouve=true;
+        					}
+        				}
+        				// Je ne suis pas sur que ce soit utile...
+        				/*if (!trouve){
+        					int lblMax=0;
+            				for (int j=0; j<lblFootnotesRef.size();j++)
+            					lblMax=Math.max(lblMax, (Integer)lblFootnotesRef.get(j));
+            				  				
+            				
+            				boolean[] lbls = new boolean[lblMax];
+            				for (int j=0;j<lbls.length;j++)
+            					lbls[j]=false;
+            				for (int j=0; j<lblFootnotesRef.size();j++)
+            					lbls[(Integer)lblFootnotesRef.get(j)-1]=true;
+            				
+            				boolean lblTrouve = false;
+        		    		String label=null;
+        		    		for (int j = 0;j<lbls.length && !trouve;i++){
+        		    			if (!lbls[j]){
+        		    				lblTrouve = true;
+        		    				label=""+(j+1);
+        		    			}
+        		    		}
+        		    		if (!lblTrouve){
+        		    			label=""+(lbls.length+1);
+        		    			int idMax=0;
+        			        	
+        			        	idMax++;
+        		    			footnote.addAttribute("id", "id"+idMax);
+        						footnote.addAttribute("refid",name);
+        						
+        						footnote.setText(label);
+        						lblFootnotesRef.add(Integer.parseInt(label));
+        		    		
+        		    		}
+        				}*/
+        				footnote.addAttribute("name", name);
+        			}
+        			done = true;
+        		}
+        	}
+        	text=txtDebut+footnote.asXML()+txtFin;
+        	matcher = REGEX_FOOTNOTE_REFERENCE.matcher(text);
+		}
+        
+        matcher = REGEX_HYPERLINK_REFERENCE.matcher(text);
+		while (matcher.find()){
+			String txtDebut=text.substring(0,matcher.start());
+			String txtFin=text.substring(matcher.end(),text.length());
+			String ref = text.substring(matcher.start(), matcher.end()-1);
+			String refFinal = ref.replaceAll("&apos;", "");
+			refFinal = refFinal.replaceAll("\\W", " ").trim();
+			Element hyper = DocumentHelper.createElement("reference");
+			hyper.addAttribute("refname", refFinal);
+			hyper.setText(refFinal);
+			text=txtDebut+hyper.asXML()+txtFin;
+			matcher = REGEX_HYPERLINK_REFERENCE.matcher(text);
+		}
+		
+		
         
         // do all substitution inline
         text = REGEX_EMAIL.matcher(text).replaceAll("$1<"+REFERENCE+" refuri='mailto:$2'>$2</"+REFERENCE+">$3");        
@@ -1227,6 +1482,8 @@ public class JRSTReader {
         text = REGEX_EMPHASIS.matcher(text).replaceAll("<"+EMPHASIS+">$1</"+EMPHASIS+">");
         text = REGEX_REFERENCE.matcher(text).replaceAll("<"+REFERENCE+" refuri='$1'>$1</"+REFERENCE+">$2");
         
+       
+		
         // substitution reference
         matcher = REGEX_SUBSTITUTION_REFERENCE.matcher(text);
         int begin = 0;
@@ -1248,6 +1505,8 @@ public class JRSTReader {
             text += end;
             matcher = REGEX_SUBSTITUTION_REFERENCE.matcher(text);
         }
+        
+       
         
         // undo substitution in LITERAL
         matcher = REGEX_LITERAL.matcher(text);

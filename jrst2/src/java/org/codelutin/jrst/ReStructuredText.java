@@ -184,7 +184,8 @@ public class ReStructuredText {
     public static final Pattern REGEX_REFERENCE = Pattern.compile("(http://[-/%#&\\._\\w]+)([^-/%#&\\._\\w]|$)");
     public static final Pattern REGEX_INLINE_REFERENCE = Pattern.compile("`(.+) ?&lt;(http://[-/%#&\\._\\w]+)&gt;`_");
     public static final Pattern REGEX_EMAIL = Pattern.compile("(^|[^_\\w])([-\\._\\w]+@[-\\._\\w]+)([^-\\._\\w]|$)");
-    public static final Pattern REGEX_FOOTNOTE_REFERENCE = Pattern.compile("\\[([0-9]+?|#)\\]");
+    public static final Pattern REGEX_FOOTNOTE_REFERENCE = Pattern.compile("\\[(#|[0-9])\\w*\\]_");
+    		//"\\[([0-9]+?|#)\\]");
     public static final Pattern REGEX_CITATION_REFERENCE = Pattern.compile("\\[([^\\]]+?)\\]");
     public static final Pattern REGEX_SUBSTITUTION_REFERENCE = Pattern.compile("\\|([^|]+?)\\|");
     public static final Pattern REGEX_ABBREVIATION = Pattern.compile("(.*?)");
@@ -194,6 +195,7 @@ public class ReStructuredText {
     public static final Pattern REGEX_INLINE = Pattern.compile("(.*?)");
     public static final Pattern REGEX_PROBLEMATIC = Pattern.compile("(.*?)");
     public static final Pattern REGEX_GENERATED = Pattern.compile("(.*?)");
+    public static final Pattern REGEX_HYPERLINK_REFERENCE = Pattern.compile("(&apos;.+[^<>]+&apos;_)|([^\\S]+[^\\s<>]+_)");
 }
 
 
