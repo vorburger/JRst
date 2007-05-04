@@ -1,6 +1,6 @@
 /* *##%
  * Copyright (C) 2006
- *     Code Lutin, Cédric Pineau, Benjamin Poussin
+ *     Code Lutin, CÃ©dric Pineau, Benjamin Poussin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -294,6 +294,8 @@ public class JRSTReader {
     protected Map<String, JRSTDirective> directives = new HashMap<String, JRSTDirective>();
     
     private int idMax = 0;
+    private int symbolMax = 0;
+    private int symbolMaxRef = 0;
     private LinkedList lblFootnotes = new LinkedList();
     private LinkedList lblFootnotesRef = new LinkedList();
     private LinkedList eFootnotes = new LinkedList();
@@ -644,6 +646,7 @@ public class JRSTReader {
      * @return Element
      * @throws Exception 
      */
+    // TODO bug caractere speciaux : auto-symbols
     private Element[] composeFootnote(Element item) throws Exception {
     	Element[] result=null;
     	if (itemEquals("footnotes", item) ) {
@@ -674,6 +677,9 @@ public class JRSTReader {
 		    	if (type.equals("autoNum") || type.equals("autoNumLabel")){
 		    		result[cnt].addAttribute("auto", "1");
 		    	}
+		    	if (type.equals("autoSymbol")){
+		    		result[cnt].addAttribute("auto", "*");
+		    	}
 		    	result[cnt].addAttribute("backrefs","id"+idMax);
 		    	efootnote.addAttribute("backrefs", "id"+idMax);
 		    	if (type.equals("num") || type.equals("autoNumLabel")){
@@ -697,13 +703,26 @@ public class JRSTReader {
 		    		if (type.equals("autoNum"))
 		    			name = label;
 		    	}
+		    	if (type.equals("autoSymbol")){
+		    		symbolMax++;
+		    		int nb = Math.abs(symbolMax/10)+1;
+		    		char symbol = FOOTNOTE_SYMBOL.charAt(symbolMax%10);
+		    		label="";
+		    		for (int j=0;j<nb;j++){
+		    			label+=symbol;
+		    		}
+		    		
+		    	}
 		    	result[cnt].addAttribute("id", ""+id);
 		    	efootnote.addAttribute("id", ""+id);
-		    	result[cnt].addAttribute("name", ""+name);
-		    	efootnote.addAttribute("name", ""+name);
+		    	if (!type.equals("autoSymbol")){
+		    		result[cnt].addAttribute("name", ""+name);
+		    		efootnote.addAttribute("name", ""+name);
+		    	}
 		    	result[cnt].addElement("label").setText(""+label);
 		    	efootnote.addAttribute("label", ""+label);
-	    		lblFootnotes.add(Integer.parseInt(label));
+		    	if (!type.equals("autoSymbol"))
+		    		lblFootnotes.add(Integer.parseInt(label));
 	    		efootnote.addAttribute("type", type);
 	    		eFootnotes.add(efootnote);
 	    		
@@ -972,7 +991,7 @@ public class JRSTReader {
             List<Element> cells = (List<Element>)rows.get(r).selectNodes(JRSTLexer.CELL); 
             for (int c=0; c<cells.size(); c++) {
                 Element cell = cells.get(c);
-                // si la cellule a ete utilisé pour un regroupement vertical on la passe
+                // si la cellule a ete utilisÃ© pour un regroupement vertical on la passe
                 if (!"true".equals(cell.attributeValue("used"))) {
                     Element entry = row.addElement(ENTRY);
                     String text = "";
@@ -986,7 +1005,7 @@ public class JRSTReader {
                         tmpCell = (Element)rows.get(r + morerows).selectSingleNode(
                                 JRSTLexer.CELL+"[@"+JRSTLexer.CELL_INDEX_START+"="+cellStart+"]");
                         text += tmpCell.getText();
-                        // on marque la cellule comme utilisé
+                        // on marque la cellule comme utilisÃ©
                         tmpCell.addAttribute("used", "true");
                     } while (!"true".equals(tmpCell.attributeValue(JRSTLexer.CELL_END)));
                                  
@@ -1342,7 +1361,27 @@ public class JRSTReader {
         	for (int i=0;i<sFootnote.length() && !done;i++){
         		if (sFootnote.charAt(i)==']'){
         			String id = sFootnote.substring(1,i);
-        			if (id.matches("[1-9]+")){
+        			if (id.equals("*")){
+        				symbolMaxRef++;
+    		    		int nb = Math.abs(symbolMaxRef/10)+1;
+    		    		char symbol = FOOTNOTE_SYMBOL.charAt(symbolMaxRef%10);
+    		    		String label="";
+    		    		for (int j=0;j<nb;j++){
+    		    			label+=symbol;
+    		    		}
+    		    		footnote.addAttribute("auto", "*");
+    		    		for (int j=0; j<eFootnotes.size();j++){
+        					Element eFootnote=(Element)eFootnotes.get(j);
+        					if (eFootnote.attributeValue("label").equals(label)){
+
+    	    		    		
+        						footnote.addAttribute("id", eFootnote.attributeValue("backrefs"));
+        						footnote.addAttribute("refid", eFootnote.attributeValue("id"));
+        						
+        					}
+        				}
+    		    		footnote.setText(label);
+        			}else if (id.matches("[1-9]+")){
         				
         				for (int j=0; j<eFootnotes.size();j++){
         					Element eFootnote=(Element)eFootnotes.get(j);

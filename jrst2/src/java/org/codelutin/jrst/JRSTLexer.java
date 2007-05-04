@@ -1,6 +1,6 @@
 /* *##%
  * Copyright (C) 2006
- *     Code Lutin, Cédric Pineau, Benjamin Poussin
+ *     Code Lutin, Cï¿½dric Pineau, Benjamin Poussin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,10 +50,10 @@ import org.dom4j.Element;
 /**
  * Le principe est de positionner la mark du {@link AdvancedReader} lors du
  * debut d'une methode peek*, puis a la fin de la methode de regarder le nombre
- * de caractere utilisé pour la methode et de faire un reset.
+ * de caractere utilisï¿½ pour la methode et de faire un reset.
  * <p>
- * Le nombre de caractere utilisé servira pour le remove lorsque l'utilisateur
- * indiquera qu'il utilise l'element retourné, si l'utilisateur n'appelle pas
+ * Le nombre de caractere utilisï¿½ servira pour le remove lorsque l'utilisateur
+ * indiquera qu'il utilise l'element retournï¿½, si l'utilisateur n'appelle pas
  * remove alors il peut relire autant de fois qu'il veut le meme element, ou
  * essayer d'en lire un autre.
  * <p>
@@ -420,7 +420,7 @@ public class JRSTLexer {
     	Element result = null;
     	String line = in.readLine();
     	if (line != null){
-    		// Le header est parsé des le debut 
+    		// Le header est parsï¿½ des le debut 
     		if (line.matches("^\\s*.. "+HEADER+":: .*")){
     			result= DocumentHelper.createElement("remove").addAttribute("level", ""+level(line));
     		}
@@ -1295,7 +1295,7 @@ public class JRSTLexer {
             	              - Second item in bullet
             	                list (row 3, column 2).
             	============  ======
-                devient l'équivalent :
+                devient l'ï¿½quivalent :
                 =====  =====  ======
             	   Inputs     Output
             	------------  ------
@@ -1723,7 +1723,7 @@ public class JRSTLexer {
         Element result = null;
         String line = in.readLine();
         if (line!=null){
-	        if (line.matches("^\\s*\\.\\.\\s\\[(#|[0-9]).*\\]\\s.+$")){
+	        if (line.matches("^\\s*\\.\\.\\s\\[(#|[0-9]|\\*).*\\]\\s.+$")){
 	        	result  = DocumentHelper.createElement("footnotes");
 	        	boolean bLine = false;
 		        do{	   
@@ -1740,7 +1740,10 @@ public class JRSTLexer {
 						   		
 					   			result.addAttribute("level", ""+level(line));
 					   			String id = line.substring(matcher.end(), i);
-					   			if (id.matches("[0-9]")){
+					   			if (id.matches("\\*")){
+					   				footnote.addAttribute("type", "autoSymbol");
+					   			}
+					   			else if (id.matches("[0-9]")){
 					   				footnote.addAttribute("type", "num");
 					   				footnote.addAttribute("name", id);
 					   			}
@@ -1756,7 +1759,7 @@ public class JRSTLexer {
 					   			int levelAv = level(line);
 					   			line = in.readLine();
 					   			if (line!=null){
-					   				if (line.matches("^\\s*\\.\\.\\s\\[(#|[0-9]).*\\]\\s.+$")){
+					   				if (line.matches("^\\s*\\.\\.\\s\\[(#|[0-9]|\\*).*\\]\\s.+$")){
 					   					bLine=true;
 					   				}else if (!line.matches("\\s")){
 					   					
@@ -1771,7 +1774,7 @@ public class JRSTLexer {
 					   				}
 					   				if (!bLine){
 					   					in.skipBlankLines();
-						   				String[] linesTmp = in.readWhile("^\\s*\\.\\.\\s\\[(#|[0-9]).*\\]\\s.+$");
+						   				String[] linesTmp = in.readWhile("^\\s*\\.\\.\\s\\[(#|[0-9]|\\*).*\\]\\s.+$");
 						   				
 						   				if (linesTmp.length>0){
 						   					line=linesTmp[0];

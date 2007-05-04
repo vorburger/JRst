@@ -1,8 +1,13 @@
-[#]_ is a reference to footnote 1, and [#]_ is a reference to
-footnote 2.
+Autonumbered footnotes are
+possible, like using [#]_ and [#]_.
 
-.. [#] This is footnote 1.
-.. [#] This is footnote 2.
-.. [#] This is footnote 3.
+.. [#] This is the first one.
+.. [#] This is the second one.
 
-[#]_ is a reference to footnote 3.
+They may be assigned 'autonumber
+labels' - for instance,
+[#fourth]_ and [#third]_.
+
+.. [#third] a.k.a. third_
+
+.. [#fourth] a.k.a. fourth_ 

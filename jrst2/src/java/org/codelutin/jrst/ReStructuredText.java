@@ -1,6 +1,6 @@
 /* *##%
  * Copyright (C) 2006
- *     Code Lutin, C�dric Pineau, Benjamin Poussin
+ *     Code Lutin, Cédric Pineau, Benjamin Poussin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -48,7 +48,8 @@ public class ReStructuredText {
     public static final String BULLET_CHAR = "*" + "+" + "-" + "\u2022" + "\u2023" + "\u2043";
     public static final String DOCINFO_ITEM =
         "author|authors|organization|address|contact|version|revision|status|date|copyright";
-   // public static final String ADMONITION = "admonition|caution|danger|error|hint|important|note|tip|warning";
+    public static final String FOOTNOTE_SYMBOL = "*†‡§¶#♠♥♦♣";
+    // public static final String ADMONITION = "admonition|caution|danger|error|hint|important|note|tip|warning";
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Root Element
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -184,7 +185,7 @@ public class ReStructuredText {
     public static final Pattern REGEX_REFERENCE = Pattern.compile("(http://[-/%#&\\._\\w]+)([^-/%#&\\._\\w]|$)");
     public static final Pattern REGEX_INLINE_REFERENCE = Pattern.compile("`(.+) ?&lt;(http://[-/%#&\\._\\w]+)&gt;`_");
     public static final Pattern REGEX_EMAIL = Pattern.compile("(^|[^_\\w])([-\\._\\w]+@[-\\._\\w]+)([^-\\._\\w]|$)");
-    public static final Pattern REGEX_FOOTNOTE_REFERENCE = Pattern.compile("\\[(#|[0-9])\\w*\\]_");
+    public static final Pattern REGEX_FOOTNOTE_REFERENCE = Pattern.compile("\\[(#|[0-9]|\\*)\\w*\\]_");
     		//"\\[([0-9]+?|#)\\]");
     public static final Pattern REGEX_CITATION_REFERENCE = Pattern.compile("\\[([^\\]]+?)\\]");
     public static final Pattern REGEX_SUBSTITUTION_REFERENCE = Pattern.compile("\\|([^|]+?)\\|");

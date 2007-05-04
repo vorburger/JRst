@@ -268,11 +268,13 @@ this is a Doctest block
 
 at least 2 spaces between option & description 'frungible doodads'_ [#aaaa]_
 
+
+.. [#aaaa] aaaaaaa
 .. _frungible doodads: http://www.example.org/
     
 .. [#] "Bogus Complexity Addition"
     
 .. [9] "Bogus Complexity Addition"
-    
+
     .. [#pep9876] PEP 9876, Let's Hope We Never Get Here
     

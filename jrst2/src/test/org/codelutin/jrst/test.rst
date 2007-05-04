@@ -1,181 +1,112 @@
-===============
-Docinfo Example
-===============
+====================
+ |reStructuredText|
+====================
+-------------------------------------------------
+ Markup Syntax and Parser Component of Docutils_
+-------------------------------------------------
 
-:Author: J. Random Hacker
-:Contact: jrh@example.com
-:Date: 2002-08-18
-:Status: Work In Progress
-:Version: 1
-:Filename: $RCSfile$
-:Copyright: This document has been placed in the public domain.
-:Address: 123 Example Ave. Example, EX
-:Authors: J. Random Hacker; Jane Doe
-:Organization: Humankind
-:Revision: b
+:Date: $Date$
 
-Admonition
-----------
+.. contents::
 
-.. admonition:: And, by the way...
+reStructuredText is an easy-to-read, what-you-see-is-what-you-get
+plaintext markup syntax and parser system.  It is useful for in-line
+program documentation (such as Python docstrings), for quickly
+creating simple web pages, and for standalone documents.
+reStructuredText is designed for extensibility for specific
+application domains.  The reStructuredText parser is a component of
+Docutils_.  reStructuredText is a revision and reinterpretation of the
+StructuredText_ and Setext_ lightweight markup systems.
 
-   You can make up your own admonition too.
+The primary goal of reStructuredText is to define and implement a
+markup syntax for use in Python docstrings and other documentation
+domains, that is readable and simple, yet powerful enough for
+non-trivial use.  The intended purpose of the markup is the conversion
+of reStructuredText documents into useful structured data formats.
 
-.. Attention:: All your base are belong to us.
+See statemachine.py_ for an example of a Python module fully
+documented using reStructuredText.
 
-.. DANGER:: Mad scientist at work!
 
-.. Caution:: Don't take any wooden nickels.
+User Documentation
+==================
 
-.. Error:: Does not compute.
+- `A ReStructuredText Primer`__ (HTML file, or `text source`__).
+- `Quick reStructuredText`__ (user reference)
+- `reStructuredText Cheat Sheet`__ (text only; 1 page for syntax, 1
+  page directive & role reference)
 
-.. Note:: Admonitions can be handy to break up a
-   long boring technical document.
-   
-.. Tip:: 15% if the service is good.
+Users who have questions or need assistance with Docutils or
+reStructuredText should post a message to the Docutils-users_ mailing
+list.
 
-.. WARNING:: Reader discretion is strongly advised.
+__ docs/user/rst/quickstart.html
+__ docs/user/rst/quickstart.txt
+__ docs/user/rst/quickref.html
+__ docs/user/rst/cheatsheet.txt
+.. _Docutils-users: docs/user/mailing-lists.html#docutils-users
 
-.. topic:: Title
 
-   Body.
+Reference Documentation
+=======================
 
-As a great paleontologist once said,
+- `An Introduction to reStructuredText`__ (includes the Goals__ and
+  History__ of reStructuredText)
+- `reStructuredText Markup Specification`__
+- `reStructuredText Directives`__
+- `reStructuredText Interpreted Text Roles`__
 
-    This theory, that is mine, is mine.
+__ docs/ref/rst/introduction.html
+__ docs/ref/rst/introduction.html#goals
+__ docs/ref/rst/introduction.html#history
+__ docs/ref/rst/restructuredtext.html
+__ docs/ref/rst/directives.html
+__ docs/ref/rst/roles.html
 
-    -- Anne Elk (Miss)
-    
-- Item 1, paragraph 1.
 
-  Item 1, paragraph 2.
+Developer Documentation
+=======================
 
-- Item 2.
+- `A Record of reStructuredText Syntax Alternatives`__
+- `Problems With StructuredText`__
 
-name : string
-    Customer name.
-i : int
-    Temporary index variable.
-    
-A paragraph.
+__ docs/dev/rst/alternatives.html
+__ docs/dev/rst/problems.html
 
-Term
-  Definition.
 
-Term : classifier
-    The ' : ' indicates a classifier in
-    definition list item terms only.
-
-Tyrannosaurus Rex : carnivore
-    Big and scary; the "Tyrant King".
-
-Brontosaurus : herbivore
-    All brontosauruses are thin at one end,
-    much much thicker in the middle
-    and then thin again at the far end.
-
-    -- Anne Elk (Miss)
-
-This is an ordinary paragraph.
-
->>> print 'this is a Doctest block'
-this is a Doctest block
-
-A Title
-=======
-
-A paragraph.
-
-1. Item 1.
-
-   (A) Item A.
-   (B) Item B.
-   (C) Item C.
-
-2. Item 2.
-
-:Author: Me
-:Version: 1
-:Date: 2001-08-11
-:Parameter i: integer
-
-.. header:: This space for rent.
-
-.. Hint:: It's bigger than a bread box.
-
-.. Important::
-
-   * Wash behind your ears.
-   * Clean up your room.
-   * Back up your data.
-   * Call your mother.
-
-Take it away, Eric the Orchestra Leader!
-
-| A one, two, a one two three four
-|
-| Half a bee, philosophically,
-|     must, *ipso facto*, half not be.
-| But half the bee has got to be,
-|     *vis a vis* its entity.  D'you see?
-|
-| But can a bee be said to be
-|     or not to be an entire bee,
-|         when half the bee is not a bee,
-|             due to some ancient injury?
-|
-| Singing...
-
-1. Outer list, item 1.
-
-   * Inner list, item 1.
-   * Inner list, item 2.
-
-2. Outer list, item 2.
-
-Here is a literal block::
-
-    if literal_block:
-        text = 'is left as-is'
-        spaces_and_linebreaks = 'are preserved'
-        markup_processing = None
-
--a            command-line option "a"
--1 file, --one=file, --two file
-              Multiple options with arguments.
-
-Title 1
-=======
-Paragraph 1.
-
-Title 2
--------
-Paragraph 2.
-
-Title 3
-=======
-Paragraph 3.
-
-Title 4
--------
-Paragraph 4.
-
-.. sidebar:: Title
-   :subtitle: If Desired
-
-   Body.
-
-=======
- Title
-=======
-----------
- Subtitle
-----------
-
-A paragraph.
-
-Paragraph 1.
-
+How-To's
 --------
 
-Paragraph 2.
+- `Creating reStructuredText Directives`__
+- `Creating reStructuredText Interpreted Text Roles`__
+
+__ docs/howto/rst-directives.html
+__ docs/howto/rst-roles.html
+
+
+Try it Online
+=============
+
+If you want to try reStructuredText out without downloading Docutils,
+you can use the `reStructuredText online renderer`__.  Thanks to Jiri
+Barton for `setting it up`__!
+
+__ http://www.hosting4u.cz/jbar/rest/rest.html
+__ http://www.hosting4u.cz/jbar/rest/about.html
+
+.. _Docutils: index.html
+.. _StructuredText:
+   http://dev.zope.org/Members/jim/StructuredTextWiki/FrontPage/
+.. _Setext: mirror/setext.html
+.. _statemachine.py: docutils/statemachine.py
+
+.. |reStructuredText| image:: rst.png
+
+
+..
+   Local Variables:
+   mode: indented-text
+   indent-tabs-mode: nil
+   sentence-end-double-space: t
+   fill-column: 70
+   End:
