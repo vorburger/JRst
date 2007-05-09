@@ -345,6 +345,9 @@ public class JRSTLexer {
     public Element peekBodyElement() throws IOException {
         Element result = null;
         if (result == null) {
+            result = peekComment();
+        }
+        if (result == null) {
         	result = peekDoctestBlock();
         }
         if (result == null) {
@@ -382,6 +385,9 @@ public class JRSTLexer {
         }
         if (result == null) {
             result = peekTarget();
+        }
+        if (result == null) {
+            result = peekTargetAnonymous();
         }
         if (result == null) {
             result = peekFootnote();
@@ -1692,7 +1698,7 @@ public class JRSTLexer {
         Element result = null;
         String line = in.readLine();
         if (line!=null){
-	        if (line.matches("^\\s*\\.\\.\\s_.+: .+$")){
+	        if (line.matches("^\\s*\\.\\.\\s_.+:.*")){
 	        	result = DocumentHelper.createElement(TARGET);
 	        	Matcher matcher = Pattern.compile("\\.\\.\\s_").matcher(line);
 	    		if (matcher.find()){
@@ -1702,13 +1708,60 @@ public class JRSTLexer {
 	    					 result.addAttribute("level", ""+level(line));
 	    					result.addAttribute("id", line.substring(matcher.end(), i).replaceAll("\\W", "-"));
 	    					result.addAttribute("name", line.substring(matcher.end(), i));
-	    					result.addAttribute("refuri", line.substring(i+2,line.length()));
+                            if (i+2>line.length()){
+                                line=in.readLine();
+                                result.addAttribute("refuri", line.trim());
+                            }
+                            else
+                                result.addAttribute("refuri", line.substring(i+2,line.length()));
+                            
 	    					done=true;
 	    				}
 	    			}
 	    		}
 	        }        
         }
+        endPeek();
+        return result;
+    }
+    private Element peekTargetAnonymous() throws IOException{
+        beginPeek();
+        Element result = null;
+        String line=in.readLine();
+        if (line!=null){
+            if (line.matches("^\\s*__ .+$")){
+                result = DocumentHelper.createElement("targetAnonymous");
+                result.addAttribute("level", ""+level(line));
+                Matcher matcher = Pattern.compile("__ ").matcher(line);
+                if (matcher.find()){
+                    result.addAttribute("refuri", line.substring(matcher.end(),line.length()));
+                }
+            }
+        }
+        
+        endPeek();
+        return result;
+    }
+    private Element peekComment() throws IOException{
+        beginPeek();
+        Element result = null;
+        String line = in.readLine();
+        if (line!=null){
+            if (line.matches("^\\.\\.\\s*$")){
+                result = DocumentHelper.createElement("comment");
+                result.addAttribute("level", "0");
+                result.addAttribute("xml:space", "preserve");
+                line = in.readLine();
+                int level = level(line);
+                String[] lines = readBlock(level);
+                String text = line.substring(level);
+                for (String l : lines)
+                    text+="\n"+l.substring(level);
+                result.setText(text);
+            }
+        }
+        
+        
         endPeek();
         return result;
     }

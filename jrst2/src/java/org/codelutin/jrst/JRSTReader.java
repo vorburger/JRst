@@ -296,9 +296,11 @@ public class JRSTReader {
     private int idMax = 0;
     private int symbolMax = 0;
     private int symbolMaxRef = 0;
-    private LinkedList lblFootnotes = new LinkedList();
-    private LinkedList lblFootnotesRef = new LinkedList();
-    private LinkedList eFootnotes = new LinkedList();
+    private LinkedList<Integer> lblFootnotes = new LinkedList<Integer>();
+    private LinkedList<Integer> lblFootnotesRef = new LinkedList<Integer>();
+    private LinkedList<Element> eFootnotes = new LinkedList<Element>();
+    private LinkedList<Element> eTarget = new LinkedList<Element>();
+    private LinkedList<Element> eTargetAnonymous = new LinkedList<Element>();
     
     static {
         defaultDirectives = new HashMap<String, JRSTDirective>();
@@ -611,11 +613,19 @@ public class JRSTReader {
             	lexer.remove();
                 Element list =composeTarget(item);
             	parent.add(list);
-            }  else if (itemEquals("footnotes", item)) { 
+            } else if (itemEquals("targetAnonymous",item)){
+                lexer.remove();
+                Element list = composeTargetAnonymous(item);
+                parent.add(list);
+            } else if (itemEquals("footnotes", item)) { 
         		lexer.remove();
                 Element[] list =composeFootnote(item);
                 for (Element l : list)
                 	parent.add(l);
+            } else if (itemEquals(COMMENT, item)) {
+                lexer.remove();
+                Element list = composeComment(item);
+                parent.add(list);
             }
             	
             	else {
@@ -634,11 +644,29 @@ public class JRSTReader {
         }
         return parent;
     }
+    private Element composeComment(Element item) {
+        
+        return item;
+    }
+
+
+    private Element composeTargetAnonymous(Element item) {
+        Element result = DocumentHelper.createElement(TARGET);
+        result.addAttribute("anonymous", "1");
+        int id = ++idMax;
+        result.addAttribute("id", "id"+id);
+        result.addAttribute("refuri", item.attributeValue("refuri"));
+        eTargetAnonymous.add(result);
+        return result;
+    }
+
+
     /**
      * @param item
      * @return Element
      */
     private Element composeTarget(Element item) {
+        eTarget.add(item);
     	return item;
 	}
     /**
@@ -1368,7 +1396,6 @@ public class JRSTReader {
 
        
         matcher = REGEX_FOOTNOTE_REFERENCE.matcher(text);
-        index = 0;
         while (matcher.find()){
             String txtDebut=text.substring(0,matcher.start());
             String txtFin=text.substring(matcher.end(),text.length());
@@ -1480,25 +1507,42 @@ public class JRSTReader {
                     done = true;
                 }
             }
-            String key = FOOTNOTE_REFERENCE + index++;            
-            temporaries.put(key, footnote.asXML());
             text=txtDebut+footnote.asXML()+txtFin;
             
             matcher = REGEX_FOOTNOTE_REFERENCE.matcher(text);
         }
+        matcher = REGEX_ANONYMOUS_HYPERLINK_REFERENCE.matcher(text);
+        while (matcher.find()){
+            String txtDebut=text.substring(0,matcher.start());
+            String txtFin=text.substring(matcher.end(),text.length());
+            String ref = text.substring(matcher.start(), matcher.end()-2);
+            ref = ref.replaceAll("`", "");
+            Element anonym = DocumentHelper.createElement("reference");
+            anonym.addAttribute("anonymous","1");
+            Element target = eTargetAnonymous.getLast();
+            eTargetAnonymous.removeLast();
+            anonym.addAttribute("name", ref.trim());
+            anonym.addAttribute("refuri", target.attributeValue("refuri"));
+            anonym.setText(ref);
+            text=txtDebut+anonym.asXML()+txtFin;
+            matcher = REGEX_ANONYMOUS_HYPERLINK_REFERENCE.matcher(text);
+        }
         matcher = REGEX_HYPERLINK_REFERENCE.matcher(text);
-        index = 0;
         while (matcher.find()){
             String txtDebut=text.substring(0,matcher.start());
             String txtFin=text.substring(matcher.end(),text.length());
             String ref = text.substring(matcher.start(), matcher.end()-1);
-            String refFinal = ref.replaceAll("&apos;", "");
-            refFinal = refFinal.replaceAll("\\W", " ").trim();
+            ref = ref.replaceAll("&apos;", "");
+            ref = ref.replaceAll("\\W", " ").trim();
             Element hyper = DocumentHelper.createElement("reference");
-            hyper.addAttribute("refname", refFinal);
-            hyper.setText(refFinal);
-            String key = "reference" + index++;            
-            temporaries.put(key, hyper.asXML());
+            hyper.addAttribute("name", ref);
+            for (Element el : eTarget){
+                if (el.attributeValue("id").equals(ref)){
+                    hyper.addAttribute("refuri",el.attributeValue("refuri"));
+                }
+            }
+            
+            hyper.setText(ref);
             text=txtDebut+hyper.asXML()+txtFin;
             matcher = REGEX_HYPERLINK_REFERENCE.matcher(text);
         }
