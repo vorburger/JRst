@@ -48,7 +48,7 @@ public class ReStructuredText {
     public static final String BULLET_CHAR = "*" + "+" + "-" + "\u2022" + "\u2023" + "\u2043";
     public static final String DOCINFO_ITEM =
         "author|authors|organization|address|contact|version|revision|status|date|copyright";
-    public static final String FOOTNOTE_SYMBOL = "*†‡§¶#♠♥♦♣";
+    public static final String FOOTNOTE_SYMBOL = "\u002A"+"\u2020"+"\u2021"+"\u00A7"+"\u00B6"+"\u0023"+"\u2660"+"\u2665"+"\u2666"+"\u2663";
     // public static final String ADMONITION = "admonition|caution|danger|error|hint|important|note|tip|warning";
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Root Element
@@ -179,7 +179,7 @@ public class ReStructuredText {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Inline Elements Regex
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    public static final Pattern REGEX_EMPHASIS = Pattern.compile("\\*([^*].+?)\\*");
+    public static final Pattern REGEX_EMPHASIS = Pattern.compile("\\*([^*(\\]_.+\\[)].+?)\\*");
     public static final Pattern REGEX_STRONG = Pattern.compile("\\*\\*(.+?)\\*\\*");
     public static final Pattern REGEX_LITERAL = Pattern.compile("``(.+?)``");
     public static final Pattern REGEX_REFERENCE = Pattern.compile("(http://[-/%#&\\._\\w]+)([^-/%#&\\._\\w]|$)");

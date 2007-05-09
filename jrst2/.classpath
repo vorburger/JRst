@@ -12,6 +12,7 @@
 	<classpathentry exported="true" kind="var" path="M2_REPO/nwalsh/docbook-xsl-nwalsh/1.71.1/docbook-xsl-nwalsh-1.71.1.jar"/>
 	<classpathentry exported="true" sourcepath="/LOCAL_SRC/jewelcli/src/main/java" kind="var" path="M2_REPO/jewelcli/jewelcli/0.41/jewelcli-0.41.jar"/>
 	<classpathentry kind="var" path="M2_REPO/lutinlib/lutinutil/0.24/lutinutil-0.24.jar"/>
+	<classpathentry kind="lib" path="/home/letellier/PROJET/jrst2/src/test/org/codelutin/jrst/sdoc-0.5.0-beta.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jaxen/jaxen/1.1-beta-6/jaxen-1.1-beta-6.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
