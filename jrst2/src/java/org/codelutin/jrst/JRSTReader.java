@@ -367,11 +367,18 @@ public class JRSTReader {
                 public void visit(Element e) {
                     e.addAttribute("level", null);
                     String type = e.attributeValue("type");
+                    boolean done = false;
                     if (type!=null){
                         if (type.equals("contents")){
                             composeContents(e);
                             e.addAttribute("type",null);
+                            done=true;
                         }
+                    }
+                    if (e.getName().equals("title") && done){
+                        Element t = eTitle.getFirst();
+                        e.addAttribute("refid", t.attributeValue("refid"));
+                        eTitle.removeFirst();
                     }
                     if ("true".equalsIgnoreCase(e.attributeValue("inline"))) {
                         e.addAttribute("inline", null);
@@ -392,6 +399,7 @@ public class JRSTReader {
         }
     }
     private void composeContents(Element e) {
+       
         Element result = DocumentHelper.createElement(TOPIC); 
         String option = e.getText();
         int depth=-1;
@@ -405,6 +413,8 @@ public class JRSTReader {
         }
         int levelInit = Integer.parseInt(eTitle.getFirst().attributeValue("level"));
         LinkedList<Element> title = new LinkedList<Element>();
+        for (int i=0;i<eTitle.size();i++)
+            eTitle.get(i).addAttribute("refid", "id"+(++idMax));
         for (Element el : eTitle){
             int level = Integer.parseInt(el.attributeValue("level"));
             level=level-levelInit;
@@ -412,7 +422,7 @@ public class JRSTReader {
             if (depth==-1)
                 title.add(el);
             else{
-                if (depth>level-levelInit)
+                if (depth>level)
                     title.add(el);
             }
         }
@@ -746,7 +756,7 @@ public class JRSTReader {
         result.addAttribute("anonymous", "1");
         int id = ++idMax;
         result.addAttribute("id", "id"+id);
-        result.addAttribute("refuri", item.attributeValue("refuri"));
+        result.addAttribute("refuri", item.attributeValue("refuri").replaceAll("`|_", "").trim());
         eTargetAnonymous.add(result);
         return result;
     }
@@ -1000,8 +1010,12 @@ public class JRSTReader {
         String text = item.getText();
         Document doc = reader.read(new StringReader(text)); 
 	    result.appendContent(doc.getRootElement());
-	    Element attribution = result.addElement(ATTRIBUTION);
-	    attribution.setText(item.attributeValue(ATTRIBUTION));
+        String sAttribution = item.attributeValue(ATTRIBUTION);
+        if (sAttribution != null){
+    	    Element attribution = result.addElement(ATTRIBUTION);
+    	    attribution.setText(sAttribution);
+            attribution.addAttribute("inline","true");
+        }
 		return result;
 	}
 	   /**
@@ -1308,7 +1322,6 @@ public class JRSTReader {
             Element title = result.addElement(TITLE);
             copyLevel(item, result);
             copyLevel(item, title);
-            title.addAttribute("refid", "id"+(++idMax));
             title.addAttribute("inline", "true").setText(item.getText().trim());
             result.addAttribute("id", item.getText().replaceAll("\\W+", " ").trim().toLowerCase().replaceAll("\\W+", "-"));
             result.addAttribute("name", item.getText().toLowerCase().trim());
@@ -1445,7 +1458,6 @@ public class JRSTReader {
      */
     private void inline(Element e) throws DocumentException {
         String text = e.getText();
-       
               
         text = StringEscapeUtils.escapeXml(text);
         // search all LITERAL and replace it with special mark
@@ -1617,10 +1629,12 @@ public class JRSTReader {
             ref = ref.replaceAll("`", "");
             Element anonym = DocumentHelper.createElement("reference");
             anonym.addAttribute("anonymous","1");
-            Element target = eTargetAnonymous.getLast();
-            eTargetAnonymous.removeLast();
             anonym.addAttribute("name", ref.trim());
-            anonym.addAttribute("refuri", target.attributeValue("refuri"));
+            if (!eTargetAnonymous.isEmpty()){
+                Element target = eTargetAnonymous.getLast();
+                eTargetAnonymous.removeLast();
+                anonym.addAttribute("refuri", target.attributeValue("refuri"));
+            }
             anonym.setText(ref);
             text=txtDebut+anonym.asXML()+txtFin;
             matcher = REGEX_ANONYMOUS_HYPERLINK_REFERENCE.matcher(text);
@@ -1635,9 +1649,11 @@ public class JRSTReader {
             Element hyper = DocumentHelper.createElement("reference");
             hyper.addAttribute("name", ref);
             for (Element el : eTarget){
-                if (el.attributeValue("id").equals(ref)){
+                if (el.attributeValue("id").equalsIgnoreCase(ref)){
                     hyper.addAttribute("refuri",el.attributeValue("refuri"));
                 }
+                else
+                    hyper.addAttribute("refid",ref);
             }
             
             hyper.setText(ref);

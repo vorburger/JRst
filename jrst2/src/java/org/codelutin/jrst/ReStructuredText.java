@@ -196,7 +196,7 @@ public class ReStructuredText {
     public static final Pattern REGEX_INLINE = Pattern.compile("(.*?)");
     public static final Pattern REGEX_PROBLEMATIC = Pattern.compile("(.*?)");
     public static final Pattern REGEX_GENERATED = Pattern.compile("(.*?)");
-    public static final Pattern REGEX_HYPERLINK_REFERENCE = Pattern.compile("(&apos;.+[^<>]+&apos;_)|([^\\S]+[^\\s<>]+_)");
+    public static final Pattern REGEX_HYPERLINK_REFERENCE = Pattern.compile("(\\`[^_<>]+\\`_)|(&apos;[^_<>]+&apos;_)|([\\S]+[^\\s<>\\.]+_)");
     public static final Pattern REGEX_ANONYMOUS_HYPERLINK_REFERENCE = Pattern.compile("(\\`[^<>`]+\\`__)|([^\\S]+[^\\s<>]+__)");
 }
 
