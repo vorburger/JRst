@@ -33,9 +33,7 @@ package org.codelutin.jrst.directive;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import org.codelutin.jrst.JRSTDirective;
-import org.codelutin.jrst.JRSTLexer;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
@@ -56,7 +54,7 @@ public class DateDirective implements JRSTDirective {
      */
     public Node parse(Element e) {
         
-        String format = e.attributeValue(JRSTLexer.DIRECTIVE_VALUE);
+        //String format = e.attributeValue(JRSTLexer.DIRECTIVE_VALUE);
         
         // TODO used format to format date, this format is not Java standard
         // is python standard "%Y-%m-%d"

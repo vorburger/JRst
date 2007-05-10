@@ -1,0 +1,20 @@
+package org.codelutin.jrst.directive;
+
+import org.codelutin.jrst.JRSTDirective;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.Node;
+
+public class ContentDirective implements JRSTDirective {
+
+    /* (non-Javadoc)
+     * @see org.codelutin.jrst.JRSTDirective#parse(org.dom4j.Element)
+     */
+    public Node parse(Element e) {
+        Element result = DocumentHelper.createElement("topic").addAttribute("value",e.attributeValue("value"));
+        result.addAttribute("type", "contents");
+        result.setText(e.getText());
+        return result;
+    }
+
+}

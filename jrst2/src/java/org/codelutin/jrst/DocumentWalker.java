@@ -65,6 +65,7 @@ public class DocumentWalker {
         handler.endDocument(doc);
     }
     
+    @SuppressWarnings("unchecked")
     public void walk(Element elem) {
         handler.startElement(elem);
         for (Node node : (List<Node>)elem.content()) {

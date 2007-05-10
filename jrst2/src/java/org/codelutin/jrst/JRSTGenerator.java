@@ -328,6 +328,7 @@ public class JRSTGenerator implements DocumentHandler {
      * @param e
      * @return
      */
+    @SuppressWarnings("unchecked")
     protected int inlineLength(Element e) {
         int result = 0;
         LinkedList<Node> elems = new LinkedList<Node>();

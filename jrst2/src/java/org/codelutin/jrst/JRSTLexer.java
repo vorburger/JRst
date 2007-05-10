@@ -34,13 +34,10 @@ package org.codelutin.jrst;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.locks.ReadWriteLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
@@ -1057,6 +1054,7 @@ public class JRSTLexer {
      * @return Element
      * @throws IOException
      */
+    @SuppressWarnings("unchecked")
     public Element peekTable() throws IOException {
         beginPeek();
 
@@ -1874,13 +1872,7 @@ public class JRSTLexer {
          }
          return txt;
     }
-    private String[] readBlockWithBlank(int level) throws IOException{
-    	
-    	 String [] lines = in.readWhile("(^ {"+level+"}.*)|(\\s*)");
-        
-         return lines;
-    }
-	/**
+    /**
      * Lit les premieres ligne non vide et les retourne, rien n'est modifier par rapport
      * aux positions dans le fichier. Util pour afficher a l'utilisateur les lignes
      * qui ont produit une erreur

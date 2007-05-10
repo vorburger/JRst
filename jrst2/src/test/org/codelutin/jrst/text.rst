@@ -16,6 +16,8 @@ Le grand titre
 
 ------------------
 
+.. contents:: sommaire
+
 L'abstract de l'article
 
 Le premier titre

@@ -43,11 +43,11 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codelutin.jrst.directive.ContentDirective;
 import org.codelutin.jrst.directive.DateDirective;
 import org.codelutin.jrst.directive.ImageDirective;
 import org.codelutin.util.StringUtil;
@@ -301,12 +301,14 @@ public class JRSTReader {
     private LinkedList<Element> eFootnotes = new LinkedList<Element>();
     private LinkedList<Element> eTarget = new LinkedList<Element>();
     private LinkedList<Element> eTargetAnonymous = new LinkedList<Element>();
+    private LinkedList<Element> eTitle = new LinkedList<Element>();
     
     static {
         defaultDirectives = new HashMap<String, JRSTDirective>();
         defaultDirectives.put(IMAGE, new ImageDirective());
         defaultDirectives.put(DATE, new DateDirective());
         defaultDirectives.put("time", new DateDirective());
+        defaultDirectives.put("contents", new ContentDirective());
         // TODO put here all other directive
     }
     
@@ -357,7 +359,6 @@ public class JRSTReader {
         JRSTLexer lexer = new JRSTLexer(reader);
         try {            
             Element root = composeDocument(lexer);
-            
             Document result = DocumentHelper.createDocument();
             result.setRootElement(root);
             
@@ -365,6 +366,13 @@ public class JRSTReader {
             root.accept(new VisitorSupport() {
                 public void visit(Element e) {
                     e.addAttribute("level", null);
+                    String type = e.attributeValue("type");
+                    if (type!=null){
+                        if (type.equals("contents")){
+                            composeContents(e);
+                            e.addAttribute("type",null);
+                        }
+                    }
                     if ("true".equalsIgnoreCase(e.attributeValue("inline"))) {
                         e.addAttribute("inline", null);
                         try {
@@ -377,15 +385,99 @@ public class JRSTReader {
                     }
                 }
             });
-            
-        
             return result;
         } catch (Exception eee) {
             log.error(_("JRST parsing error line {0} char {1}:\n{2}", lexer.getLineNumber(), lexer.getCharNumber(), lexer.readNotBlanckLine()));
             throw eee;
         }
     }
+    private void composeContents(Element e) {
+        Element result = DocumentHelper.createElement(TOPIC); 
+        String option = e.getText();
+        int depth=-1;
+        Pattern pattern = Pattern.compile("\\s*\\:depth\\:\\s*\\p{Digit}+");
+        Matcher matcher = pattern.matcher(option);
+        if (matcher.matches()) {
+            pattern = Pattern.compile("\\p{Digit}+");
+            matcher = pattern.matcher(matcher.group());
+            if (matcher.find())
+                depth=Integer.parseInt(matcher.group());
+        }
+        int levelInit = Integer.parseInt(eTitle.getFirst().attributeValue("level"));
+        LinkedList<Element> title = new LinkedList<Element>();
+        for (Element el : eTitle){
+            int level = Integer.parseInt(el.attributeValue("level"));
+            level=level-levelInit;
+            el.addAttribute("level", ""+level);
+            if (depth==-1)
+                title.add(el);
+            else{
+                if (depth>level-levelInit)
+                    title.add(el);
+            }
+        }
+        e.addAttribute("class", "contents");
+        String titleValue= e.attributeValue("value");
+        e.addAttribute("value", null);
+        String value = titleValue.trim().toLowerCase();
+        
+        if (value.matches("\\s*")){
+            value="contents";
+            titleValue="Contents";
+        }
+        e.addAttribute("id", value);
+        e.addAttribute("name",value);
+        result.addElement("title").setText(titleValue);
+        result.add(composeLineContent(title));
+        e.appendContent(result);
+    }
 
+    private Element composeLineContent(LinkedList<Element> title) {
+        Element result = DocumentHelper.createElement(BULLET_LIST);
+        while (!title.isEmpty()){
+            boolean done=false;
+            Element e = title.getFirst();
+            Element item = null;
+            title.removeFirst();
+            int level = Integer.parseInt(e.attributeValue("level"));
+            LinkedList<Element> child = new LinkedList<Element>();
+            while (level==0 && !done){
+                item = result.addElement(LIST_ITEM);
+                Element para = item.addElement(PARAGRAPH);
+                Element reference = para.addElement(REFERENCE);
+                String text=e.getText();
+                reference.addAttribute("id", e.attributeValue("refid"));
+                reference.addAttribute("refid", text.replaceAll("\\W+", " ").trim().toLowerCase().replaceAll("\\W+", "-"));
+                reference.addAttribute("inline","true");
+                reference.setText(text.trim());
+                if (!title.isEmpty()){
+                    e = title.getFirst();
+                    title.removeFirst();
+                    level = Integer.parseInt(e.attributeValue("level"));
+                }
+                else
+                    done=true;
+            }
+            while (level>0 && !done){
+                e.addAttribute("level", ""+(level-1));
+                child.add(e);
+                if (!title.isEmpty()){
+                    e = title.getFirst();
+                    title.removeFirst();
+                    level = Integer.parseInt(e.attributeValue("level"));
+                }
+                else
+                    done=true;
+            }
+            if (child!=null){
+                if (item!=null)
+                    item.add(composeLineContent(child)); // Appel recursif
+                else
+                    result.add(composeLineContent(child)); // Appel recursif
+            }    
+        }
+        return result;
+    }
     /**
      * @param lexer
      * @return Element
@@ -501,7 +593,6 @@ public class JRSTReader {
             result.add(section);
             item = lexer.peekTitle();
         }
-        
         return result;
     }
     /**
@@ -675,6 +766,7 @@ public class JRSTReader {
      * @throws Exception 
      */
     // TODO bug caractere speciaux : auto-symbols
+    @SuppressWarnings("unchecked")
     private Element[] composeFootnote(Element item) throws Exception {
     	Element[] result=null;
     	if (itemEquals("footnotes", item) ) {
@@ -785,7 +877,8 @@ public class JRSTReader {
      * @throws Exception 
      * @throws DocumentException 
      */
- 	private Element composeOptionList(JRSTLexer lexer) throws DocumentException, Exception{
+ 	@SuppressWarnings("unchecked")
+    private Element composeOptionList(JRSTLexer lexer) throws DocumentException, Exception{
 		Element item = lexer.peekOption();
         Element result = DocumentHelper.createElement(OPTION_LIST);
         while (itemEquals(OPTION_LIST, item) ) {
@@ -844,7 +937,8 @@ public class JRSTReader {
      * @throws Exception 
      */
 
-	private Element composeLineBlock(JRSTLexer lexer, Element item) throws Exception {
+	@SuppressWarnings("unchecked")
+    private Element composeLineBlock(JRSTLexer lexer, Element item) throws Exception {
 		Element result = null;
 		result=DocumentHelper.createElement(LINE_BLOCK);
 		List<Element> lines = (List<Element>)item.selectNodes(LINE); 
@@ -975,6 +1069,7 @@ public class JRSTReader {
      * @param Element item
      * @return Element 
      */
+    @SuppressWarnings("unchecked")
     private Element composeTable(Element item) throws Exception {
     	
         Element result = DocumentHelper.createElement(TABLE);
@@ -1213,8 +1308,11 @@ public class JRSTReader {
             Element title = result.addElement(TITLE);
             copyLevel(item, result);
             copyLevel(item, title);
-            
-            title.addAttribute("inline", "true").setText(item.getText());
+            title.addAttribute("refid", "id"+(++idMax));
+            title.addAttribute("inline", "true").setText(item.getText().trim());
+            result.addAttribute("id", item.getText().replaceAll("\\W+", " ").trim().toLowerCase().replaceAll("\\W+", "-"));
+            result.addAttribute("name", item.getText().toLowerCase().trim());
+            eTitle.add(title);
         }
         
         // le contenu de la section
