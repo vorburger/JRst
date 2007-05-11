@@ -163,7 +163,7 @@ import org.dom4j.VisitorSupport;
 */
 
 /**
- * Le principe est d'utiliser les methodes peek* {@link JRSTLexer} pour prendre
+ * * Le principe est d'utiliser les methodes peek* {@link JRSTLexer} pour prendre
  * l'element que l'on attend, si la methode retourne null ou un autre element
  * et bien c que ce n'est pas le bon choix, cela veut dire que l'element courant
  * est fini d'etre lu (plus de paragraphe dans la section par exemple) ou
@@ -181,7 +181,7 @@ import org.dom4j.VisitorSupport;
  * de cette facon les methods isUpperLevel et isSameLevel fonctionne pour
  * tous les elements de la meme facon
  * 
- * </pre>
+ * <pre>
  * abbreviation
  * acronym
  * address (done)
@@ -361,12 +361,12 @@ public class JRSTReader {
             Element root = composeDocument(lexer);
             Document result = DocumentHelper.createDocument();
             result.setRootElement(root);
-            
             // remove all level attribute
             root.accept(new VisitorSupport() {
                 public void visit(Element e) {
                     e.addAttribute("level", null);
                     String type = e.attributeValue("type");
+                    
                     boolean done = false;
                     if (type!=null){
                         if (type.equals("contents")){
@@ -439,19 +439,21 @@ public class JRSTReader {
         e.addAttribute("name",value);
         result.addElement("title").setText(titleValue);
         result.add(composeLineContent(title));
+        e.setText("");
         e.appendContent(result);
     }
 
     private Element composeLineContent(LinkedList<Element> title) {
         Element result = DocumentHelper.createElement(BULLET_LIST);
+        Element item = null;
         while (!title.isEmpty()){
             boolean done=false;
             Element e = title.getFirst();
-            Element item = null;
-            title.removeFirst();
             int level = Integer.parseInt(e.attributeValue("level"));
             LinkedList<Element> child = new LinkedList<Element>();
-            while (level==0 && !done){
+            
+            if (level==0 && !done){
+                title.removeFirst();
                 item = result.addElement(LIST_ITEM);
                 Element para = item.addElement(PARAGRAPH);
                 Element reference = para.addElement(REFERENCE);
@@ -460,31 +462,24 @@ public class JRSTReader {
                 reference.addAttribute("refid", text.replaceAll("\\W+", " ").trim().toLowerCase().replaceAll("\\W+", "-"));
                 reference.addAttribute("inline","true");
                 reference.setText(text.trim());
-                if (!title.isEmpty()){
-                    e = title.getFirst();
-                    title.removeFirst();
-                    level = Integer.parseInt(e.attributeValue("level"));
-                }
-                else
-                    done=true;
+               
             }
-            while (level>0 && !done){
-                e.addAttribute("level", ""+(level-1));
-                child.add(e);
-                if (!title.isEmpty()){
-                    e = title.getFirst();
+            else{
+                do{
+                    e.addAttribute("level", ""+(level-1));
+                    child.add(e);
                     title.removeFirst();
-                    level = Integer.parseInt(e.attributeValue("level"));
-                }
-                else
-                    done=true;
-            }
-            if (child!=null){
+                    if (!title.isEmpty()){
+                        e = title.getFirst();
+                        level = Integer.parseInt(e.attributeValue("level"));
+                    } 
+                }while (!title.isEmpty() && level>0 && !done);
+            
                 if (item!=null)
                     item.add(composeLineContent(child)); // Appel recursif
                 else
                     result.add(composeLineContent(child)); // Appel recursif
-            }    
+            }
         }
         return result;
     }
@@ -518,8 +513,11 @@ public class JRSTReader {
         if (itemEquals(TITLE, item)) {
             lexer.remove();
             Element title = result.addElement(TITLE);
+            String txt = item.getText();
+            result.addAttribute("id", txt.replaceAll("\\W"," ").toLowerCase().trim().replaceAll(" ", "-"));
+            result.addAttribute("name", txt.toLowerCase().replaceAll("\\W", " ").trim());
             copyLevel(item, title);
-            title.addAttribute("inline", "true").setText(item.getText());
+            title.addAttribute("inline", "true").setText(txt);
         }
         
         // skip blank line
@@ -530,8 +528,11 @@ public class JRSTReader {
         if (itemEquals(TITLE, item)) {
             lexer.remove();
             Element subtitle = result.addElement(SUBTITLE);
+            String txt = item.getText();
+            subtitle.addAttribute("id", txt.replaceAll("\\W"," ").toLowerCase().trim().replaceAll(" ", "-"));
+            subtitle.addAttribute("name",txt.toLowerCase().replaceAll("\\W", " ").trim());
             copyLevel(item, subtitle);DocumentHelper.createElement("footnotes");
-            subtitle.addAttribute("inline", "true").setText(item.getText());
+            subtitle.addAttribute("inline", "true").setText(txt);
         }
         
         // skip blank line
@@ -542,6 +543,7 @@ public class JRSTReader {
         
         Element documentinfo = null;
         while (itemEquals(DOCINFO, item) || itemEquals(FIELD_LIST, item)) {
+            
         	if (documentinfo == null) {
                 documentinfo = result.addElement(DOCINFO);
             }
@@ -584,9 +586,10 @@ public class JRSTReader {
                 lexer.remove();
             }
             // skip blank line
-            skipBlankLine(lexer);
+            //skipBlankLine(lexer);
             
             item = lexer.peekDocInfo();
+            
         }
         
         // l'abstract du doc
@@ -658,6 +661,10 @@ public class JRSTReader {
             	lexer.remove();
             	Element list = composeTopic(item);
             	parent.add(list);
+            } else if (itemEquals(TRANSITION, item)) {
+                lexer.remove();
+                Element para = parent.addElement(TRANSITION);
+                copyLevel(item, para);
             } else if (itemEquals(PARAGRAPH, item)) {
                 lexer.remove();
                 Element para = parent.addElement(PARAGRAPH);
@@ -671,10 +678,6 @@ public class JRSTReader {
                 lexer.remove();
                 Element subst = composeSubstitutionDefinition(item);
                 parent.add(subst);
-            } else if (itemEquals(TRANSITION, item)) {
-                lexer.remove();
-                Element para = parent.addElement(TRANSITION);
-                copyLevel(item, para);
             } else if (itemEquals(LITERAL_BLOCK, item)) {
                 lexer.remove();
                 Element para = parent.addElement(LITERAL_BLOCK);

@@ -1,6 +1,10 @@
 =====================================
  An Introduction to reStructuredText
 =====================================
+-------------------------------------------------
+ Markup Syntax and Parser Component of Docutils
+-------------------------------------------------
+
 :Author: David Goodger
 :Contact: goodger@python.org
 :Revision: $Revision$

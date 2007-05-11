@@ -3,20 +3,24 @@ Le grand titre
 ==============
 
 :authors: Benjamin POUSSIN <poussin@codelutin> ; Sylvain LETELLIER <letellier@codelutin>
-:address:
-  6 chemin des Orans
-  44240 La Chapelle sur Erdre
+:organisation: Code Lutin
+:address: 6 chemin des Orans 44240 La Chapelle sur Erdre
+:version: 2.1
+:statut: a finir
+:revision: 51
 :date: $date: 28/10/2006$
-
 :Un champs: au milieu
   de null part
 
   avec meme un para
-:date: $date: 28/10/2006$
+:copyright: © 2007. JRST - Code Lutin - GPL
 
 ------------------
 
 .. contents:: sommaire
+   :depth: 3
+
+
 
 L'abstract de l'article
 
@@ -60,14 +64,19 @@ plusieurs lignes** mais sans gras``
 - pour finir
 
 3. et meme
+
 4. des enum
+
 #. pour voir
 
 I) de tout
+
 II) sorte
 
 (a) pour tout
+
 (b) tester
+
 (#) vraiment tout
 
 :field1: avec un 
@@ -106,6 +115,15 @@ le mot : la classe 1 : la classe 2
 :un peu: de field
   ca ne fait pas
   de mal
+
+Un tire
+-------
+
+Un mini titre
+~~~~~~~~~~~~~
+
+Un autre encore plus mini qui ne sera pas afficher dans le sommaire
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
   
   
 ::
@@ -123,6 +141,8 @@ un para 0
   un para pluie
   de 2
 
+TABLE COMPLEXE
+--------------
 
 +------------------------+------------+----------+----------+
 | Header row, column 1   | Header 2   | Header 3 | Header 4 |
@@ -142,6 +162,9 @@ un para 0
 +------------------------+ span rows. | - contain           |
 | body row 4             |            | - body elements.    |
 +------------------------+------------+---------------------+
+
+TABLE SIMPLE
+------------
 
 ================  ============================================================
 Bullet list       * items begin with "-", "+", or "*"
@@ -168,19 +191,29 @@ True   2      - Second column of row 3.
                 list (row 3, column 2).
 =====  =====  ======
 
-The |the big: biohazard| symbol in |date| must be used on containers used to dispose of medical waste.
+IMAGE
+-----
+
+The |the big: biohazard| symbol must be used on containers used to dispose of medical waste.
 
 .. |the big: biohazard| image:: biohazard.png 
-.. |date| date::
 
+LIEN INLINE
+-----------
 
 Une *petit* phare `pour avoir <http://www.free.fr>`_ un lien inline
+
+FIELD
+-----
 
 :field1: def1
 :field2: def2
 
 :field1: autre def1
 :field2: autre def2
+
+ADMONITIONS
+-----------
 
 .. admonition:: And, by the way...
 
@@ -190,7 +223,7 @@ Une *petit* phare `pour avoir <http://www.free.fr>`_ un lien inline
    :field2: autre def2
 
 .. Attention:: All your base are belong to us.
- You can make
+   You can make
 
 .. WARNING::The "raw" role is a stop-gap measure allowing the author to bypass::
    reStructuredText's markup.  It is a "power-user" feature that
@@ -200,10 +233,9 @@ Une *petit* phare `pour avoir <http://www.free.fr>`_ un lien inline
    If you often need to use "raw"-derived interpreted text roles or
    the "raw" directive, that is a sign either of overuse/abuse or that
    functionality may be missing from reStructuredText.  Please
-   describe your situation in a message to the Docutils-users_ mailing
+   describe your situation in a message to the Docutils-users mailing
    list.
 
-   .. |the big: biohazard| image:: biohazard.png 
 
 .. admonition:: The "raw" role is a stop-gap measure allowing the author to bypass::
    reStructuredText's markup.  It is a "power-user" feature that
@@ -213,28 +245,35 @@ Une *petit* phare `pour avoir <http://www.free.fr>`_ un lien inline
    If you often need to use "raw"-derived interpreted text roles or
    the "raw" directive, that is a sign either of overuse/abuse or that
    functionality may be missing from reStructuredText.  Please
-   describe your situation in a message to the Docutils-users_ mailing
+   describe your situation in a message to the Docutils-users mailing
    list.
 
-   .. |the big: biohazard| image:: biohazard.png 
 
-la derniere ligne.
 
 .. Attention:: Derrière toi c'est horrible !
 
-.. admonition:: And, by the way...
+
 .. admonition:: Ceci est un avertissement.
 
    Je vous demande de vous arrêtez.
+
+BLOCK QUOTE
+-----------
 
 As a great paleontologist once said,
 
     This theory, that is mine, is mine.
 
     -- Anne Elk (Miss)
+    
+DOCTEST BLOCK
+-------------
 
 >>> print 'this is a Doctest block'
 this is a Doctest block
+
+LINE BLOC
+---------
  
 | A one, two, a one two three four
 |
@@ -250,33 +289,88 @@ this is a Doctest block
 |
 | Singing...
 
+SIDEBAR
+-------
+
 .. sidebar:: Title
    :subtitle: If Desired
 
    Body.
-   
+
+TOPIC
+-----
+
 .. topic:: Title
 
    Body.
+
+.. header:: Ceci est une page de test
+
+OPTION
+------
+
+-a         Output all.
+-b         Output both (this description is
+           quite long).
+-c arg     Output just arg.
+--long     Output all day long.
+
+-p         This option has two paragraphs in the description.
+           This is the first.
+
+           This is the second.  Blank lines may be omitted between
+           options (as above) or left in (as here and below).
+
+--very-long-option  A VMS-style option.  Note the adjustment for
+                    the required two spaces.
+
+--an-even-longer-option
+           The description can also start on the next line.
+
+-2, --two  This option has two variants.
+
+-f FILE, --file=FILE  These two options are synonyms; both have
+                      arguments.
+
+/V         A VMS/DOS-style option.
+
+FOOTNOTES
+---------
+
+[#]_ is a reference to footnote 1, and [#]_ is a reference to
+footnote 2.
+
+.. [#] This is footnote 1.
+.. [#] This is footnote 2.
+.. [#] This is footnote 3.
+
+[#]_ is a reference to footnote 3.
+
+HYPERLINK
+---------
+
+it's an anonymous-hyperlink__ and this one is an simple hyperlink_
+
+__ anonymous-hyperlink
+
+.. _hyperlink: www.google.fr
+
+COMMENT
+-------
+
+..
+  Ceci est un commentaire
+
+INLINE
+------
+
+``literal``, *emphasis*, **STRONG**, http://www.reference.com, letellier@codelutin.com
+
+
+
+la derniere ligne.
    
-   
--a            command-line option "a"
--1 file, --one=file, --two file
-              Multiple options with arguments.
-              
-   .. header:: This space for rent. aaaa **aaaa**
-
--o  at least 2 spaces between option & description
-
-at least 2 spaces between option & description 'frungible doodads'_ [#aaaa]_
 
 
-.. [#aaaa] aaaaaaa
-.. _frungible doodads: http://www.example.org/
-    
-.. [#] "Bogus Complexity Addition"
-    
-.. [9] "Bogus Complexity Addition"
 
-    .. [#pep9876] PEP 9876, Let's Hope We Never Get Here
     
