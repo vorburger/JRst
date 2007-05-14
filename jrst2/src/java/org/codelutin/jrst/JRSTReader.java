@@ -33,9 +33,16 @@ package org.codelutin.jrst;
 
 import static org.codelutin.jrst.ReStructuredText.*;
 import static org.codelutin.i18n.I18n._;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -645,6 +652,10 @@ public class JRSTReader {
                 lexer.remove();
             }else if (itemEquals("remove", item)) {
             	lexer.remove();            	
+            }  else if (itemEquals("include", item)){
+                lexer.remove();
+                Element list = composeInclude(item);
+                parent.add(list);
             }  else if (itemEquals(DOCTEST_BLOCK, item)) {
             	lexer.remove();
             	Element list = composeDoctestBlock(item);
@@ -748,6 +759,37 @@ public class JRSTReader {
         }
         return parent;
     }
+    private Element composeInclude(Element item) throws Exception {
+        String option = item.attributeValue("option");
+        String path = item.getText();
+        Element result = null;
+        if (option.equals("literal")){
+            result=DocumentHelper.createElement("LITERAL_BLOCK");
+            FileReader reader = new FileReader(path);
+            BufferedReader bf = new BufferedReader(reader);
+            String line="";
+            String lineTmp= bf.readLine();
+            //bf.skip(line.length());
+            while (lineTmp != null){
+                line += '\n'+lineTmp;
+                lineTmp = bf.readLine();
+                //bf.skip(line.length());
+            }
+            result.setText(line);
+        }
+        else{
+            File fileIn =new File(path);
+            URL url = fileIn.toURL();
+            Reader in = new InputStreamReader(url.openStream());        
+            JRSTReader jrst = new JRSTReader();
+            Document doc = jrst.read(in);
+            
+            result = doc.getRootElement();
+        }
+        return result;
+    }
+
+
     private Element composeComment(Element item) {
         
         return item;

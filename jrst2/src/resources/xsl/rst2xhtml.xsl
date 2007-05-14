@@ -23,19 +23,37 @@
          <xsl:apply-templates/>
        </xsl:element>
 	</xsl:template>
-
+	
+	<xsl:template match="subtitle">
+		<xsl:element name="h2">
+			<xsl:apply-templates/>
+		</xsl:element>
+	</xsl:template>
 	<!-- just eat it -->
 	<xsl:template match="substitution_definition">
 	</xsl:template>
 	
 	<xsl:template match="docinfo">
-	  <div class="docinfo"><xsl:apply-templates/></div>
+	  <table class="docinfo" frame="void" rules="none">
+		<col class="docinfo-name" />
+		<col class="docinfo-content" />
+		<tbody valign="top">
+			<xsl:apply-templates/>
+		</tbody>
+	  </table>
 	</xsl:template>
 	
-	<xsl:template match="author|authors|date|version">
-	  <div class="field {name(.)}"><span class="field_name"><xsl:value-of select="name(.)"/></span><span class="field_body"><xsl:apply-templates/></span></div>
+	<xsl:template match="author|organization|address|contact|version|revision|status|date|copyright">
+		<tr>
+			<th class="docinfo-name">
+				<xsl:value-of select="name(.)"/> : 
+			</th>
+			<td class="docinfo-content">
+				 <xsl:apply-templates/>
+			</td>
+		</tr>
 	</xsl:template>
-	
+			
 	<xsl:template match="transition">
 	  <hr/>
 	</xsl:template>
@@ -154,6 +172,12 @@
 		<img alt="{@alt}" src="{@uri}"><xsl:apply-templates/></img>
 	</xsl:template>
 
+	<xsl:template match="header">
+		<p class="header"><xsl:apply-templates/></p>
+		<hr/>
+	</xsl:template>
+	
+	
 	<!--
 	 | Table
 	 +-->

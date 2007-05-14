@@ -2,20 +2,11 @@
 Le grand titre
 ==============
 
-:authors: Benjamin POUSSIN <poussin@codelutin> ; Sylvain LETELLIER <letellier@codelutin>
-:organisation: Code Lutin
-:address: 6 chemin des Orans 44240 La Chapelle sur Erdre
-:version: 2.1
-:statut: a finir
-:revision: 51
-:date: $date: 28/10/2006$
-:Un champs: au milieu
-  de null part
+----------
+ subtitle
+----------
 
-  avec meme un para
-:copyright: © 2007. JRST - Code Lutin - GPL
-
-------------------
+.. include:: /home/letellier/PROJET/jrst2/src/test/org/codelutin/jrst/textHeader.rst
 
 .. contents:: sommaire
    :depth: 3
@@ -50,6 +41,9 @@ ligne** histoire de *voir*
 et un autre ``para aussi **sur
 plusieurs lignes** mais sans gras``
 
+LISTES
+------
+
 - une petite liste
 - qui contient 
 - plusieurs elements
@@ -79,6 +73,14 @@ II) sorte
 
 (#) vraiment tout
 
+FIELD
+-----
+
+:un peu: de field
+  ca ne fait pas
+  de mal
+
+
 :field1: avec un 
   petit texte
 
@@ -86,6 +88,9 @@ II) sorte
   - debut
   - de list
 :field2: todo
+
+DEFINITIONS
+-----------
 
 un autre mot
   une autre definition
@@ -104,17 +109,18 @@ le mot : la classe
     tel quelles
     sont
 
-un autre mot
-  une autre definition
-  
------------------------------
-  
 le mot : la classe 1 : la classe 2
   la definition
-  
-:un peu: de field
-  ca ne fait pas
-  de mal
+
+
+SEPARATION
+----------
+
+avant
+
+-----------------------------
+
+apres  
 
 Un tire
 -------
@@ -125,7 +131,9 @@ Un mini titre
 Un autre encore plus mini qui ne sera pas afficher dans le sommaire
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
   
-  
+Litteral
+--------
+
 ::
 
     public int unread(String [] lines, boolean addNewLine) {
@@ -366,7 +374,11 @@ INLINE
 
 ``literal``, *emphasis*, **STRONG**, http://www.reference.com, letellier@codelutin.com
 
+INCLUDE
+-------
 
+.. include:: literal
+	/home/letellier/PROJET/jrst2/src/test/org/codelutin/jrst/textLiteral.txt
 
 la derniere ligne.
    

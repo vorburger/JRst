@@ -342,6 +342,9 @@ public class JRSTLexer {
     public Element peekBodyElement() throws IOException {
         Element result = null;
         if (result == null) {
+            result = peekInclude();
+        }
+        if (result == null) {
             result = peekComment();
         }
         if (result == null) {
@@ -440,8 +443,32 @@ public class JRSTLexer {
      * </pre>
      *
      * @return Element
+     * @throws IOException 
      * @throws IOException
      */
+    private Element peekInclude() throws IOException{
+        beginPeek();
+        Element result = null;
+        String line = in.readLine();
+        if (line != null){
+            if (line.matches("^\\s*\\.\\.\\sinclude\\:\\:.+$")){
+                result = DocumentHelper.createElement("include");
+                result.addAttribute("level",""+level(line));
+                String option = line.substring(line.indexOf("::")+2).trim();
+                result.addAttribute("option", "");
+                if (option.trim().equalsIgnoreCase("literal")){
+                    result.addAttribute("option", "literal");
+                    line = in.readLine();
+                    result.setText(line.trim());
+                }
+                else
+                    result.setText(option);
+                
+            }
+        }
+        endPeek();
+        return result;
+    }
 	public Element peekOption() throws IOException {
 		/*
 		 -a            command-line option "a"
