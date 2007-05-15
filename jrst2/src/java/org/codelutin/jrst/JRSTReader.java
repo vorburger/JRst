@@ -57,6 +57,7 @@ import org.apache.commons.logging.LogFactory;
 import org.codelutin.jrst.directive.ContentDirective;
 import org.codelutin.jrst.directive.DateDirective;
 import org.codelutin.jrst.directive.ImageDirective;
+import org.codelutin.jrst.directive.SectnumDirective;
 import org.codelutin.util.StringUtil;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -299,7 +300,7 @@ public class JRSTReader {
     
     static protected Map<String, JRSTDirective> defaultDirectives = null;
     protected Map<String, JRSTDirective> directives = new HashMap<String, JRSTDirective>();
-    
+    private boolean sectnum = false;
     private int idMax = 0;
     private int symbolMax = 0;
     private int symbolMaxRef = 0;
@@ -316,6 +317,7 @@ public class JRSTReader {
         defaultDirectives.put(DATE, new DateDirective());
         defaultDirectives.put("time", new DateDirective());
         defaultDirectives.put("contents", new ContentDirective());
+        defaultDirectives.put("sectnum", new SectnumDirective());
         // TODO put here all other directive
     }
     
@@ -382,11 +384,6 @@ public class JRSTReader {
                             done=true;
                         }
                     }
-                    if (e.getName().equals("title") && done){
-                        Element t = eTitle.getFirst();
-                        e.addAttribute("refid", t.attributeValue("refid"));
-                        eTitle.removeFirst();
-                    }
                     if ("true".equalsIgnoreCase(e.attributeValue("inline"))) {
                         e.addAttribute("inline", null);
                         try {
@@ -445,29 +442,47 @@ public class JRSTReader {
         e.addAttribute("id", value);
         e.addAttribute("name",value);
         result.addElement("title").setText(titleValue);
-        result.add(composeLineContent(title));
+        result.add(composeLineContent(title, ""));
         e.setText("");
         e.appendContent(result);
     }
 
-    private Element composeLineContent(LinkedList<Element> title) {
+    private Element composeLineContent(LinkedList<Element> title, String num) {
         Element result = DocumentHelper.createElement(BULLET_LIST);
+        if (sectnum)
+            result.addAttribute("class", "auto-toc");
         Element item = null;
+        int cnt=0;
         while (!title.isEmpty()){
+            
             boolean done=false;
             Element e = title.getFirst();
             int level = Integer.parseInt(e.attributeValue("level"));
             LinkedList<Element> child = new LinkedList<Element>();
             
             if (level==0 && !done){
+                cnt++;
                 title.removeFirst();
                 item = result.addElement(LIST_ITEM);
                 Element para = item.addElement(PARAGRAPH);
                 Element reference = para.addElement(REFERENCE);
                 String text=e.getText();
-                reference.addAttribute("id", e.attributeValue("refid"));
+                String id= e.attributeValue("refid");
+                reference.addAttribute("id",id);
                 reference.addAttribute("refid", text.replaceAll("\\W+", " ").trim().toLowerCase().replaceAll("\\W+", "-"));
                 reference.addAttribute("inline","true");
+                if (sectnum){
+                    Element generated = reference.addElement("generated").addAttribute("class", "sectnum");
+                    generated.setText(num+cnt+"   ");
+                    for (int i=0;i<eTitle.size();i++){
+                        if (eTitle.get(i).attributeValue("refid").equals(id)){
+                            Element generatedTitle = eTitle.get(i).addElement("generated");
+                            generatedTitle.addAttribute("class", "sectnum");
+                            generatedTitle.setText(num+cnt+"   ");
+                        }
+                        
+                    }
+                }
                 reference.setText(text.trim());
                
             }
@@ -481,11 +496,13 @@ public class JRSTReader {
                         level = Integer.parseInt(e.attributeValue("level"));
                     } 
                 }while (!title.isEmpty() && level>0 && !done);
-            
+                String numTmp="";
+                if (sectnum)
+                    numTmp=num+cnt+".";
                 if (item!=null)
-                    item.add(composeLineContent(child)); // Appel recursif
+                    item.add(composeLineContent(child,numTmp)); // Appel recursif
                 else
-                    result.add(composeLineContent(child)); // Appel recursif
+                    result.add(composeLineContent(child,numTmp)); // Appel recursif
             }
         }
         return result;
@@ -769,11 +786,9 @@ public class JRSTReader {
             BufferedReader bf = new BufferedReader(reader);
             String line="";
             String lineTmp= bf.readLine();
-            //bf.skip(line.length());
             while (lineTmp != null){
                 line += '\n'+lineTmp;
                 lineTmp = bf.readLine();
-                //bf.skip(line.length());
             }
             result.setText(line);
         }
@@ -1097,6 +1112,8 @@ public class JRSTReader {
     private Node composeDirective(Element item) {
         Node result = item;
         String type = item.attributeValue(JRSTLexer.DIRECTIVE_TYPE);
+        if (type.equals("sectnum"))
+            sectnum=true;
         JRSTDirective directive = getDirective(type);
         if (directive == null) {
             directive = getDefaultDirective(type);

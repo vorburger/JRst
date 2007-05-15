@@ -8,6 +8,8 @@ Le grand titre
 
 .. include:: /home/letellier/PROJET/jrst2/src/test/org/codelutin/jrst/textHeader.rst
 
+.. sectnum::
+
 .. contents:: sommaire
    :depth: 3
 
