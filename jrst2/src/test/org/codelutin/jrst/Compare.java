@@ -53,7 +53,7 @@ public class Compare {
 		URL url = source.toURL();
         Reader in = new InputStreamReader(url.openStream());       
         JRSTReader jrst = new JRSTReader();
-        Document docRst = jrst.read(in); // JRST
+        Document docRst = jrst.read(in,0); // JRST
         String cmd = "rst2xml "+PATH+source.getPath()+" "+PATH+"src/test/org/codelutin/jrst/comparePython.xml";
         Runtime.getRuntime().exec("rm "+PATH+"src/test/org/codelutin/jrst/comparePython.xml");
         final Process p =Runtime.getRuntime().exec(cmd); // Python
@@ -98,6 +98,8 @@ public class Compare {
         for (int i=0;i<bColorPython.length;i++)
             bColorPython[i]=false;
         XMLUnit.setIgnoreComments(true);
+        XMLUnit.setIgnoreAttributeOrder(true);
+        XMLUnit.setNormalizeWhitespace(true);
 	    XMLCaseTest test = new XMLCaseTest("test");
         DetailedDiff myDiff = test.testAllDifferences(docPython.asXML(),docRst.asXML());
         List allDifferences = myDiff.getAllDifferences();
@@ -105,16 +107,20 @@ public class Compare {
         Pattern pattern = Pattern.compile("at\\s(\\/\\w+\\[\\d+])+");
         for (int i=0;i<allDifferences.size();i++){
             String diff = allDifferences.get(i).toString();
-            text+=diff+"\n\n";
+            int nbLineRst=0;
+            int nbLinePython=0;
             Matcher matcher = pattern.matcher(diff);
             if (matcher.find()){
-                int nbLine = findLine(matcher.group(),sDocRst);
-                bColorRst[nbLine]=true;
+                nbLineRst = findLine(matcher.group(),sDocRst);
+                bColorRst[nbLineRst]=true;
+                
             }
             if (matcher.find()){
-                int nbLine = findLine(matcher.group(),sDocPython);
-                bColorPython[nbLine]=true;
+                nbLinePython = findLine(matcher.group(),sDocPython);
+                bColorPython[nbLinePython]=true;
+                
             }
+            text+="L python : "+(nbLinePython+1)+" L rst : "+(nbLineRst+1)+" "+diff+"\n\n";
         }
         return text;
     }
@@ -148,8 +154,9 @@ public class Compare {
     }
     private static void compare(String docRst, String docPython, String diff) throws IOException {
         JTextArea jrst = new JTextArea();
-       
-		JTextArea python = new JTextArea();
+        JTextArea python = new JTextArea();
+        jrst.setEditable(false);
+        python.setEditable(false);
 		SyntaxSupport support = SyntaxSupport.getInstance(); 
 		support.addSupport(SyntaxSupport.XML_LEXER, jrst); // Coloration
 		support.addSupport(SyntaxSupport.XML_LEXER, python);
@@ -175,6 +182,7 @@ public class Compare {
         separateurVert.setContinuousLayout(true);
         JTextArea differences = new JTextArea(diff);
         differences.setRows(10);
+        differences.setEditable(false);
         JScrollPane scrollDiff = new JScrollPane(differences);
         JSplitPane separateurHoriz = new JSplitPane(JSplitPane.VERTICAL_SPLIT,true,separateurVert,scrollDiff);
         separateurHoriz.setResizeWeight(0.7);

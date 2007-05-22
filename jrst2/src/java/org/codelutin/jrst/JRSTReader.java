@@ -364,7 +364,8 @@ public class JRSTReader {
      * @throws IOException
      * @throws DocumentException 
      */
-    public Document read(Reader reader) throws Exception {
+    public Document read(Reader reader, int idMax) throws Exception {
+        this.idMax=idMax;
         JRSTLexer lexer = new JRSTLexer(reader);
         try {            
             Element root = composeDocument(lexer);
@@ -418,8 +419,10 @@ public class JRSTReader {
         }
         int levelInit = Integer.parseInt(eTitle.getFirst().attributeValue("level"));
         LinkedList<Element> title = new LinkedList<Element>();
-        for (int i=0;i<eTitle.size();i++)
-            eTitle.get(i).addAttribute("refid", "id"+(++idMax));
+        for (int i=0;i<eTitle.size();i++){
+            idMax++;
+            eTitle.get(i).addAttribute("refid", "id"+idMax);
+        }
         for (Element el : eTitle){
             int level = Integer.parseInt(el.attributeValue("level"));
             level=level-levelInit;
@@ -545,7 +548,7 @@ public class JRSTReader {
             result.addAttribute("id", txt.replaceAll("\\W"," ").toLowerCase().trim().replaceAll(" ", "-"));
             result.addAttribute("name", txt.toLowerCase().replaceAll("\\W", " ").trim());
             copyLevel(item, title);
-            title.addAttribute("inline", "true").setText(txt);
+            title.addAttribute("inline", "true").setText(txt.trim());
         }
         
         // skip blank line
@@ -560,7 +563,7 @@ public class JRSTReader {
             subtitle.addAttribute("id", txt.replaceAll("\\W"," ").toLowerCase().trim().replaceAll(" ", "-"));
             subtitle.addAttribute("name",txt.toLowerCase().replaceAll("\\W", " ").trim());
             copyLevel(item, subtitle);DocumentHelper.createElement("footnotes");
-            subtitle.addAttribute("inline", "true").setText(txt);
+            subtitle.addAttribute("inline", "true").setText(txt.trim());
         }
         
         // skip blank line
@@ -583,21 +586,21 @@ public class JRSTReader {
                 if ("author".equalsIgnoreCase(item.attributeValue("type"))) {
                     documentinfo.addElement(AUTHOR).addAttribute("inline", "true").setText(item.getText());
                 } else if ("date".equalsIgnoreCase(item.attributeValue("type"))) {
-                    documentinfo.addElement(DATE).addAttribute("inline", "true").setText(item.getText());
+                    documentinfo.addElement(DATE).addAttribute("inline", "true").setText(item.getText().trim());
                 } else if ("organization".equalsIgnoreCase(item.attributeValue("type"))) {
-                    documentinfo.addElement(ORGANIZATION).addAttribute("inline", "true").setText(item.getText());
+                    documentinfo.addElement(ORGANIZATION).addAttribute("inline", "true").setText(item.getText().trim());
                 } else if ("contact".equalsIgnoreCase(item.attributeValue("type"))) {
-                    documentinfo.addElement(CONTACT).addAttribute("inline", "true").setText(item.getText());
+                    documentinfo.addElement(CONTACT).addAttribute("inline", "true").setText(item.getText().trim());
                 } else if ("address".equalsIgnoreCase(item.attributeValue("type"))) {
-                    documentinfo.addElement(ADDRESS).addAttribute("inline", "true").setText(item.getText());
+                    documentinfo.addElement(ADDRESS).addAttribute("inline", "true").setText(item.getText().trim());
                 } else if ("version".equalsIgnoreCase(item.attributeValue("type"))) {
-                    documentinfo.addElement(VERSION).addAttribute("inline", "true").setText(item.getText());
+                    documentinfo.addElement(VERSION).addAttribute("inline", "true").setText(item.getText().trim());
                 } else if ("revision".equalsIgnoreCase(item.attributeValue("type"))) {
-                    documentinfo.addElement(REVISION).addAttribute("inline", "true").setText(item.getText());
+                    documentinfo.addElement(REVISION).addAttribute("inline", "true").setText(item.getText().trim());
                 } else if ("status".equalsIgnoreCase(item.attributeValue("type"))) {
-                    documentinfo.addElement(STATUS).addAttribute("inline", "true").setText(item.getText());
+                    documentinfo.addElement(STATUS).addAttribute("inline", "true").setText(item.getText().trim());
                 } else if ("copyright".equalsIgnoreCase(item.attributeValue("type"))) {
-                    documentinfo.addElement(COPYRIGHT).addAttribute("inline", "true").setText(item.getText());
+                    documentinfo.addElement(COPYRIGHT).addAttribute("inline", "true").setText(item.getText().trim());
                 } else if ("authors".equalsIgnoreCase(item.attributeValue("type"))){
                 	Element authors = documentinfo.addElement(AUTHORS);
             		int t=0;
@@ -805,7 +808,7 @@ public class JRSTReader {
             URL url = fileIn.toURL();
             Reader in = new InputStreamReader(url.openStream());        
             JRSTReader jrst = new JRSTReader();
-            Document doc = jrst.read(in);
+            Document doc = jrst.read(in,idMax);
             
             result = doc.getRootElement();
         }
@@ -827,8 +830,8 @@ public class JRSTReader {
     private Element composeTargetAnonymous(Element item) {
         Element result = DocumentHelper.createElement(TARGET);
         result.addAttribute("anonymous", "1");
-        int id = ++idMax;
-        result.addAttribute("id", "id"+id);
+        idMax++;
+        result.addAttribute("id", "id"+idMax);
         result.addAttribute("refuri", item.attributeValue("refuri").replaceAll("`|_", "").trim());
         eTargetAnonymous.add(result);
         return result;
@@ -933,7 +936,7 @@ public class JRSTReader {
 	    		
 	    		JRSTReader reader = new JRSTReader();
 	            String text = footnote.getText();
-	            Document doc = reader.read(new StringReader(text)); 
+	            Document doc = reader.read(new StringReader(text),idMax); 
 	            result[cnt].appendContent(doc.getRootElement());
 	    		
 	            
@@ -1007,7 +1010,7 @@ public class JRSTReader {
 	   		result.addElement(SUBTITLE).addAttribute("inline", "true").setText(item.attributeValue(SUBTITLE));
 		JRSTReader reader = new JRSTReader();
         String text = item.getText();
-        Document doc = reader.read(new StringReader(text)); 
+        Document doc = reader.read(new StringReader(text), idMax); 
 	    result.appendContent(doc.getRootElement());
 		
 		return result;
@@ -1080,7 +1083,7 @@ public class JRSTReader {
 		result=DocumentHelper.createElement(BLOCK_QUOTE);
 		JRSTReader reader = new JRSTReader();
         String text = item.getText();
-        Document doc = reader.read(new StringReader(text)); 
+        Document doc = reader.read(new StringReader(text),idMax); 
 	    result.appendContent(doc.getRootElement());
         String sAttribution = item.attributeValue(ATTRIBUTION);
         if (sAttribution != null){
@@ -1111,7 +1114,7 @@ public class JRSTReader {
 			result=DocumentHelper.createElement(item.attributeValue("type").toLowerCase());
         JRSTReader reader = new JRSTReader();
         String text = item.getText();
-        Document doc = reader.read(new StringReader(text));
+        Document doc = reader.read(new StringReader(text),idMax);
 	    result.appendContent(doc.getRootElement());
 	    return result;
 	}
@@ -1239,7 +1242,7 @@ public class JRSTReader {
                     }
                     // parse entry text in table
                     JRSTReader reader = new JRSTReader();
-                    Document doc = reader.read(new StringReader(text));
+                    Document doc = reader.read(new StringReader(text),idMax);
                     entry.appendContent(doc.getRootElement());
                 }
             }
@@ -1280,11 +1283,13 @@ public class JRSTReader {
     private Element composeEnumeratedList(JRSTLexer lexer) throws Exception {
         Element item = lexer.peekEnumeratedList();
         Element result = DocumentHelper.createElement(ENUMERATED_LIST);
-        copyLevel(item, result);        
-        result.addAttribute("start", item.attributeValue("start"));
+        copyLevel(item, result);
+        String enumType = item.attributeValue("enumtype");
+        if (!enumType.equals("arabic"))
+            result.addAttribute("start", item.attributeValue("start"));
         result.addAttribute("prefix", item.attributeValue("prefix"));
         result.addAttribute("suffix", item.attributeValue("suffix"));
-        result.addAttribute("enumtype", item.attributeValue("enumtype"));
+        result.addAttribute("enumtype",enumType );
         while (itemEquals(ENUMERATED_LIST, item) && isSameLevel(item, result) &&
                 hasSameAttribute(item, result, "prefix", "suffix") &&
                 ("auto".equals(item.attributeValue("enumtype")) ||
@@ -1705,8 +1710,8 @@ public class JRSTReader {
             anonym.addAttribute("anonymous","1");
             anonym.addAttribute("name", ref.trim());
             if (!eTargetAnonymous.isEmpty()){
-                Element target = eTargetAnonymous.getLast();
-                eTargetAnonymous.removeLast();
+                Element target = eTargetAnonymous.getFirst();
+                eTargetAnonymous.removeFirst();
                 anonym.addAttribute("refuri", target.attributeValue("refuri"));
             }
             anonym.setText(ref);
@@ -1719,17 +1724,20 @@ public class JRSTReader {
             String txtFin=text.substring(matcher.end(),text.length());
             String ref = text.substring(matcher.start(), matcher.end()-1);
             ref = ref.replaceAll("&apos;", "");
-            ref = ref.replaceAll("\\W", " ").trim();
+            ref = ref.replaceAll("[\\W&&[^-]]", " ").trim();
             Element hyper = DocumentHelper.createElement("reference");
             hyper.addAttribute("name", ref);
-            for (Element el : eTarget){
-                if (el.attributeValue("id").equalsIgnoreCase(ref)){
+            boolean trouve = false;
+            for (int i=0;i<eTarget.size() && !trouve;i++){
+                Element el = eTarget.get(i);
+                String refTmp = ref.replaceAll("\\s", "-").toLowerCase();
+                if (el.attributeValue("id").equalsIgnoreCase(refTmp)){
                     hyper.addAttribute("refuri",el.attributeValue("refuri"));
+                    trouve=true;
                 }
-                else
-                    hyper.addAttribute("refid",ref);
             }
-            
+            if (!trouve)
+                hyper.addAttribute("refid",ref);
             hyper.setText(ref);
             text=txtDebut+hyper.asXML()+txtFin;
             matcher = REGEX_HYPERLINK_REFERENCE.matcher(text);

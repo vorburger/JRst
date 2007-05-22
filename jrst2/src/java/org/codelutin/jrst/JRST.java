@@ -150,7 +150,7 @@ public class JRST {
             URL url = fileIn.toURL();
             Reader in = new InputStreamReader(url.openStream());        
             JRSTReader jrst = new JRSTReader();
-            Document doc = jrst.read(in);       
+            Document doc = jrst.read(in,0);       
             
             // apply xsl on rst xml document
             JRSTGenerator gen = new JRSTGenerator();

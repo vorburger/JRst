@@ -1859,9 +1859,8 @@ public class JRSTLexer {
 					   			if (line!=null){
 					   				if (line.matches("^\\s*\\.\\.\\s\\[(#|[0-9]|\\*).*\\]\\s.+$")){
 					   					bLine=true;
-					   				}else if (line.matches("\\s*")){
-                                        text+="\n"+line;
-					   					line = in.readLine();
+					   				}else {
+                                        
 					   					int level = level(line);
 						   				if (levelAv<level){
 							   				String[] lines =in.readWhile("(^ {"+level+"}.*)|(\\s*)");
@@ -1870,6 +1869,17 @@ public class JRSTLexer {
 								   				text += "\n"+l.trim();
 								   			
 							   			}
+                                        else if (line.matches("\\s*")){
+                                            line = in.readLine();
+                                            level = level(line);
+                                            if (levelAv<level){
+                                                String[] lines =in.readWhile("(^ {"+level+"}.*)|(\\s*)");
+                                                text+="\n"+line.trim();
+                                                for (String l : lines)
+                                                    text += "\n"+l.trim();
+                                                
+                                            }
+                                        }
 					   				}
 					   				if (!bLine){
 					   					in.skipBlankLines();
