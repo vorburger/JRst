@@ -300,16 +300,16 @@ public class JRSTReader {
     
     static protected Map<String, JRSTDirective> defaultDirectives = null;
     protected Map<String, JRSTDirective> directives = new HashMap<String, JRSTDirective>();
-    private boolean sectnum = false;
-    private int idMax = 0;
-    private int symbolMax = 0;
-    private int symbolMaxRef = 0;
-    private LinkedList<Integer> lblFootnotes = new LinkedList<Integer>();
-    private LinkedList<Integer> lblFootnotesRef = new LinkedList<Integer>();
-    private LinkedList<Element> eFootnotes = new LinkedList<Element>();
-    private LinkedList<Element> eTarget = new LinkedList<Element>();
-    private LinkedList<Element> eTargetAnonymous = new LinkedList<Element>();
-    private LinkedList<Element> eTitle = new LinkedList<Element>();
+    private static boolean sectnum = false;
+    private static int idMax = 0;
+    private static int symbolMax = 0;
+    private static int symbolMaxRef = 0;
+    private static LinkedList<Integer> lblFootnotes = new LinkedList<Integer>();
+    private static LinkedList<Integer> lblFootnotesRef = new LinkedList<Integer>();
+    private static LinkedList<Element> eFootnotes = new LinkedList<Element>();
+    private static LinkedList<Element> eTarget = new LinkedList<Element>();
+    private static LinkedList<Element> eTargetAnonymous = new LinkedList<Element>();
+    private static LinkedList<Element> eTitle = new LinkedList<Element>();
     
     static {
         defaultDirectives = new HashMap<String, JRSTDirective>();
@@ -355,7 +355,7 @@ public class JRSTReader {
     public void addDirectives(String name, JRSTDirective directive) {
         directives.put(name, directive);
     }
-    
+
     /**
      * On commence par decouper tout le document en Element, puis on construit
      * l'article a partir de ces elements.
@@ -364,8 +364,7 @@ public class JRSTReader {
      * @throws IOException
      * @throws DocumentException 
      */
-    public Document read(Reader reader, int idMax) throws Exception {
-        this.idMax=idMax;
+    public Document read(Reader reader) throws Exception {
         JRSTLexer lexer = new JRSTLexer(reader);
         try {            
             Element root = composeDocument(lexer);
@@ -545,8 +544,8 @@ public class JRSTReader {
             lexer.remove();
             Element title = result.addElement(TITLE);
             String txt = item.getText();
-            result.addAttribute("id", txt.replaceAll("\\W"," ").toLowerCase().trim().replaceAll(" ", "-"));
-            result.addAttribute("name", txt.toLowerCase().replaceAll("\\W", " ").trim());
+            result.addAttribute("id", txt.replaceAll("[(\\W+)_]"," ").toLowerCase().trim().replaceAll("\\s+", "-"));
+            result.addAttribute("name", txt.toLowerCase().replaceAll("[(\\W+)_&&[^\\:]]+", " ").trim());
             copyLevel(item, title);
             title.addAttribute("inline", "true").setText(txt.trim());
         }
@@ -560,8 +559,8 @@ public class JRSTReader {
             lexer.remove();
             Element subtitle = result.addElement(SUBTITLE);
             String txt = item.getText();
-            subtitle.addAttribute("id", txt.replaceAll("\\W"," ").toLowerCase().trim().replaceAll(" ", "-"));
-            subtitle.addAttribute("name",txt.toLowerCase().replaceAll("\\W", " ").trim());
+            subtitle.addAttribute("id", txt.replaceAll("[(\\W+)_]"," ").toLowerCase().trim().replaceAll("\\s+", "-"));
+            subtitle.addAttribute("name",txt.toLowerCase().replaceAll("[(\\W+)_]", " ").trim());
             copyLevel(item, subtitle);DocumentHelper.createElement("footnotes");
             subtitle.addAttribute("inline", "true").setText(txt.trim());
         }
@@ -808,7 +807,7 @@ public class JRSTReader {
             URL url = fileIn.toURL();
             Reader in = new InputStreamReader(url.openStream());        
             JRSTReader jrst = new JRSTReader();
-            Document doc = jrst.read(in,idMax);
+            Document doc = jrst.read(in);
             
             result = doc.getRootElement();
         }
@@ -936,7 +935,7 @@ public class JRSTReader {
 	    		
 	    		JRSTReader reader = new JRSTReader();
 	            String text = footnote.getText();
-	            Document doc = reader.read(new StringReader(text),idMax); 
+	            Document doc = reader.read(new StringReader(text)); 
 	            result[cnt].appendContent(doc.getRootElement());
 	    		
 	            
@@ -1010,7 +1009,7 @@ public class JRSTReader {
 	   		result.addElement(SUBTITLE).addAttribute("inline", "true").setText(item.attributeValue(SUBTITLE));
 		JRSTReader reader = new JRSTReader();
         String text = item.getText();
-        Document doc = reader.read(new StringReader(text), idMax); 
+        Document doc = reader.read(new StringReader(text)); 
 	    result.appendContent(doc.getRootElement());
 		
 		return result;
@@ -1083,7 +1082,7 @@ public class JRSTReader {
 		result=DocumentHelper.createElement(BLOCK_QUOTE);
 		JRSTReader reader = new JRSTReader();
         String text = item.getText();
-        Document doc = reader.read(new StringReader(text),idMax); 
+        Document doc = reader.read(new StringReader(text)); 
 	    result.appendContent(doc.getRootElement());
         String sAttribution = item.attributeValue(ATTRIBUTION);
         if (sAttribution != null){
@@ -1114,7 +1113,7 @@ public class JRSTReader {
 			result=DocumentHelper.createElement(item.attributeValue("type").toLowerCase());
         JRSTReader reader = new JRSTReader();
         String text = item.getText();
-        Document doc = reader.read(new StringReader(text),idMax);
+        Document doc = reader.read(new StringReader(text));
 	    result.appendContent(doc.getRootElement());
 	    return result;
 	}
@@ -1242,7 +1241,7 @@ public class JRSTReader {
                     }
                     // parse entry text in table
                     JRSTReader reader = new JRSTReader();
-                    Document doc = reader.read(new StringReader(text),idMax);
+                    Document doc = reader.read(new StringReader(text));
                     entry.appendContent(doc.getRootElement());
                 }
             }

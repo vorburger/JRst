@@ -53,7 +53,7 @@ public class Compare {
 		URL url = source.toURL();
         Reader in = new InputStreamReader(url.openStream());       
         JRSTReader jrst = new JRSTReader();
-        Document docRst = jrst.read(in,0); // JRST
+        Document docRst = jrst.read(in); // JRST
         String cmd = "rst2xml "+PATH+source.getPath()+" "+PATH+"src/test/org/codelutin/jrst/comparePython.xml";
         Runtime.getRuntime().exec("rm "+PATH+"src/test/org/codelutin/jrst/comparePython.xml");
         final Process p =Runtime.getRuntime().exec(cmd); // Python

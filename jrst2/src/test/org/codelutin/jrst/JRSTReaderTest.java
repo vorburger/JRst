@@ -55,7 +55,7 @@ public class JRSTReaderTest extends TestCase {
         Reader in = new InputStreamReader(url.openStream());
         
         JRSTReader jrst = new JRSTReader();
-        Document doc = jrst.read(in,0);
+        Document doc = jrst.read(in);
         
         {
             XMLWriter out = new XMLWriter(System.out, new OutputFormat("  ", true));
