@@ -20,7 +20,13 @@
 
 	<xsl:template match="title">
 	   <xsl:element name="h{count(ancestor::section) + 1}">
-         <xsl:apply-templates/>
+		   <xsl:if test="@refid">
+     		 <a href="#{@refid}" id="{../@id}"><xsl:apply-templates/></a>
+    	   </xsl:if>
+		   <xsl:if test="not(@refid)">
+     		 <xsl:apply-templates/>
+    	   </xsl:if>
+         
        </xsl:element>
 	</xsl:template>
 	
@@ -43,7 +49,7 @@
 	  </table>
 	</xsl:template>
 	
-	<xsl:template match="author|organization|address|contact|version|revision|status|date|copyright">
+	<xsl:template match="organization|address|contact|version|revision|status|date|copyright">
 		<tr>
 			<th class="docinfo-name">
 				<xsl:value-of select="name(.)"/> : 
@@ -54,6 +60,43 @@
 		</tr>
 	</xsl:template>
 			
+	<xsl:template match="author">
+		<xsl:if test="not(../../authors)">
+				<tr>
+					<th class="docpatterninfo-name">
+						<xsl:value-of select="name(.)"/> :
+					</th>
+					<td class="docinfo-content">
+						<xsl:apply-templates/>
+					</td>
+				</tr>
+    	</xsl:if>
+		<xsl:if test="../../authors">
+			<xsl:variable name="num" select="position()"/>
+			<xsl:if test="$num=1">
+				<tr>
+					<th class="docinfo-name">
+						<xsl:value-of select="authors"/>authors :
+					</th>
+					<td class="docinfo-content">
+						<xsl:apply-templates/>
+					</td>
+				</tr>
+			</xsl:if>
+			<xsl:if test="$num>1">
+				<tr>
+					<th>
+						
+					</th>
+					<td class="docinfo-content">
+						<xsl:apply-templates/>
+					</td>
+				</tr>
+			</xsl:if>
+		</xsl:if>
+	</xsl:template>
+	
+		
 	<xsl:template match="transition">
 	  <hr/>
 	</xsl:template>
@@ -75,7 +118,7 @@
 	</xsl:template>
 
 	<xsl:template match="reference">
-	  <a href="{@refuri}"><xsl:apply-templates/></a>
+	  <a href="{@refuri}#{@refid}" id="{@id}"><xsl:apply-templates/></a>
 	</xsl:template>
 
 	<xsl:template match="emphasis">
@@ -222,6 +265,137 @@
 			<xsl:apply-templates/>
 		</td>
 	</xsl:template>
-
-
+	
+	<xsl:template match="admonition">
+		<div class="admonition">
+			<div class="{@class}">
+				<p class="{title}">
+					<xsl:apply-templates select="./title"/>
+				</p>
+				<p class="body">
+					<xsl:apply-templates select="child::*[position()>1]"/>
+				</p>
+			</div>
+		</div>
+	</xsl:template>
+	
+	<xsl:template match="attention|caution|danger|error|hint|important|note|tip|warning">
+		<div class="{name(.)}">
+			<p class="title"><xsl:value-of select="name(.)"/> :</p>
+			<p class="body">
+				<xsl:apply-templates/>
+			</p>
+		</div>
+	</xsl:template>
+	
+	<xsl:template match="block_quote">
+		<div class="block_quote">
+			<p><xsl:apply-templates select="child::*[position()=1]"/></p>
+			<xsl:if test="./attribution">
+				<p class="attribution">
+					<xsl:apply-templates select="./attribution"/>
+				</p>
+			</xsl:if>
+		</div>
+	</xsl:template>
+	
+	<xsl:template match="doctest_block">
+		<pre class="doctest_block">
+			<xsl:apply-templates/>
+		</pre>
+	</xsl:template>
+	
+	<xsl:template match="line_block">
+		<div class="line_block">
+			<xsl:apply-templates/>
+		</div>
+	</xsl:template>
+	
+	<xsl:template match="line">
+		<div class="line">
+			<xsl:apply-templates/>
+		</div>
+	</xsl:template>
+	
+	<xsl:template match="sidebar">
+		<div class="sidebar">
+			<p class="title">
+				<xsl:apply-templates select="./title"/>
+			</p>
+			<xsl:if test="./subtitle">
+				<p class="subtitle">
+					<xsl:apply-templates select="./subtitle"/>
+				</p>
+			</xsl:if>
+			<xsl:choose>
+				<xsl:when test="./subtitle">
+					<xsl:apply-templates select="child::*[position()>2]"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:apply-templates select="child::*[position()>1]"/>
+				</xsl:otherwise>
+			</xsl:choose>
+			
+		</div>
+	</xsl:template>
+	
+	<xsl:template match="topic">
+		<div class="topic">
+			<p class="title">
+				<xsl:apply-templates select="./title"/>
+			</p>
+			<xsl:apply-templates select="child::*[position()>1]"/>
+		</div>
+	</xsl:template>
+	
+	<xsl:template match="option_list">
+		<table class="option_list">
+			<col class="option" />
+			<col class="description" />
+			<tbody valign="top">
+				
+				<xsl:apply-templates/>
+				
+			</tbody>
+		</table>
+	</xsl:template>
+	
+	<xsl:template match="option_list_item">
+		<tr>
+			<td class="option-group">
+				<kbd>
+					<span class="option">
+						<xsl:value-of
+							select="option_group/option/option_string"/>
+					</span>
+				</kbd>
+			</td>
+			<td>
+				<xsl:value-of select="description"/>
+			</td>
+		</tr>
+	</xsl:template>
+	
+	
+	<xsl:template match="footnote">
+		<table class="footnote" frame="void" id="{@id}" rules="none">
+			<colgroup>
+				<col class="label"/>
+				<col/>
+			</colgroup>
+			<tbody valign="top">
+				<tr>
+					<td class="label">
+						<a class="backref" href="#{@backrefs}" name="{id}">
+							[<xsl:value-of select="label"/>]
+						</a>
+					</td>
+					<td>
+						<xsl:value-of select="child::*[position()>1]"/>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</xsl:template>
+	
 </xsl:stylesheet>

@@ -376,12 +376,10 @@ public class JRSTReader {
                     e.addAttribute("level", null);
                     String type = e.attributeValue("type");
                     
-                    boolean done = false;
                     if (type!=null){
                         if (type.equals("contents")){
                             composeContents(e);
                             e.addAttribute("type",null);
-                            done=true;
                         }
                     }
                     if ("true".equalsIgnoreCase(e.attributeValue("inline"))) {
@@ -402,6 +400,9 @@ public class JRSTReader {
             throw eee;
         }
     }
+    /**
+     * @param Element e
+     */
     private void composeContents(Element e) {
        
         Element result = DocumentHelper.createElement(TOPIC); 
@@ -446,7 +447,10 @@ public class JRSTReader {
         e.setText("");
         e.appendContent(result);
     }
-
+    /**
+     * @param LinkedList<Element> title, String num
+     * @return Element
+     */
     private Element composeLineContent(LinkedList<Element> title, String num) {
         Element result = DocumentHelper.createElement(BULLET_LIST);
         if (sectnum)
@@ -611,7 +615,6 @@ public class JRSTReader {
             }
             // skip blank line
             //skipBlankLine(lexer);
-            
             item = lexer.peekDocInfo();
             
         }
@@ -776,12 +779,17 @@ public class JRSTReader {
         }
         return parent;
     }
+    /**
+     * @param item
+     * @return Element
+     * @throws Exception 
+     */
     private Element composeInclude(Element item) throws Exception {
         String option = item.attributeValue("option");
         String path = item.getText();
         Element result = null;
         if (option.equals("literal")){
-            result=DocumentHelper.createElement("LITERAL_BLOCK");
+            result=DocumentHelper.createElement(LITERAL_BLOCK);
             FileReader reader = new FileReader(path);
             BufferedReader bf = new BufferedReader(reader);
             String line="";
@@ -803,14 +811,19 @@ public class JRSTReader {
         }
         return result;
     }
-
-
+    /**
+     * @param item
+     * @return Element
+     */
     private Element composeComment(Element item) {
         
         return item;
     }
 
-
+    /**
+     * @param item
+     * @return Element
+     */
     private Element composeTargetAnonymous(Element item) {
         Element result = DocumentHelper.createElement(TARGET);
         result.addAttribute("anonymous", "1");
@@ -835,7 +848,6 @@ public class JRSTReader {
      * @return Element
      * @throws Exception 
      */
-    // TODO bug caractere speciaux : auto-symbols
     @SuppressWarnings("unchecked")
     private Element[] composeFootnote(Element item) throws Exception {
     	Element[] result=null;
@@ -1742,6 +1754,7 @@ public class JRSTReader {
             begin = text.length();
             text += end;
             matcher = REGEX_SUBSTITUTION_REFERENCE.matcher(text);
+            
         }
         
        

@@ -1783,31 +1783,20 @@ data: Data elements used by the stylesheet
 	  name="wanted"
 	  select="generate-id()"/>
       <!-- Generate the right current node list -->
-      <xsl:for-each
-	  select="../list_item">
-	<xsl:if
-	    test="generate-id() = $wanted">
-	  <xsl:value-of
-	      select="position()"/>
-	</xsl:if>
-      </xsl:for-each>
+		<xsl:for-each select="../list_item">
+			<xsl:if test="generate-id() = $wanted">
+				<xsl:value-of select="position()"/>
+			</xsl:if>
+		</xsl:for-each>
     </xsl:variable>
     <!-- Determine encoding of the number for the given numeration -->
-    <xsl:variable
-	name="cur">
-      <xsl:call-template
-	  name="u:position2Enumerator">
-	<xsl:with-param
-	    name="enumType"
-	    select="$enumType"/>
-	<xsl:with-param
-	    name="position"
-	    select="$position"/>
-	<xsl:with-param
-	    name="start"
-	    select="$start"/>
-      </xsl:call-template>
-    </xsl:variable>
+	<xsl:variable name="cur">
+		<xsl:call-template name="u:position2Enumerator">
+			<xsl:with-param name="enumType" select="$enumType"/>
+			<xsl:with-param name="position" select="$position"/>
+			<xsl:with-param name="start" select="$start"/>
+		</xsl:call-template>
+	</xsl:variable>
     <!-- Determine encoding of the maximum number -->
     <xsl:variable
 	name="max">
@@ -1989,19 +1978,17 @@ data: Data elements used by the stylesheet
     <!-- Determine heights in physical lines of all entries -->
     <xsl:variable
 	name="heights">
-      <xsl:for-each
-	  select="entry">
-	<xsl:variable
-	    name="text">
-	  <!-- Catch the text of all entries -->
-	  <xsl:apply-templates/>
-	</xsl:variable>
-	<!-- Compute height of this entry; leading and trailing EOL must be
-             subtracted -->
-	<xsl:value-of
-	    select="string-length($text) - string-length(translate($text, '&#xA;', '')) - 1"/>
-	 <!-- A space as a list separator -->
-      </xsl:for-each>
+		<xsl:for-each select="entry">
+			<xsl:variable name="text">
+				<!-- Catch the text of all entries -->
+				<xsl:apply-templates/>
+			</xsl:variable>
+			<!-- Compute height of this entry; leading and trailing EOL must be
+			subtracted -->
+			<xsl:value-of
+				select="string-length($text) - string-length(translate($text, '&#xA;', '')) - 1"/>
+			<!-- A space as a list separator -->
+		</xsl:for-each>
     </xsl:variable>
     <!-- Determine maximum height so every entry must be this high -->
     <xsl:variable
@@ -2093,15 +2080,10 @@ data: Data elements used by the stylesheet
     <xsl:text>+</xsl:text>
     <xsl:for-each
 	select="../../colspec">
-      <xsl:call-template
-	  name="u:repeat">
-	<xsl:with-param
-	    name="length"
-	    select="@colwidth"/>
-	<xsl:with-param
-	    name="chars"
-	    select="$char"/>
-      </xsl:call-template>
+		<xsl:call-template name="u:repeat">
+			<xsl:with-param name="length" select="@colwidth"/>
+			<xsl:with-param name="chars" select="$char"/>
+		</xsl:call-template>
       <xsl:text>+</xsl:text>
     </xsl:for-each>
     
@@ -2886,47 +2868,33 @@ data: Data elements used by the stylesheet
     <xsl:param
 	name="ancestors"
 	select="ancestor::*"/>
-    <xsl:for-each
-	select="$ancestors">
-      <xsl:variable
-	  name="this"
-	  select="name()"/>
-      <xsl:choose>
-	<xsl:when
-	    test="contains($directives, concat('*', $this, '*'))">
-	  <xsl:call-template
-	      name="u:repeat">
-	    <xsl:with-param
-		name="length"
-		select="3"/>
-	  </xsl:call-template>
-	</xsl:when>
-	<xsl:when
-	    test="$this = 'list_item' and parent::enumerated_list">
-	  <!-- Enumerated list items base their indentation on the
-               numeration -->
-	  <xsl:variable
-	      name="enumerator">
-	    <xsl:call-template
-		name="u:outputEnumerator"/>
-	  </xsl:variable>
-	  <xsl:call-template
-	      name="u:repeat">
-	    <xsl:with-param
-		name="length"
-		select="string-length($enumerator)"/>
-	  </xsl:call-template>
-	</xsl:when>
-	<xsl:otherwise>
-	  <xsl:call-template
-	      name="u:repeat">
-	    <xsl:with-param
-		name="length"
-		select="document('')//data:lookup/node[@name=$this]/@indent"/>
-	  </xsl:call-template>
-	</xsl:otherwise>
-      </xsl:choose>
-    </xsl:for-each>
+	<xsl:for-each select="$ancestors">
+		<xsl:variable name="this" select="name()"/>
+		<xsl:choose>
+			<xsl:when test="contains($directives, concat('*', $this, '*'))">
+				<xsl:call-template name="u:repeat">
+					<xsl:with-param name="length" select="3"/>
+				</xsl:call-template>
+			</xsl:when>
+			<xsl:when test="$this = 'list_item' and parent::enumerated_list">
+				<!-- Enumerated list items base their indentation on the
+				numeration -->
+				<xsl:variable name="enumerator">
+					<xsl:call-template name="u:outputEnumerator"/>
+				</xsl:variable>
+				<xsl:call-template name="u:repeat">
+					<xsl:with-param name="length"
+						select="string-length($enumerator)"/>
+				</xsl:call-template>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:call-template name="u:repeat">
+					<xsl:with-param name="length"
+						select="document('')//data:lookup/node[@name=$this]/@indent"/>
+				</xsl:call-template>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:for-each>
   </xsl:template>
 
   <!-- ******************************************************************** -->
@@ -3205,30 +3173,20 @@ data: Data elements used by the stylesheet
   <!-- ******************************************************************** -->
 
   <!-- Output attributes of the current element as a field list -->
-  <xsl:template
-      name="u:params">
-    <xsl:param
-	name="params"
-	select="@*"/>
-    <!-- Ancestors are needed for determining indentation; caller may give
-         them -->
-    <xsl:param
-	name="ancestors"
-	select="ancestor-or-self::*"/>
-    <xsl:for-each
-	select="$params">
-      <!-- Skip URIs based on parent -->
-      <xsl:if
-	  test="name() != 'uri' and name() != 'xml:space'">
-	<xsl:call-template
-	    name="u:param">
-	  <xsl:with-param
-	      name="ancestors"
-	      select="$ancestors"/>
-	</xsl:call-template>
-      </xsl:if>
-    </xsl:for-each>
-  </xsl:template>
+	<xsl:template name="u:params">
+		<xsl:param name="params" select="@*"/>
+		<!-- Ancestors are needed for determining indentation; caller may give
+		them -->
+		<xsl:param name="ancestors" select="ancestor-or-self::*"/>
+		<xsl:for-each select="$params">
+			<!-- Skip URIs based on parent -->
+			<xsl:if test="name() != 'uri' and name() != 'xml:space'">
+				<xsl:call-template name="u:param">
+					<xsl:with-param name="ancestors" select="$ancestors"/>
+				</xsl:call-template>
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:template>
 
   <!-- Output one attribute of the current element as a field list -->
   <xsl:template
@@ -3446,37 +3404,26 @@ data: Data elements used by the stylesheet
 	name="cleanNumbers"
 	select="normalize-space($numbers)"/>
     <xsl:choose>
-      <xsl:when
-	  test="contains($cleanNumbers, ' ')">
-	<xsl:variable
-	    name="head"
-	    select="substring-before($cleanNumbers, ' ')"/>
-	<xsl:choose>
-	  <xsl:when
-	      test="$head > $currentMax">
-	    <xsl:call-template
-		name="u:maxNumber">
-	      <xsl:with-param
-		  name="numbers"
-		  select="substring-after($cleanNumbers, ' ')"/>
-	      <xsl:with-param
-		  name="currentMax"
-		  select="$head"/>
-	    </xsl:call-template>
-	  </xsl:when>
-	  <xsl:otherwise>
-	    <xsl:call-template
-		name="u:maxNumber">
-	      <xsl:with-param
-		  name="numbers"
-		  select="substring-after($cleanNumbers, ' ')"/>
-	      <xsl:with-param
-		  name="currentMax"
-		  select="$currentMax"/>
-	    </xsl:call-template>
-	  </xsl:otherwise>
-	</xsl:choose>
-      </xsl:when>
+		<xsl:when test="contains($cleanNumbers, ' ')">
+			<xsl:variable name="head"
+				select="substring-before($cleanNumbers, ' ')"/>
+			<xsl:choose>
+				<xsl:when test="$head > $currentMax">
+					<xsl:call-template name="u:maxNumber">
+						<xsl:with-param name="numbers"
+							select="substring-after($cleanNumbers, ' ')"/>
+						<xsl:with-param name="currentMax" select="$head"/>
+					</xsl:call-template>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:call-template name="u:maxNumber">
+						<xsl:with-param name="numbers"
+							select="substring-after($cleanNumbers, ' ')"/>
+						<xsl:with-param name="currentMax" select="$currentMax"/>
+					</xsl:call-template>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:when>
       <xsl:otherwise>
 	<xsl:choose>
 	  <xsl:when

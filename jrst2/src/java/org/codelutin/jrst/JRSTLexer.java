@@ -435,16 +435,17 @@ public class JRSTLexer {
 		return result;
 	}
     /**
-     * read options
+     * read include
      * <pre>
-     * -a            command-line option "a"
-	 * -1 file, --one=file, --two file
-     *        Multiple options with arguments.
+     * .. include:: text.txt
+     * or
+     * .. include:: literal
+     *      text.txt
+     * 
      * </pre>
      *
      * @return Element
      * @throws IOException 
-     * @throws IOException
      */
     private Element peekInclude() throws IOException{
         beginPeek();
@@ -469,6 +470,17 @@ public class JRSTLexer {
         endPeek();
         return result;
     }
+    /**
+     * read options
+     * <pre>
+     * -a            command-line option "a"
+     * -1 file, --one=file, --two file
+     *        Multiple options with arguments.
+     * </pre>
+     *
+     * @return Element
+     * @throws IOException 
+     */
 	public Element peekOption() throws IOException {
 		/*
 		 -a            command-line option "a"
@@ -1746,6 +1758,11 @@ public class JRSTLexer {
         endPeek();
         return result;
     }
+    /**
+     * .. __: http://www.python.org
+     * @return Element
+     * @throws IOException 
+     */
     private Element peekTargetAnonymous() throws IOException{
         beginPeek();
         Element result = null;
@@ -1764,6 +1781,12 @@ public class JRSTLexer {
         endPeek();
         return result;
     }
+    /**
+     * ..
+     *   comment
+     * @return Element
+     * @throws IOException 
+     */
     private Element peekComment() throws IOException{
         beginPeek();
         Element result = null;
