@@ -6,15 +6,25 @@ Le grand titre
  subtitle
 ----------
 
-.. include:: /home/letellier/PROJET/jrst2/src/test/org/codelutin/jrst/textHeader.rst
+:authors: Benjamin POUSSIN <poussin@codelutin> ; Sylvain LETELLIER <letellier@codelutin>
+:organization: Code Lutin
+:address: 6 chemin des Orans
+	44240 La Chapelle sur Erdre
+:version: 2.1
+:status: a finir
+:revision: 51
+:date: $date: 28/10/2006$
+:Un champs: au milieu
+  de null part
 
-.. sectnum::
-
+  avec meme un para
+:copyright: © 2007. JRST - Code Lutin - GPL
 
 ------------------
 
+.. sectnum::
 
-.. contents:: Sommaire
+.. contents:: sommaire
    :depth: 3
 
 
@@ -106,11 +116,11 @@ le mot : la classe
 
   avec un autre para
   sur plusieurs lignes::
-
+  
     Et meme
       avec *des*
      ligne a 
-
+     
          preserver
     tel quelles
     sont
@@ -136,7 +146,7 @@ Un mini titre
 
 Un autre encore plus mini qui ne sera pas afficher dans le sommaire
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
+  
 Litteral
 --------
 
@@ -232,7 +242,7 @@ ADMONITIONS
 .. admonition:: And, by the way...
 
    You can make up your own admonition too.
-
+   
    :field1: autre def1
    :field2: autre def2
 
@@ -279,7 +289,7 @@ As a great paleontologist once said,
     This theory, that is mine, is mine.
 
     -- Anne Elk (Miss)
-
+    
 DOCTEST BLOCK
 -------------
 
@@ -288,7 +298,7 @@ this is a Doctest block
 
 LINE BLOC
 ---------
-
+ 
 | A one, two, a one two three four
 |
 | Half a bee, philosophically,
@@ -320,14 +330,16 @@ TOPIC
 
 .. header:: Ceci est une page de test
 
+
 .. footer:: Cree par **LETELLIER Sylvain**
+
 
 OPTION
 ------
 
 -a            command-line option "a"
--1 file, --one=file, --two file
-              Multiple options with arguments.
+		 -1 file, --one=file, --two file
+         		      Multiple options with arguments.
 
 FOOTNOTES
 ---------
@@ -341,15 +353,14 @@ footnote 2.
 
 [#]_ is a reference to footnote 3.
 
-
 HYPERLINK
 ---------
 
 it's an anonymous-hyperlink__ and this one is an simple hyperlink_
 
-__ http://www.google.fr
+__ anonymous-hyperlink
 
-.. _hyperlink: http://www.google.fr
+.. _hyperlink: www.google.fr
 
 COMMENT
 -------
@@ -362,14 +373,9 @@ INLINE
 
 ``literal``, *emphasis*, **STRONG**, http://www.reference.com, letellier@codelutin.com
 
-INCLUDE
--------
-
-.. include:: literal
-	/home/letellier/PROJET/jrst2/src/test/org/codelutin/jrst/textLiteral.txt
 
 la derniere ligne.
-
+   
 
 
 

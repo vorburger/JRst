@@ -130,7 +130,7 @@ public final class GutterColor extends JLabel
             if (bColors.length>row+1){
                 if (bColors[row+1]){
                     g2d.setColor(Color.RED);
-                    g2d.fill3DRect(1, i+3, 20, 15, false);
+                    g2d.fill3DRect(1, i+3, rhWidth-4, 15, false);
                     white=true;
                     
                 }

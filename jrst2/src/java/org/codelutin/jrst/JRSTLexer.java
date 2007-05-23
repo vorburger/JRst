@@ -89,6 +89,7 @@ public class JRSTLexer {
     
     public static final String DECORATION = "decoration";
     public static final String HEADER = "header";
+    public static final String FOOTER = "footer";
     
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Structural Elements
@@ -284,11 +285,72 @@ public class JRSTLexer {
 					result.addAttribute("line", ""+i);
 					result.setText(l);
 				}
+                
 			}
 		}
 		endPeek();
 		return result;
     	
+    }
+    /**
+     * search if the doc have an header
+     * <pre>
+     *    .. footer:: design by **LETELLIER Sylvain**
+     * </pre>
+     *
+     * @return Element
+     * @throws IOException
+     */
+    public Element peekFooter() throws IOException {
+        beginPeek();
+        Element result = null;
+        String[] line = in.readAll();
+        if (line != null){
+            int i=0;
+            for (String l : line){
+                i++;
+                
+                if (l.matches("^\\s*.. "+FOOTER+":: .*")){
+                    int level = level(l);
+                    l=l.replaceAll("^\\s*.. "+FOOTER+":: ", "");
+                    result = DocumentHelper.createElement(FOOTER).addAttribute("level", String.valueOf(level));
+                    result.addAttribute("line", ""+i);
+                    result.setText(l);
+                }
+            }
+        }
+        endPeek();
+        return result;
+        
+    }
+    /**
+     * .. __: http://www.python.org
+     * @return Element
+     * @throws IOException 
+     */
+    public LinkedList <Element> peekTargetAnonymous() throws IOException{
+        beginPeek();
+        LinkedList <Element> result = new LinkedList<Element>();
+        String[] line = in.readAll();
+        if (line!=null){
+            int i=0;
+            for (String l : line){
+                i++;
+                
+                if (l.matches("^\\s*__ .+$|^\\s*\\.\\. __\\:.+$")){
+                    Element resultTmp = DocumentHelper.createElement("targetAnonymous");
+                    resultTmp.addAttribute("level", ""+level(l));
+                    Matcher matcher = Pattern.compile("__ ").matcher(l);
+                    if (matcher.find()){
+                        resultTmp.addAttribute("refuri", l.substring(matcher.end(),l.length()));
+                    }
+                    result.add(resultTmp);
+                }
+            }
+            
+        }
+        endPeek();
+        return result;
     }
     /**
      * Return title or para
@@ -329,6 +391,8 @@ public class JRSTLexer {
         if (result == null) {
             result = peekFieldList();
         }
+       
+        
 
         return result;
 
@@ -396,9 +460,6 @@ public class JRSTLexer {
             result = peekFieldList();
         }
         if (result == null) {
-            result = peekTargetAnonymous();
-        }
-        if (result == null) {
             result = peekLiteralBlock();
         }
         if (result == null) {
@@ -430,6 +491,12 @@ public class JRSTLexer {
     		if (line.matches("^\\s*.. "+HEADER+":: .*")){
     			result= DocumentHelper.createElement("remove").addAttribute("level", ""+level(line));
     		}
+            if (line.matches("^\\s*.. "+FOOTER+":: .*")){
+                result= DocumentHelper.createElement("remove").addAttribute("level", ""+level(line));
+            }
+            if (line.matches("^\\s*__ .+$|^\\s*\\.\\. __\\:.+$")){
+                result= DocumentHelper.createElement("remove").addAttribute("level", ""+level(line));
+            }
     	}
     	endPeek();
 		return result;
@@ -1053,24 +1120,29 @@ public class JRSTLexer {
         String line = in.readLine();
         // (?i) case inensitive on docinfo item
         if (line != null && line.matches("^:((?i)"+DOCINFO_ITEM+"):.*$")) {
+            
         	result = DocumentHelper.createElement(DOCINFO);
             result.addAttribute("level", "0");
             String infotype = line.substring(1, line.indexOf(":", 1));
 
-            if (!in.eof()) {
+            /*if (!in.eof()) {
                 String [] content = readBlock(1);
                 line += joinBlock(content);
-            }
+            }*/
             String text = line.substring(line.indexOf(":", 1) + 1).trim();
-
+            String[] textTmp = in.readWhile("^\\s+.*");
+            if (textTmp.length!=0)
+                in.mark();
+             
+            for (String txt : textTmp)
+                text+="\n"+txt.trim();
+            
             // CVS, RCS support
             text = text.replaceAll("\\$\\w+: (.+?)\\$", "$1");
 
             result.addAttribute("type", infotype).addText(text);
         }
-        
         endPeek();
-       
         return result;
     }
     /**
@@ -1389,11 +1461,17 @@ public class JRSTLexer {
 		                            if (row.nodeCount() <= cellNumber) {
 		                                cell = row.addElement(CELL);
 		                            } else {cell = (Element)row.node(cellNumber);} 
-		                            
-		                            if (columns.size()-1==cellNumber)
-		                            	cell.setText(tmpLine.substring(matcher.start(),tmpLine.length())+ "\n");
-		                            else
-		                            	cell.setText(tmpLine.substring(matcher.start(),matcher.end()) + "\n");
+		                            if (matcher.start()<tmpLine.length()){
+    		                            if (columns.size()-1==cellNumber){
+    		                            	cell.setText(tmpLine.substring(matcher.start(),tmpLine.length())+ "\n");
+                                        }
+    		                            else{
+                                            if (matcher.end()<tmpLine.length())
+                                                cell.setText(tmpLine.substring(matcher.start(),matcher.end()) + "\n");
+                                            else
+                                                cell.setText(tmpLine.substring(matcher.start(),tmpLine.length())+ "\n");
+                                        }
+                                    }
 		                            		                            
 		                            if (lastLines.size()==0){
 		                            	row.addAttribute("debug", "pCell");
@@ -1758,29 +1836,7 @@ public class JRSTLexer {
         endPeek();
         return result;
     }
-    /**
-     * .. __: http://www.python.org
-     * @return Element
-     * @throws IOException 
-     */
-    private Element peekTargetAnonymous() throws IOException{
-        beginPeek();
-        Element result = null;
-        String line=in.readLine();
-        if (line!=null){
-            if (line.matches("^\\s*__ .+$|^\\s*\\.\\. __\\:.+$")){
-                result = DocumentHelper.createElement("targetAnonymous");
-                result.addAttribute("level", ""+level(line));
-                Matcher matcher = Pattern.compile("__ |\\.\\. __\\:").matcher(line);
-                if (matcher.find()){
-                    result.addAttribute("refuri", line.substring(matcher.end(),line.length()));
-                }
-            }
-        }
-        
-        endPeek();
-        return result;
-    }
+
     /**
      * ..
      *   comment
@@ -1870,15 +1926,12 @@ public class JRSTLexer {
 								   			
 							   			}
                                         else if (line.matches("\\s*")){
-                                            line = in.readLine();
-                                            level = level(line);
-                                            if (levelAv<level){
-                                                String[] lines =in.readWhile("(^ {"+level+"}.*)|(\\s*)");
-                                                text+="\n"+line.trim();
-                                                for (String l : lines)
-                                                    text += "\n"+l.trim();
+                                            level = levelAv+1;
+                                            String[] lines =in.readWhile("(^ {"+level+"}.*)|(\\s*)");
+                                            text+="\n"+line.trim();
+                                            for (String l : lines)
+                                                text += "\n"+l.trim();
                                                 
-                                            }
                                         }
 					   				}
 					   				if (!bLine){

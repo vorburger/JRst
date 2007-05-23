@@ -164,7 +164,7 @@ public class ReStructuredText {
     public static final String STRONG = "strong";
     public static final String LITERAL = "literal";
     public static final String REFERENCE = "reference";
-    public static final String FOOTNOTE_REFERENCE = "footnote_reference";
+    public static final String FOOTNOTE_REFERENCE = "footnote-reference";
     public static final String CITATION_REFERENCE = "citation_reference";
     public static final String SUBSTITUTION_REFERENCE = "substitution_reference";
     public static final String TITLE_REFERENCE = "title_reference";
@@ -182,8 +182,8 @@ public class ReStructuredText {
     public static final Pattern REGEX_EMPHASIS = Pattern.compile("\\*([^*(\\]_.+\\[)].+?)\\*");
     public static final Pattern REGEX_STRONG = Pattern.compile("\\*\\*(.+?)\\*\\*");
     public static final Pattern REGEX_LITERAL = Pattern.compile("``(.+?)``");
-    public static final Pattern REGEX_REFERENCE = Pattern.compile("(http://[-/%#&\\._\\w]+)([^-/%#&_\\w]+)");
-    public static final Pattern REGEX_INLINE_REFERENCE = Pattern.compile("`(.+) ?[(&lt;)<](http://[-/%#&\\._\\w]+)[(&gt;)>]`_");
+    public static final Pattern REGEX_REFERENCE = Pattern.compile("(http://[-/%#[\\&&&[^(&gt;)]]\\._\\w]+\\w+)((\\W|&|$)+)");
+    public static final Pattern REGEX_INLINE_REFERENCE = Pattern.compile("`(.+) \\&lt\\;(http://[-/%#&\\._\\w]+)(\\&gt\\;)`_");
     public static final Pattern REGEX_EMAIL = Pattern.compile("(^|[^_\\w])([-\\._\\w]+@[-\\._\\w]+)([^-\\._\\w]|$)");
     public static final Pattern REGEX_FOOTNOTE_REFERENCE = Pattern.compile("\\[(#|[0-9]|\\*)\\w*\\]_");
     		//"\\[([0-9]+?|#)\\]");
@@ -197,7 +197,7 @@ public class ReStructuredText {
     public static final Pattern REGEX_PROBLEMATIC = Pattern.compile("(.*?)");
     public static final Pattern REGEX_GENERATED = Pattern.compile("(.*?)");
     public static final Pattern REGEX_HYPERLINK_REFERENCE = Pattern.compile("(\\`[^_<>]+\\`_)|(&apos;[^_<>]+&apos;_)|([\\S]+[^\\s<>\\.]+_)");
-    public static final Pattern REGEX_ANONYMOUS_HYPERLINK_REFERENCE = Pattern.compile("(\\`[^<>`]+\\`__)|([^\\S]+[^\\s<>]+__)");
+    public static final Pattern REGEX_ANONYMOUS_HYPERLINK_REFERENCE = Pattern.compile("(\\`[^<>`]+\\`__)|([\\w]+[^`\\s<>]+__)");
 }
 
 

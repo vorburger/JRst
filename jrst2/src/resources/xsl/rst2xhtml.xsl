@@ -366,7 +366,7 @@
 				<kbd>
 					<span class="option">
 						<xsl:value-of
-							select="option_group/option/option_string"/>
+							select="option_group/option[position()>0]/option_string"/>
 					</span>
 				</kbd>
 			</td>
@@ -396,6 +396,12 @@
 				</tr>
 			</tbody>
 		</table>
+	</xsl:template>
+	
+	<xsl:template match="footnote-reference">
+		<a class="footnote-reference" href="#{@refid}" id="{@id}" name="{@id}">
+			[<xsl:value-of select="text()"/>]
+		</a>
 	</xsl:template>
 	
 </xsl:stylesheet>
