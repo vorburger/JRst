@@ -12,22 +12,33 @@
 	    <meta name="generator" content="JRST http://jrst.labs.libre-entreprise.org/" />
 	    <title><xsl:value-of select="title"/></title>
 	  </head>
-	  <body>	    
-		<xsl:apply-templates/>
-	  </body>
+		<body>
+			<xsl:apply-templates/>
+		</body>
 	</html>
 	</xsl:template>
 
 	<xsl:template match="title">
-	   <xsl:element name="h{count(ancestor::section) + 1}">
-		   <xsl:if test="@refid">
-     		 <a href="#{@refid}" id="{../@id}"><xsl:apply-templates/></a>
-    	   </xsl:if>
-		   <xsl:if test="not(@refid)">
+	   <xsl:if test="name(..)='document'">
+		   <h1 class="mainTitle">
+			   
      		 <xsl:apply-templates/>
-    	   </xsl:if>
-         
-       </xsl:element>
+		   </h1>
+			  
+		   
+	   </xsl:if>
+		<xsl:if test="not(name(..)='document')">
+			<xsl:element name="h{count(ancestor::section) + 1}">
+				<xsl:attribute name="class">title</xsl:attribute>
+				<xsl:if test="@refid">
+					<a href="#{@refid}" id="{../@id}"><xsl:apply-templates/></a>
+				</xsl:if>
+				<xsl:if test="not(@refid)">
+					<xsl:apply-templates/>
+				</xsl:if>
+				
+			</xsl:element>
+		</xsl:if>
 	</xsl:template>
 	
 	<xsl:template match="subtitle">
@@ -118,7 +129,12 @@
 	</xsl:template>
 
 	<xsl:template match="reference">
-	  <a href="{@refuri}#{@refid}" id="{@id}"><xsl:apply-templates/></a>
+		<xsl:if test="@refid">
+			<a href="{@refuri}#{@refid}" id="{@id}"><xsl:apply-templates/></a>
+		</xsl:if>
+		<xsl:if test="not(@refid)">
+			<a href="{@refuri}" id="{@id}"><xsl:apply-templates/></a>
+		</xsl:if>
 	</xsl:template>
 
 	<xsl:template match="emphasis">
@@ -215,12 +231,17 @@
 		<img alt="{@alt}" src="{@uri}"><xsl:apply-templates/></img>
 	</xsl:template>
 
+	
+	
+	<xsl:template match="footer">
+		<hr/>
+		<p class="footer"><xsl:apply-templates/></p>
+	</xsl:template>
+	
 	<xsl:template match="header">
 		<p class="header"><xsl:apply-templates/></p>
 		<hr/>
 	</xsl:template>
-	
-	
 	<!--
 	 | Table
 	 +-->
@@ -364,19 +385,29 @@
 		<tr>
 			<td class="option-group">
 				<kbd>
-					<span class="option">
-						<xsl:value-of
-							select="option_group/option[position()>0]/option_string"/>
-					</span>
+					<xsl:apply-templates select="./option_group/option"/>
 				</kbd>
 			</td>
 			<td>
-				<xsl:value-of select="description"/>
+				<xsl:apply-templates select="./description"/>
 			</td>
 		</tr>
 	</xsl:template>
 	
+	<xsl:template match="option">
+		<span class="option">
+			<xsl:value-of select="option_string/text()"/>
+			<xsl:value-of select="./option_argument/@delimiter"/>
+			<xsl:apply-templates select="./option_argument"/>
+		</span>
+	</xsl:template>
 	
+	<xsl:template match="option_argument">
+		<var>
+			<xsl:value-of select="text()"/>,
+		</var>
+	</xsl:template>
+		
 	<xsl:template match="footnote">
 		<table class="footnote" frame="void" id="{@id}" rules="none">
 			<colgroup>

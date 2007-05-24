@@ -1082,13 +1082,15 @@ public class JRSTLexer {
                 para = para.substring(level) + "\n";
 
                 // it's literal block until level is down
-                String [] lines = in.readWhile("^ {"+level+"}.*");
+                String [] lines = in.readWhile("(^ {"+level+"}.*|\\s*)");
                 while (lines.length > 0) {
                     for (String line : lines) {
-                        para += line.substring(level) + "\n";
+                        if (!line.matches("\\s*"))
+                            para += line.substring(level) + "\n";
+                        else
+                            para += "\n";
                     }
-                    in.skipBlankLines();
-                    lines = in.readWhile("^ {"+level+"}.*");
+                    lines = in.readWhile("(^ {"+level+"}.*|\\s*)");
                 }
 
                 result = DocumentHelper.createElement(LITERAL_BLOCK)

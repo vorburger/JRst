@@ -1042,8 +1042,12 @@ public class JRSTReader {
                             .setText(e.attributeValue(OPTION_ARGUMENT));
                 }
             }
-            optionListItem.addElement(DESCRIPTION).addAttribute("inline",
-                    "true").setText(item.getText());
+            Element description = optionListItem.addElement(DESCRIPTION);
+            JRSTReader reader = new JRSTReader();
+            String text = item.getText();
+            Document doc = reader.read(new StringReader(text));
+            description.appendContent(doc.getRootElement());
+            
             item = lexer.peekOption();
         }
         return result;
