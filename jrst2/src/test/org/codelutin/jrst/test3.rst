@@ -25,8 +25,8 @@ program documentation (such as Python docstrings), for quickly
 creating simple web pages, and for standalone documents.  This web
 page was generated from reStructuredText.  The original implementation
 of a reStructuredText parser is that of the docutils_ project, written
-in Python.  The "prest" name is an acronym for "***P***\ erl
-***reS***\ tructured\ ***T***\ ext".
+in Python.  The "prest" name is an acronym for "**P**\ erl
+**reS**\ tructured\ **T**\ ext".
 
 .. _docutils: http://docutils.sourceforge.net
 

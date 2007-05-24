@@ -460,6 +460,9 @@ public class JRSTLexer {
             result = peekFieldList();
         }
         if (result == null) {
+            result = peekTargetAnonymousBody();
+        }
+        if (result == null) {
             result = peekLiteralBlock();
         }
         if (result == null) {
@@ -494,9 +497,7 @@ public class JRSTLexer {
             if (line.matches("^\\s*.. "+FOOTER+":: .*")){
                 result= DocumentHelper.createElement("remove").addAttribute("level", ""+level(line));
             }
-            if (line.matches("^\\s*__ .+$|^\\s*\\.\\. __\\:.+$")){
-                result= DocumentHelper.createElement("remove").addAttribute("level", ""+level(line));
-            }
+           
     	}
     	endPeek();
 		return result;
@@ -1836,7 +1837,26 @@ public class JRSTLexer {
         endPeek();
         return result;
     }
-
+ 	/**
+     * .. __: http://www.python.org
+     * @return Element
+     * @throws IOException 
+     */
+    private Element peekTargetAnonymousBody() throws IOException{
+        beginPeek();
+        Element result = null;
+        String line=in.readLine();
+        if (line!=null){
+            if (line.matches("^\\s*__ .+$|^\\s*\\.\\. __\\:.+$")){
+                result = DocumentHelper.createElement("targetAnonymous");
+                result.addAttribute("level", ""+level(line));
+                
+            }
+        }
+        
+        endPeek();
+        return result;
+    }
     /**
      * ..
      *   comment

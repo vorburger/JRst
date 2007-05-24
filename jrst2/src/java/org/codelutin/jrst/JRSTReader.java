@@ -300,6 +300,7 @@ public class JRSTReader {
     private static LinkedList<Element> eTarget = new LinkedList<Element>();
 
     static LinkedList<Element> eTargetAnonymous = new LinkedList<Element>();
+    static LinkedList<Element> eTargetAnonymousCopy = new LinkedList<Element>();
 
     private static LinkedList<Element> eTitle = new LinkedList<Element>();
 
@@ -362,6 +363,7 @@ public class JRSTReader {
         JRSTLexer lexer = new JRSTLexer(reader);
         try {
             Element root = composeDocument(lexer);
+            
             Document result = DocumentHelper.createDocument();
             result.setRootElement(root);
             // remove all level attribute
@@ -388,6 +390,7 @@ public class JRSTReader {
                     }
                 }
             });
+            
             return result;
         } catch (Exception eee) {
             log.error(_("JRST parsing error line {0} char {1}:\n{2}", lexer
@@ -551,15 +554,14 @@ public class JRSTReader {
         LinkedList<Element> listItem = lexer.peekTargetAnonymous();
         if (listItem != null) {
             for (Element e : listItem) {
-                Element anonym = result.addElement(TARGET);
+                Element anonym = DocumentHelper.createElement(TARGET);
                 anonym.addAttribute("anonymous", "1");
                 idMax++;
                 anonym.addAttribute("id", "id" + idMax);
                 anonym.addAttribute("refuri", e.attributeValue("refuri")
-                        .replaceAll("`|_", "").trim());
-
+                        .trim());
                 eTargetAnonymous.add(anonym);
-
+                eTargetAnonymousCopy.add(anonym);
             }
         }
 
@@ -813,6 +815,10 @@ public class JRSTReader {
                 lexer.remove();
                 Element list = composeTarget(item);
                 parent.add(list);
+            } else if (itemEquals("targetAnonymous",item)){
+                lexer.remove();
+                Element list = composeTargetAnonymous(item);
+                parent.add(list);
             } else if (itemEquals("footnotes", item)) {
                 lexer.remove();
                 Element[] list = composeFootnote(item);
@@ -884,7 +890,16 @@ public class JRSTReader {
 
         return item;
     }
-
+    /**
+     * @param item
+     * @return Element
+     */
+    private Element composeTargetAnonymous(Element item) {
+        Element result=null;
+        result =eTargetAnonymousCopy.getFirst();
+        eTargetAnonymousCopy.removeFirst();
+        return result;
+    }
     /**
      * @param item
      * @return Element
@@ -1695,7 +1710,6 @@ public class JRSTReader {
         // mechanisme as literal for that
         matcher = REGEX_INLINE_REFERENCE.matcher(text);
         index = 0;
-
         while (matcher.find()) {
             int start = matcher.start();
             int end = matcher.end();
@@ -1707,7 +1721,7 @@ public class JRSTReader {
             text = text.substring(0, start) + "``" + key + "``"
                     + text.substring(end);
         }
-
+        
         // do all substitution inline
         text = REGEX_EMAIL.matcher(text).replaceAll(
                 "$1<" + REFERENCE + " refuri='mailto:$2'>$2</" + REFERENCE
@@ -1718,7 +1732,7 @@ public class JRSTReader {
                 "<" + EMPHASIS + ">$1</" + EMPHASIS + ">");
         text = REGEX_REFERENCE.matcher(text).replaceAll(
                 "<" + REFERENCE + " refuri='$1'>$1</" + REFERENCE + ">$2");
-
+        
         matcher = REGEX_FOOTNOTE_REFERENCE.matcher(text);
         while (matcher.find()) {
             String txtDebut = text.substring(0, matcher.start());
@@ -1860,13 +1874,13 @@ public class JRSTReader {
             text = txtDebut + anonym.asXML() + txtFin;
             matcher = REGEX_ANONYMOUS_HYPERLINK_REFERENCE.matcher(text);
         }
-
+        
         matcher = REGEX_HYPERLINK_REFERENCE.matcher(text);
         while (matcher.find()) {
             String txtDebut = text.substring(0, matcher.start());
             String txtFin = text.substring(matcher.end(), text.length());
             String ref = text.substring(matcher.start(), matcher.end() - 1);
-            ref = ref.replaceAll("&apos;", "");
+            ref = ref.replaceAll("(&apos;|_)", "");
             ref = ref.replaceAll("[\\W&&[^-]]", " ").trim();
             Element hyper = DocumentHelper.createElement("reference");
             hyper.addAttribute("name", ref);
@@ -1884,6 +1898,7 @@ public class JRSTReader {
             hyper.setText(ref);
             text = txtDebut + hyper.asXML() + txtFin;
             matcher = REGEX_HYPERLINK_REFERENCE.matcher(text);
+           
         }
         // substitution reference
         matcher = REGEX_SUBSTITUTION_REFERENCE.matcher(text);
@@ -1905,9 +1920,10 @@ public class JRSTReader {
             begin = text.length();
             text += end;
             matcher = REGEX_SUBSTITUTION_REFERENCE.matcher(text);
+           
 
         }
-
+        
         // undo substitution in LITERAL
         matcher = REGEX_LITERAL.matcher(text);
         while (matcher.find()) {
@@ -1916,10 +1932,11 @@ public class JRSTReader {
 
             String tempKey = matcher.group(1);
             text = start + temporaries.get(tempKey) + end;
+            
         }
         Element result = DocumentHelper.parseText("<TMP>" + text + "</TMP>")
                 .getRootElement();
-
+        
         e.setText("");
         e.appendContent(result);
     }

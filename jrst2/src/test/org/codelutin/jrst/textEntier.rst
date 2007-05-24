@@ -330,16 +330,14 @@ TOPIC
 
 .. header:: Ceci est une page de test
 
-
 .. footer:: Cree par **LETELLIER Sylvain**
-
 
 OPTION
 ------
 
 -a            command-line option "a"
-		 -1 file, --one=file, --two file
-         		      Multiple options with arguments.
+-1 file, --one=file, --two file
+              Multiple options with arguments.
 
 FOOTNOTES
 ---------
@@ -375,7 +373,7 @@ INLINE
 
 
 la derniere ligne.
-   
+
 
 
 

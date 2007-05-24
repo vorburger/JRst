@@ -190,7 +190,7 @@ improvements, but still suffers from many of the problems of classic
 StructuredText.
 
 I decided that a complete rewrite was in order, and even started a
-`reStructuredText SourceForge project`_ (now inactive).  My
+reStructuredText SourceForge project (now inactive).  My
 motivations (the "itches" I aim to "scratch") are as follows:
 
 - I need a standard format for inline documentation of the programs I
@@ -264,7 +264,6 @@ System`_ projects were released in April 2002.  The two projects were
 immediately merged, renamed to "Docutils_", and a 0.1 release soon
 followed.
 
-.. __: `reStructuredText SourceForge project`_
 
 .. [#spec-2] The second draft of the spec:
 
@@ -295,8 +294,6 @@ followed.
 
 .. _Zope Corporation: http://www.zope.com
 .. _ZOPE: http://www.zope.org
-.. _reStructuredText SourceForge project:
-   http://structuredtext.sourceforge.net/
 .. _pythondoc: http://starship.python.net/crew/danilo/pythondoc/
 .. _StructuredTextNG:
    http://www.zope.org/DevHome/Members/jim/StructuredTextWiki/StructuredTextNG
