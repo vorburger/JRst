@@ -190,15 +190,32 @@
 	</xsl:template>
 
 	<xsl:template match="field">
-		<div class="field"><xsl:apply-templates/></div>
+		<xsl:if test="not(../../docinfo)">
+			<div class="field"><xsl:apply-templates/></div>
+		</xsl:if>
+		<xsl:if test="../../docinfo">
+			<tr>
+				<th class="docinfo-name">
+					<xsl:value-of select="field_name/text()"/> :
+				</th>
+				<td>
+					<xsl:apply-templates select="field_body/*"/>
+				</td>
+			</tr>
+						
+		</xsl:if>
+		
 	</xsl:template>
 
 	<xsl:template match="field_name">
 		<span class="field_name"><xsl:apply-templates/></span>
+		
+		
 	</xsl:template>
 
 	<xsl:template match="field_body">
 		<span class="field_body"><xsl:apply-templates/></span>
+		
 	</xsl:template>
 
 	<xsl:template match="definition_list">
@@ -422,15 +439,18 @@
 						</a>
 					</td>
 					<td>
-						<xsl:value-of select="child::*[position()>1]"/>
+						<!--
+	 					| <xsl:value-of select="child::*[position()>1]"/>
+						 +-->
+						<xsl:apply-templates select="child::*[position()>1]"/>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 	</xsl:template>
 	
-	<xsl:template match="footnote-reference">
-		<a class="footnote-reference" href="#{@refid}" id="{@id}" name="{@id}">
+	<xsl:template match="footnote_reference">
+		<a class="footnote_reference" href="#{@refid}" id="{@id}" name="{@id}">
 			[<xsl:value-of select="text()"/>]
 		</a>
 	</xsl:template>
