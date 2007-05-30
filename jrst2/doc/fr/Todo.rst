@@ -5,15 +5,10 @@ Todo
 Voici la liste des tâches qui reste à faire. Si quelqu'un souhaite aider, ou
 a une idée à proposer il ne faut pas hésiter.
 
-- implanter la lecture des images, référence interne,
-- implanter la lecture des citations, ...
 - intégrer une date multiformat
-- faire une feuille de style de conversion de RST en xhtml (plus rapide que dn2dbk -> dbk2xhtml)
 - faire une feuille de style de conversion de xhtml -> xdoc
-- corriger le "::" qui est considéré comme un titre lorsqu'il est tous seul
 
-- La documentation utilisateur
-- La documentation développeur
+- la documentation en anglais
 - faire une règle ant pour aider à la génération
   <jrst include="..." exclude="..." destination="" extension="...."/>
   destination est le répertoire destination

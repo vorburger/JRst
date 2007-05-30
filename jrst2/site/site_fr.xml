@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="JRst">
+	
+  <skin>                                                                                                                                                                                                                 
+    <groupId>lutinlib</groupId>                                                                                                                                                                            
+    <artifactId>lutin-site-skin</artifactId>
+    <version>0.1</version>
+  </skin>                 
+	
+  <bannerLeft>
+      <name>Java ReStructuredText parser</name>
+  </bannerLeft>
+	
+  <bannerRight>
+      <src>http://www.codelutin.com/images/lutinorange-codelutin.png</src>
+	  <href>http://www.codelutin.com</href>
+  </bannerRight>
+
+  <poweredBy>
+     <logo href="http://maven.apache.org" name="Maven" img="images/logos/maven-feather.png"/>
+     <logo href="http://jrst.labs.libre-entreprise.org" name="JRst" img="images/jrst-logo.png"/>
+     <logo href="http://docutils.sourceforge.net/rst.html" name="ReStructuredText" img="images/restructuredtext-logo.png"/>
+  </poweredBy>    
+
+  <body>
+    <links>
+      <item name="Maven-jrst-plugin" href="http://jrst.labs.libre-entreprise.org/maven-jrst-plugin/"/>
+      <item name="Labs" href="http://labs.libre-entreprise.org/"/>
+      <item name="Code Lutin" href="http://www.codelutin.com/"/>
+	  <item name="[fr" href="http://jrst.labs.libre-entreprise.org/index.html"/>
+	  <item name="en]" href="http://jrst.labs.libre-entreprise.org/en/index.html"/>
+    </links>
+
+    <menu name="Utilisateur">
+      <item href="/index.html" name="Présentation du JRST"></item>
+	  <item href="/fr/presentation.html" name="Introduction à ReStructuredText"></item>
+	  <item href="/fr/fonctionnalites.html" name="Fonctionnalités incluses"></item>
+      <item href="http://labs.libre-entreprise.org/frs/?group_id=54&amp;release_id=252" name="Télécharger"/>
+    </menu>
+
+	<menu name="Developpeur">
+	  <item name="Fonctionnement" href="/fr/docDeveloppeur.html"/>
+	  <item name="Librairies utilisées" href="/fr/librairies.html"/>
+      <item name="Todo" href="/fr/Todo.html"/>
+	  <item name="Presentation au XSL" href="/fr/presentationXSL.html"/>
+	  <item name="Documentation externe" href="/fr/docExterne.html"/>
+    </menu>
+
+    ${reports}
+
+  </body>
+</project>
