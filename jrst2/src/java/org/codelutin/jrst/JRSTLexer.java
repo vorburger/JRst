@@ -439,10 +439,10 @@ public class JRSTLexer {
             result = peekLineBlock();
         }
         if (result == null) {
-        	result = peekOption();
+            result = peekBulletList();
         }
         if (result == null) {
-            result = peekBulletList();
+            result = peekOption();
         }
         if (result == null) {
             result = peekEnumeratedList();
@@ -572,7 +572,7 @@ public class JRSTLexer {
     	Element result = null;
     	String line = in.readLine();
 		if (line != null){
-			if (line.matches("^\\s*-{1,2}.\\s+.*$")){
+			if (line.matches("^(\\s*-{1,2}.+\\s+.*)+\\s+.+$")){
 				result = DocumentHelper.createElement(OPTION_LIST).addAttribute("level", ""+level(line));
 				char delimiter;
 				do{
@@ -585,27 +585,27 @@ public class JRSTLexer {
 	                String option_string=matcher.group();
 	                option.addAttribute("option_string", option_string);
 	                delimiter=option_stringTmp.charAt(matcher.end());
-	                option_stringTmp=option_stringTmp.substring(matcher.end()+1, option_stringTmp.length());
-	                option.addAttribute("delimiterExiste", "false");
+	                option_stringTmp=option_stringTmp.substring(matcher.end(), option_stringTmp.length());
+                    option.addAttribute("delimiterExiste", "false");
 	                boolean done=false;
 	                if (delimiter==' '){ // S'il ya 2 espace a suivre, l'option est finit
-	                	if (option_stringTmp.charAt(0)==' '){
+	                	if (option_stringTmp.charAt(1)==' '){
 	                		done=true;
 	                	}
 	                }
 	                if ((delimiter=='=' || delimiter==' ')&&!done){
 	                	option.addAttribute("delimiterExiste", "true");
 	                	option.addAttribute("delimiter", ""+delimiter);
-	                	matcher = Pattern.compile("[ =]\\w+").matcher(option_stringTmp);
+	                	matcher = Pattern.compile(delimiter+"\\w+").matcher(option_stringTmp);
 	                	String option_argument;
 	                	if (matcher.find()){
 	                		option_argument= matcher.group().substring(1, matcher.group().length());
 	                		option.addAttribute("option_argument", option_argument);
-		                	if (option_stringTmp.charAt(option_argument.length())==','){
+		                	if (option_stringTmp.charAt(option_argument.length()+1)==','){
 		                		delimiter = ',';
 		                		line=line.substring(option_string.length()+option_argument.length()+3,line.length());
 		                	}
-		                	else if (option_stringTmp.charAt(option_argument.length())==' ')
+		                	else
 		                		done=true;
 	                	}
 	                	else{ // Si la description n'est pas sur la meme ligne
@@ -616,8 +616,8 @@ public class JRSTLexer {
 	                	}
 	                }
 	                if (done)
-	                	result.setText(option_stringTmp.substring(matcher.end()-1,option_stringTmp.length()).trim());
-	            }while (delimiter==',');
+	                	result.setText(option_stringTmp.substring(matcher.end(),option_stringTmp.length()).trim());
+                }while (delimiter==',');
 			}
 		}
 		endPeek();
@@ -646,7 +646,10 @@ public class JRSTLexer {
             	String title = line.substring(matcher.end(),line.length());
                 result.addAttribute(TITLE,title);
                 line = in.readLine();
-				String txt = joinBlock(readBlock(level(line)));
+				String [] lines=in.readWhile("(^ {"+level(line)+"}.*)|(\\s*)");
+                String txt="";
+                for (String txtTmp : lines)
+                    txt += "\n"+txtTmp.trim();
 				result.setText(txt);
 				
 			}
@@ -1074,7 +1077,7 @@ public class JRSTLexer {
 
         String [] prefix = in.readLines(2);
         if (prefix.length == 2 &&
-                prefix[0].matches("::\\s*") && prefix[1].matches("\\s*")) {
+                prefix[0].matches("\\s*::\\s*") && prefix[1].matches("\\s*")) {
 
             String para = in.readLine();
             if (para != null) {
@@ -1536,7 +1539,7 @@ public class JRSTLexer {
         Element result = null;
 //        in.skipBlankLines();
         String line = in.readLine();
-        if (line != null && line.matches("^\\s*["+escapeRegex(BULLET_CHAR)+"] \\S.*")) {
+        if (line != null && line.matches("^\\s*["+escapeRegex(BULLET_CHAR)+"] +\\S.*")) {
             int level = level(line);
             String bullet = line.substring(level, level + 1);
 

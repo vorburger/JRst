@@ -190,7 +190,7 @@ public class JRST {
         public String getXslFile();        
         public boolean isXslFile();
         
-        @Option(shortName="t", pattern = "xhtml|docbook|xml|html|xdoc|rst", // TODO |pdf|rst|odt|rtf",                
+        @Option(shortName="t", pattern = "xhtml|docbook|xml|html|xdoc|rst", // TODO pdf|rst|odt|rtf",                
                 description = "Output type")
         public String getOutType();
         public boolean isOutType();

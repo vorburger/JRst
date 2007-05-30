@@ -36,7 +36,6 @@ import static org.codelutin.i18n.I18n._;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -192,7 +191,7 @@ import org.dom4j.VisitorSupport;
  *   copyright (done)
  *   danger (done)
  *   date (done)
- *   decoration
+ *   decoration (done)
  *   definition (done)
  *   definition_list (done)
  *   definition_list_item (done)
@@ -209,11 +208,11 @@ import org.dom4j.VisitorSupport;
  *   field_list (done)
  *   field_name (done)
  *   figure
- *   footer
+ *   footer (done)
  *   footnote	(done)
  *   footnote_reference (done)
  *   generated
- *   header (parcialy done)
+ *   header (done)
  *   hint (done)
  *   image (done)
  *   important (done)
@@ -237,7 +236,7 @@ import org.dom4j.VisitorSupport;
  *   pending
  *   problematic
  *   raw
- *   reference (partialy done)
+ *   reference (done)
  *   revision (done)
  *   row (done)
  *   rubric
@@ -252,7 +251,7 @@ import org.dom4j.VisitorSupport;
  *   superscript
  *   system_message
  *   table (done)
- *   target
+ *   target (done)
  *   tbody (done)
  *   term (done)
  *   tgroup (done)
@@ -840,9 +839,7 @@ public class JRSTReader {
             }
 
             // Pour afficher le "PseudoXML"
-            /*
-             * if (item!=null) System.out.println(item.asXML());
-             */
+            //if (item!=null) System.out.println(item.asXML());
 
             item = lexer.peekTitleOrBodyElement();
         }
@@ -1065,8 +1062,11 @@ public class JRSTReader {
         result = DocumentHelper.createElement(TOPIC);
         result.addElement(TITLE).addAttribute("inline", "true").setText(
                 item.attributeValue(TITLE));
-        result.addElement(PARAGRAPH).addAttribute("inline", "true").setText(
-                item.getText());
+        JRSTReader reader = new JRSTReader();
+        String text = item.getText();
+        Document doc = reader.read(new StringReader(text));
+        result.appendContent(doc.getRootElement());
+        
         return result;
     }
 
@@ -1694,7 +1694,6 @@ public class JRSTReader {
         // this prevent substitution in literal, example **something** must not
         // change in literal
         Map<String, String> temporaries = new HashMap<String, String>();
-
         Matcher matcher = REGEX_LITERAL.matcher(text);
         int index = 0;
         while (matcher.find()) {
@@ -1704,11 +1703,10 @@ public class JRSTReader {
                     + LITERAL + ">";
             String key = "literal" + index++;
             temporaries.put(key, literal);
-
-            text = text.substring(0, start) + "``" + key + "``"
+            text = text.substring(0, start) + "<tmp>" + key + "</tmp>"
                     + text.substring(end);
+            matcher = REGEX_LITERAL.matcher(text);
         }
-
         // search all REGEX_INLINE_REFERENCE and replace it with special mark
         // this prevent substitution of URL with REGEX_REFERENCE. Use same
         // mechanisme as literal for that
@@ -1722,10 +1720,11 @@ public class JRSTReader {
             ref.setText(matcher.group(1));
             String key = "inlineReference" + index++;
             temporaries.put(key, ref.asXML());
-            text = text.substring(0, start) + "``" + key + "``"
+            text = text.substring(0, start) + "<tmp>" + key + "</tmp>"
                     + text.substring(end);
+            matcher = REGEX_INLINE_REFERENCE.matcher(text);
+           
         }
-        
         // do all substitution inline
         text = REGEX_EMAIL.matcher(text).replaceAll(
                 "$1<" + REFERENCE + " refuri='mailto:$2'>$2</" + REFERENCE
@@ -1736,7 +1735,6 @@ public class JRSTReader {
                 "<" + EMPHASIS + ">$1</" + EMPHASIS + ">");
         text = REGEX_REFERENCE.matcher(text).replaceAll(
                 "<" + REFERENCE + " refuri='$1'>$1</" + REFERENCE + ">$2");
-        
         matcher = REGEX_FOOTNOTE_REFERENCE.matcher(text);
         while (matcher.find()) {
             String txtDebut = text.substring(0, matcher.start());
@@ -1882,8 +1880,9 @@ public class JRSTReader {
         matcher = REGEX_HYPERLINK_REFERENCE.matcher(text);
         while (matcher.find()) {
             String txtDebut = text.substring(0, matcher.start());
-            String txtFin = text.substring(matcher.end(), text.length());
+            String txtFin = text.substring(matcher.end()-1, text.length());
             String ref = text.substring(matcher.start(), matcher.end() - 1);
+            
             ref = ref.replaceAll("(&apos;|_)", "");
             ref = ref.replaceAll("[\\W&&[^-]]", " ").trim();
             Element hyper = DocumentHelper.createElement("reference");
@@ -1902,8 +1901,9 @@ public class JRSTReader {
             hyper.setText(ref);
             text = txtDebut + hyper.asXML() + txtFin;
             matcher = REGEX_HYPERLINK_REFERENCE.matcher(text);
-           
+            
         }
+        
         // substitution reference
         matcher = REGEX_SUBSTITUTION_REFERENCE.matcher(text);
         int begin = 0;
@@ -1927,18 +1927,19 @@ public class JRSTReader {
            
 
         }
-        
         // undo substitution in LITERAL
-        matcher = REGEX_LITERAL.matcher(text);
+        Pattern p = Pattern.compile("<tmp>([^<>]+)</tmp>");
+        
+        matcher = p.matcher(text);
         while (matcher.find()) {
             String start = text.substring(0, matcher.start());
             String end = text.substring(matcher.end());
 
             String tempKey = matcher.group(1);
             text = start + temporaries.get(tempKey) + end;
-            
+            matcher = p.matcher(text);
         }
-        Element result = DocumentHelper.parseText("<TMP>" + text + "</TMP>")
+        Element result = DocumentHelper.parseText("<TMP>" + text.trim() + "</TMP>")
                 .getRootElement();
         
         e.setText("");
