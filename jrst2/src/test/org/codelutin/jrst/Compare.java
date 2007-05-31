@@ -1,8 +1,5 @@
 package org.codelutin.jrst;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -14,15 +11,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextPane;
-import javax.swing.text.JTextComponent;
-
 import org.codelutin.jrst.JRSTReader;
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -30,7 +22,6 @@ import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
-
 import sdoc.*;
 
 public class Compare {
@@ -83,7 +74,6 @@ public class Compare {
         SAXReader sr= new SAXReader();
         Document docPython =  sr.read(xml);
         String diff = test(docRst, docPython);
-        
         String sDocRst = indent(docRst);   // On indente
         String sDocPython = indent(docPython);
         compare(sDocRst, sDocPython, diff);
@@ -113,12 +103,10 @@ public class Compare {
             if (matcher.find()){
                 nbLineRst = findLine(matcher.group(),sDocRst);
                 bColorRst[nbLineRst]=true;
-                
             }
             if (matcher.find()){
                 nbLinePython = findLine(matcher.group(),sDocPython);
                 bColorPython[nbLinePython]=true;
-                
             }
             text+="L python : "+(nbLinePython+1)+" L rst : "+(nbLineRst+1)+" "+diff+"\n\n";
         }
@@ -133,7 +121,6 @@ public class Compare {
         while (matcher2.find()){
             names.add(matcher2.group().substring(1,matcher2.group().indexOf("[")));
             rgs.add(Integer.valueOf(matcher2.group().substring(matcher2.group().indexOf("[")+1,matcher2.group().indexOf("]"))));
-            
         }
         int cntName=0;
         int nbLine=0;
@@ -166,8 +153,8 @@ public class Compare {
 		
         JScrollPane spJrst = new JScrollPane(jrst);
 		JScrollPane spPython = new JScrollPane(python);
-		// Ajout de gutter : la numerotation des lignes
         
+		// Ajout de gutterColor : la numerotation des lignes et coloration des érreurs
 		spJrst.setRowHeaderView(new GutterColor(jrst , spJrst, bColorRst));
 		spPython.setRowHeaderView(new GutterColor(python , spPython, bColorPython));
         jrst.setText(docRst);
@@ -175,7 +162,6 @@ public class Compare {
 		JScrollPane droit = new JScrollPane(spJrst);
 		JScrollPane gauche = new JScrollPane(spPython);
 		JFrame comparateur = new JFrame();
-        
 		JSplitPane separateurVert = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,true, gauche,droit);
         separateurVert.setResizeWeight(0.5);
         separateurVert.setOneTouchExpandable(true);
