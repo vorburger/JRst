@@ -31,9 +31,11 @@
 
 package org.codelutin.jrst;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
@@ -75,11 +77,14 @@ public class JRST {
     static final private String rst2xdoc = "/xsl/rst2xdoc.xsl";
     static final private String rst2docbook = "/xsl/dn2dbk.xsl";
     static final private String walshDir = "/docbook-xsl-nwalsh";    
+    static final private String docbook2odfDir = "/docbook2odf-0.211";
     static final private String docbook2xhtml = walshDir + "/xhtml/docbook.xsl";
     static final private String docbook2javahelp = walshDir + "/javahelp/javahelp.xsl";
 //    static final private String dbkx2html = walshDir + "/html/onechunk.xsl";
     static final private String docbook2htmlhelp = walshDir + "/htmlhelp/htmlhelp.xsl";
     static final private String rst2rst = "/xsl/xml2rst.xsl";
+    static final private String docbook2odf = docbook2odfDir + "/xsl/docbook.xsl";
+    static final private String docbook2fo = walshDir + "/fo/docbook.xsl";
     
     // Out put type available
     static final public String TYPE_HTML = "html";
@@ -89,6 +94,9 @@ public class JRST {
     static final public String TYPE_JAVAHELP = "javahelp";
     static final public String TYPE_HTMLHELP = "htmlhelp";
     static final public String TYPE_RST = "rst";
+    static final public String TYPE_ODT = "odt";
+    static final public String TYPE_FO = "fo";
+    
     
     /** key, Out type; value: chain of XSL file to provide wanted file for output */
     static private Map<String, String> stylesheets = null;
@@ -102,9 +110,13 @@ public class JRST {
         stylesheets.put(TYPE_JAVAHELP, rst2docbook+","+docbook2javahelp);
         stylesheets.put(TYPE_HTMLHELP, rst2docbook+","+docbook2htmlhelp);
         stylesheets.put(TYPE_RST, rst2rst);
+        stylesheets.put(TYPE_ODT, rst2docbook+","+docbook2odf);
+        stylesheets.put(TYPE_FO, rst2docbook + "," + docbook2fo);
     }
     
     static public void main(String [] args) throws Exception {
+        if (args.length == 0)
+            args = askOption();
         JRSTOption option = CliFactory.parseArguments(JRSTOption.class, args);
         
         if (option.isHelp()) {
@@ -124,6 +136,93 @@ public class JRST {
         generate(xslList, option.getFile(), option.getOutFile(), option.isForce()?Overwrite.ALLTIME:Overwrite.NEVER);
     }
     
+    private static String[] askOption() {
+        System.out.println("JRST --help pour afficher l'aide");
+        Boolean done=false;
+        String cheminRST="";
+        while (!done){
+            System.out.println("Veuillez saisir le chemin du fichier reStructuredText (Laissez vide pour quitter)");
+            cheminRST = lire();
+            if (cheminRST.length()==0)
+                System.exit(0);
+            File fileRST = new File(cheminRST);
+            if (!fileRST.exists()){
+                System.out.println("Ce fichier n'existe pas");
+                cheminRST="";
+            }
+            else
+                done=true;
+        }
+        done=false;
+        String type ="";
+        while (!done){
+            type ="";
+            System.out.println("Veuillez saisir le format de sortie (xhtml, docbook, xml(par défault), html, xdoc, rst, pdf, odt ou rtf)");
+            System.out.println("(Laissez vide pour spécifier le XSL de génération à utiliser)");
+            type = lire();
+            if (type.matches("xhtml|docbook|xml|html|xdoc|rst|pdf|odt|rtf")||type.length()==0)
+                done=true;
+        }
+        String cheminXSL="";
+        if (type.length()==0){
+            done=false;
+            while (!done){
+                System.out.println("Veuillez saisir le chemin du fichier XSL (Sortie XML si vide)");
+                cheminXSL = lire();
+               
+                File fileRST = new File(cheminXSL);
+                if (!fileRST.exists()){
+                    System.out.println("Ce fichier n'existe pas");
+                    cheminXSL = "";
+                }
+                else
+                    done=true;
+            }
+            if (cheminXSL.length()==0 || !type.matches("xhtml|docbook|xml|html|xdoc|rst|pdf|odt|rtf"))
+                type="xml";
+        }
+        boolean ecraser=false;
+        done=false;
+        String cheminSortie="";
+        while (!done){
+            System.out.println("Veuillez saisir le chemin du fichier sortie (Laissez vide pour l'afficher dans la sortie standard)");
+            cheminSortie = lire();
+           
+            File fileRST = new File(cheminSortie);
+            if (fileRST.exists()){
+                String strEcraser="";
+                do {
+                    System.out.println("Ce fichier existe, voulez-vous l'écraser (y/n) ?");
+                    strEcraser = lire();
+                }while(!strEcraser.matches("y|n"));
+                if (strEcraser.equals("y")){
+                    done=true;
+                    ecraser=true;
+                }
+            }
+            else
+                done=true;
+        }
+        String cmd = "";
+        if (ecraser)
+            cmd += "--force ";
+        cmd += "-t " + type;
+        if (cheminXSL.length()>0)
+            cmd += " -x " + cheminXSL;
+        if (cheminSortie.length()>0)
+            cmd += " -o " + cheminSortie;
+        cmd += " " + cheminRST + " "; 
+        return cmd.split(" ");
+    }
+    public static String lire(){
+        String ligne_lue=null;
+        try {InputStreamReader isr = new InputStreamReader(System.in);
+              BufferedReader br = new BufferedReader(isr);
+              ligne_lue=br.readLine();
+         }
+        catch(IOException e) {System.err.println(e);}     
+     return ligne_lue;
+    }
     public static void generate(String xslListOrOutType, File fileIn, File fileOut,
             Overwrite overwrite) throws Exception {
         if (fileOut != null && fileOut.exists() && 
@@ -190,7 +289,7 @@ public class JRST {
         public String getXslFile();        
         public boolean isXslFile();
         
-        @Option(shortName="t", pattern = "xhtml|docbook|xml|html|xdoc|rst", // TODO pdf|rst|odt|rtf",                
+        @Option(shortName="t", pattern = "xhtml|docbook|xml|html|xdoc|rst|odt|fo", // TODO pdf|rst|odt|rtf",                
                 description = "Output type")
         public String getOutType();
         public boolean isOutType();
