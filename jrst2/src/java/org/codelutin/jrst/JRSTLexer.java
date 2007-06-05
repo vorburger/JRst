@@ -915,17 +915,19 @@ public class JRSTLexer {
                 String firstLine="";
             	if (!admonition && matcher.end()+2 < line.length())
             		firstLine =line.substring(matcher.end()+2,line.length());
-            	in.skipBlankLines();
             	line = in.readLine();
                 if (line!=null){
-                    level = level(line);
-                    if (level>0){
-                    	String txt = firstLine.trim() + "\n" + line.trim() + "\n";
-    	                txt += "\n" + readBlockWithBlankLine(level);
-    	                result.setText(txt);
+                    if (line.matches("\\s*"))
+                        line = "\n\n"+in.readLine();
+                    if (line!=null){
+                        level = level(line);
+                        String txt = firstLine.trim() + "\n" + line + "\n";
+        	            txt += "\n" + readBlockWithBlankLine(level);
+        	            result.setText(txt);
+                        
                     }
                     else
-    	                result.setText(firstLine);
+                        result.setText(firstLine);
                 }
                 else
                     result.setText(firstLine);
