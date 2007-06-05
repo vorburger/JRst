@@ -229,6 +229,8 @@ public class JRSTLexer {
 
         return result;
     }
+    
+   
 
     /**
      * All lines are joined and left and right spaces are removed during join
@@ -601,7 +603,9 @@ public class JRSTLexer {
 	                	if (matcher.find()){
 	                		option_argument= matcher.group().substring(1, matcher.group().length());
 	                		option.addAttribute("option_argument", option_argument);
-		                	if (option_stringTmp.charAt(option_argument.length()+1)==','){
+                            // TODO a verif...
+		                	//if (option_stringTmp.charAt(option_argument.length()+1)==','){
+                            if (option_stringTmp.charAt(option_argument.length())==','){
 		                		delimiter = ',';
 		                		line=line.substring(option_string.length()+option_argument.length()+3,line.length());
 		                	}
@@ -646,11 +650,17 @@ public class JRSTLexer {
             	String title = line.substring(matcher.end(),line.length());
                 result.addAttribute(TITLE,title);
                 line = in.readLine();
-				String [] lines=in.readWhile("(^ {"+level(line)+"}.*)|(\\s*)");
-                String txt="";
-                for (String txtTmp : lines)
-                    txt += "\n"+txtTmp.trim();
-				result.setText(txt);
+                if (line.matches("\\s*"))
+                    line = in.readLine();
+                int level = level(line);
+                String [] lines=null;
+                if (level!=0) {
+                    lines=in.readWhile("(^ {"+level+"}.*)|(\\s*)");
+                    String txt=line;
+                    for (String txtTmp : lines)
+                        txt += "\n"+txtTmp.trim();
+    				result.setText(txt);
+                }
 				
 			}
 		}
@@ -843,7 +853,7 @@ public class JRSTLexer {
                                 blockQuote = blockQuote.replaceAll("--","").trim();
                             }
                             else
-                                txt += "\n" + l.trim();
+                                txt += "\n" + l;
                         }
                         result = DocumentHelper.createElement(BLOCK_QUOTE).addAttribute("level", String.valueOf(level));
                         if (blockQuote!=null)
@@ -876,12 +886,15 @@ public class JRSTLexer {
             String lineTest = line.toLowerCase();
             Pattern pAdmonition = Pattern.compile("^\\.\\.\\s*("+ADMONITION_PATTERN+")::\\s*(.*)$");
             Matcher matcher = pAdmonition.matcher(lineTest);
+           
             if (matcher.matches()) {
+               
             	boolean admonition=false;
             	matcher = Pattern.compile(ADMONITION_PATTERN).matcher(lineTest);
                 matcher.find();
-                result = DocumentHelper.createElement(ADMONITION).addAttribute("level", String.valueOf(0));
-            	int level;
+                int level=level(line);
+                result = DocumentHelper.createElement(ADMONITION).addAttribute("level", ""+level);
+            	
                 if (matcher.group().equals(ADMONITION)){ // Il y a un titre pour un admonition general
             		admonition=true;
             		result.addAttribute("type", ADMONITION);
@@ -904,14 +917,18 @@ public class JRSTLexer {
             		firstLine =line.substring(matcher.end()+2,line.length());
             	in.skipBlankLines();
             	line = in.readLine();
-                level = level(line);
-                if (level>0){
-                	String txt = firstLine.trim() + "\n" + line.trim() + "\n";
-	                txt += "\n" + readBlockWithBlankLine(level);
-	                result.setText(txt);
+                if (line!=null){
+                    level = level(line);
+                    if (level>0){
+                    	String txt = firstLine.trim() + "\n" + line.trim() + "\n";
+    	                txt += "\n" + readBlockWithBlankLine(level);
+    	                result.setText(txt);
+                    }
+                    else
+    	                result.setText(firstLine);
                 }
                 else
-	                result.setText(firstLine);
+                    result.setText(firstLine);
             }
         }
         endPeek();
