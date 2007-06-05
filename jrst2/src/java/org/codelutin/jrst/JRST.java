@@ -40,7 +40,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codelutin.util.FileUtil;
@@ -53,6 +56,7 @@ import uk.co.flamingpenguin.jewel.cli.CliFactory;
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 import uk.co.flamingpenguin.jewel.cli.Unparsed;
+import org.codelutin.i18n.I18n;
 
 
 /**
@@ -137,17 +141,22 @@ public class JRST {
     }
     
     private static String[] askOption() {
-        System.out.println("JRST --help pour afficher l'aide");
+        if (Locale.getDefault().getLanguage()=="fr")
+            I18n.init("fr","FR");
+        else
+            I18n.init("en","US");
+        ResourceBundle bundle = ResourceBundle.getBundle("org.codelutin.i18n.I18nBundleBridge");
+        System.out.println(bundle.getString("help?"));
         Boolean done=false;
         String cheminRST="";
         while (!done){
-            System.out.println("Veuillez saisir le chemin du fichier reStructuredText (Laissez vide pour quitter)");
+            System.out.println(bundle.getString("rstFile?"));
             cheminRST = lire();
             if (cheminRST.length()==0)
                 System.exit(0);
             File fileRST = new File(cheminRST);
             if (!fileRST.exists()){
-                System.out.println("Ce fichier n'existe pas");
+                System.out.println(bundle.getString("dontExist"));
                 cheminRST="";
             }
             else
@@ -157,8 +166,7 @@ public class JRST {
         String type ="";
         while (!done){
             type ="";
-            System.out.println("Veuillez saisir le format de sortie (xhtml, docbook, xml(par défault), html, xdoc, rst, pdf, odt ou rtf)");
-            System.out.println("(Laissez vide pour spécifier le XSL de génération à utiliser)");
+            System.out.println(bundle.getString("outputFormat?"));
             type = lire();
             if (type.matches("xhtml|docbook|xml|html|xdoc|rst|pdf|odt|rtf")||type.length()==0)
                 done=true;
@@ -167,12 +175,12 @@ public class JRST {
         if (type.length()==0){
             done=false;
             while (!done){
-                System.out.println("Veuillez saisir le chemin du fichier XSL (Sortie XML si vide)");
+                System.out.println(bundle.getString("xslFile?"));
                 cheminXSL = lire();
                
                 File fileRST = new File(cheminXSL);
                 if (!fileRST.exists()){
-                    System.out.println("Ce fichier n'existe pas");
+                    System.out.println(bundle.getString("dontExist"));
                     cheminXSL = "";
                 }
                 else
@@ -185,17 +193,17 @@ public class JRST {
         done=false;
         String cheminSortie="";
         while (!done){
-            System.out.println("Veuillez saisir le chemin du fichier sortie (Laissez vide pour l'afficher dans la sortie standard)");
+            System.out.println(bundle.getString("outputFile?"));
             cheminSortie = lire();
            
             File fileRST = new File(cheminSortie);
             if (fileRST.exists()){
                 String strEcraser="";
                 do {
-                    System.out.println("Ce fichier existe, voulez-vous l'écraser (y/n) ?");
+                    System.out.println(bundle.getString("overwrite?"));
                     strEcraser = lire();
-                }while(!strEcraser.matches("y|n"));
-                if (strEcraser.equals("y")){
+                }while(!strEcraser.matches("y|n|o"));
+                if (strEcraser.equals("y")||strEcraser.equals("o")){
                     done=true;
                     ecraser=true;
                 }
