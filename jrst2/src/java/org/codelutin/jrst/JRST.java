@@ -81,13 +81,13 @@ public class JRST {
     static final private String rst2xdoc = "/xsl/rst2xdoc.xsl";
     static final private String rst2docbook = "/xsl/dn2dbk.xsl";
     static final private String walshDir = "/docbook-xsl-nwalsh";    
-    static final private String docbook2odfDir = "/docbook2odf-0.211";
+    //static final private String docbook2odfDir = "/docbook2odf-0.211";
     static final private String docbook2xhtml = walshDir + "/xhtml/docbook.xsl";
     static final private String docbook2javahelp = walshDir + "/javahelp/javahelp.xsl";
 //    static final private String dbkx2html = walshDir + "/html/onechunk.xsl";
     static final private String docbook2htmlhelp = walshDir + "/htmlhelp/htmlhelp.xsl";
     static final private String rst2rst = "/xsl/xml2rst.xsl";
-    static final private String docbook2odf = docbook2odfDir + "/xsl/docbook.xsl";
+    //static final private String docbook2odf = docbook2odfDir + "/xsl/docbook.xsl";
     static final private String docbook2fo = walshDir + "/fo/docbook.xsl";
     
     // Out put type available
@@ -98,7 +98,7 @@ public class JRST {
     static final public String TYPE_JAVAHELP = "javahelp";
     static final public String TYPE_HTMLHELP = "htmlhelp";
     static final public String TYPE_RST = "rst";
-    static final public String TYPE_ODT = "odt";
+    //static final public String TYPE_ODT = "odt";
     static final public String TYPE_FO = "fo";
     
     
@@ -114,7 +114,7 @@ public class JRST {
         stylesheets.put(TYPE_JAVAHELP, rst2docbook+","+docbook2javahelp);
         stylesheets.put(TYPE_HTMLHELP, rst2docbook+","+docbook2htmlhelp);
         stylesheets.put(TYPE_RST, rst2rst);
-        stylesheets.put(TYPE_ODT, rst2docbook+","+docbook2odf);
+        //stylesheets.put(TYPE_ODT, rst2docbook+","+docbook2odf);
         stylesheets.put(TYPE_FO, rst2docbook + "," + docbook2fo);
     }
     
@@ -297,7 +297,7 @@ public class JRST {
         public String getXslFile();        
         public boolean isXslFile();
         
-        @Option(shortName="t", pattern = "xhtml|docbook|xml|html|xdoc|rst|odt|fo", // TODO pdf|rst|odt|rtf",                
+        @Option(shortName="t", pattern = "xhtml|docbook|xml|html|xdoc|rst|fo", // TODO pdf|rst|odt|rtf",                
                 description = "Output type")
         public String getOutType();
         public boolean isOutType();

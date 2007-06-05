@@ -31,7 +31,7 @@
 			<xsl:element name="h{count(ancestor::section) + 1}">
 				<xsl:attribute name="class">title</xsl:attribute>
 				<xsl:if test="@refid">
-					<a href="#{@refid}" id="{../@id}"><xsl:apply-templates/></a>
+					<a class="toc-backref" href="#{@refid}" id="{../@id}"><xsl:apply-templates/></a>
 				</xsl:if>
 				<xsl:if test="not(@refid)">
 					<xsl:apply-templates/>
@@ -74,7 +74,7 @@
 	<xsl:template match="author">
 		<xsl:if test="not(../../authors)">
 				<tr>
-					<th class="docpatterninfo-name">
+					<th class="docinfo-name">
 						<xsl:value-of select="name(.)"/> :
 					</th>
 					<td class="docinfo-content">
@@ -134,6 +134,8 @@
 		</xsl:if>
 		<xsl:if test="not(@refid)">
 			<a href="{@refuri}" id="{@id}"><xsl:apply-templates/></a>
+	
+			
 		</xsl:if>
 	</xsl:template>
 
@@ -327,14 +329,20 @@
 	</xsl:template>
 	
 	<xsl:template match="block_quote">
-		<div class="block_quote">
-			<p><xsl:apply-templates select="child::*[position()=1]"/></p>
+		
+		<blockquote>
+			
 			<xsl:if test="./attribution">
+				<p><xsl:apply-templates select="child::*[position()=1]"/></p>
 				<p class="attribution">
 					<xsl:apply-templates select="./attribution"/>
 				</p>
 			</xsl:if>
-		</div>
+			<xsl:if test="not(./attribution)">
+				<xsl:apply-templates select="child::*"/>
+				
+			</xsl:if>
+		</blockquote>
 	</xsl:template>
 	
 	<xsl:template match="doctest_block">
