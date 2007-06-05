@@ -52,6 +52,7 @@ L'on souhaite convertir le document rst (text.rst) suivant en html (text.html) :
    :Author: Letellier Sylvain
 
    .. Attention:: texte à être réinterprété comme un fichier rst indépendant
+      ceci est considéré comme un **paragraphe**
 
 On utilise donc la commande suivante::
 
@@ -85,7 +86,8 @@ La Classe **JRSTGenerator**, grâce au fichier XSL rst2xhtml.xsl, renvoie le fich
        <div class="attention">
          <p class="title">attention :</p>
          <p class="body">
-           <p>texte à être réinterprété comme un fichier rst indépendant</p>
+           <p>texte à être réinterprété comme un fichier rst indépendant
+              ceci est considéré comme un <strong>paragraphe</strong></p>
          </p>
        </div>
      </body>
@@ -96,7 +98,9 @@ Qui affiche la page (un CSS à été ajouté pour la mise en forme) :
 .. topic:: Titre
 
    :Author: Letellier Sylvain
+   
    .. Attention:: texte à être réinterprété comme un fichier rst indépendant
+      ceci est considéré comme un **paragraphe**
 
 Utilisation de XSL externe
 ==========================
@@ -105,7 +109,6 @@ JRST propose de transformer le XML de docutils_ avec des fichiers XSL externe.
 Pour cela, il faut utiliser la commande::
 
   JRST -x fichierXSL, fichierXSL2 fichierRST
-
 ou::
 
   JRST --xslFile fichierXSL, fichierXSL2 fichierRST

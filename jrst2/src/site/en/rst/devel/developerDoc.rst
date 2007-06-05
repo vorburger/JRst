@@ -57,6 +57,8 @@ We want to convert this following reStructuredText document (text.rst) to html (
    :Author: Letellier Sylvain
    
    .. Attention:: this text must be interpreted independently
+      because it must be interpreted like a **paragraph**
+
 
 So we use this following command::
 
@@ -90,7 +92,9 @@ This sequence diagramme describes the parser's mechanism throughout the generati
        <div class="attention">
          <p class="title">attention :</p>
          <p class="body">
-           <p>this text must be interpreted independently</p>
+           <p>this text must be interpreted independently
+              because it must be interpreted like a <strong>paragraph</strong>
+           </p>
          </p>
        </div>
      </body>
@@ -102,6 +106,8 @@ What display the page (CSS was added to layout) :
 
    :Author: Letellier Sylvain
    .. Attention:: this text must be interpreted independently
+      because it must be interpreted like a **paragraph**
+   
 
 Uses axternal XSL
 =================
