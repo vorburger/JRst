@@ -424,6 +424,7 @@ public class JRSTReader {
             eTitle.get(i).addAttribute("refid", "id" + idMax);
         }
         for (Element el : eTitle) {
+            
             int level = Integer.parseInt(el.attributeValue("level"));
             level = level - levelInit;
             el.addAttribute("level", "" + level);
@@ -480,7 +481,7 @@ public class JRSTReader {
                 reference.addAttribute("id", id);
                 reference.addAttribute("refid", text.replaceAll("\\W+", " ")
                         .trim().toLowerCase().replaceAll("\\W+", "-"));
-                reference.addAttribute("inline", "true");
+                //reference.addAttribute("inline", "true");
                 if (sectnum) {
                     Element generated = reference.addElement("generated")
                             .addAttribute("class", "sectnum");
@@ -495,7 +496,7 @@ public class JRSTReader {
 
                     }
                 }
-                reference.setText(text.trim());
+                reference.setText(text.replaceAll("_", "").trim());
 
             } else {
                 do {
@@ -1880,7 +1881,7 @@ public class JRSTReader {
         matcher = REGEX_HYPERLINK_REFERENCE.matcher(text);
         while (matcher.find()) {
             String txtDebut = text.substring(0, matcher.start());
-            String txtFin = text.substring(matcher.end()-1, text.length());
+            String txtFin = text.substring(matcher.end(), text.length());
             String ref = text.substring(matcher.start(), matcher.end() - 1);
             
             ref = ref.replaceAll("(&apos;|_)", "");
@@ -1899,7 +1900,7 @@ public class JRSTReader {
             if (!trouve)
                 hyper.addAttribute("refid", ref);
             hyper.setText(ref);
-            text = txtDebut + hyper.asXML() + txtFin;
+            text = txtDebut + hyper.asXML() +" "+ txtFin;
             matcher = REGEX_HYPERLINK_REFERENCE.matcher(text);
             
         }
