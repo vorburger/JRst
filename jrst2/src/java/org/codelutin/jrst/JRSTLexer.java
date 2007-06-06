@@ -603,9 +603,7 @@ public class JRSTLexer {
 	                	if (matcher.find()){
 	                		option_argument= matcher.group().substring(1, matcher.group().length());
 	                		option.addAttribute("option_argument", option_argument);
-                            // TODO a verif...
-		                	//if (option_stringTmp.charAt(option_argument.length()+1)==','){
-                            if (option_stringTmp.charAt(option_argument.length())==','){
+		                	if (option_stringTmp.charAt(option_argument.length()+1)==','){
 		                		delimiter = ',';
 		                		line=line.substring(option_string.length()+option_argument.length()+3,line.length());
 		                	}
