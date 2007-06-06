@@ -167,13 +167,13 @@ character - either "-", "+" or "*"::
 
 Results in:
 
-  * a bullet point using "*"
+* a bullet point using "*"
 
-    - a sub-list using "-"
+  - a sub-list using "-"
 
-      + yet another sub-list
+    + yet another sub-list
 
-    - another item
+  - another item
 
 **definition** lists (quickref__)
   
@@ -212,7 +212,7 @@ text, finish the prior paragraph with "``::``".  The preformatted
 block is finished when the text falls back to the same indentation
 level as a paragraph prior to the preformatted block.  For example::
 
-An example::
+  An example::
 
       Whitespace, newlines, blank lines, and all kinds of markup
         (like *this* or \this) is preserved by literal blocks.
@@ -221,12 +221,12 @@ An example::
 
 Results in:
 
-  An example::
+An example::
 
-      Whitespace, newlines, blank lines, and all kinds of markup
-        (like *this* or \this) is preserved by literal blocks.
+    Whitespace, newlines, blank lines, and all kinds of markup
+      (like *this* or \this) is preserved by literal blocks.
 
-  no more example
+no more example
 
 Note that if a paragraph consists only of "``::``", then it's removed
 from the output::

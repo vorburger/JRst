@@ -2,7 +2,7 @@
 Various librairy used
 =====================
 
-.. contents:: Sommary
+.. contents::
 
 dom4j_
 ======

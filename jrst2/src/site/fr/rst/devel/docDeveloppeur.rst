@@ -9,7 +9,7 @@ Le diagramme de Class
 
 |classDiagramme|
 
-La Class **AdvancedReader** à pour fonction de faciliter la lecture du fichier RST grâce à différentes méthodes :
+La Class **AdvancedReader** à pour fonction de faciliter la lecture du fichier RST_ grâce à différentes méthodes :
   - String readLine() : renvoie une ligne
   - String[] readLines(int nombresLigne) : renvoie un certain nombre de lignes
   - Stringn[] readWhile(Pattern p) : renvoie les lignes tant qu'elles correspondent au pattern
@@ -93,7 +93,7 @@ La Classe **JRSTGenerator**, grâce au fichier XSL rst2xhtml.xsl, renvoie le fich
      </body>
    </html>
 
-Qui affiche la page (un CSS à été ajouté pour la mise en forme) :
+Qui affiche la page (un CSS [1]_ à été ajouté pour la mise en forme) :
 
 .. topic:: Titre
 
@@ -105,7 +105,7 @@ Qui affiche la page (un CSS à été ajouté pour la mise en forme) :
 Utilisation de XSL externe
 ==========================
 
-JRST propose de transformer le XML de docutils_ avec des fichiers XSL externe.
+JRST propose de transformer le XML de docutils_ avec des fichiers XSL [2]_ externe.
 Pour cela, il faut utiliser la commande::
 
   JRST -x fichierXSL, fichierXSL2 fichierRST
@@ -116,9 +116,12 @@ ou::
 JRST traitera le fichierRST, le XML de DocUtils_ qui est retourné sera transformé par la Class JRSTgenerator
 en commençant par le fichierXSL puis par le fichierXSL2...
 
-Une documentation sur le XSL est diponible ici_.
+.. [1] `Cascading Style Sheets`_
+.. [2] Une documentation sur le XSL est diponible ici_.
 
 .. _ici: presentationXSL.html
+.. _Cascading Style Sheets: http://fr.wikipedia.org/wiki/Feuilles_de_style_en_cascade
+.. _RST: http://docutils.sourceforge.net/rst.html
 .. _DocUtils: http://docutils.sourceforge.net/docs/ref/doctree.html
 .. |diagrammegeneration| image:: images/diagrammeGeneration.png
 .. |classDiagramme| image:: images/diagrammeClass.png

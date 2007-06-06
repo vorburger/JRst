@@ -2,7 +2,7 @@
 XSL (Extensible Stylesheets Language)
 =====================================
 
-.. contents:: Summary
+.. contents::
 
 Presentation
 ============

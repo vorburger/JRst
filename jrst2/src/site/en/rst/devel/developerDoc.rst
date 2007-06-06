@@ -2,14 +2,14 @@
 Developer Documentation
 =======================
 
-.. contents:: Summary
+.. contents::
 
 Class diagram
 =============
 
 |classDiagramme|
 
-AdvencedReader Class is used to easily read RST file using specifics methods:
+AdvencedReader Class is used to easily read RST_ file using specifics methods:
   - String readLine() : return a line.
   - String[] readLines(int nb) : return nb lines
   - String[] readWhile(Pattern p) : return lines while they match to the pattern
@@ -100,7 +100,7 @@ This sequence diagramme describes the parser's mechanism throughout the generati
      </body>
    </html>
 
-What display the page (CSS was added to layout) :
+What display the page (CSS [1]_ was added to layout) :
 
 .. topic:: Titre
 
@@ -112,7 +112,7 @@ What display the page (CSS was added to layout) :
 Uses axternal XSL
 =================
 
-JRST able to transform DocUtils XML with external XSL files.
+JRST able to transform DocUtils XML with external XSL [2]_ files.
 You must use this following command::
 
   JRST -x XSLfile, XSLfile2 RSTfile
@@ -121,12 +121,14 @@ or::
 
   JRST --xslFile XSLfile, XSLfile2 RSTfile
 
-JRST process RST file, returned DocUtils_ XML will be transformed by JRSTgenerator Class
+JRST process RST_ file, returned DocUtils_ XML will be transformed by JRSTgenerator Class
 starting by XSLfile then XSL2file2...
 
-XSL documentation is available here_.
+.. [1] `Cascading Style Sheets`_
+.. [2] XSL documentation is available here_.
 
 .. _here: presentationXSL.html
+.. _Cascading Style Sheets: http://en.wikipedia.org/wiki/Cascading_Style_Sheets
 .. _DocUtils: http://docutils.sourceforge.net/docs/ref/doctree.html
 .. |classDiagramme| image:: images/DiagrammeClass.png 
 .. |sequanceDiagramme| image:: images/DiagrammeSequance.png
