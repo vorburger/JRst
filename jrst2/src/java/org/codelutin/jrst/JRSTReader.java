@@ -1739,7 +1739,7 @@ public class JRSTReader {
         matcher = REGEX_FOOTNOTE_REFERENCE.matcher(text);
         while (matcher.find()) {
             String txtDebut = text.substring(0, matcher.start());
-            String txtFin = text.substring(matcher.end(), text.length());
+            String txtFin = text.substring(matcher.end()+1, text.length());
             Element footnote = DocumentHelper.createElement(FOOTNOTE_REFERENCE);
             String sFootnote = matcher.group();
             boolean done = false;
