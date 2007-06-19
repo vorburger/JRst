@@ -365,18 +365,20 @@ public class JRSTReader {
             
             Document result = DocumentHelper.createDocument();
             result.setRootElement(root);
-            // remove all level attribute
-            root.accept(new VisitorSupport() {
-                public void visit(Element e) {
-                    e.addAttribute("level", null);
-                    String type = e.attributeValue("type");
 
+            root.accept(new VisitorSupport() {
+                public void visit(Element e) {                                      
+                    // remove all level attribute
+                    e.addAttribute("level", null);
+
+                    String type = e.attributeValue("type");
                     if (type != null) {
                         if (type.equals("contents")) {
                             composeContents(e);
                             e.addAttribute("type", null);
                         }
                     }
+
                     if ("true".equalsIgnoreCase(e.attributeValue("inline"))) {
                         e.addAttribute("inline", null);
                         try {
@@ -404,7 +406,6 @@ public class JRSTReader {
      *            e
      */
     private void composeContents(Element e) {
-
         Element result = DocumentHelper.createElement(TOPIC);
         String option = e.getText();
         int depth = -1;
@@ -415,9 +416,15 @@ public class JRSTReader {
             matcher = pattern.matcher(matcher.group());
             if (matcher.find())
                 depth = Integer.parseInt(matcher.group());
+        }        
+        int levelInit = 0; 
+        try {
+            levelInit = Integer.parseInt(eTitle.getFirst().attributeValue("level"));
+        } catch (NumberFormatException eee) {
+            log.error("Can't parse level in: " + eTitle.getFirst().asXML(), eee);
+            return;
         }
-        int levelInit = Integer.parseInt(eTitle.getFirst().attributeValue(
-                "level"));
+            
         LinkedList<Element> title = new LinkedList<Element>();
         for (int i = 0; i < eTitle.size(); i++) {
             idMax++;
@@ -470,7 +477,7 @@ public class JRSTReader {
             int level = Integer.parseInt(e.attributeValue("level"));
             LinkedList<Element> child = new LinkedList<Element>();
 
-            if (level == 0 && !done) {
+            if (level <= 0 && !done) {
                 cnt++;
                 title.removeFirst();
                 item = result.addElement(LIST_ITEM);
@@ -509,14 +516,16 @@ public class JRSTReader {
                     }
                 } while (!title.isEmpty() && level > 0 && !done);
                 String numTmp = "";
-                if (sectnum)
+                if (sectnum) {
                     numTmp = num + cnt + ".";
-                if (item != null)
+                }
+                if (item != null) {
                     item.add(composeLineContent(child, numTmp)); // Appel
-                // recursif
-                else
+                    // recursif
+                } else {
                     result.add(composeLineContent(child, numTmp)); // Appel
-                // recursif
+                    // recursif
+                }
             }
         }
         return result;

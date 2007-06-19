@@ -9,6 +9,7 @@
 			</activation>
 
 			<properties>
+                                <maven.test.skip>true</maven.test.skip>
 				<!--Source base dir-->
 				<maven.src.dir>${basedir}/src</maven.src.dir>
 				
