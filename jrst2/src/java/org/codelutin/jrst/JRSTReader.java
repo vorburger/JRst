@@ -53,6 +53,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codelutin.jrst.directive.CalcDirective;
 import org.codelutin.jrst.directive.ContentDirective;
 import org.codelutin.jrst.directive.DateDirective;
 import org.codelutin.jrst.directive.ImageDirective;
@@ -280,28 +281,29 @@ public class JRSTReader {
 
     protected Map<String, JRSTDirective> directives = new HashMap<String, JRSTDirective>();
 
-    private static boolean sectnum = false;
+    private boolean sectnum = false;
 
     private Element footer;
 
-    private static int idMax = 0;
+    private int idMax = 0;
 
-    private static int symbolMax = 0;
+    private int symbolMax = 0;
 
-    private static int symbolMaxRef = 0;
+    private int symbolMaxRef = 0;
 
-    private static LinkedList<Integer> lblFootnotes = new LinkedList<Integer>();
+    private LinkedList<Integer> lblFootnotes = new LinkedList<Integer>();
 
-    private static LinkedList<Integer> lblFootnotesRef = new LinkedList<Integer>();
+    private LinkedList<Integer> lblFootnotesRef = new LinkedList<Integer>();
 
-    private static LinkedList<Element> eFootnotes = new LinkedList<Element>();
+    private LinkedList<Element> eFootnotes = new LinkedList<Element>();
 
-    private static LinkedList<Element> eTarget = new LinkedList<Element>();
+    private LinkedList<Element> eTarget = new LinkedList<Element>();
 
-    static LinkedList<Element> eTargetAnonymous = new LinkedList<Element>();
-    static LinkedList<Element> eTargetAnonymousCopy = new LinkedList<Element>();
+    private LinkedList<Element> eTargetAnonymous = new LinkedList<Element>();
 
-    private static LinkedList<Element> eTitle = new LinkedList<Element>();
+    private LinkedList<Element> eTargetAnonymousCopy = new LinkedList<Element>();
+
+    private LinkedList<Element> eTitle = new LinkedList<Element>();
 
     static {
         defaultDirectives = new HashMap<String, JRSTDirective>();
@@ -309,6 +311,7 @@ public class JRSTReader {
         defaultDirectives.put(DATE, new DateDirective());
         defaultDirectives.put("time", new DateDirective());
         defaultDirectives.put("contents", new ContentDirective());
+        defaultDirectives.put("calc", new CalcDirective());
         defaultDirectives.put("sectnum", new SectnumDirective());
         // TODO put here all other directive
     }
@@ -342,7 +345,7 @@ public class JRSTReader {
     }
 
     /**
-     * @param defaultDirectives
+     * @param JRSTDirective
      *            the defaultDirectives to set
      */
     public void addDirectives(String name, JRSTDirective directive) {
@@ -362,15 +365,15 @@ public class JRSTReader {
         JRSTLexer lexer = new JRSTLexer(reader);
         try {
             Element root = composeDocument(lexer);
-            
+
             Document result = DocumentHelper.createDocument();
             result.setRootElement(root);
 
             root.accept(new VisitorSupport() {
-                public void visit(Element e) {                                      
+                public void visit(Element e) {
                     // remove all level attribute
                     e.addAttribute("level", null);
-
+                    // Constrution du sommaire
                     String type = e.attributeValue("type");
                     if (type != null) {
                         if (type.equals("contents")) {
@@ -391,7 +394,7 @@ public class JRSTReader {
                     }
                 }
             });
-            
+
             return result;
         } catch (Exception eee) {
             log.error(_("JRST parsing error line {0} char {1}:\n{2}", lexer
@@ -402,13 +405,27 @@ public class JRSTReader {
     }
 
     /**
+     * <p>
+     * exemple :
+     * </p>
+     * 
+     * <pre>
+     * ..contents : Sommaire
+     *   depth: 3
+     * </pre>
+     * 
+     * <p>
+     * depth sert a limiter la profondeur du sommaire
+     * </p>
+     * 
      * @param Element
-     *            e
+     * 
      */
     private void composeContents(Element e) {
         Element result = DocumentHelper.createElement(TOPIC);
         String option = e.getText();
         int depth = -1;
+        // depth: 3
         Pattern pattern = Pattern.compile("\\s*\\:depth\\:\\s*\\p{Digit}+");
         Matcher matcher = pattern.matcher(option);
         if (matcher.matches()) {
@@ -416,22 +433,27 @@ public class JRSTReader {
             matcher = pattern.matcher(matcher.group());
             if (matcher.find())
                 depth = Integer.parseInt(matcher.group());
-        }        
-        int levelInit = 0; 
+        }
+        int levelInit = 0;
         try {
-            levelInit = Integer.parseInt(eTitle.getFirst().attributeValue("level"));
+            levelInit = Integer.parseInt(eTitle.getFirst().attributeValue(
+                    "level"));
         } catch (NumberFormatException eee) {
-            log.error("Can't parse level in: " + eTitle.getFirst().asXML(), eee);
+            log
+                    .error(
+                            "Can't parse level in: "
+                                    + eTitle.getFirst().asXML(), eee);
             return;
         }
-            
+
         LinkedList<Element> title = new LinkedList<Element>();
+        // on rajoute les refid
         for (int i = 0; i < eTitle.size(); i++) {
             idMax++;
             eTitle.get(i).addAttribute("refid", "id" + idMax);
         }
+        // on enleve les titres limites par depth
         for (Element el : eTitle) {
-            
             int level = Integer.parseInt(el.attributeValue("level"));
             level = level - levelInit;
             el.addAttribute("level", "" + level);
@@ -446,7 +468,7 @@ public class JRSTReader {
         String titleValue = e.attributeValue("value");
         e.addAttribute("value", null);
         String value = titleValue.trim().toLowerCase();
-
+        // sans titre c "contents" par default
         if (value.matches("\\s*")) {
             value = "contents";
             titleValue = "Contents";
@@ -454,6 +476,7 @@ public class JRSTReader {
         e.addAttribute("id", value);
         e.addAttribute("name", value);
         result.addElement("title").setText(titleValue);
+        // on compose les lignes
         result.add(composeLineContent(title, ""));
         e.setText("");
         e.appendContent(result);
@@ -472,12 +495,11 @@ public class JRSTReader {
         int cnt = 0;
         while (!title.isEmpty()) {
 
-            boolean done = false;
             Element e = title.getFirst();
             int level = Integer.parseInt(e.attributeValue("level"));
             LinkedList<Element> child = new LinkedList<Element>();
 
-            if (level <= 0 && !done) {
+            if (level <= 0) {
                 cnt++;
                 title.removeFirst();
                 item = result.addElement(LIST_ITEM);
@@ -488,7 +510,7 @@ public class JRSTReader {
                 reference.addAttribute("id", id);
                 reference.addAttribute("refid", text.replaceAll("\\W+", " ")
                         .trim().toLowerCase().replaceAll("\\W+", "-"));
-                //reference.addAttribute("inline", "true");
+                // si l'on doit les numeroter
                 if (sectnum) {
                     Element generated = reference.addElement("generated")
                             .addAttribute("class", "sectnum");
@@ -514,8 +536,9 @@ public class JRSTReader {
                         e = title.getFirst();
                         level = Integer.parseInt(e.attributeValue("level"));
                     }
-                } while (!title.isEmpty() && level > 0 && !done);
+                } while (!title.isEmpty() && level > 0);
                 String numTmp = "";
+                // numerotation
                 if (sectnum) {
                     numTmp = num + cnt + ".";
                 }
@@ -545,6 +568,13 @@ public class JRSTReader {
         // skip blank line
         skipBlankLine(lexer);
 
+        // les liens anonymes
+        LinkedList<Element> items = lexer.refTarget();
+        for (Element e : items) {
+            eTarget.add(e);
+
+        }
+
         // le header
         item = lexer.peekHeader();
         if (itemEquals(HEADER, item)) {
@@ -553,6 +583,7 @@ public class JRSTReader {
             header.addAttribute("inline", "true").setText(item.getText());
         }
 
+        // le footer
         item = lexer.peekFooter();
         if (itemEquals(FOOTER, item)) {
             footer = DocumentHelper.createElement(DECORATION);
@@ -560,6 +591,7 @@ public class JRSTReader {
             header.addAttribute("inline", "true").setText(item.getText());
         }
 
+        // les hyperlinks
         LinkedList<Element> listItem = lexer.peekTargetAnonymous();
         if (listItem != null) {
             for (Element e : listItem) {
@@ -567,13 +599,15 @@ public class JRSTReader {
                 anonym.addAttribute("anonymous", "1");
                 idMax++;
                 anonym.addAttribute("id", "id" + idMax);
-                anonym.addAttribute("refuri", e.attributeValue("refuri")
-                        .trim());
+                anonym
+                        .addAttribute("refuri", e.attributeValue("refuri")
+                                .trim());
                 eTargetAnonymous.add(anonym);
                 eTargetAnonymousCopy.add(anonym);
             }
         }
 
+        // les el�ments a enlever (deja parser : header, footer...)
         item = lexer.peekRemove();
         if (itemEquals("remove", item))
             lexer.remove();
@@ -615,7 +649,6 @@ public class JRSTReader {
 
         // les infos du doc
         item = lexer.peekDocInfo();
-
         Element documentinfo = null;
         while (itemEquals(DOCINFO, item) || itemEquals(FIELD_LIST, item)) {
 
@@ -702,6 +735,7 @@ public class JRSTReader {
             item = lexer.peekTitle();
         }
 
+        // on ajoute le footer a la fin
         if (footer != null)
             result.add(footer);
 
@@ -709,6 +743,10 @@ public class JRSTReader {
     }
 
     /**
+     * <p>
+     * skip blank line
+     * </p>
+     * 
      * @param lexer
      * @throws DocumentException
      * @throws IOException
@@ -726,6 +764,9 @@ public class JRSTReader {
 
     /**
      * *
+     * <p>
+     * Corps du document
+     * </p>
      * 
      * @param lexer
      * @param root
@@ -824,7 +865,7 @@ public class JRSTReader {
                 lexer.remove();
                 Element list = composeTarget(item);
                 parent.add(list);
-            } else if (itemEquals("targetAnonymous",item)){
+            } else if (itemEquals("targetAnonymous", item)) {
                 lexer.remove();
                 Element list = composeTargetAnonymous(item);
                 parent.add(list);
@@ -849,7 +890,7 @@ public class JRSTReader {
             }
 
             // Pour afficher le "PseudoXML"
-            //if (item!=null) System.out.println(item.asXML());
+            // if (item!=null) System.out.println(item.asXML());
 
             item = lexer.peekTitleOrBodyElement();
         }
@@ -858,6 +899,23 @@ public class JRSTReader {
     }
 
     /**
+     * <p>
+     * include un document rst
+     * </p>
+     * 
+     * <pre>
+     * .. include:: doc.rst
+     * </pre>
+     * 
+     * <p>
+     * include un document literal (code...)
+     * </p>
+     * 
+     * <pre>
+     * .. include:: literal
+     *       doc.rst
+     * </pre>
+     * 
      * @param item
      * @return Element
      * @throws Exception
@@ -881,8 +939,8 @@ public class JRSTReader {
             File fileIn = new File(path);
             URL url = fileIn.toURL();
             Reader in = new InputStreamReader(url.openStream());
-            JRSTReader jrst = new JRSTReader();
-            Document doc = jrst.read(in);
+
+            Document doc = newJRSTReader(in);
 
             result = doc.getRootElement();
         }
@@ -890,6 +948,12 @@ public class JRSTReader {
     }
 
     /**
+     * <pre>
+     * ..
+     *   So this block is not &quot;lost&quot;,
+     *   despite its indentation. 
+     * </pre>
+     * 
      * @param item
      * @return Element
      */
@@ -897,26 +961,42 @@ public class JRSTReader {
 
         return item;
     }
+
     /**
+     * <pre>
+     * __ http://truc.html
+     * </pre>
      * @param item
      * @return Element
      */
     private Element composeTargetAnonymous(Element item) {
-        Element result=null;
-        result =eTargetAnonymousCopy.getFirst();
+        Element result = null;
+        result = eTargetAnonymousCopy.getFirst();
         eTargetAnonymousCopy.removeFirst();
         return result;
     }
+
     /**
+     * <pre
+     * _ target: target.html
+     * </pre>
      * @param item
      * @return Element
      */
     private Element composeTarget(Element item) {
-        eTarget.add(item);
-        return item;
+        Element result = null;
+        for (Element e : eTarget) {
+            if (e.attributeValue("id").equals(item.attributeValue("id"))) {
+                result = e;
+            }
+        }
+        return result;
     }
 
     /**
+     * <pre>
+     * .. [#] This is a footnote
+     * </pre>
      * @param item
      * @return Element
      * @throws Exception
@@ -1002,10 +1082,8 @@ public class JRSTReader {
                     lblFootnotes.add(Integer.parseInt(label));
                 efootnote.addAttribute("type", type);
                 eFootnotes.add(efootnote);
-
-                JRSTReader reader = new JRSTReader();
                 String text = footnote.getText();
-                Document doc = reader.read(new StringReader(text));
+                Document doc = newJRSTReader(new StringReader(text));
                 result[cnt].appendContent(doc.getRootElement());
 
                 cnt++;
@@ -1024,6 +1102,10 @@ public class JRSTReader {
     }
 
     /**
+     * <pre>
+     * -a command-line option "a" -1 file, --one=file, --two file Multiple
+     * options with arguments.
+     * </pre>
      * @param lexer
      * @return Element
      * @throws Exception
@@ -1050,17 +1132,23 @@ public class JRSTReader {
                 }
             }
             Element description = optionListItem.addElement(DESCRIPTION);
-            JRSTReader reader = new JRSTReader();
+
             String text = item.getText();
-            Document doc = reader.read(new StringReader(text));
+            Document doc = newJRSTReader(new StringReader(text));
             description.appendContent(doc.getRootElement());
-            
+
             item = lexer.peekOption();
         }
         return result;
     }
 
     /**
+     * <pre>
+     * .. topic:: Title
+     * 
+     *    Body.
+     * </pre>
+     * 
      * @param Element
      *            item
      * @return Element
@@ -1072,17 +1160,22 @@ public class JRSTReader {
         result = DocumentHelper.createElement(TOPIC);
         result.addElement(TITLE).addAttribute("inline", "true").setText(
                 item.attributeValue(TITLE));
-        JRSTReader reader = new JRSTReader();
         String text = item.getText();
-        Document doc = reader.read(new StringReader(text));
+        Document doc = newJRSTReader(new StringReader(text));
         result.appendContent(doc.getRootElement());
-        
+
         return result;
     }
 
     /**
+     * <pre>
+     * .. sidebar:: Title
+     *    :subtitle: If Desired
+     *    
+     *    Body.
+     * </pre>
+     * 
      * @param Element
-     *            item
      * @return Element
      * @throws Exception
      */
@@ -1095,15 +1188,21 @@ public class JRSTReader {
         if (item.attributeValue("subExiste").equals("true"))
             result.addElement(SUBTITLE).addAttribute("inline", "true").setText(
                     item.attributeValue(SUBTITLE));
-        JRSTReader reader = new JRSTReader();
+
         String text = item.getText();
-        Document doc = reader.read(new StringReader(text));
+        Document doc = newJRSTReader(new StringReader(text));
         result.appendContent(doc.getRootElement());
 
         return result;
     }
 
     /**
+     * <pre>
+     * | line block
+     * |
+     * |    indent
+     * </pre>
+     * 
      * @param lexer
      * @param item
      * @return Element
@@ -1156,8 +1255,12 @@ public class JRSTReader {
     }
 
     /**
+     * <pre>
+     * &gt;&gt;&gt; print 'this is a Doctest block'
+     * this is a Doctest block
+     * </pre>
+     * 
      * @param Element
-     *            item
      * @return Element
      */
     private Element composeDoctestBlock(Element item) {
@@ -1165,18 +1268,26 @@ public class JRSTReader {
     }
 
     /**
+     * <pre>
+     * As a great paleontologist once said,
+     * 
+     *      This theory, that is mine, is mine.
+     * 
+     *      -- Anne Elk (Miss)
+     * </pre>
+     * 
      * @param Element
-     *            item
      * @return Element
      * @throws Exception
+     * 
      */
 
     private Element composeBlockQuote(Element item) throws Exception {
         Element result = null;
         result = DocumentHelper.createElement(BLOCK_QUOTE);
-        JRSTReader reader = new JRSTReader();
+
         String text = item.getText();
-        Document doc = reader.read(new StringReader(text));
+        Document doc = newJRSTReader(new StringReader(text));
         result.appendContent(doc.getRootElement());
         String sAttribution = item.attributeValue(ATTRIBUTION);
         if (sAttribution != null) {
@@ -1188,10 +1299,16 @@ public class JRSTReader {
     }
 
     /**
+     * <pre>
+     * .. admonition:: And, by the way...
+     * 
+     *      You can make up your own admonition too.
+     * </pre>
+     * 
      * @param Element
-     *            item
      * @return Element
      * @throws Exception
+     * 
      */
     private Element composeAdmonition(Element item) throws Exception {
         Element result = null;
@@ -1209,15 +1326,17 @@ public class JRSTReader {
         } else
             result = DocumentHelper.createElement(item.attributeValue("type")
                     .toLowerCase());
-        JRSTReader reader = new JRSTReader();
+
         String text = item.getText();
-        Document doc = reader.read(new StringReader(text));
+        Document doc = newJRSTReader(new StringReader(text));
         result.appendContent(doc.getRootElement());
         return result;
     }
 
     /**
-     * @param item
+     * parse all directives
+     * 
+     * @param Element
      * @return Node
      */
     private Node composeDirective(Element item) {
@@ -1238,8 +1357,11 @@ public class JRSTReader {
     }
 
     /**
+     * <pre>
+     * .. |biohazard| image:: biohazard.png
+     * </pre>
+     * 
      * @param Element
-     *            item
      * @return Element
      */
     private Element composeSubstitutionDefinition(Element item) {
@@ -1253,9 +1375,35 @@ public class JRSTReader {
     }
 
     /**
+     * <p>
+     * Complexe Table
+     * </p>
+     * 
+     * <pre>
+     * +------------------------+------------+---------------------+
+     * | body row 3             | Cells may  | - Table cells       |
+     * +------------------------+ span rows. | - contain           |
+     * | body row 4             |            | - body elements.    |
+     * +------------------------+------------+---------------------+
+     * </pre>
+     * 
+     * <p>
+     * And simple table
+     * </p>
+     * 
+     * <pre>
+     * =====  =====  ======
+     *    Inputs     Output
+     * ============  ======
+     *   A      B    A or B
+     * ------------  ------
+     *   A      B    A or B
+     * =====  =====  ======
+     * </pre>
+     * 
      * @param Element
-     *            item
      * @return Element
+     * 
      */
     @SuppressWarnings("unchecked")
     private Element composeTable(Element item) throws Exception {
@@ -1313,7 +1461,7 @@ public class JRSTReader {
                     JRSTLexer.CELL);
             for (int c = 0; c < cells.size(); c++) {
                 Element cell = cells.get(c);
-                // si la cellule a ete utilisé pour un regroupement vertical on
+                // si la cellule a ete utilise pour un regroupement vertical on
                 // la passe
                 if (!"true".equals(cell.attributeValue("used"))) {
                     Element entry = row.addElement(ENTRY);
@@ -1332,7 +1480,7 @@ public class JRSTReader {
                                                 + JRSTLexer.CELL_INDEX_START
                                                 + "=" + cellStart + "]");
                         text += tmpCell.getText();
-                        // on marque la cellule comme utilisé
+                        // on marque la cellule comme utilise
                         tmpCell.addAttribute("used", "true");
                     } while (!"true".equals(tmpCell
                             .attributeValue(JRSTLexer.CELL_END)));
@@ -1361,8 +1509,7 @@ public class JRSTReader {
                                         .valueOf(morecols));
                     }
                     // parse entry text in table
-                    JRSTReader reader = new JRSTReader();
-                    Document doc = reader.read(new StringReader(text));
+                    Document doc = newJRSTReader(new StringReader(text));
                     entry.appendContent(doc.getRootElement());
                 }
             }
@@ -1376,6 +1523,17 @@ public class JRSTReader {
     }
 
     /**
+     * <p> * items begin with "-", "+", or "*"
+     * </p>
+     * 
+     * <pre>
+     * * aaa
+     *   - bbb
+     * * ccc
+     *   - ddd
+     *      + eee
+     * </pre>
+     * 
      * @param lexer
      * @return Element
      * @throws Exception
@@ -1400,6 +1558,14 @@ public class JRSTReader {
     }
 
     /**
+     * <pre>
+     * 3. et meme
+     * * #. pour voir
+     * * I) de tout
+     * (a) pour tout
+     * (#) vraiment tout
+     * </pre>
+     * 
      * @param lexer
      * @return Element
      * @throws Exception
@@ -1432,6 +1598,11 @@ public class JRSTReader {
     }
 
     /**
+     * <pre>
+     * le mot : la classe
+     *   la definition
+     * </pre>
+     * 
      * @param lexer
      * @return Element
      * @throws Exception
@@ -1472,6 +1643,12 @@ public class JRSTReader {
     }
 
     /**
+     * <pre>
+     * :un peu: de field
+     *      ca ne fait pas
+     *      de mal
+     * </pre>
+     * 
      * @param lexer
      * @return Element
      * @throws Exception
@@ -1489,6 +1666,13 @@ public class JRSTReader {
     }
 
     /**
+     * <pre>
+     * :field1: avec un
+     *    petit texte 
+     *    - et meme un 
+     *    - debut 
+     *    - de list
+     * </pre>
      * @param lexer
      * @return Element
      * @throws Exception
@@ -1517,6 +1701,11 @@ public class JRSTReader {
     }
 
     /**
+     * <pre>
+     * DEFINITIONS
+     * -----------
+     * </pre>
+     * 
      * @param lexer
      * @return Element
      * @throws Exception
@@ -1689,6 +1878,47 @@ public class JRSTReader {
         return result;
     }
 
+    private Document newJRSTReader(Reader r) throws Exception {
+        JRSTReader reader = new JRSTReader();
+        reader.setVariable(idMax, symbolMax, symbolMaxRef, lblFootnotes,
+                lblFootnotesRef, eFootnotes, eTarget, eTargetAnonymous,
+                eTargetAnonymousCopy);
+
+        return reader.read(r);
+
+    }
+    /**
+     * <p>
+     * Initialises les variables d'environements
+     * par ex, les hyperlinks peuvent etre referencer dans tous le document
+     * </p>
+     * @param idMax
+     * @param symbolMax
+     * @param symbolMaxRef
+     * @param lblFootnotes
+     * @param lblFootnotesRef
+     * @param eFootnotes
+     * @param eTarget
+     * @param eTargetAnonymous
+     * @param eTargetAnonymousCopy
+     */
+    public void setVariable(int idMax, int symbolMax, int symbolMaxRef,
+            LinkedList<Integer> lblFootnotes,
+            LinkedList<Integer> lblFootnotesRef,
+            LinkedList<Element> eFootnotes, LinkedList<Element> eTarget,
+            LinkedList<Element> eTargetAnonymous,
+            LinkedList<Element> eTargetAnonymousCopy) {
+        this.idMax = idMax;
+        this.symbolMax = symbolMax;
+        this.symbolMaxRef = symbolMaxRef;
+        this.lblFootnotes = lblFootnotes;
+        this.lblFootnotesRef = lblFootnotesRef;
+        this.eFootnotes = eFootnotes;
+        this.eTarget = eTarget;
+        this.eTargetAnonymous = eTargetAnonymous;
+        this.eTargetAnonymousCopy = eTargetAnonymousCopy;
+    }
+
     /**
      * Parse text in element and replace text with parse result
      * 
@@ -1733,7 +1963,7 @@ public class JRSTReader {
             text = text.substring(0, start) + "<tmp>" + key + "</tmp>"
                     + text.substring(end);
             matcher = REGEX_INLINE_REFERENCE.matcher(text);
-           
+
         }
         // do all substitution inline
         text = REGEX_EMAIL.matcher(text).replaceAll(
@@ -1745,10 +1975,11 @@ public class JRSTReader {
                 "<" + EMPHASIS + ">$1</" + EMPHASIS + ">");
         text = REGEX_REFERENCE.matcher(text).replaceAll(
                 "<" + REFERENCE + " refuri='$1'>$1</" + REFERENCE + ">$2");
+        // _[#]truc
         matcher = REGEX_FOOTNOTE_REFERENCE.matcher(text);
         while (matcher.find()) {
             String txtDebut = text.substring(0, matcher.start());
-            String txtFin = text.substring(matcher.end()+1, text.length());
+            String txtFin = text.substring(matcher.end() + 1, text.length());
             Element footnote = DocumentHelper.createElement(FOOTNOTE_REFERENCE);
             String sFootnote = matcher.group();
             boolean done = false;
@@ -1868,6 +2099,7 @@ public class JRSTReader {
             text = txtDebut + footnote.asXML() + txtFin;
             matcher = REGEX_FOOTNOTE_REFERENCE.matcher(text);
         }
+        // .. __http://truc.html
         matcher = REGEX_ANONYMOUS_HYPERLINK_REFERENCE.matcher(text);
         while (matcher.find()) {
             String txtDebut = text.substring(0, matcher.start());
@@ -1886,13 +2118,13 @@ public class JRSTReader {
             text = txtDebut + anonym.asXML() + txtFin;
             matcher = REGEX_ANONYMOUS_HYPERLINK_REFERENCE.matcher(text);
         }
-        
+        // .. _truc: http://truc.html
         matcher = REGEX_HYPERLINK_REFERENCE.matcher(text);
         while (matcher.find()) {
             String txtDebut = text.substring(0, matcher.start());
             String txtFin = text.substring(matcher.end(), text.length());
             String ref = text.substring(matcher.start(), matcher.end() - 1);
-            
+
             ref = ref.replaceAll("(&apos;|_)", "");
             ref = ref.replaceAll("[\\W&&[^-]]", " ").trim();
             Element hyper = DocumentHelper.createElement("reference");
@@ -1909,11 +2141,11 @@ public class JRSTReader {
             if (!trouve)
                 hyper.addAttribute("refid", ref);
             hyper.setText(ref);
-            text = txtDebut + hyper.asXML() +" "+ txtFin;
+            text = txtDebut + hyper.asXML() + " " + txtFin;
             matcher = REGEX_HYPERLINK_REFERENCE.matcher(text);
-            
+
         }
-        
+
         // substitution reference
         matcher = REGEX_SUBSTITUTION_REFERENCE.matcher(text);
         int begin = 0;
@@ -1934,12 +2166,11 @@ public class JRSTReader {
             begin = text.length();
             text += end;
             matcher = REGEX_SUBSTITUTION_REFERENCE.matcher(text);
-           
 
         }
         // undo substitution in LITERAL
         Pattern p = Pattern.compile("<tmp>([^<>]+)</tmp>");
-        
+
         matcher = p.matcher(text);
         while (matcher.find()) {
             String start = text.substring(0, matcher.start());
@@ -1949,9 +2180,9 @@ public class JRSTReader {
             text = start + temporaries.get(tempKey) + end;
             matcher = p.matcher(text);
         }
-        Element result = DocumentHelper.parseText("<TMP>" + text.trim() + "</TMP>")
-                .getRootElement();
-        
+        Element result = DocumentHelper.parseText(
+                "<TMP>" + text.trim() + "</TMP>").getRootElement();
+
         e.setText("");
         e.appendContent(result);
     }
