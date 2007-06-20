@@ -2,7 +2,7 @@
 Introduction à ReStructuredText
 ===============================
 
-Document adaptée du document de Richard Jones : http://docutils.sourceforge.net/sandbox/wilk/french/quickstart-fr.html
+Document adapté de celui de Richard Jones : http://docutils.sourceforge.net/sandbox/wilk/french/quickstart-fr.html
 
 .. contents:: Sommaire
 
@@ -285,10 +285,6 @@ du fait que les sections ne peuvent être utilisées à l'intérieur d'un
 paragraphe décalé. Pour un exemple concret, comparez la structure de
 ce document avec le résultat.)
 
-Notez que les en-têtes de section sont utilisable comme cible de liens,
-simplement en utilisant leur nom. Pour créer un lien sur la section Listes_,
-j'écris "``Listes_``". Si le titre comporte des espaces, il est nécessaire
-d'utiliser les doubles apostrophes inversées "```Styles de texte`_``".
 
 Pour indiquer le titre du document, utilisez un style d'ornement unique
 en début de document. Pour indiquer un sous-titre de document, utilisez

@@ -109,7 +109,7 @@ What display the page (CSS [1]_ was added to layout) :
       because it must be interpreted like a **paragraph**
    
 
-Uses axternal XSL
+Uses external XSL
 =================
 
 JRST able to transform DocUtils XML with external XSL [2]_ files.
@@ -127,7 +127,8 @@ starting by XSLfile then XSL2file2...
 .. [1] `Cascading Style Sheets`_
 .. [2] XSL documentation is available here_.
 
-.. _here: presentationXSL.html
+.. _here: ./presentationXSL.html
+.. _RST: http://docutils.sourceforge.net/rst.html
 .. _Cascading Style Sheets: http://en.wikipedia.org/wiki/Cascading_Style_Sheets
 .. _DocUtils: http://docutils.sourceforge.net/docs/ref/doctree.html
 .. |classDiagramme| image:: images/DiagrammeClass.png 

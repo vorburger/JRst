@@ -12,8 +12,8 @@ are relative links that point to the `Quick reStructuredText`_ user
 reference.  If these links don't work, please refer to the `master
 quick reference`_ document.
 
-
-.. _Quick reStructuredText: quickref.html
+__ http://docutils.sourceforge.net/docs/user/rst/quickref.html
+.. _Quick reStructuredText: http://docutils.sourceforge.net/docs/user/rst/quickref.html
 .. _master quick reference: http://docutils.sourceforge.net/docs/user/rst/quickref.html
 .. _master quick reference: http://docutils.sourceforge.net/docs/rst/quickref.html
 
@@ -302,11 +302,6 @@ examples, because sections cannot exist inside block quotes.  For a
 concrete example, compare the section structure of this document's
 source text and processed output.)
 
-Note that section headers are available as link targets, just using
-their name.  To link to the Lists_ heading, I write "``Lists_``".  If
-the heading has a space in it like `text styles`_, we need to quote
-the heading "```text styles`_``".
-
 
 Document Title / Subtitle
 `````````````````````````
@@ -384,5 +379,4 @@ user reference is a good place to go next.  For complete details, the
    http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html.
 
 .. _reStructuredText Markup Specification: http://docutils.sourceforge.net/spec/rst/reStructuredText.html
-.. _Docutils-users: ../mailing-lists.html#docutils-users
 .. _Docutils project web site: http://docutils.sourceforge.net/

@@ -3,7 +3,7 @@ Le grand titre
 ==============
 
 ----------
- subtitle
+ subtitle 
 ----------
 
 .. include:: /home/letellier/PROJET/jrst2/src/test/org/codelutin/jrst/textHeader.rst
@@ -326,8 +326,7 @@ OPTION
 ------
 
 -a            command-line option "a"
--1 file, --one=file, --two file
-              Multiple options with arguments.
+-1 file, --one=file, --two file  Multiple options with arguments.
 
 FOOTNOTES
 ---------

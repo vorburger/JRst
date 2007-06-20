@@ -38,8 +38,10 @@ Référence :
   * XMLmind (convertion de FO vers ODT et RTF) : http://www.xmlmind.com/foconverter/what_is_xfc.html
   * FOP (convertion de FO vers PDF) : http://xmlgraphics.apache.org/fop
 
+
 Exemple d'utilisation
 =====================
+
 
 L'on souhaite convertir le document rst (text.rst) suivant en html (text.html) :
 
@@ -123,6 +125,6 @@ en commençant par le fichierXSL puis par le fichierXSL2...
 .. _Cascading Style Sheets: http://fr.wikipedia.org/wiki/Feuilles_de_style_en_cascade
 .. _RST: http://docutils.sourceforge.net/rst.html
 .. _DocUtils: http://docutils.sourceforge.net/docs/ref/doctree.html
-.. |diagrammegeneration| image:: images/diagrammeGeneration.png
-.. |classDiagramme| image:: images/diagrammeClass.png
-.. |sequanceDiagramme| image:: images/diagrammeSequance.png
+.. |diagrammegeneration| image:: /home/letellier/PROJET/jrst2/src/site/fr/rst/devel/images/diagrammeGeneration.png
+.. |classDiagramme| image:: /home/letellier/PROJET/jrst2/src/site/fr/rst/devel/images/diagrammeClass.png
+.. |sequanceDiagramme| image:: /home/letellier/PROJET/jrst2/src/site/fr/rst/devel/images/diagrammeSequance.png
