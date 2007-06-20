@@ -1,3 +1,7 @@
+/**
+ * Compare les 2 xml avec XMLUnit
+ * 
+ */
 package org.codelutin.jrst;
 
 import org.custommonkey.xmlunit.DetailedDiff;
