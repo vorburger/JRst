@@ -40,7 +40,7 @@
     </menu>
 
 	<menu name="Developer">
- 	  <item name="Documentation" href="/devel/developpeurDoc.html"/>
+ 	  <item name="Documentation" href="/devel/developerDoc.html"/>
 	  <item name="A XSL primer" href="/devel/XSLpresentation.html"/>
 	  <item name="Librairy used" href="/devel/library.html"/>
       <item name="Todo" href="/devel/Todo.html"/>
