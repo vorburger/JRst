@@ -13,7 +13,6 @@ AdvencedReader Class is used to easily read RST_ file using specifics methods:
   - String readLine() : return a line.
   - String[] readLines(int nb) : return nb lines
   - String[] readWhile(Pattern p) : return lines while they match to the pattern
-
   ...
 
 **JRSTLexer** Class uses **AdvencedReader** to build XML file, it browses all document to isolate the data types, parameters
