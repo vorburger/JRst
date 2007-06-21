@@ -15,7 +15,6 @@ quick reference`_ document.
 __ http://docutils.sourceforge.net/docs/user/rst/quickref.html
 .. _Quick reStructuredText: http://docutils.sourceforge.net/docs/user/rst/quickref.html
 .. _master quick reference: http://docutils.sourceforge.net/docs/user/rst/quickref.html
-.. _master quick reference: http://docutils.sourceforge.net/docs/rst/quickref.html
 
 
 Structure
