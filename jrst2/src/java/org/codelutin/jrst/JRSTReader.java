@@ -311,7 +311,7 @@ public class JRSTReader {
         defaultDirectives.put(DATE, new DateDirective());
         defaultDirectives.put("time", new DateDirective());
         defaultDirectives.put("contents", new ContentDirective());
-        defaultDirectives.put("calc", new CalcDirective());
+        //defaultDirectives.put("calc", new CalcDirective());
         defaultDirectives.put("sectnum", new SectnumDirective());
         // TODO put here all other directive
     }
