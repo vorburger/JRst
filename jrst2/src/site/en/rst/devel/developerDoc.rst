@@ -14,7 +14,7 @@ AdvencedReader Class is used to easily read RST_ file using specifics methods:
   - String[] readLines(int nb) : return nb lines
   - String[] readWhile(Pattern p) : return lines while they match to the pattern
 
-...
+  ...
 
 **JRSTLexer** Class uses **AdvencedReader** to build XML file, it browses all document to isolate the data types, parameters
 and content, so assembling all usefuls informations to build the final XML. It will start by document's head (peekHeader(),
@@ -131,5 +131,6 @@ starting by XSLfile then XSL2file2...
 .. _RST: http://docutils.sourceforge.net/rst.html
 .. _Cascading Style Sheets: http://en.wikipedia.org/wiki/Cascading_Style_Sheets
 .. _DocUtils: http://docutils.sourceforge.net/docs/ref/doctree.html
+.. |diagrammegeneration| image:: images/diagrammeGeneration.png
 .. |classDiagramme| image:: images/DiagrammeClass.png 
 .. |sequanceDiagramme| image:: images/DiagrammeSequance.png

@@ -158,5 +158,5 @@ Links
 - Article : http://www.commentcamarche.net/xml/xmlxsl.php3
 - Diagram : http://fr.wikipedia.org/wiki/Extended_stylesheet_language_transformations
 
-.. |presentationxsl| image:: image/presentationXSL.png 
+.. |presentationxsl| image:: images/presentationXSL.png 
 
