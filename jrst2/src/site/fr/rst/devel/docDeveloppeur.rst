@@ -13,8 +13,7 @@ La Class **AdvancedReader** à pour fonction de faciliter la lecture du fichier R
   - String readLine() : renvoie une ligne
   - String[] readLines(int nombresLigne) : renvoie un certain nombre de lignes
   - Stringn[] readWhile(Pattern p) : renvoie les lignes tant qu'elles correspondent au pattern
-
-...
+  ...
 
 La Class **JRSTLexer** utilise **AdvancedReader** pour construire un fichier XML, il parcours l'ensemble du document pour isoler les types de données, leurs paramètres et leurs contenus, donc rassembler toutes les informations utiles à la mise en forme du XML final. Il va commencer par l'entête du document (peekHeader(), peekDocInfo()) pour ensuite s'intéresser au corps (peekBody()).
 
