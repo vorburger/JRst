@@ -29,6 +29,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.codelutin.i18n.I18n;
+import org.codelutin.util.Resource;
 
 public class JRSTInterface extends JDialog{
     private JPanel savePanel = null;
@@ -81,9 +82,9 @@ public class JRSTInterface extends JDialog{
     private boolean ecrase=false;
     private String[] commande = null;
 
-    private ImageIcon open = new ImageIcon("src/resources/icone/open.png");
-    private ImageIcon delete = new ImageIcon("src/resources/icone/cancel.png");
-    private ImageIcon more = new ImageIcon("src/resources/icone/more.gif");
+    private ImageIcon open = Resource.getIcon("icone/open.png");
+    private ImageIcon delete = Resource.getIcon("icone/cancel.png");
+    private ImageIcon more = Resource.getIcon("icone/more.gif");
     private ResourceBundle bundle = null;
 
     private LinkedList<Container> composantsXSL = null;
