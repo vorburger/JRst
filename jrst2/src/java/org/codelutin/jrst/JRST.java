@@ -30,6 +30,8 @@
  */
 package org.codelutin.jrst;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.Console;
@@ -59,6 +61,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codelutin.util.FileCompletion;
 import org.codelutin.util.FileUtil;
 import org.codelutin.util.StringUtil;
 import org.dom4j.Document;
@@ -78,7 +81,7 @@ import org.apache.fop.apps.MimeConstants;
 
 /**
  * FIXME: 'JRST --help' doesn't work, but 'JRST --help toto' work :(
- * 
+ * FIXME: 'JRST -c' doesn't work, but 'JRST -c toto'
  * @author poussin
  */
 @CommandLineInterface(application = "JRST")
@@ -156,6 +159,8 @@ public class JRST {
     static public void main(String[] args) throws Exception {
         if (args.length == 0)
             args = askOption();
+        if (args==null){System.exit(0);}
+        
         JRSTOption option = CliFactory.parseArguments(JRSTOption.class, args);
         
         if (option.isHelp()) {
@@ -178,17 +183,24 @@ public class JRST {
                 .isForce() ? Overwrite.ALLTIME : Overwrite.NEVER);
     }
 
-    private static String[] askOption() throws SecurityException, NoSuchMethodException{
-        //TODO remplacer par fileCompletion
-       
-        Console c = System.console();
-        String[] result;
-        if (c==null){
-            result=askOptionGraph();
-        }
-        else{
+    private static String[] askOption() throws SecurityException, NoSuchMethodException, IOException{
+        String[] result = null;
+        try{
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            GraphicsDevice[] gs = ge.getScreenDevices();
+            boolean done=false;
+            if (!(gs==null)){
+                if (gs.length>0){
+                    result=askOptionGraph();
+                    done=true;
+                }
+            }
+            if (!done)
+                result=askOptionText();
+        }catch(java.awt.HeadlessException e){
             result=askOptionText();
         }
+                
         return result;
 
     }
@@ -209,8 +221,9 @@ public class JRST {
 /**
  * Interface textuel
  * @return String[]
+ * @throws IOException 
  */
-    private static String[] askOptionText() {
+    private static String[] askOptionText() throws IOException {
         //language
         if (Locale.getDefault().getLanguage() == "fr")
             I18n.init("fr", "FR");
@@ -223,7 +236,7 @@ public class JRST {
         String cheminRST = "";
         while (!done) {
             System.out.println(bundle.getString("rstFile?"));
-            cheminRST = lire();
+            cheminRST = lireFile(false,false);
             if (cheminRST.length() == 0)
                 System.exit(0);
             File fileRST = new File(cheminRST);
@@ -248,7 +261,7 @@ public class JRST {
             done = false;
             while (!done) {
                 System.out.println(bundle.getString("xslFile?"));
-                String cheminXSLtmp = lire();
+                String cheminXSLtmp = lireFile(false,true);
 
                 File fileRST = new File(cheminXSLtmp);
                 if (cheminXSLtmp.equals("")){
@@ -282,7 +295,7 @@ public class JRST {
         String cheminSortie = "";
         while (!done) {
             System.out.println(bundle.getString("outputFile?"));
-            cheminSortie = lire();
+            cheminSortie = lireFile(true,true);
 
             File fileRST = new File(cheminSortie);
             if (fileRST.exists()) {
@@ -326,6 +339,15 @@ public class JRST {
         return ligne_lue;
 
     }
+    public static String lireFile(boolean enreg, boolean exit) throws IOException{
+        String line="";
+        FileCompletion fc = new FileCompletion(enreg,exit);
+        if (fc.consoleAvailable())
+            line=fc.read();
+        if (line==null)
+            line="";
+        return line;
+    }
     /**
      * 
      * @param xslListOrOutType
@@ -340,8 +362,8 @@ public class JRST {
                 && fileOut.exists()
                 && (overwrite == Overwrite.NEVER || (overwrite == Overwrite.IFNEWER && FileUtil
                         .isNewer(fileIn, fileOut)))) {
-            log.info("Don't generate file " + fileOut
-                    + ", because already exists");
+            //System.err.println("Don't generate file " + fileOut + ", because already exists");   
+            log.info("Don't generate file " + fileOut + ", because already exists");
         } else {
             // search xsl file list to apply
             String xslList = stylesheets.get(xslListOrOutType);
@@ -455,7 +477,7 @@ public class JRST {
         public boolean isXslFile();
 
         @Option(shortName = "t", pattern = "xml|xhtml|docbook|html|xdoc|rst|fo|pdf", // TODO
-        // pdf|rst|odt|rtf",
+        // odt|rtf",
         description = "Output type")
         public String getOutType();
 
