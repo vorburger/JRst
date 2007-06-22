@@ -17,7 +17,10 @@ a une idée à proposer il ne faut pas hésiter.
 
 - un export vers pretion, magic, ou autre outil de présentation.
 
-- permettre l'import de d'autre format que rst, par exemple .sxw
-  ce qui permettra de convertir simple du .sxw en rst.
+- permettre l'import de d'autre format que rst, par exemple .odt
+  ce qui permettra de convertir simple du .odt en rst.
 
 - Faire une doclet qui permette d'écrire les Javadocs en RST
+
+- Correction du bug sur les URIResolver, lors de la génération DocBook -> fo
+  il va chercher les imports à la racine du jrst, et non dans le jar.
