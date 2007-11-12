@@ -685,7 +685,9 @@ public class JRSTLexer {
                             option.addAttribute("option_argument",
                                     option_argument);
                             line = in.readLine();
-                            result.setText(line.trim());
+                            if (line != null) {
+                                result.setText(line.trim());
+                            }
                         }
                     }
                     if (done)
