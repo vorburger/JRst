@@ -21,7 +21,7 @@
 	<packaging>jar</packaging>
 
 	<!--Version-->
-	<version>0.7</version>
+	<version>0.8</version>
 
 	<!--Description-->
 	<description>Parser RST en Java.</description>
@@ -72,7 +72,7 @@
 		<dependency>
 			<groupId>lutinlib</groupId>
 			<artifactId>lutinutil</artifactId>
-			<version>0.24</version>
+			<version>0.26</version>
 			<scope>compile</scope>
 		</dependency>
 		
