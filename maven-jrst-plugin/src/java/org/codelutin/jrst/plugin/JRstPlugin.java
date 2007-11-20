@@ -68,14 +68,14 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
     private String directoryOut = "target/site-build/xdoc";
 
     /**
-     * Arrête la génération en cas d'erreurs
+     * Arrï¿½te la gï¿½nï¿½ration en cas d'erreurs
      * 
      * @parameter default-value="true"
      */
     private boolean ignoreErrors = true;
     
     /**
-     * Ecrase les fichiers générés
+     * Ecrase les fichiers gï¿½nï¿½rï¿½s
      * 
      * @parameter default-value="false"
      */
@@ -104,7 +104,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
     }
     
     private void actionGenerate(){
-        getLog().info("Génération des fichier xdocs à  partir des fichiers rst");
+        getLog().info("Gï¿½nï¿½ration des fichier xdocs ï¿½ partir des fichiers rst");
         numberFilesGenerates = 0;
         FileUtil.walkAfter(new File(directoryIn), this);
         getLog().info("Generating " + numberFilesGenerates + " files to " + directoryOut);
@@ -118,7 +118,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
             fileOut = fileIn.replace(directoryIn,directoryOut).replace(".rst",".xml");
             try {
                 JRST.generate(JRST.TYPE_XDOC,
-                        new File(fileIn), new File(fileOut), overwrite);
+                        new File(fileIn), new File(fileOut), (overwrite ? JRST.Overwrite.ALLTIME : JRST.Overwrite.NEVER));
                 numberFilesGenerates ++;
             } catch (Exception e) {
                 getLog().error(e);

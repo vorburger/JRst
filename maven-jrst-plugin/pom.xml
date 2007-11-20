@@ -21,7 +21,7 @@
 	<packaging>maven-plugin</packaging>
 	
 	<!--Version-->
-	<version>0.7</version>
+	<version>0.8</version>
 	
 	<!--Description-->
 	<description>
@@ -79,7 +79,7 @@
 		<dependency>
 			<groupId>lutinlib</groupId>
 			<artifactId>jrst</artifactId>
-			<version>[0.7,)</version>
+			<version>[0.8,)</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
