@@ -79,7 +79,7 @@
 		<dependency>
 			<groupId>xmlunit</groupId>
 			<artifactId>xmlunit</artifactId>
-			<version>1.1beta1</version>
+			<version>1.1</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -127,13 +127,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>lutinlib</groupId>
-			<artifactId>lutinxml</artifactId>
-			<version>0.7</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.1</version>
@@ -157,7 +150,7 @@
 		<dependency>
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
-			<version>1.1-beta-6</version>
+			<version>1.1.1</version>
 			<scope>compile</scope>
 		</dependency>
 
