@@ -2047,8 +2047,14 @@ public class JRSTLexer {
                                             .toLowerCase());
                             if (i + 2 > line.length()) {
                                 line = in.readLine();
-                                result.getLast().addAttribute("refuri",
-                                        line.trim());
+                                // FIXME 20071129 chatellier
+                                // line = null if link is non well formed
+                                // .. _Unifying types and classes in Python:
+                                // miss uri
+                                if(line==null) {
+                                    line = "";
+                                }
+                                result.getLast().addAttribute("refuri",line.trim());
                             } else
                                 result.getLast().addAttribute("refuri",
                                         line.substring(i + 2, line.length()));
