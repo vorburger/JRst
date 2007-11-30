@@ -1,37 +1,64 @@
-JRst
-====
+==============================
+reStructuredText parser : JRst
+==============================
 
-.. contents::
-
-
-Présentation
+Presentation
 ------------
 
-JRst is Java ReStructuredText parser.
+reStructuredText format is a document description format. Like other LaTex
+or DocBook, it can be converted toward a multitude of formats. These formats
+have usually invading syntax which, if it is necessary for very specific
+documents, becomes useless when it is used to quickly creating a simple
+document. RST has a so simple syntax that it  becomes almost invisible.
 
-Internaly Rst document is a dom4j tree that represent python docutils xml.
-You can generate docbook, xhtml, xdoc or your own files with your own XSL
-files.
+JRST is a Java ReStructuredText parser enabling to create a tree representation
+document. It becomes easy to generate document representation towards differents
+fomats.
 
-Usage
------
+How to use it
+-------------
 
-To generate python docutils xml just write::
+JRST parser takes a reStructuredText file and generates XML file. Which could be used to produce
+various files formats with generation XSL files. The available output formats are HTML, xhtml,
+rst, pdf, docbook, odt(Open-Office), rtf, or XML.
 
-  JRST myfile.rst
+::
 
-To generate html::
+   JRST myfile.rst   
 
-  JRST -t html myfile.rst
+This command converts myfile.rst toward XML file, displayed to the standard output (console).
+Several options are available :
 
-To generate in specified file::
+-o file,--outFile=file          to write toward a file.
+-t format,--outType format      to specify exit format, so using generation XSL file(s).
+                                Several formats are available xhtml, docbook, xml, HTML, xdoc, rst, pdf, odt, rtf. 
+-x xslFile,--xslFile xslFile    to specify generation XSL file at using.
+--force                         to overwrite, if file exists, it will be replaced by the new one.
+--help                          to display available options :
 
-  JRST -t xdoc -o myfile.xml myfile.rst
+::
+
+   Usage: [options] FILE
+      [--force] : overwrite existing out file
+      [--help] : display this help and exit
+      [--outFile -o value] : Output file
+      [--outType -t /xhtml|docbook|xml|html|xdoc|rst/] : Output type
+      [--xslFile -x value] : XSL file list to apply, comma separated
+
+NOTE : Only html, xhtml, DocBook, xdoc and pdf are available for the moment.
+
+ex :
+
+::
+
+   JRST --force -t html -o myfile.html myfile.rst   
+
+This command produces html file (myfile.html) from rst file (myfile.rst) 
+even if myfile.html already exists.
 
 
-Plugin maven
+Maven Plugin
 ------------
 
-Un plugin maven est disponnible à l'adresse suivante 
-http://jrst.labs.libre-entreprise.org/maven-jrst-plugin . Il permet l'utilisation 
-depuis maven de JRst.
+Maven plugin is available at the following links : http://jrst.labs.libre-entreprise.org/maven-jrst-plugin.
+It enables the use of JRST from Maven.

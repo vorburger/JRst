@@ -2,12 +2,6 @@
 Parseur reStructuredText : le JRst
 ==================================
 
-Documentation utilisateur
-=========================
-
-.. contents:: Sommaire
-
-
 Présentation
 ------------
 
@@ -26,7 +20,10 @@ vers différents formats.
 Usage
 -----
 
-Le parser JRST prend un fichier reStructuredText en entré et génère un fichier XML qui pourra ensuite servir à produire divers formats de fichiers grâce à des fichiers XSL de générations. Les formats de sortie disponibles sont le html, le xhtml, le rst, le pdf, le docbook, le odt (Open-Office), le rtf, ou encore le XML.
+Le parser JRST prend un fichier reStructuredText en entré et génère un fichier XML
+qui pourra ensuite servir à produire divers formats de fichiers grâce à des fichiers
+XSL de générations. Les formats de sortie disponibles sont le html, le xhtml, le rst,
+le pdf, le docbook, le odt (Open-Office), le rtf, ou encore le XML.
 
 ::
 
@@ -35,9 +32,10 @@ Le parser JRST prend un fichier reStructuredText en entré et génère un fichier X
 Cette commande aura pour effet de convertir le fichier myfile.rst en XML qui sera affiché sur la sortie standard (console).
 Plusieurs options sont disponibles :
 
--o file, --outFile=file          pour rediriger la sortie vers un fichier.
--t format, --outType format      pour préciser un format de sortie, donc utiliser un fichier XSL de génération. Plusieurs formats sont disponibles xhtml, docbook, xml, html, xdoc, rst, pdf, odt, rtf.
--x xslFile, --xslFile xslFile    sert à préciser le fichier xsl de génération à utiliser.
+-o file,--outFile=file           pour rediriger la sortie vers un fichier.
+-t format,--outType format       pour préciser un format de sortie, donc utiliser un ou des fichiers XSL de génération.
+                                 Plusieurs formats sont disponibles xhtml, docbook, xml, html, xdoc, rst, pdf, odt, rtf.
+-x xslFile,--xslFile xslFile     sert à préciser le fichier xsl de génération à utiliser.
 --force                          forcer l'écriture d'un fichier, si le fichier de sortie existe, il sera remplacé.
 --help                           pour afficher les options disponibles :
 
@@ -51,6 +49,7 @@ Plusieurs options sont disponibles :
       [--outType -t /xhtml|docbook|xml|html|xdoc|rst/] : Output type
       [--xslFile -x value] : XSL file list to apply, comma separated
 
+Note : Seul les formats html, xhtml, DocBook, xdoc et pdf sont disponible pour le moment.
 
 ex :
 
@@ -58,12 +57,12 @@ ex :
 
    JRST --force -t html -o myfile.html myfile.rst
 
-Cette commande produira un fichier html (myfile.html) à partir du fichier reStructuredText (myfile.rst) même si myfile.html existe déjà.
+Cette commande produira un fichier html (myfile.html) à partir du fichier reStructuredText_ (myfile.rst)
+même si myfile.html existe déjà.
 
 
-Plugin maven
+Plugin Maven
 ------------
 
-Un plugin maven est disponnible à l'adresse suivante 
-http://jrst.labs.libre-entreprise.org/maven-jrst-plugin. Il permet l'utilisation 
-depuis maven de JRst.
+Un plugin Maven est disponible à l'adresse suivante http://jrst.labs.libre-entreprise.org/maven-jrst-plugin.
+Il permet l'utilisation depuis Maven de JRst.
