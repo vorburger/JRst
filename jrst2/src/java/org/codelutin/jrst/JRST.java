@@ -407,7 +407,7 @@ public class JRST {
     
                     OutputStream outPDF = null;
                     if (fileOut != null) {
-                        fileOut.getParentFile().mkdirs();
+                        fileOut.getAbsoluteFile().getParentFile().mkdirs();
                         outPDF = new BufferedOutputStream(new FileOutputStream(fileOut));
                     } else {
                         outPDF = new BufferedOutputStream(System.out);
@@ -442,7 +442,8 @@ public class JRST {
     //          prepare the output flux
                 XMLWriter out = null;
                 if (fileOut != null) {
-                    fileOut.getParentFile().mkdirs();
+                    fileOut.getAbsoluteFile().getParentFile().mkdirs();
+                    
                     out = new XMLWriter(new FileWriter(fileOut), new OutputFormat(
                             "  ", true,"ISO-8859-1"));
                 } else {
