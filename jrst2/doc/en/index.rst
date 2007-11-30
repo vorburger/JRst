@@ -2,50 +2,55 @@
 reStructuredText parser : JRst
 ==============================
 
-Presentation
+About
 ------------
 
-reStructuredText format is a document description format. Like other LaTex
-or DocBook, it can be converted toward a multitude of formats. These formats
-have usually invading syntax which, if it is necessary for very specific
-documents, becomes useless when it is used to quickly creating a simple
-document. RST has a so simple syntax that it  becomes almost invisible.
+reStructuredText is a document markup system. Like LaTex
+or DocBook, it can be converted into a multitude of output formats. 
+Most markup systems have a very complex syntax which, though necessary 
+to maintain a high level of control over specific document layout tasks,
+is less desirable for the creation of simple documents with standard layouts.
+RST, on the other hand, has a such a simple syntax that it becomes almost 
+invisible.
 
-JRST is a Java ReStructuredText parser enabling to create a tree representation
-document. It becomes easy to generate document representation towards differents
-fomats.
+JRST is a Java ReStructuredText parser which generates an XML tree from 
+RST documents. This tree, in turn, may be transformed into a variety of 
+abitrary output formats through the use of standard tools.
 
 How to use it
 -------------
 
-JRST parser takes a reStructuredText file and generates XML file. Which could be used to produce
-various files formats with generation XSL files. The available output formats are HTML, xhtml,
-rst, pdf, docbook, odt(Open-Office), rtf, or XML.
+The JRST parser takes a reStructuredText file and generates an XML file. 
+This XML file, taken together with an appropriate XSL file, may be then
+be transformed into a variety of output formats. Currently available 
+output formats include HTML, xhtml, rst, pdf, docbook, odt(Open-Office), 
+rtf, and XML.
 
 ::
 
    JRST myfile.rst   
 
-This command converts myfile.rst toward XML file, displayed to the standard output (console).
+This command converts myfile.rst into an XML file which will be sent to
+the standard output (console).
 Several options are available :
 
--o file,--outFile=file          to write toward a file.
--t format,--outType format      to specify exit format, so using generation XSL file(s).
-                                Several formats are available xhtml, docbook, xml, HTML, xdoc, rst, pdf, odt, rtf. 
--x xslFile,--xslFile xslFile    to specify generation XSL file at using.
---force                         to overwrite, if file exists, it will be replaced by the new one.
---help                          to display available options :
+-o file,--outFile=file          to write to a file.
+-t format,--outType format      to specify output format
+                                Several formats are available including xhtml, docbook, xml, HTML, xdoc, rst, pdf, odt, rtf. 
+-x xslFile,--xslFile xslFile    to specify the XSL file to use 
+--force                         to overwrite an existing output file
+--help                          to display available options 
 
 ::
 
    Usage: [options] FILE
-      [--force] : overwrite existing out file
+      [--force] : overwrite existing output file
       [--help] : display this help and exit
-      [--outFile -o value] : Output file
-      [--outType -t /xhtml|docbook|xml|html|xdoc|rst/] : Output type
-      [--xslFile -x value] : XSL file list to apply, comma separated
+      [--outFile -o value] : output file
+      [--outType -t /xhtml|docbook|xml|html|xdoc|rst/] : output type
+      [--xslFile -x value] : comma separated list of XSL files to apply
 
-NOTE : Only html, xhtml, DocBook, xdoc and pdf are available for the moment.
+NOTE : Only html, xhtml, DocBook, xdoc and pdf are available at the moment.
 
 ex :
 
@@ -53,12 +58,14 @@ ex :
 
    JRST --force -t html -o myfile.html myfile.rst   
 
-This command produces html file (myfile.html) from rst file (myfile.rst) 
+This command produces an html file (myfile.html) from the rst file (myfile.rst) 
 even if myfile.html already exists.
 
 
 Maven Plugin
 ------------
 
-Maven plugin is available at the following links : http://jrst.labs.libre-entreprise.org/maven-jrst-plugin.
+A Maven plugin is available at the following location: 
+http://jrst.labs.libre-entreprise.org/maven-jrst-plugin.
 It enables the use of JRST from Maven.
+
