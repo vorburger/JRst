@@ -21,7 +21,7 @@
 	<packaging>jar</packaging>
 
 	<!--Version-->
-	<version>0.8</version>
+	<version>0.8.1</version>
 
 	<!--Description-->
 	<description>Parser RST en Java.</description>
