@@ -21,7 +21,7 @@
 	<packaging>jar</packaging>
 
 	<!--Version-->
-	<version>0.8.1</version>
+	<version>0.8.2-SNAPSHOT</version>
 
 	<!--Description-->
 	<description>Parser RST en Java.</description>
@@ -102,13 +102,6 @@
 			<artifactId>fop</artifactId>
 			<version>0.93</version>
 			<classifier>jdk15</classifier>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>lutinlib</groupId>
-			<artifactId>lutinwidget</artifactId>
-			<version>0.9</version>
 			<scope>compile</scope>
 		</dependency>
 
