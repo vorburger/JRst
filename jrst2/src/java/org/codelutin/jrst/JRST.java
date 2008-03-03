@@ -348,6 +348,11 @@ public class JRST {
             line="";
         return line;
     }
+
+    public static void generate(String xslListOrOutType, File fileIn, File fileOut, Overwrite overwrite) throws Exception {
+        generate(xslListOrOutType, fileIn, "ISO-8859-15", fileOut, "ISO-8859-15", overwrite);
+    }
+    
     /**
      * 
      * @param xslListOrOutType
@@ -357,7 +362,7 @@ public class JRST {
      * @throws Exception
      */
 
-    public static void generate(String xslListOrOutType, File fileIn, File fileOut, Overwrite overwrite) throws Exception {
+    public static void generate(String xslListOrOutType, File fileIn, String inputEncoding, File fileOut, String outputEncoding, Overwrite overwrite) throws Exception {
         if (fileOut != null
                 && fileOut.exists()
                 && (overwrite == Overwrite.NEVER || (overwrite == Overwrite.IFNEWER && FileUtil
@@ -375,7 +380,7 @@ public class JRST {
             
             // parse rst file
             URL url = fileIn.toURL();
-            Reader in = new InputStreamReader(url.openStream());
+            Reader in = new InputStreamReader(url.openStream(), inputEncoding);
             JRSTReader jrst = new JRSTReader();
             Document doc = jrst.read(in);
 
@@ -443,11 +448,11 @@ public class JRST {
                 XMLWriter out = null;
                 if (fileOut != null) {
                     fileOut.getAbsoluteFile().getParentFile().mkdirs();
-                    
-                    out = new XMLWriter(new FileWriter(fileOut), new OutputFormat(
-                            "  ", true,"ISO-8859-1"));
+
+                    out = new XMLWriter(FileUtil.getWriter(fileOut, outputEncoding), new OutputFormat(
+                            "  ", true,outputEncoding));
                 } else {
-                    out = new XMLWriter(System.out, new OutputFormat("  ", true, "ISO-8859-1"));
+                    out = new XMLWriter(System.out, new OutputFormat("  ", true, outputEncoding));
                 }
                 // write generated document
                 out.write(doc);
