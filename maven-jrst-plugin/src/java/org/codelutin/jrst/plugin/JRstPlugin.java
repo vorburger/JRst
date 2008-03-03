@@ -45,19 +45,33 @@ import org.codelutin.util.FileUtil;
 import org.codelutin.util.FileUtil.FileAction;
 
 /**
- * G√©n√©re du xdoc √† partir de fichiers Rst
+ * GÈnÈre du xdoc ‡ partir de fichiers Rst
  *  
  * @goal jrst
  * @phase pre-site
  */
 public class JRstPlugin extends AbstractMojo implements FileAction {    
     /**
-     * R√©pertoire source des fichiers Rst
+     * RÈpertoire source des fichiers Rst
      * 
      * @parameter default-value="doc"
      * @required
      */
     private String directoryIn = "doc";
+    
+    /**
+     * Encoding en entrÈe
+     * 
+     * @parameter default-value="ISO-8859-15"
+     */
+    private String inputEncoding = "ISO-8859-15";
+
+    /**
+     * Encoding en sortie
+     * 
+     * @parameter default-value="ISO-8859-15"
+     */
+    private String outputEncoding = "ISO-8859-15";
     
     /**
      * R√©pertoire cible des fichiers xdoc g√©n√©r√©e
@@ -118,7 +132,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
             fileOut = fileIn.replace(directoryIn,directoryOut).replace(".rst",".xml");
             try {
                 JRST.generate(JRST.TYPE_XDOC,
-                        new File(fileIn), new File(fileOut), (overwrite ? JRST.Overwrite.ALLTIME : JRST.Overwrite.NEVER));
+                        new File(fileIn), inputEncoding, new File(fileOut), outputEncoding, (overwrite ? JRST.Overwrite.ALLTIME : JRST.Overwrite.NEVER));
                 numberFilesGenerates ++;
             } catch (Exception e) {
                 getLog().error(e);

@@ -21,7 +21,7 @@
 	<packaging>maven-plugin</packaging>
 	
 	<!--Version-->
-	<version>0.8</version>
+	<version>0.8.1-SNAPSHOT</version>
 	
 	<!--Description-->
 	<description>
