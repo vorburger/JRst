@@ -34,11 +34,9 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.Console;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -51,37 +49,40 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.MimeConstants;
+import org.codelutin.i18n.I18n;
 import org.codelutin.util.FileCompletion;
 import org.codelutin.util.FileUtil;
+import org.codelutin.util.Resource;
 import org.codelutin.util.StringUtil;
 import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+
 import uk.co.flamingpenguin.jewel.cli.Cli;
 import uk.co.flamingpenguin.jewel.cli.CliFactory;
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 import uk.co.flamingpenguin.jewel.cli.Unparsed;
-import org.codelutin.i18n.I18n;
-
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FopFactory;
-import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.MimeConstants;
 
 /**
- * FIXME: 'JRST --help' doesn't work, but 'JRST --help toto' work :(
- * FIXME: 'JRST -c' doesn't work, but 'JRST -c toto'
+ * FIXME: 'JRST --help' doesn't work, but 'JRST --help toto' work :( FIXME:
+ * 'JRST -c' doesn't work, but 'JRST -c toto'
+ * 
  * @author poussin
  */
 @CommandLineInterface(application = "JRST")
@@ -100,8 +101,10 @@ public class JRST {
     static final private String rst2xdoc = "/xsl/rst2xdoc.xsl";
 
     static final private String rst2docbook = "/xsl/dn2dbk.xsl";
-    //static final private String walshDir = "/home/letellier/docbook5-xsl-1.72.0/";
-    static final private String walshDir = "/docbook-xsl-nwalsh";
+    // static final private String walshDir =
+    // "/home/letellier/docbook5-xsl-1.72.0/";
+    //static final private String walshDir = "/docbook-xsl-nwalsh";
+    static final private String walshDir = "";
 
     // static final private String docbook2odfDir = "/docbook2odf-0.211";
     static final private String docbook2xhtml = walshDir + "/xhtml/docbook.xsl";
@@ -136,10 +139,12 @@ public class JRST {
 
     // static final public String TYPE_ODT = "odt";
     static final public String TYPE_FO = "fo";
-    
+
     static final public String TYPE_PDF = "pdf";
 
-    /** key, Out type; value: chain of XSL file to provide wanted file for output */
+    /**
+     * key, Out type; value: chain of XSL file to provide wanted file for output
+     */
     static private Map<String, String> stylesheets = null;
 
     static {
@@ -153,16 +158,18 @@ public class JRST {
         stylesheets.put(TYPE_RST, rst2rst);
         // stylesheets.put(TYPE_ODT, rst2docbook+","+docbook2odf);
         stylesheets.put(TYPE_FO, rst2docbook + "," + docbook2fo);
-        stylesheets.put(TYPE_PDF,  rst2docbook + "," + docbook2fo);
+        stylesheets.put(TYPE_PDF, rst2docbook + "," + docbook2fo);
     }
 
     static public void main(String[] args) throws Exception {
         if (args.length == 0)
             args = askOption();
-        if (args==null){System.exit(0);}
-        
+        if (args == null) {
+            System.exit(0);
+        }
+
         JRSTOption option = CliFactory.parseArguments(JRSTOption.class, args);
-        
+
         if (option.isHelp()) {
             Cli<JRSTOption> cli = CliFactory.createCli(JRSTOption.class);
             System.out.println(cli.getHelpMessage());
@@ -183,48 +190,55 @@ public class JRST {
                 .isForce() ? Overwrite.ALLTIME : Overwrite.NEVER);
     }
 
-    private static String[] askOption() throws SecurityException, NoSuchMethodException, IOException{
+    private static String[] askOption() throws SecurityException,
+            NoSuchMethodException, IOException {
         String[] result = null;
-        try{
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        try {
+            GraphicsEnvironment ge = GraphicsEnvironment
+                    .getLocalGraphicsEnvironment();
             GraphicsDevice[] gs = ge.getScreenDevices();
-            boolean done=false;
-            if (!(gs==null)){
-                if (gs.length>0){
-                    result=askOptionGraph();
-                    done=true;
+            boolean done = false;
+            if (!(gs == null)) {
+                if (gs.length > 0) {
+                    result = askOptionGraph();
+                    done = true;
                 }
             }
             if (!done)
-                result=askOptionText();
-        }catch(java.awt.HeadlessException e){
-            result=askOptionText();
+                result = askOptionText();
+        } catch (java.awt.HeadlessException e) {
+            result = askOptionText();
         }
-                
+
         return result;
 
     }
-/**
- * interface graphique
- * @return
- * @throws SecurityException
- * @throws NoSuchMethodException
- */
-    private static String[] askOptionGraph() throws SecurityException, NoSuchMethodException {
-        Method m =JRSTOption.class.getMethod("getOutType", null);
+
+    /**
+     * interface graphique
+     * 
+     * @return
+     * @throws SecurityException
+     * @throws NoSuchMethodException
+     */
+    private static String[] askOptionGraph() throws SecurityException,
+            NoSuchMethodException {
+        Method m = JRSTOption.class.getMethod("getOutType", null);
         Option a = m.getAnnotation(Option.class);
         JRSTInterface graph = new JRSTInterface(a.pattern());
-        
-        //String[] result=graph.askOption();
+
+        // String[] result=graph.askOption();
         return graph.getCmd();
     }
-/**
- * Interface textuel
- * @return String[]
- * @throws IOException 
- */
+
+    /**
+     * Interface textuel
+     * 
+     * @return String[]
+     * @throws IOException
+     */
     private static String[] askOptionText() throws IOException {
-        //language
+        // language
         if (Locale.getDefault().getLanguage() == "fr")
             I18n.init("fr", "FR");
         else
@@ -236,7 +250,7 @@ public class JRST {
         String cheminRST = "";
         while (!done) {
             System.out.println(bundle.getString("rstFile?"));
-            cheminRST = lireFile(false,false);
+            cheminRST = lireFile(false, false);
             if (cheminRST.length() == 0)
                 System.exit(0);
             File fileRST = new File(cheminRST);
@@ -261,33 +275,35 @@ public class JRST {
             done = false;
             while (!done) {
                 System.out.println(bundle.getString("xslFile?"));
-                String cheminXSLtmp = lireFile(false,true);
+                String cheminXSLtmp = lireFile(false, true);
 
                 File fileRST = new File(cheminXSLtmp);
-                if (cheminXSLtmp.equals("")){
-                    if (cheminXSL.length()!=0)
-                        cheminXSL=cheminXSL.substring(0,cheminXSL.length()-1);
-                    done=true;
-                }
-                else{
+                if (cheminXSLtmp.equals("")) {
+                    if (cheminXSL.length() != 0)
+                        cheminXSL = cheminXSL.substring(0,
+                                cheminXSL.length() - 1);
+                    done = true;
+                } else {
                     if (!fileRST.exists()) {
                         System.out.println(bundle.getString("dontExist"));
-                    } else{
-                        cheminXSL+=cheminXSLtmp;
+                    } else {
+                        cheminXSL += cheminXSLtmp;
                         String other = "";
                         do {
                             System.out.println(bundle.getString("other?"));
                             other = lire();
                         } while (!other.matches("y|n|o"));
                         if (other.equals("y") || other.equals("o"))
-                            cheminXSL+=",";
+                            cheminXSL += ",";
                         else if (other.equals("n"))
                             done = true;
                     }
                 }
-                
+
             }
-            if (cheminXSL.length() == 0 || !type.matches("xhtml|docbook|xml|html|xdoc|rst|pdf|odt|rtf"))
+            if (cheminXSL.length() == 0
+                    || !type
+                            .matches("xhtml|docbook|xml|html|xdoc|rst|pdf|odt|rtf"))
                 type = "xml";
         }
         boolean ecraser = false;
@@ -295,7 +311,7 @@ public class JRST {
         String cheminSortie = "";
         while (!done) {
             System.out.println(bundle.getString("outputFile?"));
-            cheminSortie = lireFile(true,true);
+            cheminSortie = lireFile(true, true);
 
             File fileRST = new File(cheminSortie);
             if (fileRST.exists()) {
@@ -322,11 +338,13 @@ public class JRST {
         cmd += " " + cheminRST + " ";
         return cmd.split(" ");
     }
+
     /**
      * lit une ligne
+     * 
      * @return String
-     */ 
-    public static String lire(){
+     */
+    public static String lire() {
 
         String ligne_lue = null;
         try {
@@ -339,20 +357,24 @@ public class JRST {
         return ligne_lue;
 
     }
-    public static String lireFile(boolean enreg, boolean exit) throws IOException{
-        String line="";
-        FileCompletion fc = new FileCompletion(enreg,exit);
+
+    public static String lireFile(boolean enreg, boolean exit)
+            throws IOException {
+        String line = "";
+        FileCompletion fc = new FileCompletion(enreg, exit);
         if (fc.consoleAvailable())
-            line=fc.read();
-        if (line==null)
-            line="";
+            line = fc.read();
+        if (line == null)
+            line = "";
         return line;
     }
 
-    public static void generate(String xslListOrOutType, File fileIn, File fileOut, Overwrite overwrite) throws Exception {
-        generate(xslListOrOutType, fileIn, "ISO-8859-15", fileOut, "ISO-8859-15", overwrite);
+    public static void generate(String xslListOrOutType, File fileIn,
+            File fileOut, Overwrite overwrite) throws Exception {
+        generate(xslListOrOutType, fileIn, "ISO-8859-15", fileOut,
+                "ISO-8859-15", overwrite);
     }
-    
+
     /**
      * 
      * @param xslListOrOutType
@@ -362,13 +384,17 @@ public class JRST {
      * @throws Exception
      */
 
-    public static void generate(String xslListOrOutType, File fileIn, String inputEncoding, File fileOut, String outputEncoding, Overwrite overwrite) throws Exception {
+    public static void generate(String xslListOrOutType, File fileIn,
+            String inputEncoding, File fileOut, String outputEncoding,
+            Overwrite overwrite) throws Exception {
         if (fileOut != null
                 && fileOut.exists()
                 && (overwrite == Overwrite.NEVER || (overwrite == Overwrite.IFNEWER && FileUtil
                         .isNewer(fileIn, fileOut)))) {
-            //System.err.println("Don't generate file " + fileOut + ", because already exists");   
-            log.info("Don't generate file " + fileOut + ", because already exists");
+            // System.err.println("Don't generate file " + fileOut +
+            // ", because already exists");
+            log.info("Don't generate file " + fileOut
+                    + ", because already exists");
         } else {
             // search xsl file list to apply
             String xslList = stylesheets.get(xslListOrOutType);
@@ -376,14 +402,12 @@ public class JRST {
                 xslList = xslListOrOutType;
             }
 
-            
-            
             // parse rst file
             URL url = fileIn.toURL();
             Reader in = new InputStreamReader(url.openStream(), inputEncoding);
             JRSTReader jrst = new JRSTReader();
             Document doc = jrst.read(in);
-
+            
             // apply xsl on rst xml document
             JRSTGenerator gen = new JRSTGenerator();
             String[] xsls = StringUtil.split(xslList, ",");
@@ -401,71 +425,79 @@ public class JRST {
                 }
                 doc = gen.transform(doc, stylesheet);
             }
-            
-            boolean pdf=false; 
-            //generation PDF
-            if (xslListOrOutType!=null){
-                if (xslListOrOutType.equals("pdf")){
-                    pdf=true;
+
+            boolean pdf = false;
+            // generation PDF
+            if (xslListOrOutType != null) {
+                if (xslListOrOutType.equals("pdf")) {
+                    pdf = true;
                     FopFactory fopFactory = FopFactory.newInstance();
-                    //OutputStream outPDF = new BufferedOutputStream(new FileOutputStream(new File("C:/Temp/myfile.pdf")));
-    
+                    // OutputStream outPDF = new BufferedOutputStream(new
+                    // FileOutputStream(new File("C:/Temp/myfile.pdf")));
+
                     OutputStream outPDF = null;
                     if (fileOut != null) {
                         fileOut.getAbsoluteFile().getParentFile().mkdirs();
-                        outPDF = new BufferedOutputStream(new FileOutputStream(fileOut));
+                        outPDF = new BufferedOutputStream(new FileOutputStream(
+                                fileOut));
                     } else {
                         outPDF = new BufferedOutputStream(System.out);
                     }
-                    
+
                     FOUserAgent userAgent = fopFactory.newFOUserAgent();
-                    
-                    //Step 3: Construct fop with desired output format
-                    Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, outPDF);
-                    
+
+                    // Step 3: Construct fop with desired output format
+                    Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF,
+                            userAgent, outPDF);
+
                     // Step 4: Setup JAXP using identity transformer
-                    TransformerFactory factory = TransformerFactory.newInstance();
-                    Transformer transformer = factory.newTransformer(); // identity transformer
-                             
-                    // Step 5: Setup input and output for XSLT transformation 
+                    TransformerFactory factory = TransformerFactory
+                            .newInstance();
+                    Transformer transformer = factory.newTransformer(); // identity
+                    // transformer
+
+                    // Step 5: Setup input and output for XSLT transformation
                     // Setup input stream
                     Source src = new StreamSource(new StringReader(doc.asXML()));
-    
-                    // Resulting SAX events (the generated FO) must be piped through to FOP
+
+                    // Resulting SAX events (the generated FO) must be piped
+                    // through to FOP
                     Result res = new SAXResult(fop.getDefaultHandler());
-                              
+
                     // Step 6: Start XSLT transformation and FOP processing
                     transformer.transform(src, res);
-                    
-                    
+
                     if (fileOut != null) {
                         outPDF.close();
                     }
                 }
             }
-            if(!pdf){
-    //          prepare the output flux
+            if (!pdf) {
+                // prepare the output flux
                 XMLWriter out = null;
                 if (fileOut != null) {
                     fileOut.getAbsoluteFile().getParentFile().mkdirs();
 
-                    out = new XMLWriter(FileUtil.getWriter(fileOut, outputEncoding), new OutputFormat(
-                            "  ", true,outputEncoding));
+                    out = new XMLWriter(FileUtil.getWriter(fileOut,
+                            outputEncoding), new OutputFormat("  ", true,
+                            outputEncoding));
                 } else {
-                    out = new XMLWriter(System.out, new OutputFormat("  ", true, outputEncoding));
+                    out = new XMLWriter(System.out, new OutputFormat("  ",
+                            true, outputEncoding));
                 }
                 // write generated document
                 out.write(doc);
-    
+
                 if (fileOut != null) {
                     out.close();
                 }
             }
         }
     }
-/**
- * Les options
- */
+
+    /**
+     * Les options
+     */
     public static interface JRSTOption {
 
         @Option(description = "display this help and exit")
@@ -476,7 +508,7 @@ public class JRST {
 
         @Option(shortName = "c", description = "Console mode")
         public boolean isConsole();
-        
+
         @Option(shortName = "x", description = "XSL file list to apply, comma separated")
         public String getXslFile();
 

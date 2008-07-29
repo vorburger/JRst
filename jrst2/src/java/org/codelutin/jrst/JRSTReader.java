@@ -31,8 +31,82 @@
 
 package org.codelutin.jrst;
 
-import static org.codelutin.jrst.ReStructuredText.*;
 import static org.codelutin.i18n.I18n._;
+import static org.codelutin.jrst.ReStructuredText.ADDRESS;
+import static org.codelutin.jrst.ReStructuredText.ADMONITION;
+import static org.codelutin.jrst.ReStructuredText.ATTRIBUTION;
+import static org.codelutin.jrst.ReStructuredText.AUTHOR;
+import static org.codelutin.jrst.ReStructuredText.AUTHORS;
+import static org.codelutin.jrst.ReStructuredText.BLOCK_QUOTE;
+import static org.codelutin.jrst.ReStructuredText.BULLET_LIST;
+import static org.codelutin.jrst.ReStructuredText.COLSPEC;
+import static org.codelutin.jrst.ReStructuredText.COMMENT;
+import static org.codelutin.jrst.ReStructuredText.CONTACT;
+import static org.codelutin.jrst.ReStructuredText.COPYRIGHT;
+import static org.codelutin.jrst.ReStructuredText.DATE;
+import static org.codelutin.jrst.ReStructuredText.DECORATION;
+import static org.codelutin.jrst.ReStructuredText.DEFINITION;
+import static org.codelutin.jrst.ReStructuredText.DEFINITION_LIST;
+import static org.codelutin.jrst.ReStructuredText.DEFINITION_LIST_ITEM;
+import static org.codelutin.jrst.ReStructuredText.DESCRIPTION;
+import static org.codelutin.jrst.ReStructuredText.DOCINFO;
+import static org.codelutin.jrst.ReStructuredText.DOCTEST_BLOCK;
+import static org.codelutin.jrst.ReStructuredText.DOCUMENT;
+import static org.codelutin.jrst.ReStructuredText.EMPHASIS;
+import static org.codelutin.jrst.ReStructuredText.ENTRY;
+import static org.codelutin.jrst.ReStructuredText.ENUMERATED_LIST;
+import static org.codelutin.jrst.ReStructuredText.FIELD;
+import static org.codelutin.jrst.ReStructuredText.FIELD_BODY;
+import static org.codelutin.jrst.ReStructuredText.FIELD_LIST;
+import static org.codelutin.jrst.ReStructuredText.FIELD_NAME;
+import static org.codelutin.jrst.ReStructuredText.FOOTER;
+import static org.codelutin.jrst.ReStructuredText.FOOTNOTE;
+import static org.codelutin.jrst.ReStructuredText.FOOTNOTE_REFERENCE;
+import static org.codelutin.jrst.ReStructuredText.FOOTNOTE_SYMBOL;
+import static org.codelutin.jrst.ReStructuredText.HEADER;
+import static org.codelutin.jrst.ReStructuredText.IMAGE;
+import static org.codelutin.jrst.ReStructuredText.LINE;
+import static org.codelutin.jrst.ReStructuredText.LINE_BLOCK;
+import static org.codelutin.jrst.ReStructuredText.LIST_ITEM;
+import static org.codelutin.jrst.ReStructuredText.LITERAL;
+import static org.codelutin.jrst.ReStructuredText.LITERAL_BLOCK;
+import static org.codelutin.jrst.ReStructuredText.OPTION;
+import static org.codelutin.jrst.ReStructuredText.OPTION_ARGUMENT;
+import static org.codelutin.jrst.ReStructuredText.OPTION_GROUP;
+import static org.codelutin.jrst.ReStructuredText.OPTION_LIST;
+import static org.codelutin.jrst.ReStructuredText.OPTION_LIST_ITEM;
+import static org.codelutin.jrst.ReStructuredText.OPTION_STRING;
+import static org.codelutin.jrst.ReStructuredText.ORGANIZATION;
+import static org.codelutin.jrst.ReStructuredText.PARAGRAPH;
+import static org.codelutin.jrst.ReStructuredText.REFERENCE;
+import static org.codelutin.jrst.ReStructuredText.REGEX_ANONYMOUS_HYPERLINK_REFERENCE;
+import static org.codelutin.jrst.ReStructuredText.REGEX_EMAIL;
+import static org.codelutin.jrst.ReStructuredText.REGEX_EMPHASIS;
+import static org.codelutin.jrst.ReStructuredText.REGEX_FOOTNOTE_REFERENCE;
+import static org.codelutin.jrst.ReStructuredText.REGEX_HYPERLINK_REFERENCE;
+import static org.codelutin.jrst.ReStructuredText.REGEX_INLINE_REFERENCE;
+import static org.codelutin.jrst.ReStructuredText.REGEX_LITERAL;
+import static org.codelutin.jrst.ReStructuredText.REGEX_REFERENCE;
+import static org.codelutin.jrst.ReStructuredText.REGEX_STRONG;
+import static org.codelutin.jrst.ReStructuredText.REGEX_SUBSTITUTION_REFERENCE;
+import static org.codelutin.jrst.ReStructuredText.REVISION;
+import static org.codelutin.jrst.ReStructuredText.ROW;
+import static org.codelutin.jrst.ReStructuredText.SECTION;
+import static org.codelutin.jrst.ReStructuredText.SIDEBAR;
+import static org.codelutin.jrst.ReStructuredText.STATUS;
+import static org.codelutin.jrst.ReStructuredText.STRONG;
+import static org.codelutin.jrst.ReStructuredText.SUBSTITUTION_DEFINITION;
+import static org.codelutin.jrst.ReStructuredText.SUBTITLE;
+import static org.codelutin.jrst.ReStructuredText.TABLE;
+import static org.codelutin.jrst.ReStructuredText.TARGET;
+import static org.codelutin.jrst.ReStructuredText.TBODY;
+import static org.codelutin.jrst.ReStructuredText.TERM;
+import static org.codelutin.jrst.ReStructuredText.TGROUP;
+import static org.codelutin.jrst.ReStructuredText.THEAD;
+import static org.codelutin.jrst.ReStructuredText.TITLE;
+import static org.codelutin.jrst.ReStructuredText.TOPIC;
+import static org.codelutin.jrst.ReStructuredText.TRANSITION;
+import static org.codelutin.jrst.ReStructuredText.VERSION;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -49,11 +123,11 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-//import org.codelutin.jrst.directive.CalcDirective;
 import org.codelutin.jrst.directive.ContentDirective;
 import org.codelutin.jrst.directive.DateDirective;
 import org.codelutin.jrst.directive.ImageDirective;
@@ -311,7 +385,7 @@ public class JRSTReader {
         defaultDirectives.put(DATE, new DateDirective());
         defaultDirectives.put("time", new DateDirective());
         defaultDirectives.put("contents", new ContentDirective());
-        //defaultDirectives.put("calc", new CalcDirective());
+        // defaultDirectives.put("calc", new CalcDirective());
         defaultDirectives.put("sectnum", new SectnumDirective());
         // TODO put here all other directive
     }
@@ -330,8 +404,7 @@ public class JRSTReader {
     }
 
     /**
-     * @param defaultDirectives
-     *            the defaultDirectives to set
+     * @param defaultDirectives the defaultDirectives to set
      */
     public static void addDefaultDirectives(String name, JRSTDirective directive) {
         JRSTReader.defaultDirectives.put(name, directive);
@@ -345,8 +418,7 @@ public class JRSTReader {
     }
 
     /**
-     * @param JRSTDirective
-     *            the defaultDirectives to set
+     * @param JRSTDirective the defaultDirectives to set
      */
     public void addDirectives(String name, JRSTDirective directive) {
         directives.put(name, directive);
@@ -483,8 +555,7 @@ public class JRSTReader {
     }
 
     /**
-     * @param LinkedList
-     *            <Element> title, String num
+     * @param LinkedList <Element> title, String num
      * @return Element
      */
     private Element composeLineContent(LinkedList<Element> title, String num) {
@@ -951,7 +1022,7 @@ public class JRSTReader {
      * <pre>
      * ..
      *   So this block is not &quot;lost&quot;,
-     *   despite its indentation. 
+     *   despite its indentation.
      * </pre>
      * 
      * @param item
@@ -966,6 +1037,7 @@ public class JRSTReader {
      * <pre>
      * __ http://truc.html
      * </pre>
+     * 
      * @param item
      * @return Element
      */
@@ -977,9 +1049,8 @@ public class JRSTReader {
     }
 
     /**
-     * <pre
-     * _ target: target.html
-     * </pre>
+     * <pre _ target: target.html </pre>
+     * 
      * @param item
      * @return Element
      */
@@ -997,6 +1068,7 @@ public class JRSTReader {
      * <pre>
      * .. [#] This is a footnote
      * </pre>
+     * 
      * @param item
      * @return Element
      * @throws Exception
@@ -1103,9 +1175,10 @@ public class JRSTReader {
 
     /**
      * <pre>
-     * -a command-line option "a" -1 file, --one=file, --two file Multiple
+     * -a command-line option &quot;a&quot; -1 file, --one=file, --two file Multiple
      * options with arguments.
      * </pre>
+     * 
      * @param lexer
      * @return Element
      * @throws Exception
@@ -1149,8 +1222,7 @@ public class JRSTReader {
      *    Body.
      * </pre>
      * 
-     * @param Element
-     *            item
+     * @param Element item
      * @return Element
      * @throws Exception
      */
@@ -1501,7 +1573,8 @@ public class JRSTReader {
                         morecols++;
                         // tmpCell = cells.get(c + morecols);
                         // cellEnd =
-                        // Integer.parseInt(tmpCell.attributeValue(JRSTLexer.CELL_INDEX_END));
+                        // Integer.parseInt(tmpCell.attributeValue(JRSTLexer.
+                        // CELL_INDEX_END));
                     }
                     if (morecols > 0) {
                         entry
@@ -1523,7 +1596,8 @@ public class JRSTReader {
     }
 
     /**
-     * <p> * items begin with "-", "+", or "*"
+     * <p>
+     * items begin with "-", "+", or "*"
      * </p>
      * 
      * <pre>
@@ -1673,6 +1747,7 @@ public class JRSTReader {
      *    - debut 
      *    - de list
      * </pre>
+     * 
      * @param lexer
      * @return Element
      * @throws Exception
@@ -1795,12 +1870,9 @@ public class JRSTReader {
     }
 
     /**
-     * @param Element
-     *            e1
-     * @param Element
-     *            e2
-     * @param String
-     *            ... attnames
+     * @param Element e1
+     * @param Element e2
+     * @param String ... attnames
      * @return boolean
      */
     private boolean hasSameAttribute(Element e1, Element e2, String... attnames) {
@@ -1817,10 +1889,8 @@ public class JRSTReader {
     }
 
     /**
-     * @param Element
-     *            from
-     * @param Element
-     *            to
+     * @param Element from
+     * @param Element to
      * @throws DocumentException
      */
     private void copyLevel(Element from, Element to) throws DocumentException {
@@ -1832,10 +1902,8 @@ public class JRSTReader {
     }
 
     /**
-     * @param String
-     *            name
-     * @param Element
-     *            e
+     * @param String name
+     * @param Element e
      * @return boolean
      * @throws DocumentException
      */
@@ -1845,14 +1913,10 @@ public class JRSTReader {
     }
 
     /**
-     * @param String
-     *            name
-     * @param Element
-     *            e
-     * @param boolean
-     *            throwError
-     * @param boolean
-     *            eof
+     * @param String name
+     * @param Element e
+     * @param boolean throwError
+     * @param boolean eof
      * @return boolean
      * @throws DocumentException
      */
@@ -1867,10 +1931,8 @@ public class JRSTReader {
     }
 
     /**
-     * @param String
-     *            name
-     * @param Element
-     *            e
+     * @param String name
+     * @param Element e
      * @return boolean
      */
     private boolean itemNotEquals(String name, Element e) {
@@ -1887,11 +1949,13 @@ public class JRSTReader {
         return reader.read(r);
 
     }
+
     /**
      * <p>
-     * Initialises les variables d'environements
-     * par ex, les hyperlinks peuvent etre referencer dans tous le document
+     * Initialises les variables d'environements par ex, les hyperlinks peuvent
+     * etre referencer dans tous le document
      * </p>
+     * 
      * @param idMax
      * @param symbolMax
      * @param symbolMaxRef
@@ -1922,8 +1986,7 @@ public class JRSTReader {
     /**
      * Parse text in element and replace text with parse result
      * 
-     * @param Element
-     *            e
+     * @param Element e
      * @throws DocumentException
      */
     private void inline(Element e) throws DocumentException {

@@ -38,6 +38,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
@@ -199,7 +200,9 @@ public class JRSTLexer {
 
     private AdvancedReader in = null;
 
-    /** length of the last element returned (number of char need to this element) */
+    /**
+     * length of the last element returned (number of char need to this element)
+     */
     private int elementLength = 0;
 
     public JRSTLexer(Reader reader) {
@@ -255,8 +258,7 @@ public class JRSTLexer {
      * Read block text, block text have same indentation and is continu (no
      * blank line)
      * 
-     * @param minLeftMargin
-     *            min left blank needed to accept to read block
+     * @param minLeftMargin min left blank needed to accept to read block
      * @return String[]
      * @throws IOException
      */
@@ -277,8 +279,7 @@ public class JRSTLexer {
     /**
      * All lines are joined and left and right spaces are removed during join
      * 
-     * @param String[]
-     *            lines
+     * @param String[] lines
      * @return String
      */
     private String joinBlock(String[] lines) {
@@ -290,12 +291,9 @@ public class JRSTLexer {
      * All lines are joined whith the String joinSep and left and right spaces
      * are removed if trim
      * 
-     * @param String[]
-     *            lines
-     * @param String
-     *            joinSep
-     * @param Boolean
-     *            trim
+     * @param String[] lines
+     * @param String joinSep
+     * @param Boolean trim
      * @return String
      */
     private String joinBlock(String[] lines, String joinSep, boolean trim) {
@@ -383,6 +381,7 @@ public class JRSTLexer {
      * <pre>
      * .. __: http://www.python.org
      * </pre>
+     * 
      * @return Element
      * @throws IOException
      */
@@ -560,7 +559,7 @@ public class JRSTLexer {
                 result = DocumentHelper.createElement("remove").addAttribute(
                         "level", "" + level(line));
             }
-           
+
         }
         endPeek();
         return result;
@@ -607,30 +606,28 @@ public class JRSTLexer {
      * read options
      * 
      * <pre>
-     * Ex :     -a            command-line option "a"
+     * Ex :     -a            command-line option &quot;a&quot;
      *          -1 file, --one=file, --two file
      *                     Multiple options with arguments.
-     *
      * Schéma :  ________________________________
      *           v          |                    |
-     *        -{1,2}\w+ ->|','                   |
-     *                    |'='-----|-> \w+ --->|','
+     *        -{1,2}\w+ -&gt;|','                   |
+     *                    |'='-----|-&gt; \w+ ---&gt;|','
      *                    |' '-----|           |' '---+
-     *                    |"  " -----> \w+ ---> end   |
-     *                      ^                         |
+     *                    |&quot;  &quot; -----&gt; \w+ ---&gt; end   |
+     *                      &circ;                         |
      *                      |_________________________|
-     *
      * Légende :   
      * 
-     *          -{1,2} --> 1 or 2 tirets
-     *          \w+ -----> word characters one or more times
+     *          -{1,2} --&gt; 1 or 2 tirets
+     *          \w+ -----&gt; word characters one or more times
      * </pre>
      * 
      * @return Element
      * @throws IOException
      */
     public Element peekOption() throws IOException {
-     
+
         beginPeek();
         Element result = null;
         String line = in.readLine();
@@ -1497,21 +1494,16 @@ public class JRSTLexer {
                 // result.addText(line);
             } else if (line.matches("^\\s*(=+ +)+=+\\s*$")) {
                 // Les donnees de la table peuvent depasser de celle-ci
-            	/*
-            	=====  =====  ======
-            	   Inputs     Output
-            	------------  ------
-            	  A      B    A or B
-            	=====  =====  ======
-            	False  False  Second column of row 1.
-            	True   False  Second column of row 2.
-
-            	True   2      - Second column of row 3.
-
-            	              - Second item in bullet
-            	                list (row 3, column 2).
-            	============  ======
-            	*/
+                /*
+                 * ===== ===== ====== Inputs Output ------------ ------ A B A or
+                 * B ===== ===== ====== False False Second column of row 1. True
+                 * False Second column of row 2.
+                 * 
+                 * True 2 - Second column of row 3.
+                 * 
+                 * - Second item in bullet list (row 3, column 2). ============
+                 * ======
+                 */
 
                 result = DocumentHelper.createElement(TABLE);
                 line = line.trim();
@@ -1519,7 +1511,8 @@ public class JRSTLexer {
                 // =
                 Pattern pBordersTiret = Pattern.compile("^\\s*(-+ +)+-+\\s*$"); // Separation
                 // -
-                Pattern pBorders = Pattern.compile("^\\s*([=-]+ +)+[=-]+\\s*$"); // = ou
+                Pattern pBorders = Pattern.compile("^\\s*([=-]+ +)+[=-]+\\s*$"); // =
+                                                                                 // ou
                 // -
                 String[] table = in.readUntilBlank(); // Recuperation de la
                 // table
@@ -1553,34 +1546,20 @@ public class JRSTLexer {
 
                 // Traitement du tbl
                 /*
-				=====  =====  ======
-            	   Inputs     Output
-            	------------  ------
-            	  A      B    A or B
-            	=====  =====  ======
-            	False  False  Second column of row 1.
-            	True   False  Second column of row 2.
-
-            	True   2      - Second column of row 3.
-
-            	              - Second item in bullet
-            	                list (row 3, column 2).
-            	============  ======
-                devient l'equivalent :
-                =====  =====  ======
-            	   Inputs     Output
-            	------------  ------
-            	  A      B    A or B
-            	=====  =====  ======
-            	False  False  Second column of row 1.
-            	-----  -----  ------
-            	True   False  Second column of row 2.
-				-----  -----  ------
-            	True   2      - Second column of row 3.
-            	              - Second item in bullet
-            	                list (row 3, column 2).
-            	============  ======
-				*/
+                 * ===== ===== ====== Inputs Output ------------ ------ A B A or
+                 * B ===== ===== ====== False False Second column of row 1. True
+                 * False Second column of row 2.
+                 * 
+                 * True 2 - Second column of row 3.
+                 * 
+                 * - Second item in bullet list (row 3, column 2). ============
+                 * ====== devient l'equivalent : ===== ===== ====== Inputs
+                 * Output ------------ ------ A B A or B ===== ===== ======
+                 * False False Second column of row 1. ----- ----- ------ True
+                 * False Second column of row 2. ----- ----- ------ True 2 -
+                 * Second column of row 3. - Second item in bullet list (row 3,
+                 * column 2). ============ ======
+                 */
                 String lineRef = line.replace('=', '-');
                 Matcher matcher2;
                 List tableTmp = new LinkedList();
@@ -1847,24 +1826,21 @@ public class JRSTLexer {
     /**
      * read enumarted list
      * 
-     * can be:
-     * <li> 1, 2, 3, ...
-     * <li> a, b, c, ...
-     * <li> A, B, C, ...
-     * <li> i, ii, iii, iv, ...
-     * <li> I, II, III, IV, ...
+     * can be: <li>1, 2, 3, ... <li>a, b, c, ... <li>A, B, C, ... <li>i, ii,
+     * iii, iv, ... <li>I, II, III, IV, ...
      * 
      * or # for auto-numbered
      * 
      * <pre>
-     * 1. next line
-     * 1) next line
-     * (1) first line
+     * 
+     * 1. next line 1) next line (1) first line
+     * 
      * </pre>
      * 
      * @return &lt;enumerated_list level="[int]" start="[number]"
      *         prefix="[char]" suffix="[char]"
-     *         enumtype="[(arabic|loweralpha|upperalpha|lowerroman|upperroman]"&gt;[text]&lt;/enumerated_list&gt;
+     *         enumtype="[(arabic|loweralpha|upperalpha|lowerroman|upperroman]"&gt
+     *         ;[text]&lt;/enumerated_list&gt;
      * @throws IOException
      */
     public Element peekEnumeratedList() throws IOException {
@@ -1929,16 +1905,17 @@ public class JRSTLexer {
      * simple:
      * 
      * <pre>
-     * Le titre
-     * ========
+     * 
+     * Le titre ========
+     * 
      * </pre>
      * 
      * double:
      * 
      * <pre>
-     * ============
-     *   le titre
-     * ============
+     * 
+     * ============ le titre ============
+     * 
      * </pre>
      * 
      * @return &lt;title level="[int]" type="[simple|double]" char="[underline
@@ -2007,7 +1984,7 @@ public class JRSTLexer {
                     int i = line.indexOf(':');
                     result.addAttribute("id", line.substring(matcher.end(), i)
                             .replaceAll("\\W", "-").toLowerCase());
-                    result.addAttribute("level", ""+level(line));
+                    result.addAttribute("level", "" + level(line));
                 }
             }
         }
@@ -2051,10 +2028,11 @@ public class JRSTLexer {
                                 // line = null if link is non well formed
                                 // .. _Unifying types and classes in Python:
                                 // miss uri
-                                if(line==null) {
+                                if (line == null) {
                                     line = "";
                                 }
-                                result.getLast().addAttribute("refuri",line.trim());
+                                result.getLast().addAttribute("refuri",
+                                        line.trim());
                             } else
                                 result.getLast().addAttribute("refuri",
                                         line.substring(i + 2, line.length()));
@@ -2224,8 +2202,7 @@ public class JRSTLexer {
     /**
      * Read block text, block text have same indentation
      * 
-     * @param minLeftMargin
-     *            min left blank needed to accept to read block
+     * @param minLeftMargin min left blank needed to accept to read block
      * @return String
      * @throws IOException
      */
@@ -2306,8 +2283,7 @@ public class JRSTLexer {
     }
 
     /**
-     * @param String
-     *            line
+     * @param String line
      * @return int
      * @throws IOException
      */

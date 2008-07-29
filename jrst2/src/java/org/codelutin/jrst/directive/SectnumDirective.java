@@ -7,7 +7,9 @@ import org.dom4j.Node;
 
 public class SectnumDirective implements JRSTDirective {
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.codelutin.jrst.JRSTDirective#parse(org.dom4j.Element)
      */
     public Node parse(Element e) {

@@ -40,10 +40,9 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.Text;
 
-
 /**
  * @author poussin
- *
+ * 
  */
 
 public class DocumentWalker {
@@ -51,6 +50,7 @@ public class DocumentWalker {
     static private Log log = LogFactory.getLog(DocumentWalker.class);
 
     protected DocumentHandler handler = null;
+
     /**
      * 
      */
@@ -64,25 +64,24 @@ public class DocumentWalker {
         walk(elem);
         handler.endDocument(doc);
     }
-    
+
     @SuppressWarnings("unchecked")
     public void walk(Element elem) {
         handler.startElement(elem);
-        for (Node node : (List<Node>)elem.content()) {
+        for (Node node : (List<Node>) elem.content()) {
             switch (node.getNodeType()) {
-                case Node.ELEMENT_NODE:
-                    walk((Element)node);
-                    break;
-                case Node.TEXT_NODE:
-                    handler.text((Text)node);
-                    break;
-                default:
-                    log.warn("Not supported element type: " + node.getNodeTypeName());
-                    break;
+            case Node.ELEMENT_NODE:
+                walk((Element) node);
+                break;
+            case Node.TEXT_NODE:
+                handler.text((Text) node);
+                break;
+            default:
+                log.warn("Not supported element type: "
+                        + node.getNodeTypeName());
+                break;
             }
         }
         handler.endElement(elem);
     }
 }
-
-

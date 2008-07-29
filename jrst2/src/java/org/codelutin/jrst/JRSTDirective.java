@@ -34,22 +34,18 @@ package org.codelutin.jrst;
 import org.dom4j.Element;
 import org.dom4j.Node;
 
-
 /**
  * @author poussin
- *
+ * 
  */
 
 public interface JRSTDirective {
 
     /**
-     * parse directive block element and return element to put in final
-     * XML 
+     * parse directive block element and return element to put in final XML
      * 
      * @param e
      * @return
      */
     public Node parse(Element e);
 }
-
-

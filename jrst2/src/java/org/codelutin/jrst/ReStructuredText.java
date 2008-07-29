@@ -33,39 +33,41 @@ package org.codelutin.jrst;
 
 import java.util.regex.Pattern;
 
-
 /**
  * @author poussin
- *
+ * 
  */
 
 public class ReStructuredText {
-    
+
     public static final String DTD = "http://docutils.sourceforge.net/docs/ref/docutils.dtd";
-    
+
     public static final String TITLE_CHAR = "-=-~'`^+:!\"#$%&*,./;|?@\\_[\\]{}<>()";
     public static final String QUOTED_CHAR = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
-    public static final String BULLET_CHAR = "*" + "+" + "-" + "\u2022" + "\u2023" + "\u2043";
-    public static final String DOCINFO_ITEM =
-        "author|authors|organization|address|contact|version|revision|status|date|copyright";
-    public static final String FOOTNOTE_SYMBOL = "\u002A"+"\u2020"+"\u2021"+"\u00A7"+"\u00B6"+"\u0023"+"\u2660"+"\u2665"+"\u2666"+"\u2663";
-    // public static final String ADMONITION = "admonition|caution|danger|error|hint|important|note|tip|warning";
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    public static final String BULLET_CHAR = "*" + "+" + "-" + "\u2022"
+            + "\u2023" + "\u2043";
+    public static final String DOCINFO_ITEM = "author|authors|organization|address|contact|version|revision|status|date|copyright";
+    public static final String FOOTNOTE_SYMBOL = "\u002A" + "\u2020" + "\u2021"
+            + "\u00A7" + "\u00B6" + "\u0023" + "\u2660" + "\u2665" + "\u2666"
+            + "\u2663";
+    // public static final String ADMONITION =
+    // "admonition|caution|danger|error|hint|important|note|tip|warning";
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Root Element
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public static final String DOCUMENT = "document";
-    
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Title Elements
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public static final String TITLE = "title";
     public static final String SUBTITLE = "subtitle";
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Bibliographic Elements
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public static final String DOCINFO = "docinfo";
-//    public static final String INFO = "info";
+    // public static final String INFO = "info";
     public static final String AUTHOR = "author";
     public static final String AUTHORS = "authors";
     public static final String ORGANIZATION = "organization";
@@ -74,27 +76,27 @@ public class ReStructuredText {
     public static final String VERSION = "version";
     public static final String REVISION = "revision";
     public static final String STATUS = "status";
-    public static final String DATE =  "date";
+    public static final String DATE = "date";
     public static final String COPYRIGHT = "copyright";
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Decoration Elements
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public static final String DECORATION = "decoration";
     public static final String HEADER = "header";
     public static final String FOOTER = "footer";
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Structural Elements
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public static final String SECTION = "section";
     public static final String TOPIC = "topic";
     public static final String SIDEBAR = "sidebar";
     public static final String TRANSITION = "transition";
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Body Elements
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public static final String PARAGRAPH = "paragraph";
     public static final String COMPOUND = "compound";
     public static final String CONTAINER = "container";
@@ -147,7 +149,7 @@ public class ReStructuredText {
     public static final String LEGEND = "legend";
     public static final String SYSTEM_MESSAGE = "system_message";
     public static final String RAW = "raw";
-    
+
     // table
     public static final String TABLE = "table";
     public static final String TGROUP = "tgroup";
@@ -157,9 +159,9 @@ public class ReStructuredText {
     public static final String ROW = "row";
     public static final String ENTRY = "entry";
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Inline Elements
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public static final String EMPHASIS = "emphasis";
     public static final String STRONG = "strong";
     public static final String LITERAL = "literal";
@@ -176,19 +178,27 @@ public class ReStructuredText {
     public static final String PROBLEMATIC = "problematic";
     public static final String GENERATED = "generated";
 
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // Inline Elements Regex
-    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    public static final Pattern REGEX_EMPHASIS = Pattern.compile("\\*([^*(\\]_.+\\[)].+?)\\*");
-    public static final Pattern REGEX_STRONG = Pattern.compile("\\*\\*(.+?)\\*\\*");
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    public static final Pattern REGEX_EMPHASIS = Pattern
+            .compile("\\*([^*(\\]_.+\\[)].+?)\\*");
+    public static final Pattern REGEX_STRONG = Pattern
+            .compile("\\*\\*(.+?)\\*\\*");
     public static final Pattern REGEX_LITERAL = Pattern.compile("``([^`]+)``");
-    public static final Pattern REGEX_REFERENCE = Pattern.compile("(http://[-/%#[\\&&&[^(&gt;)]]\\._\\w]+\\w+)((\\W|&|$)+)");
-    public static final Pattern REGEX_INLINE_REFERENCE = Pattern.compile("`(.+) \\&lt\\;(http://[-/%#&\\._\\w]+)(\\&gt\\;)`");
-    public static final Pattern REGEX_EMAIL = Pattern.compile("(^|[^_\\w])([-\\._\\w]+@[-\\._\\w]+)([^-\\._\\w]|$)");
-    public static final Pattern REGEX_FOOTNOTE_REFERENCE = Pattern.compile("\\[(#|[0-9]|\\*)\\w*\\]_");
-    		//"\\[([0-9]+?|#)\\]");
-    public static final Pattern REGEX_CITATION_REFERENCE = Pattern.compile("\\[([^\\]]+?)\\]");
-    public static final Pattern REGEX_SUBSTITUTION_REFERENCE = Pattern.compile("\\|([^|]+?)\\|");
+    public static final Pattern REGEX_REFERENCE = Pattern
+            .compile("(http://[-/%#[\\&&&[^(&gt;)]]\\._\\w]+\\w+)((\\W|&|$)+)");
+    public static final Pattern REGEX_INLINE_REFERENCE = Pattern
+            .compile("`(.+) \\&lt\\;(http://[-/%#&\\._\\w]+)(\\&gt\\;)`");
+    public static final Pattern REGEX_EMAIL = Pattern
+            .compile("(^|[^_\\w])([-\\._\\w]+@[-\\._\\w]+)([^-\\._\\w]|$)");
+    public static final Pattern REGEX_FOOTNOTE_REFERENCE = Pattern
+            .compile("\\[(#|[0-9]|\\*)\\w*\\]_");
+    // "\\[([0-9]+?|#)\\]");
+    public static final Pattern REGEX_CITATION_REFERENCE = Pattern
+            .compile("\\[([^\\]]+?)\\]");
+    public static final Pattern REGEX_SUBSTITUTION_REFERENCE = Pattern
+            .compile("\\|([^|]+?)\\|");
     public static final Pattern REGEX_ABBREVIATION = Pattern.compile("(.*?)");
     public static final Pattern REGEX_ACRONYM = Pattern.compile("(.*?)");
     public static final Pattern REGEX_SUPERSCRIPT = Pattern.compile("(.*?)");
@@ -197,9 +207,9 @@ public class ReStructuredText {
     public static final Pattern REGEX_PROBLEMATIC = Pattern.compile("(.*?)");
     public static final Pattern REGEX_GENERATED = Pattern.compile("(.*?)");
     // `truc truc`_
-    public static final Pattern REGEX_HYPERLINK_REFERENCE = Pattern.compile("(\\`[^_<>]+\\`_(\\W|$))|((&apos;|`)[^_<`(&apos;)>]+(&apos;|`)_(\\W|$))|([\\S]+[^\\s<>\\.`]+_(\\W|$))");
+    public static final Pattern REGEX_HYPERLINK_REFERENCE = Pattern
+            .compile("(\\`[^_<>]+\\`_(\\W|$))|((&apos;|`)[^_<`(&apos;)>]+(&apos;|`)_(\\W|$))|([\\S]+[^\\s<>\\.`]+_(\\W|$))");
     // `trux truc`__
-    public static final Pattern REGEX_ANONYMOUS_HYPERLINK_REFERENCE = Pattern.compile("(\\`[^<>`\\]\\[]+\\`__)|(\\w+[^()`\\s<>]+__)");
+    public static final Pattern REGEX_ANONYMOUS_HYPERLINK_REFERENCE = Pattern
+            .compile("(\\`[^<>`\\]\\[]+\\`__)|(\\w+[^()`\\s<>]+__)");
 }
-
-

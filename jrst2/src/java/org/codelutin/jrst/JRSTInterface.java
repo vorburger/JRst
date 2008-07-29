@@ -31,7 +31,7 @@ import javax.swing.event.ChangeListener;
 import org.codelutin.i18n.I18n;
 import org.codelutin.util.Resource;
 
-public class JRSTInterface extends JDialog{
+public class JRSTInterface extends JDialog {
     private JPanel savePanel = null;
 
     private JPanel formatPanel = null;
@@ -45,7 +45,7 @@ public class JRSTInterface extends JDialog{
     private JComboBox formatList = null;
 
     private JButton boutonAnnuler = null;
-    
+
     private JButton boutonConvertir = null;
 
     private JPanel panelPrincipal = null;
@@ -53,8 +53,8 @@ public class JRSTInterface extends JDialog{
     private JPanel boutonPanel = null;
 
     private JButton boutonSaveLocation = null;
-    
-    private JLabel errorLbl=null;
+
+    private JLabel errorLbl = null;
 
     private JButton boutonOpenLocation = null;
 
@@ -79,7 +79,7 @@ public class JRSTInterface extends JDialog{
     private LinkedList<JButton> ListXslBouton = null;
 
     private LinkedList<JButton> ListXslBoutonLocation = null;
-    private boolean ecrase=false;
+    private boolean ecrase = false;
     private String[] commande = null;
 
     private ImageIcon open = Resource.getIcon("icone/open.png");
@@ -88,10 +88,11 @@ public class JRSTInterface extends JDialog{
     private ResourceBundle bundle = null;
 
     private LinkedList<Container> composantsXSL = null;
+
     /**
      * le parametre initialise les options disponibles
-     * @param String 
-     *              o
+     * 
+     * @param String o
      */
     public JRSTInterface(String o) {
         // language
@@ -99,24 +100,26 @@ public class JRSTInterface extends JDialog{
             I18n.init("fr", "FR");
         else
             I18n.init("en", "US");
-        bundle = ResourceBundle.getBundle("org.codelutin.i18n.I18nBundleBridge");
-       this.setFormats(o);
-       this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-       this.setTitle("JRST");
-       this.setLayout(new BorderLayout());
-       this.add(getPanelPrincipal(), BorderLayout.CENTER);
-       Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-       this.setModal(true);  // pour que JRST attende que cette fenetre soit ferme
-       this.pack(); 
-       this.setResizable(false);  
-       this.setLocation(dim.width/2 - this.getWidth()/2, dim.height/2 - this.getHeight()/2); // Centrer
-       this.setVisible(true);
+        bundle = ResourceBundle
+                .getBundle("org.codelutin.i18n.I18nBundleBridge");
+        this.setFormats(o);
+        this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        this.setTitle("JRST");
+        this.setLayout(new BorderLayout());
+        this.add(getPanelPrincipal(), BorderLayout.CENTER);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setModal(true); // pour que JRST attende que cette fenetre soit
+                             // ferme
+        this.pack();
+        this.setResizable(false);
+        this.setLocation(dim.width / 2 - this.getWidth() / 2, dim.height / 2
+                - this.getHeight() / 2); // Centrer
+        this.setVisible(true);
     }
 
-  
     private JPanel getPanelPrincipal() {
         if (panelPrincipal == null) {
-            
+
             panelPrincipal = new JPanel();
             panelPrincipal.setLayout(new BoxLayout(panelPrincipal,
                     BoxLayout.Y_AXIS));
@@ -130,9 +133,10 @@ public class JRSTInterface extends JDialog{
         }
         return panelPrincipal;
     }
-    private JLabel getErrorLabel(){
-        if (errorLbl==null){
-            errorLbl=new JLabel("");
+
+    private JLabel getErrorLabel() {
+        if (errorLbl == null) {
+            errorLbl = new JLabel("");
         }
         return errorLbl;
     }
@@ -197,7 +201,7 @@ public class JRSTInterface extends JDialog{
     }
 
     private LinkedList<JPanel> getListAddXslPanel() {
-        if (ListAddXslPanel.size()==0) {
+        if (ListAddXslPanel.size() == 0) {
 
             ListAddXslPanel.add(ajoutXSL());
             getFormatList().setEnabled(getFormat().isSelected());
@@ -214,14 +218,14 @@ public class JRSTInterface extends JDialog{
         b.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JButton b = (JButton) e.getSource();
-                if (b.getIcon()==more)
-                    
+                if (b.getIcon() == more)
+
                     ajout();
                 else
                     supprimerXslLigne((JButton) e.getSource());
             }
         });
-        
+
         composantsXSL.add(b);
         ListXslBouton.add(b);
         JTextField t = new JTextField();
@@ -433,8 +437,6 @@ public class JRSTInterface extends JDialog{
         return openText;
     }
 
-    
-
     private JButton getBoutonOpenLocation() {
         if (boutonOpenLocation == null) {
             boutonOpenLocation = new JButton(open);
@@ -464,68 +466,66 @@ public class JRSTInterface extends JDialog{
         fc.showSaveDialog(this);
         File file = fc.getSelectedFile();
         if (file != null) {
-            if (file.exists()){
+            if (file.exists()) {
                 int choix = askEcraser();
-                if (choix == JOptionPane.YES_OPTION){
+                if (choix == JOptionPane.YES_OPTION) {
                     ecrase = true;
                     getSaveText().setText(file.getAbsolutePath());
-                }
-                else if (choix == JOptionPane.NO_OPTION)
+                } else if (choix == JOptionPane.NO_OPTION)
                     openSaveLocation();
-            }
-            else
+            } else
                 getSaveText().setText(file.getAbsolutePath());
         }
 
     }
-    public int askEcraser(){
-        int choix = JOptionPane.showConfirmDialog(this,bundle.getObject("overwriteGraph?"));
-             
+
+    public int askEcraser() {
+        int choix = JOptionPane.showConfirmDialog(this, bundle
+                .getObject("overwriteGraph?"));
+
         return choix;
     }
+
     public void setFormats(String formats) {
         listFormats = formats.split("\\|");
     }
-   
 
     private void annuler() {
         System.exit(0);
     }
-    
-    
+
     private void convert() {
-        boolean exit=false;
-        if (getOpenText().getText().equals("")){
+        boolean exit = false;
+        if (getOpenText().getText().equals("")) {
             getErrorLabel().setText(bundle.getString("openEmpty?"));
             getErrorLabel().setForeground(Color.RED);
             this.pack();
-        }
-        else{
-            if (!ecrase){
+        } else {
+            if (!ecrase) {
                 File file = new File(getSaveText().getText());
                 if (file != null) {
-                    if (file.exists()){
+                    if (file.exists()) {
                         int choix = askEcraser();
                         if (choix == JOptionPane.YES_OPTION)
                             ecrase = true;
                         else if (choix == JOptionPane.NO_OPTION)
-                            exit=true;
-                    }                    
+                            exit = true;
+                    }
                 }
             }
-            if (!exit){
+            if (!exit) {
                 String cmd = "";
                 if (ecrase)
                     cmd += "--force ";
                 if (getFormat().isSelected())
                     cmd += "-t " + getFormatList().getSelectedItem();
-                else{
+                else {
                     cmd += "-x ";
-                    for (JTextField t : ListXslText){
+                    for (JTextField t : ListXslText) {
                         if (!t.getText().equals(""))
-                            cmd+=t.getText()+",";
+                            cmd += t.getText() + ",";
                     }
-                    cmd=cmd.substring(0,cmd.length()-1);
+                    cmd = cmd.substring(0, cmd.length() - 1);
                 }
                 if (getSaveText().getText().length() > 0)
                     cmd += " -o " + getSaveText().getText();
@@ -535,7 +535,8 @@ public class JRSTInterface extends JDialog{
             }
         }
     }
-    public String[] getCmd(){
+
+    public String[] getCmd() {
         return commande;
     }
 

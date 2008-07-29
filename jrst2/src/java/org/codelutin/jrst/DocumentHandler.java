@@ -35,20 +35,21 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Text;
 
-
 /**
  * @author poussin
- *
+ * 
  */
 
 public interface DocumentHandler {
 
     public void startDocument(Document doc);
+
     public void endDocument(Document doc);
+
     public void startElement(Element e);
+
     public void endElement(Element e);
+
     public void text(Text t);
-    
+
 }
-
-

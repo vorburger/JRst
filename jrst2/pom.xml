@@ -1,181 +1,148 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<!--The version of maven's project object model-->
-	<modelVersion>4.0.0</modelVersion>
-
-	<!--lutinproject.xml-->
-	<parent>
-		<groupId>lutinlib</groupId>
-		<artifactId>lutinproject</artifactId>
-		<version>2.2</version>
-	</parent>
-
-	<!--A unique name for this project-->
-	<artifactId>jrst</artifactId>
-	<name>JRst</name>
-
-	<!--ejb, jar, war...-->
-	<packaging>jar</packaging>
-
-	<!--Version-->
-	<version>0.8.2-SNAPSHOT</version>
-
-	<!--Description-->
-	<description>Parser RST en Java.</description>
-	<inceptionYear>2004</inceptionYear>
-
-	<!--Tracking-->
-	<issueManagement>
-		<url>http://labs.libre-entreprise.org/tracker/?group_id=54</url>
-	</issueManagement>
-
-	<!--who the developers are for the project-->
-	<repositories>
-		<repository>
-			<id>codelutin-repository</id>
-			<name>CodeLutinRepository</name>
-			<url>
-				http://lutinbuilder.labs.libre-entreprise.org/maven2
-			</url>
-		</repository>
-	</repositories>
-
+    <modelVersion>4.0.0</modelVersion>
+    
+    <!--lutinproject.xml-->
+    <parent>
+    	<groupId>lutinlib</groupId>
+    	<artifactId>lutinproject</artifactId>
+    	<version>2.2</version>
+    </parent>
+    
+    <!--A unique name for this project-->
+    <artifactId>jrst</artifactId>
+    <name>JRst</name>
+    
+    <!--ejb, jar, war...-->
+    <packaging>jar</packaging>
+    
+    <!--Version-->
+    <version>0.8.2-SNAPSHOT</version>
+    
+    <!--Description-->
+    <description>Parser RST en Java.</description>
+    <inceptionYear>2004</inceptionYear>
+    
+    <!--Tracking-->
+    <issueManagement>
+        <url>http://labs.libre-entreprise.org/tracker/?group_id=54</url>
+    </issueManagement>
+    
+    <!--who the developers are for the project-->
+    <repositories>
+       <repository>
+            <id>codelutin-repository</id>
+            <name>CodeLutinRepository</name>
+            <url> http://lutinbuilder.labs.libre-entreprise.org/maven2 </url>
+        </repository>
+    </repositories>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-<!--		<version>2.0-beta-5</version> -->
+                <version>2.0-beta-7</version>
                 <configuration>
                     <outputEncoding>UTF-8</outputEncoding>
                     <locales>fr,en</locales>
                 </configuration>
-            </plugin>
+           </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-		<configuration>
-			<link>http://java.sun.com/j2se/api/index.html</link>
-			<link>http://topia.labs.libre-entreprise.org/apidocs/</link>
-			<link>http://lutinmatrix.labs.libre-entreprise.org/apidocs/</link>
-			<link>http://lutinutil.labs.libre-entreprise.org/apidocs/</link>
-               </configuration>
+                <configuration>
+                    <link>http://java.sun.com/j2se/api/index.html</link>
+                    <link>http://topia.labs.libre-entreprise.org/apidocs/</link>
+                    <link>http://lutinmatrix.labs.libre-entreprise.org/apidocs/</link>
+                    <link>http://lutinutil.labs.libre-entreprise.org/apidocs/</link>
+                </configuration>
             </plugin>
         </plugins>
     </build>
-
-	<!--Librairies-->
-	<dependencies>
-		<dependency>
-			<groupId>lutinlib</groupId>
-			<artifactId>lutinutil</artifactId>
-			<version>0.27</version>
-			<scope>compile</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>xmlunit</groupId>
-			<artifactId>xmlunit</artifactId>
-			<version>1.2</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>batik</groupId>
-			<artifactId>batik-util</artifactId>
-			<version>1.6-1</version>
-			<scope>runtime</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>1.4</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>fop</groupId>
-			<artifactId>fop</artifactId>
-			<version>0.93</version>
-			<classifier>jdk15</classifier>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>sdoc</groupId>
-			<artifactId>sdoc</artifactId>
-			<version>0.5.0-beta</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.xmlgraphics</groupId>
-			<artifactId>xmlgraphics-commons</artifactId>
-			<version>1.3</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.4</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-primitives</groupId>
-			<artifactId>commons-primitives</artifactId>
-			<version>1.0</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>dom4j</groupId>
-			<artifactId>dom4j</artifactId>
-			<version>1.6.1</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>jaxen</groupId>
-			<artifactId>jaxen</artifactId>
-			<version>1.1.1</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>jewelcli</groupId>
-			<artifactId>jewelcli</artifactId>
-			<version>0.41</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.2</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>nwalsh</groupId>
-			<artifactId>docbook-xsl-nwalsh</artifactId>
-			<version>1.71.1</version>
-			<scope>compile</scope>
-		</dependency>
-	</dependencies>
-
-	<distributionManagement>
-		<site>
-			<id>labs</id>
-			<url>
-				scp://labs.libre-entreprise.org/home/groups/${pom.artifactId}/htdocs/
-			</url>
-		</site>
-	</distributionManagement>
-
+    
+    <!--Librairies-->
+    <dependencies>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>lutinlib</groupId>
+            <artifactId>lutinutil</artifactId>
+            <version>0.29</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>1.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>fop</artifactId>
+            <version>0.95beta-1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>sdoc</groupId>
+            <artifactId>sdoc</artifactId>
+            <version>0.5.0-beta</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>uk.co.flamingpenguin</groupId>
+            <artifactId>jewelcli</artifactId>
+            <version>0.53</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.docbook</groupId>
+            <artifactId>docbook-xsl</artifactId>
+            <version>1.72.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+    <distributionManagement>
+        <site>
+            <id>labs</id>
+            <url>
+                scp://labs.libre-entreprise.org/home/groups/${pom.artifactId}/htdocs/ 
+            </url>
+        </site>
+    </distributionManagement>
 </project>

@@ -41,38 +41,38 @@ import java.util.ArrayList;
 import org.apache.commons.collections.primitives.ArrayCharList;
 import org.apache.commons.collections.primitives.CharList;
 
-
 /**
  * Le principe est d'avoir dans cette classe le moyen de lire, et de retourner
  * la ou on etait avant la lecture (mark et reset de {@link BufferedReader}).
  * <p>
  * Mais il faut aussi pouvoir dire qu'en fin de compte on ne souhaite pas lire
- * les caracteres que l'on vient de lire ({@link #unread(int)} a peu pres egal
- * a {@link PushbackReader})
+ * les caracteres que l'on vient de lire ({@link #unread(int)} a peu pres egal a
+ * {@link PushbackReader})
  * <p>
  * Le pointer nextChar pointe toujours sur le prochain caractere qui sera lu
  * <p>
- * Lorsque l'on appelle la method {@link #mark()} on vide aussi le  buffer pour
+ * Lorsque l'on appelle la method {@link #mark()} on vide aussi le buffer pour
  * liberer de la place, car on a plus le moyen de retourner avant le mark que
  * l'on vient de positionner.
  * <p>
- * On contraire du mark de {@link BufferedReader} ou {@link LineNumberReader}
- * il n'y a pas a specifier le nombre de caractere a garder au maximum, seul la
+ * On contraire du mark de {@link BufferedReader} ou {@link LineNumberReader} il
+ * n'y a pas a specifier le nombre de caractere a garder au maximum, seul la
  * memoire nous limite. Du coup si l'on utilise cette classe sans mark, au final
  * on aura dans le buffer tout le contenu du reader, il faut donc utiliser mark
- * avec cette classe 
+ * avec cette classe
  * 
- * buffer 
+ * buffer
+ * 
  * <pre>
  * #########################
- * 0     ^       ^
+ * 0     &circ;       &circ;
  *       |       |
  *       |       + nextChar
  *       + markChar
  * </pre>
- *  
+ * 
  * @author poussin
- *
+ * 
  */
 public class AdvancedReader {
 
@@ -80,20 +80,20 @@ public class AdvancedReader {
     protected static final String TAB = "    ";
     /** nombre de caractere lu au minimum sur le vrai reader */
     protected static final int READ_AHEAD = 80;
-    
+
     protected Reader in = null;
     protected CharList buffer = null;
-    
+
     protected int charNumber = 0;
     protected int charNumberMark = 0;
     protected int lineNumber = 0;
     protected int lineNumberMark = 0;
-    
+
     protected int nextChar = 0;
     protected int markChar = 0;
-    
+
     protected int readInMark = 0;
-    
+
     /**
      * 
      */
@@ -106,70 +106,70 @@ public class AdvancedReader {
         markChar = nextChar;
         charNumberMark = charNumber;
         lineNumberMark = lineNumber;
-        
+
         free(markChar);
     }
-    
+
     public void reset() throws IOException {
         nextChar = markChar;
         charNumber = charNumberMark;
-        lineNumber = lineNumberMark;        
-       
+        lineNumber = lineNumberMark;
+
     }
-    
+
     public int readSinceMark() {
         return nextChar - markChar;
     }
-    
+
     /**
      * @return the charNumber
      */
     public int getCharNumber() {
         return this.charNumber;
     }
-    
+
     /**
      * @return the lineNumber
      */
     public int getLineNumber() {
         return this.lineNumber;
     }
-    
-  
+
     /**
      * remove number of char in buffer
      * 
      * @param number
      * @return the real number of char removed from the head of buffer
-     * @throws IOException 
+     * @throws IOException
      */
     private int free(int number) throws IOException {
-//        fill(number);
+        // fill(number);
         int result = Math.min(buffer.size(), number);
         buffer.subList(0, result).clear();
-        
+
         nextChar -= result;
-        markChar -= result;       
-        
+        markChar -= result;
+
         return result;
     }
 
     /**
      * ensure that have number char available and not allready read
+     * 
      * @param number
-     * @throws IOException 
+     * @throws IOException
      */
     private void fill(int number) throws IOException {
         int needed = nextChar + number - buffer.size();
         if (needed > 0) {
-            char [] cbuf = new char[needed + READ_AHEAD]; 
+            char[] cbuf = new char[needed + READ_AHEAD];
             int read = in.read(cbuf);
-            for (int i=0; i<read; i++) {
+            for (int i = 0; i < read; i++) {
                 buffer.add(cbuf[i]);
             }
         }
     }
-    
+
     public boolean eof() throws IOException {
         boolean result = -1 == read();
         if (!result) {
@@ -177,15 +177,15 @@ public class AdvancedReader {
         }
         return result;
     }
-    
+
     public int skip(int number) throws IOException {
         int result = 0;
         while (result < number && read() != -1) {
-            result ++;
+            result++;
         }
         return result;
     }
-    
+
     /**
      * go left in reading char buffer
      * 
@@ -195,26 +195,27 @@ public class AdvancedReader {
     public int unread(int number) {
         int result = Math.min(number, nextChar);
         nextChar -= result;
-        
+
         charNumber -= result;
-        for (int i=nextChar; i<nextChar + result; i++) {
+        for (int i = nextChar; i < nextChar + result; i++) {
             if (buffer.get(i) == '\n') {
-                lineNumber --;
+                lineNumber--;
             }
         }
-        
+
         return result;
     }
-    
+
     /**
      * Unread the line length
      * 
      * @param line line used to know the length to unread
-     * @param addNewLine if true then add +1 to unread lenght for not present '\n'
+     * @param addNewLine if true then add +1 to unread lenght for not present
+     *            '\n'
      * @return number of unread char
      */
     public int unread(String line, boolean addNewLine) {
-        int result = unread(line.length() + (addNewLine?1:0));
+        int result = unread(line.length() + (addNewLine ? 1 : 0));
         return result;
     }
 
@@ -222,22 +223,23 @@ public class AdvancedReader {
      * Unread the line length
      * 
      * @param lines lines used to know the length to unread
-     * @param addNewLine if true then add +1 for each line to unread lenght
-     * for not present '\n'
+     * @param addNewLine if true then add +1 for each line to unread lenght for
+     *            not present '\n'
      * @return number of unread char
      */
-    public int unread(String [] lines, boolean addNewLine) {
+    public int unread(String[] lines, boolean addNewLine) {
         int result = 0;
         for (String line : lines) {
             result += unread(line, addNewLine);
         }
         return result;
     }
-     
+
     /**
      * read one char in buffer
+     * 
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     public int read() throws IOException {
         fill(1);
@@ -248,10 +250,10 @@ public class AdvancedReader {
             if (result == '\n') {
                 lineNumber++;
             }
-        }        
+        }
         return result;
     }
-        
+
     /**
      * read one line
      * 
@@ -262,7 +264,7 @@ public class AdvancedReader {
         StringBuffer result = new StringBuffer(READ_AHEAD);
         int c = read();
         while (c != -1 && c != '\n') {
-            result.append((char)c);
+            result.append((char) c);
             c = read();
         }
         if (c == -1 && result.length() == 0) {
@@ -271,61 +273,67 @@ public class AdvancedReader {
             return result.toString();
         }
     }
+
     /**
      * passe les lignes blanches
-     * @throws IOException 
+     * 
+     * @throws IOException
      */
     public void skipBlankLines() throws IOException {
         readUntil("^\\s*\\S+.*");
     }
-    
+
     /**
      * lit toutes les lignes du fichier
+     * 
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
-    String [] readAll() throws IOException {
-        String [] result = readLines(-1);
+    String[] readAll() throws IOException {
+        String[] result = readLines(-1);
         return result;
     }
-    
+
     /**
      * lit un certain nombre de ligne
+     * 
      * @param count si negatif lit toutes les lignes
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
-    public String [] readLines(int count) throws IOException {
+    public String[] readLines(int count) throws IOException {
         ArrayList<String> result = new ArrayList<String>();
-        
+
         String tmp = "";
-        for (int i=count; tmp!=null && i!=0; i--) {
+        for (int i = count; tmp != null && i != 0; i--) {
             tmp = readLine();
             if (tmp != null) {
                 result.add(tmp);
             }
         }
-        return result.toArray(new String [result.size()]);
+        return result.toArray(new String[result.size()]);
     }
 
     /**
-     * lit les lignes jusqu'a la premiere ligne blanche (non retournée) 
+     * lit les lignes jusqu'a la premiere ligne blanche (non retournée)
+     * 
      * @return
      * @throws IOException
      */
-    public String [] readUntilBlank() throws IOException {
-        String [] result = readUntil("\\s*");
+    public String[] readUntilBlank() throws IOException {
+        String[] result = readUntil("\\s*");
         return result;
     }
-    
-   /**
+
+    /**
      * lit les lignes jusqu'a la ligne qui correspond pas au pattern, cette
      * ligne n'est pas mise dans le resultat retourne
+     * 
      * @param pattern
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
-    public String [] readUntil(String pattern) throws IOException {
+    public String[] readUntil(String pattern) throws IOException {
         ArrayList<String> result = new ArrayList<String>();
         String tmp = readLine();
         while (tmp != null && !tmp.matches(pattern)) {
@@ -335,9 +343,9 @@ public class AdvancedReader {
         if (tmp != null) {
             unread(tmp.length() + 1); // +1 for '\n' not in line
         }
-        return result.toArray(new String[result.size()]);        
+        return result.toArray(new String[result.size()]);
     }
-    
+
     /**
      * lit les lignes tant que les lignes correspondent au pattern
      * 
@@ -345,7 +353,7 @@ public class AdvancedReader {
      * @return
      * @throws IOException
      */
-    public String [] readWhile(String pattern) throws IOException {
+    public String[] readWhile(String pattern) throws IOException {
         ArrayList<String> result = new ArrayList<String>();
         String tmp = readLine();
         while (tmp != null && tmp.matches(pattern)) {
@@ -355,9 +363,7 @@ public class AdvancedReader {
         if (tmp != null) {
             unread(tmp.length() + 1); // +1 for '\n' not in line
         }
-        return result.toArray(new String[result.size()]);                
+        return result.toArray(new String[result.size()]);
     }
-    
+
 }
-
-

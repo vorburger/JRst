@@ -31,7 +31,36 @@
 
 package org.codelutin.jrst;
 
-import static org.codelutin.jrst.ReStructuredText.*;
+import static org.codelutin.jrst.ReStructuredText.ADDRESS;
+import static org.codelutin.jrst.ReStructuredText.AUTHOR;
+import static org.codelutin.jrst.ReStructuredText.AUTHORS;
+import static org.codelutin.jrst.ReStructuredText.BULLET_LIST;
+import static org.codelutin.jrst.ReStructuredText.CLASSIFIER;
+import static org.codelutin.jrst.ReStructuredText.CONTACT;
+import static org.codelutin.jrst.ReStructuredText.COPYRIGHT;
+import static org.codelutin.jrst.ReStructuredText.DATE;
+import static org.codelutin.jrst.ReStructuredText.DEFINITION;
+import static org.codelutin.jrst.ReStructuredText.DEFINITION_LIST;
+import static org.codelutin.jrst.ReStructuredText.DOCINFO;
+import static org.codelutin.jrst.ReStructuredText.EMPHASIS;
+import static org.codelutin.jrst.ReStructuredText.ENUMERATED_LIST;
+import static org.codelutin.jrst.ReStructuredText.FIELD_BODY;
+import static org.codelutin.jrst.ReStructuredText.FIELD_LIST;
+import static org.codelutin.jrst.ReStructuredText.FIELD_NAME;
+import static org.codelutin.jrst.ReStructuredText.LIST_ITEM;
+import static org.codelutin.jrst.ReStructuredText.LITERAL;
+import static org.codelutin.jrst.ReStructuredText.LITERAL_BLOCK;
+import static org.codelutin.jrst.ReStructuredText.ORGANIZATION;
+import static org.codelutin.jrst.ReStructuredText.PARAGRAPH;
+import static org.codelutin.jrst.ReStructuredText.REVISION;
+import static org.codelutin.jrst.ReStructuredText.SECTION;
+import static org.codelutin.jrst.ReStructuredText.STATUS;
+import static org.codelutin.jrst.ReStructuredText.STRONG;
+import static org.codelutin.jrst.ReStructuredText.TABLE;
+import static org.codelutin.jrst.ReStructuredText.TITLE;
+import static org.codelutin.jrst.ReStructuredText.TITLE_CHAR;
+import static org.codelutin.jrst.ReStructuredText.TRANSITION;
+import static org.codelutin.jrst.ReStructuredText.VERSION;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,14 +91,13 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-
 /**
- * Cette classe contient plusieurs methode pour generer, soit en utilisant
- * une feuille de style {@link #generate(Document, URL, Writer)}, soit un
+ * Cette classe contient plusieurs methode pour generer, soit en utilisant une
+ * feuille de style {@link #generate(Document, URL, Writer)}, soit un
  * {@link ContentHandler} avec {@link #generate(Document, ContentHandler)}, soit
- * {@link DocumentHandler} avec {@link #generate(Document, ContentHandler)}
- * ou bien regenerer du RST avec {@link #generate(Document)} dans les deux
- * dernier cas il faut passer un {@link Writer} en paremetre du constructeur.
+ * {@link DocumentHandler} avec {@link #generate(Document, ContentHandler)} ou
+ * bien regenerer du RST avec {@link #generate(Document)} dans les deux dernier
+ * cas il faut passer un {@link Writer} en paremetre du constructeur.
  * <p>
  * On peut aussi transformer le {@link Document} en un autre {@link Document}
  * avec {@link #transform(Document, URL)}
@@ -79,39 +107,39 @@ import org.xml.sax.SAXException;
 public class JRSTGenerator implements DocumentHandler {
 
     static boolean DEBUG = true;
-    
+
     static private Log log = LogFactory.getLog(JRSTGenerator.class);
-    
+
     protected Writer out = null;
     protected int sectionLevel = 0;
     protected int indent = 0;
-        
+
     protected String listType = "bullet|enumerated|...";
-    protected int enumStart = 1; 
-    
+    protected int enumStart = 1;
+
     protected URIResolver uriResolver = null;
-    
+
     public JRSTGenerator() {
     }
-    
+
     public JRSTGenerator(Writer out) {
         this.out = out;
     }
-    
+
     /**
      * @return the uriResolver
      */
     public URIResolver getUriResolver() {
         return this.uriResolver;
     }
-    
+
     /**
      * @param uriResolver the uriResolver to set
      */
     public void setUriResolver(URIResolver uriResolver) {
         this.uriResolver = uriResolver;
     }
-    
+
     /**
      * Generate using this class as handler, this generate RST text to out
      * passed in constructor
@@ -123,12 +151,13 @@ public class JRSTGenerator implements DocumentHandler {
     public void generate(Document doc) throws IOException {
         generate(doc, this);
     }
-     
-    public void generate(Document doc, DocumentHandler handler) throws IOException {
+
+    public void generate(Document doc, DocumentHandler handler)
+            throws IOException {
         DocumentWalker walker = new DocumentWalker(handler);
         walker.walk(doc);
     }
-    
+
     /**
      * Generate using handler passed in argument
      * 
@@ -137,7 +166,8 @@ public class JRSTGenerator implements DocumentHandler {
      * @throws IOException
      * @throws TransformerException
      */
-    public void generate(Document doc, ContentHandler handler) throws IOException, TransformerException {
+    public void generate(Document doc, ContentHandler handler)
+            throws IOException, TransformerException {
         // load the transformer using JAXP
         TransformerFactory factory = TransformerFactory.newInstance();
         if (uriResolver != null) {
@@ -146,11 +176,11 @@ public class JRSTGenerator implements DocumentHandler {
         Transformer transformer = factory.newTransformer();
 
         // now lets style the given document
-        DocumentSource source = new DocumentSource( doc );
+        DocumentSource source = new DocumentSource(doc);
         SAXResult result = new SAXResult(handler);
-        transformer.transform( source, result );
+        transformer.transform(source, result);
     }
-   
+
     /**
      * Used writer passed in construction class
      * 
@@ -159,10 +189,11 @@ public class JRSTGenerator implements DocumentHandler {
      * @throws IOException
      * @throws TransformerException
      */
-    public void generate(Document doc, URL stylesheet) throws IOException, TransformerException {
+    public void generate(Document doc, URL stylesheet) throws IOException,
+            TransformerException {
         generate(doc, stylesheet, out);
     }
-    
+
     /**
      * Generate out from document using stylesheet
      * 
@@ -172,7 +203,8 @@ public class JRSTGenerator implements DocumentHandler {
      * @throws IOException
      * @throws TransformerException
      */
-    public void generate(Document doc, URL stylesheet, Writer out) throws IOException, TransformerException {
+    public void generate(Document doc, URL stylesheet, Writer out)
+            throws IOException, TransformerException {
         // load the transformer using JAXP
         TransformerFactory factory = TransformerFactory.newInstance();
         if (uriResolver != null) {
@@ -180,18 +212,17 @@ public class JRSTGenerator implements DocumentHandler {
         } else {
             factory.setURIResolver(new DocumentResolver(stylesheet));
         }
-        Transformer transformer = factory.newTransformer( 
-            new StreamSource( stylesheet.openStream() ) 
-        );
+        Transformer transformer = factory.newTransformer(new StreamSource(
+                stylesheet.openStream()));
 
         // now lets style the given document
-        DocumentSource source = new DocumentSource( doc );
+        DocumentSource source = new DocumentSource(doc);
         StreamResult result = new StreamResult(out);
-        transformer.transform( source, result );
+        transformer.transform(source, result);
 
         out.flush();
     }
-    
+
     /**
      * Transform doc in another XML document
      * 
@@ -201,7 +232,8 @@ public class JRSTGenerator implements DocumentHandler {
      * @throws TransformerException
      * @throws IOException
      */
-    public Document transform(Document doc, URL stylesheet, String ... args) throws TransformerException, IOException {
+    public Document transform(Document doc, URL stylesheet, String... args)
+            throws TransformerException, IOException {
         // load the transformer using JAXP
         TransformerFactory factory = TransformerFactory.newInstance();
         if (uriResolver != null) {
@@ -209,33 +241,35 @@ public class JRSTGenerator implements DocumentHandler {
         } else {
             factory.setURIResolver(new DocumentResolver(stylesheet));
         }
-        Transformer transformer = factory.newTransformer( 
-            new StreamSource( stylesheet.openStream() ) 
-        );
+        Transformer transformer = factory.newTransformer(new StreamSource(
+                stylesheet.openStream()));
 
         // DEBUG To see where is the probleme with the dtd locator :(
-//        transformer.setErrorListener(new ErrorListener() {
-//            public void error(TransformerException exception) throws TransformerException {
-//                exception.printStackTrace();
-//            }
-//            public void fatalError(TransformerException exception) throws TransformerException {
-//                exception.printStackTrace();
-//            }
-//            public void warning(TransformerException exception) throws TransformerException {
-//                exception.printStackTrace();
-//            }
-//            
-//        });
-        
+        // transformer.setErrorListener(new ErrorListener() {
+        // public void error(TransformerException exception) throws
+        // TransformerException {
+        // exception.printStackTrace();
+        // }
+        // public void fatalError(TransformerException exception) throws
+        // TransformerException {
+        // exception.printStackTrace();
+        // }
+        // public void warning(TransformerException exception) throws
+        // TransformerException {
+        // exception.printStackTrace();
+        // }
+        //            
+        // });
+
         // TODO
-//        for (int i=0; i<args.length; i+=2) {
-//            transformer.
-//        }
+        // for (int i=0; i<args.length; i+=2) {
+        // transformer.
+        // }
 
         // now lets style the given document
-        DocumentSource source = new DocumentSource( doc );
+        DocumentSource source = new DocumentSource(doc);
         DocumentResult result = new DocumentResult();
-        transformer.transform( source, result );
+        transformer.transform(source, result);
 
         // return the transformed document
         Document transformedDoc = result.getDocument();
@@ -243,17 +277,20 @@ public class JRSTGenerator implements DocumentHandler {
     }
 
     static public class DocumentResolver implements URIResolver, EntityResolver {
-        
+
         URL baseURL = null;
-        
-        private DocumentResolver() {}
-        
+
+        private DocumentResolver() {
+        }
+
         public DocumentResolver(URL url) throws MalformedURLException {
             String path = new File(url.getPath()).getParent();
-            baseURL = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
+            baseURL = new URL(url.getProtocol(), url.getHost(), url.getPort(),
+                    path);
         }
-        
-        public Source resolve(String href, String base) throws TransformerException {
+
+        public Source resolve(String href, String base)
+                throws TransformerException {
             try {
                 URL url = null;
                 if (href == null) {
@@ -261,15 +298,19 @@ public class JRSTGenerator implements DocumentHandler {
                 } else {
                     String path = baseURL.getPath();
                     if (path.startsWith("file:")) {
-                        path = "file:" + new File(path.substring("file:".length()), href).getCanonicalPath();
+                        path = "file:"
+                                + new File(path.substring("file:".length()),
+                                        href).getCanonicalPath();
                     } else {
-                        path = new File(path, href).getCanonicalPath();                        
+                        path = new File(path, href).getCanonicalPath();
                     }
-                    url = new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(), path);
+                    url = new URL(baseURL.getProtocol(), baseURL.getHost(),
+                            baseURL.getPort(), path);
                 }
-                log.debug("** resolve href: '" + href +  "' base: '"+base + "' return: '"+ url + "'");
+                log.debug("** resolve href: '" + href + "' base: '" + base
+                        + "' return: '" + url + "'");
                 Source result = new StreamSource(url.openStream());
-               return result;
+                return result;
             } catch (MalformedURLException eee) {
                 throw new TransformerException("Can't create url ", eee);
             } catch (IOException eee) {
@@ -277,42 +318,44 @@ public class JRSTGenerator implements DocumentHandler {
             }
         }
 
-        /* (non-Javadoc)
-         * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String, java.lang.String)
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String,
+         * java.lang.String)
          */
-        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-            System.err.println("## resolveEntity publicId '" + publicId + "' systemId: '" + systemId + "'");
+        public InputSource resolveEntity(String publicId, String systemId)
+                throws SAXException, IOException {
+            System.err.println("## resolveEntity publicId '" + publicId
+                    + "' systemId: '" + systemId + "'");
             return null;
         }
 
     }
 
-    
-    
-    
     protected String string(String s, int number) {
         String result = "";
-        for (int i=0; i<number; i++) {
+        for (int i = 0; i < number; i++) {
             result += s;
         }
         return result;
     }
-    
+
     protected String enumtype(int i, String type) {
         String result = null;
         if ("arabic".equals(type)) {
             result = String.valueOf(i);
         } else if ("loweralpha".equals(type)) {
-            result = String.valueOf((char)((int)'a' + i));
+            result = String.valueOf((char) ((int) 'a' + i));
         } else if ("upperalpha".equals(type)) {
-            result = String.valueOf((char)((int)'A' + i));
+            result = String.valueOf((char) ((int) 'A' + i));
         } else if ("lowerroman".equals(type) || "upperroman".equals(type)) {
-            String [] c = new String[]{"i","v","x","l","c","d","m"};
-            int [] d = new int[]{1,5,10,50,100,500,1000};
+            String[] c = new String[] { "i", "v", "x", "l", "c", "d", "m" };
+            int[] d = new int[] { 1, 5, 10, 50, 100, 500, 1000 };
             result = "";
-            for (int a=0; a<c.length; a++) {
-                result = string(c[a], i/d[a]) + result;
-                i = i%d[a];
+            for (int a = 0; a < c.length; a++) {
+                result = string(c[a], i / d[a]) + result;
+                i = i % d[a];
             }
             if ("upperroman".equals(type)) {
                 result = result.toUpperCase();
@@ -336,42 +379,48 @@ public class JRSTGenerator implements DocumentHandler {
         while (elems.peek() != null) {
             Node elem = elems.poll();
             switch (elem.getNodeType()) {
-                case Node.ELEMENT_NODE:
-                    elems.addAll(((Element)elem).content());
-                    if (EMPHASIS.equals(elem.getName())) {
-                        result += 2;
-                    } else if (STRONG.equals(elem.getName())) {
-                        result += 4;
-                    } else if (LITERAL.equals(elem.getName())) {
-                        result += 4;
-                    } // perhaps do footnote_refence, ... 
-                    break;
-                case Node.TEXT_NODE:
-                    result += elem.getText().length();
-                    break;
-            }            
+            case Node.ELEMENT_NODE:
+                elems.addAll(((Element) elem).content());
+                if (EMPHASIS.equals(elem.getName())) {
+                    result += 2;
+                } else if (STRONG.equals(elem.getName())) {
+                    result += 4;
+                } else if (LITERAL.equals(elem.getName())) {
+                    result += 4;
+                } // perhaps do footnote_refence, ...
+                break;
+            case Node.TEXT_NODE:
+                result += elem.getText().length();
+                break;
+            }
         }
         return result;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.codelutin.jrst.DocumentHandler#startDocument(org.dom4j.Document)
      */
     public void startDocument(Document doc) {
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.codelutin.jrst.DocumentHandler#endDocument(org.dom4j.Document)
      */
     public void endDocument(Document doc) {
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.codelutin.jrst.DocumentHandler#endElement(org.dom4j.Element)
      */
     public void endElement(Element e) {
         boolean needNewLine = false;
-        
+
         if (SECTION.equals(e.getName())) {
             sectionLevel--;
             needNewLine = true;
@@ -383,7 +432,7 @@ public class JRSTGenerator implements DocumentHandler {
             if (sectionLevel == 0) {
                 write(string("=", inlineLength(e)));
             } else {
-                String c = TITLE_CHAR.substring(sectionLevel, sectionLevel+1);
+                String c = TITLE_CHAR.substring(sectionLevel, sectionLevel + 1);
                 write(string(c, inlineLength(e)));
             }
             newLine();
@@ -402,14 +451,15 @@ public class JRSTGenerator implements DocumentHandler {
             needNewLine = true;
         } else if (TABLE.equals(e.getName())) {
             // TODO now we take table as LITERAL_BLOCK, but in near
-            // futur we must parse correctly TABLE (show JRSTReader and JRSTLexer too)
+            // futur we must parse correctly TABLE (show JRSTReader and
+            // JRSTLexer too)
             newLine();
             needNewLine = true;
         } else if (BULLET_LIST.equals(e.getName())) {
             needNewLine = true;
         } else if (ENUMERATED_LIST.equals(e.getName())) {
             needNewLine = true;
-        }else if (FIELD_LIST.equals(e.getName())) {
+        } else if (FIELD_LIST.equals(e.getName())) {
             needNewLine = true;
         } else if (FIELD_BODY.equals(e.getName())) {
             indent--;
@@ -417,7 +467,7 @@ public class JRSTGenerator implements DocumentHandler {
             needNewLine = true;
         } else if (DEFINITION.equals(e.getName())) {
             indent--;
-        }  else if (LIST_ITEM.equals(e.getName())) {
+        } else if (LIST_ITEM.equals(e.getName())) {
             indent--;
         } else if (AUTHOR.equals(e.getName())) {
             newLine();
@@ -450,22 +500,25 @@ public class JRSTGenerator implements DocumentHandler {
             newLine();
             indent--;
         }
-        
-        if(needNewLine) {
+
+        if (needNewLine) {
             // on ajoute une nouvelle ligne que si on est pas le dernier
             // fils, cela evite que le fils, le pere, et le grand-pere ne
             // demande tous une nouvelle ligne et donc au lieu d'en avoir
             // une comme on le souhaite on en est 3 voir plus
             Element parent = e.getParent();
-            Node lastNode = parent.node(parent.nodeCount() -1);
+            Node lastNode = parent.node(parent.nodeCount() - 1);
             if (lastNode != e) {
-//                write("** new line ** " + e.getName() + ":" + lastNode.getName());
+                // write("** new line ** " + e.getName() + ":" +
+                // lastNode.getName());
                 newLine();
             }
         }
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.codelutin.jrst.DocumentHandler#startElement(org.dom4j.Element)
      */
     public void startElement(Element e) {
@@ -478,8 +531,8 @@ public class JRSTGenerator implements DocumentHandler {
             }
         } else if (PARAGRAPH.equals(e.getName())) {
             Element parent = e.getParent();
-            if (!((LIST_ITEM.equals(parent.getName()) || FIELD_BODY.equals(parent.getName()))
-                    && parent.node(0) == e)) {
+            if (!((LIST_ITEM.equals(parent.getName()) || FIELD_BODY
+                    .equals(parent.getName())) && parent.node(0) == e)) {
                 writeIndent();
             }
         } else if (TRANSITION.equals(e.getName())) {
@@ -542,41 +595,46 @@ public class JRSTGenerator implements DocumentHandler {
             indent++;
         } else if (TABLE.equals(e.getName())) {
             // TODO now we take table as LITERAL_BLOCK, but in near
-            // futur we must parse correctly TABLE (show JRSTReader and JRSTLexer too)
+            // futur we must parse correctly TABLE (show JRSTReader and
+            // JRSTLexer too)
         } else if (BULLET_LIST.equals(e.getName())) {
             listType = BULLET_LIST;
         } else if (ENUMERATED_LIST.equals(e.getName())) {
             listType = ENUMERATED_LIST;
             enumStart = Integer.parseInt(e.attributeValue("start"));
-        }  else if (LIST_ITEM.equals(e.getName())) {
+        } else if (LIST_ITEM.equals(e.getName())) {
             if (BULLET_LIST.equals(listType)) {
                 writeIndent("- ");
             } else if (ENUMERATED_LIST.equals(listType)) {
-                writeIndent(enumtype(enumStart++, e.getParent().attributeValue("enumtype")) + ". ");
+                writeIndent(enumtype(enumStart++, e.getParent().attributeValue(
+                        "enumtype"))
+                        + ". ");
             }
             indent++;
-        } 
+        }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.codelutin.jrst.DocumentHandler#text(org.dom4j.Text)
      */
     public void text(Text t) {
         if (LITERAL_BLOCK.equals(t.getParent().getName())) {
             writeIndent(t.getText());
         } else {
-            write(t.getText()); 
+            write(t.getText());
         }
     }
 
     protected void newLine() {
-        write("\n");        
+        write("\n");
     }
-    
+
     protected void write(String text) {
         write(text, false);
     }
-    
+
     protected void writeIndent() {
         write("", true);
     }
@@ -584,7 +642,7 @@ public class JRSTGenerator implements DocumentHandler {
     protected void writeIndent(String text) {
         write(text, true);
     }
-    
+
     /**
      * Ecrit le text, si indent est vrai, alors chaque ligne est indentée
      * 
@@ -599,7 +657,7 @@ public class JRSTGenerator implements DocumentHandler {
             }
             out.write(blank);
             for (char c : text.toCharArray()) {
-                out.write(c);                
+                out.write(c);
                 if (c == '\n') {
                     out.write(blank);
                 }
@@ -611,5 +669,3 @@ public class JRSTGenerator implements DocumentHandler {
         }
     }
 }
-
-

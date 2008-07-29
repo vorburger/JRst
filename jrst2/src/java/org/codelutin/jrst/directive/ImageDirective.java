@@ -31,44 +31,43 @@
 
 package org.codelutin.jrst.directive;
 
+import static org.codelutin.jrst.ReStructuredText.IMAGE;
+import static org.codelutin.jrst.ReStructuredText.SUBSTITUTION_DEFINITION;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.codelutin.jrst.JRSTDirective;
 import org.codelutin.jrst.JRSTLexer;
-
-import static org.codelutin.jrst.ReStructuredText.*;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 
-
 /**
- * .. image:: picture.jpeg
- *   :height: 100
- *   :width: 200
- *   :scale: 50
- *   :alt: alternate text
- *   :align: right
- *   
+ * .. image:: picture.jpeg :height: 100 :width: 200 :scale: 50 :alt: alternate
+ * text :align: right
+ * 
  * @author poussin
  */
 public class ImageDirective implements JRSTDirective {
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.codelutin.jrst.JRSTDirective#parse(org.dom4j.Element)
      */
     public Node parse(Element e) {
         Element result = DocumentHelper.createElement(IMAGE);
-        
-        if (e.getParent() != null && SUBSTITUTION_DEFINITION.equals(e.getParent().getName())) {
+
+        if (e.getParent() != null
+                && SUBSTITUTION_DEFINITION.equals(e.getParent().getName())) {
             String ref = e.getParent().attributeValue("name");
             result.addAttribute("alt", ref);
         }
         result.addAttribute("uri", e.attributeValue(JRSTLexer.DIRECTIVE_VALUE));
-        
+
         Pattern arg = Pattern.compile("\\s+:([^:]+):\\s*(.*)");
-        String [] lines = e.getText().split("\n");
+        String[] lines = e.getText().split("\n");
         for (String l : lines) {
             Matcher matcher = arg.matcher(l.trim());
             if (matcher.matches()) {
@@ -81,5 +80,3 @@ public class ImageDirective implements JRSTDirective {
     }
 
 }
-
-
