@@ -5,7 +5,7 @@
 	<!--The version of maven's project object model-->
 	<modelVersion>4.0.0</modelVersion>
 	
-	<!--lutinproject.xml-->
+	<!--lutinproject.xml--> <!-- bug dans maven, les plugins ne fonctionne pas s'il herite d'un projet, mais pour la generation du site -->
 	<!--parent>
 		<groupId>lutinlib</groupId>
 		<artifactId>lutinproject</artifactId>

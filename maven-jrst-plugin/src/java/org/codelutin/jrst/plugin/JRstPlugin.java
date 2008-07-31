@@ -32,9 +32,11 @@
 package org.codelutin.jrst.plugin;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.NoBannerLogger;
 import org.apache.tools.ant.Project;
@@ -45,7 +47,22 @@ import org.codelutin.util.FileUtil;
 import org.codelutin.util.FileUtil.FileAction;
 
 /**
- * G�n�re du xdoc � partir de fichiers Rst
+ * Génére du xdoc à partir de fichiers Rst
+ * 
+ * Les fichiers rst sont dans les repertoires:
+ * <li> src/site/fr/rst/
+ * <li> src/site/en/rst/
+ * <li> src/site/es/rst/
+ * <li> ...
+ * 
+ * et ils iront au final dans:
+ * <li> target/site-build/fr/xdoc/
+ * <li> target/site-build/en/xdoc/
+ * <li> target/site-build/es/xdoc/
+ * <li> ...
+ *  
+ * tous les autres fichiers iront dans target/site-build en respectant la
+ * meme hierarchie de repertoire.
  *  
  * @goal jrst
  * @phase pre-site
@@ -54,10 +71,10 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
     /**
      * R�pertoire source des fichiers Rst
      * 
-     * @parameter default-value="doc"
+     * @parameter default-value="src/site"
      * @required
      */
-    private String directoryIn = "doc";
+    private String directoryIn = "src/site";
     
     /**
      * Encoding en entr�e
@@ -76,10 +93,10 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
     /**
      * Répertoire cible des fichiers xdoc générée
      * 
-     * @parameter default-value="target/site-build/xdoc"
+     * @parameter default-value="target/site-build"
      * @required
      */
-    private String directoryOut = "target/site-build/xdoc";
+    private String directoryOut = "target/site-build";
 
     /**
      * Arr�te la g�n�ration en cas d'erreurs
@@ -91,9 +108,15 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
     /**
      * Ecrase les fichiers g�n�r�s
      * 
-     * @parameter default-value="false"
+     * @parameter default-value="ifnewer"
      */
-    private boolean overwrite = false;
+    private String overwrite = "ifnewer";
+    
+    /**
+     * 
+     * @parameter default-value="fr"
+     */
+    private String defaultLocale = "fr";
     
     /**
      * Permet d'obtenir plus d'information
@@ -102,8 +125,37 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
      */
     private boolean verbose = false;
     
+    /**
+    * Projet en cours de deploiement.
+    * @parameter expression="${project}"
+    */
+
+    private MavenProject project;
     
     private int numberFilesGenerates;
+    
+    /**
+     * Retourne la langue par defaut precisé dans le pom.xml
+     * @return
+     */
+    protected String getDefaultLocale() {
+        String result = defaultLocale;
+        return result;
+    }
+    
+    /**
+     * @return the overwrite
+     */
+    public JRST.Overwrite getOverwrite() {
+        JRST.Overwrite result = JRST.Overwrite.NEVER; 
+        if (this.overwrite.contains("new")) {
+            result = JRST.Overwrite.IFNEWER;
+        } else if ("true".equalsIgnoreCase(this.overwrite) ||
+                "alltime".equalsIgnoreCase(this.overwrite)) {
+            result = JRST.Overwrite.ALLTIME;
+        }
+        return result;
+    }
     
     public void execute() throws MojoExecutionException {
         try {
@@ -118,7 +170,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
     }
     
     private void actionGenerate(){
-        getLog().info("G�n�ration des fichier xdocs � partir des fichiers rst");
+        getLog().info("Génération des fichier xdocs à partir des fichiers rst");
         numberFilesGenerates = 0;
         FileUtil.walkAfter(new File(directoryIn), this);
         getLog().info("Generating " + numberFilesGenerates + " files to " + directoryOut);
@@ -127,16 +179,26 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
     public boolean doAction(File file) {
         String fileIn = file.getAbsoluteFile().toString();
         String fileOut = null;
-        
-        if (fileIn.matches(".*\\.rst")) {
-            fileOut = fileIn.replace(directoryIn,directoryOut).replace(".rst",".xml");
+        getLog().info("Using " + fileIn);
+        if (fileIn.matches(".*[/\\\\]rst[/\\\\].*\\.rst")) {
+            fileOut = 
+                fileIn.replace(directoryIn, directoryOut)
+                .replace(".rst",".xml")
+                .replaceFirst("([/\\\\])rst([/\\\\])", "$1xdoc$2");
+
+            if (defaultLocale != null && !"".equals(defaultLocale)) {
+                fileOut = fileOut.replaceFirst("([/\\\\])" + defaultLocale + "([/\\\\])", "$1");
+            }
+            
             try {
                 JRST.generate(JRST.TYPE_XDOC,
-                        new File(fileIn), inputEncoding, new File(fileOut), outputEncoding, (overwrite ? JRST.Overwrite.ALLTIME : JRST.Overwrite.NEVER));
+                        new File(fileIn), inputEncoding, new File(fileOut), outputEncoding, getOverwrite());
                 numberFilesGenerates ++;
             } catch (Exception e) {
                 getLog().error(e);
-                throw new GenerationJRstException(fileIn); 
+                if(!ignoreErrors) {
+                    throw new GenerationJRstException(fileIn);
+                }
             }
         }
         
@@ -151,35 +213,83 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
         getLog().info("Copie des fichiers images");
         /* Execution de la tâche ant copy */
          
-        /* Création d'un projet ant */
-        Project project = new Project();
+        try {
+            if (defaultLocale != null && !"".equals(defaultLocale)) {
+                // copie de tous les fichiers non rst
+                FileUtil.copyAndRenameRecursively(
+                        new File(directoryIn),
+                        new File(directoryOut),
+                        false,
+                        "([/\\\\])" + defaultLocale + "([/\\\\])", "$1",
+                        true,
+                        ".*[/\\\\]rst[/\\\\].*");
+                
+                // copie des images du repertoire rst dans le build-site
+                FileUtil.copyAndRenameRecursively(
+                        new File(directoryIn),
+                        new File(directoryOut),
+                        false, // on ne copie que le contenu de directoryIn
+                        "([/\\\\])" + defaultLocale + "([/\\\\])rst([/\\\\])",
+                        "$1resources$2",
+                        false,
+                        ".*[/\\\\]rst[/\\\\].*(\\.png|\\.jpeg|\\.jpg|\\.gif)$");
+            } else {
+                // copie de tous les fichiers non rst
+                FileUtil.copyAndRenameRecursively(
+                        new File(directoryIn),
+                        new File(directoryOut),
+                        false, 
+                        "", 
+                        "", 
+                        true, 
+                        ".*[/\\\\]rst[/\\\\].*");
+                
+                // copie des images du repertoire rst dans le build-site
+                FileUtil.copyAndRenameRecursively(
+                        new File(directoryIn),
+                        new File(directoryOut),
+                        false,
+                        "([/\\\\])rst([/\\\\])", 
+                        "$1resources$2",
+                        false,
+                        ".*[/\\\\]rst[/\\\\].*(\\.png|\\.jpeg|\\.jpg|\\.gif)$");
+            }
+        } catch (IOException eee) {
+            getLog().error(eee);
+        }
         
-        BuildLogger logger = new NoBannerLogger();
-        logger.setMessageOutputLevel(org.apache.tools.ant.Project.MSG_INFO);
-        logger.setOutputPrintStream(System.out);
-        logger.setErrorPrintStream(System.err);
-
-        project.init();
-        project.getBaseDir();
-        project.addBuildListener(logger);
-
-        /* Création de la tâche ant Copy */
-        Copy copy = new Copy();
-        copy.setProject(project);
-        copy.setTaskName("Copy images");
-
-        /* Configuration */
-        copy.setTodir(new File(directoryOut + "/resources")); // with maven2 site plugin images must be in resources
-        copy.setPreserveLastModified(true);
-        copy.setOverwrite(overwrite);
         
-        FileSet fileSet = new FileSet();
-        fileSet.setDir(new File(directoryIn));
-        fileSet.setIncludes("**/*.png,**/*.jpeg,**/*.jpg,**/*.gif");
-        copy.addFileset(fileSet);
+      
         
-        /* Execution */
-        copy.execute();
+//        /* Création d'un projet ant */
+//        Project project = new Project();
+//        
+//        BuildLogger logger = new NoBannerLogger();
+//        logger.setMessageOutputLevel(org.apache.tools.ant.Project.MSG_INFO);
+//        logger.setOutputPrintStream(System.out);
+//        logger.setErrorPrintStream(System.err);
+//
+//        project.init();
+//        project.getBaseDir();
+//        project.addBuildListener(logger);
+//
+//        /* Création de la tâche ant Copy */
+//        Copy copy = new Copy();
+//        copy.setProject(project);
+//        copy.setTaskName("Copy images");
+//
+//        /* Configuration */
+//        copy.setTodir(new File(directoryOut + "/resources")); // with maven2 site plugin images must be in resources
+//        copy.setPreserveLastModified(true);
+//        copy.setOverwrite("true".equalsIgnoreCase(overwrite));
+//        
+//        FileSet fileSet = new FileSet();
+//        fileSet.setDir(new File(directoryIn));
+//        fileSet.setIncludes("**/*.png,**/*.jpeg,**/*.jpg,**/*.gif");
+//        copy.addFileset(fileSet);
+//        
+//        /* Execution */
+//        copy.execute();
     }
 
 }
