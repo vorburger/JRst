@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -30,7 +30,15 @@
     <issueManagement>
         <url>http://labs.libre-entreprise.org/tracker/?group_id=54</url>
     </issueManagement>
-    
+    <properties>
+                                <!--Source base dir-->
+                                <maven.src.dir>${basedir}/src</maven.src.dir>
+
+                                <!--Compile with ?-->
+                                <maven.compile.source>1.5</maven.compile.source>
+                                <maven.compile.target>1.5</maven.compile.target>
+                        </properties>
+
     <!--who the developers are for the project-->
     <repositories>
        <repository>

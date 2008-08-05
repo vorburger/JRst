@@ -1,6 +1,6 @@
 /* *##%
  * Copyright (C) 2006
- *     Code Lutin, Cédric Pineau, Benjamin Poussin
+ *     Code Lutin, CÃ©dric Pineau, Benjamin Poussin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,14 +31,14 @@
 
 package org.codelutin.jrst;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.Text;
+
+import java.util.List;
 
 /**
  * @author poussin

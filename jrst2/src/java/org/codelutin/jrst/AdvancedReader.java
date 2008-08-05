@@ -1,6 +1,6 @@
 /* *##%
  * Copyright (C) 2006
- *     Code Lutin, Cédric Pineau, Benjamin Poussin
+ *     Code Lutin, CÃ©dric Pineau, Benjamin Poussin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,15 +31,15 @@
 
 package org.codelutin.jrst;
 
+import org.apache.commons.collections.primitives.ArrayCharList;
+import org.apache.commons.collections.primitives.CharList;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.PushbackReader;
 import java.io.Reader;
 import java.util.ArrayList;
-
-import org.apache.commons.collections.primitives.ArrayCharList;
-import org.apache.commons.collections.primitives.CharList;
 
 /**
  * Le principe est d'avoir dans cette classe le moyen de lire, et de retourner
@@ -315,7 +315,7 @@ public class AdvancedReader {
     }
 
     /**
-     * lit les lignes jusqu'a la premiere ligne blanche (non retournée)
+     * lit les lignes jusqu'a la premiere ligne blanche (non retournÃ©e)
      * 
      * @return
      * @throws IOException

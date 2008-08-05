@@ -4,16 +4,16 @@ Le XSL (Extensible Stylesheets Language)
 
 .. contents:: Sommaire
 
-Présentation
+PrÃ©sentation
 ============
 
-XML est un langage de structuration des données, et non de représentation des données. Ainsi XSL (eXtensible StyleSheet Language) est un langage recommandé par le W3C pour effectuer la représentation des données de documents XML. XSL est lui-même défini avec le formalisme XML, cela signifie qu'une feuille de style XSL est un document XML bien formé.
+XML est un langage de structuration des donnÃ©es, et non de reprÃ©sentation des donnÃ©es. Ainsi XSL (eXtensible StyleSheet Language) est un langage recommandÃ© par le W3C pour effectuer la reprÃ©sentation des donnÃ©es de documents XML. XSL est lui-mÃªme dÃ©fini avec le formalisme XML, cela signifie qu'une feuille de style XSL est un document XML bien formÃ©.
 
-XSL est un langage permettant de définir des feuilles de style pour les documents XML au même titre que les CSS (Cascading StyleSheets) pour le langage HTML ou bien DSSSL (Document Style Semantics and Specification Language) pour le SGML. XSL est d'ailleurs inspiré de DSSSL dont il reprend beaucoup de fonctionnalités et est compatible avec les CSS (il s'agit d'un sur-ensemble des CSS).
+XSL est un langage permettant de dÃ©finir des feuilles de style pour les documents XML au mÃªme titre que les CSS (Cascading StyleSheets) pour le langage HTML ou bien DSSSL (Document Style Semantics and Specification Language) pour le SGML. XSL est d'ailleurs inspirÃ© de DSSSL dont il reprend beaucoup de fonctionnalitÃ©s et est compatible avec les CSS (il s'agit d'un sur-ensemble des CSS).
 
-Toutefois, contrairement aux CSS, XSL permet aussi de retraiter un document XML afin d'en modifier totalement sa structure, ce qui permet à partir d'un document XML d'être capable de générer d'autres types de documents (PostScript, HTML, Tex, RTF, ...) ou bien un fichier XML de structure différente.
+Toutefois, contrairement aux CSS, XSL permet aussi de retraiter un document XML afin d'en modifier totalement sa structure, ce qui permet Ã  partir d'un document XML d'Ãªtre capable de gÃ©nÃ©rer d'autres types de documents (PostScript, HTML, Tex, RTF, ...) ou bien un fichier XML de structure diffÃ©rente.
 
-Ainsi la structuration des données (définie par XML) et leur représentation (définie par un langage tel que XSL) sont séparées. Cela signifie qu'il est possible à partir d'un document XML de créer des documents utilisant différentes représentations (HTML pour créer des pages web, WML pour les mobiles WAP, ...).
+Ainsi la structuration des donnÃ©es (dÃ©finie par XML) et leur reprÃ©sentation (dÃ©finie par un langage tel que XSL) sont sÃ©parÃ©es. Cela signifie qu'il est possible Ã  partir d'un document XML de crÃ©er des documents utilisant diffÃ©rentes reprÃ©sentations (HTML pour crÃ©er des pages web, WML pour les mobiles WAP, ...).
 
 |presentationxsl|
 
@@ -21,47 +21,47 @@ Ainsi la structuration des données (définie par XML) et leur représentation (déf
 Structure d'un document XSL
 ===========================
 
-Un document XSL étant un document XML, il commence obligatoirement par la balise suivante::
+Un document XSL Ã©tant un document XML, il commence obligatoirement par la balise suivante::
 
-   <?xml version="1.0" encoding="ISO-8859-1"?>
+   <?xml version="1.0" encoding="UTF-8"?>
 
 
 D'autre part, toute feuille de style XSL est comprise entre les balises <xsl:stylesheet ...> et </xsl:stylesheet>.
 
-La balise xsl:stylesheet encapsule des balises xsl:template définissant les transformations à faire subir à certains éléments du document XML.
+La balise xsl:stylesheet encapsule des balises xsl:template dÃ©finissant les transformations Ã  faire subir Ã  certains Ã©lÃ©ments du document XML.
 
 ::
 
-   <?xml version="1.0" encoding="ISO-8859-1"?>
+   <?xml version="1.0" encoding="UTF-8"?>
    <xsl:stylesheet
    xmlns:xsl="http://www.w3.org/TR/WD-xsl"
    xmlns="http://www.w3.org/TR/REC-html40"
    result-ns="">
       <xsl:template ... >
-          <!-- traitements à effectuer -->
+          <!-- traitements Ã  effectuer -->
       </xsl:template >
    </xsl:stylesheet>
 
 
-Association d'une feuille XSL à un document XML
+Association d'une feuille XSL Ã  un document XML
 ===============================================
 
-Une feuille de style XSL (enregistré dans un fichier dont l'extension est .xsl) peut être liée à un document XML (de telle manière à ce que le document XML utilise la feuille XSL) en insérant la balise suivante au début du document XML::
+Une feuille de style XSL (enregistrÃ© dans un fichier dont l'extension est .xsl) peut Ãªtre liÃ©e Ã  un document XML (de telle maniÃ¨re Ã  ce que le document XML utilise la feuille XSL) en insÃ©rant la balise suivante au dÃ©but du document XML::
 
-   <?xml version="1.0" encoding="ISO-8859-1"?>
+   <?xml version="1.0" encoding="UTF-8"?>
    <?xml-stylesheet href="fichier.xsl" type="text/xsl"?>
 
 
-Les template rules (règles de gabarit)
+Les template rules (rÃ¨gles de gabarit)
 ======================================
 
-Les template rules sont des balises XSL permettant de définir des opérations à réaliser sur certains éléments du document XML utilisant la page XSL, c'est-à-dire généralement de transformer un tag XML en au moins un tag HTML (généralement plusieurs).
+Les template rules sont des balises XSL permettant de dÃ©finir des opÃ©rations Ã  rÃ©aliser sur certains Ã©lÃ©ments du document XML utilisant la page XSL, c'est-Ã -dire gÃ©nÃ©ralement de transformer un tag XML en au moins un tag HTML (gÃ©nÃ©ralement plusieurs).
 
 Ainsi le tag XML suivant::
 
    <personne>
       <nom>Pillou</nom>
-      <prenom>Jean-François</prenom>
+      <prenom>Jean-FranÃ§ois</prenom>
    </personne>
    <personne>
       <nom>VanHaute</nom>
@@ -72,38 +72,38 @@ Ainsi le tag XML suivant::
       <prenom>Seb</prenom>
    </personne>
 
-pourra être transformé en les tags HTML suivants::
+pourra Ãªtre transformÃ© en les tags HTML suivants::
 
    <ul>
-      <li>Pillou - Jean-François</li>
+      <li>Pillou - Jean-FranÃ§ois</li>
       <li>VanHaute - Nico</li>
       <li>Andrieu - Seb</li>
    </ul>
 
-L'attribut "match" de la balise <xsl:template> permet de définir (grâce à la notation XPath) le ou les éléments du document XML sur lesquels s'applique la transformation.
+L'attribut "match" de la balise <xsl:template> permet de dÃ©finir (grÃ¢ce Ã  la notation XPath) le ou les Ã©lÃ©ments du document XML sur lesquels s'applique la transformation.
 
-La notation Xpath permet de définir des patterns, c'est-à-dire des chaînes de caractères permettant de repérer un noeud dans le document XML. Les principaux patterns sont :
+La notation Xpath permet de dÃ©finir des patterns, c'est-Ã -dire des chaÃ®nes de caractÃ¨res permettant de repÃ©rer un noeud dans le document XML. Les principaux patterns sont :
 
 =======  =============  =================================================================
 Pattern  Exemple        Signification   
 =======  =============  =================================================================
 ``|``    Gauche|Milieu  Indique une alternative (un noeud ou bien l'autre (ou les deux))
-/        personne/nom   Chemin d'accès aux éléments (personne/bras/gauche)
-*        *              Motif "joker" désignant n'importe quel élément
+/        personne/nom   Chemin d'accÃ¨s aux Ã©lÃ©ments (personne/bras/gauche)
+*        *              Motif "joker" dÃ©signant n'importe quel Ã©lÃ©ment
 //       //personne     Indique tous les descendants d'un noeud
-.        .              Caractérise le noeud courant
-``..``   ``..``             Désigne le noeud parent
-@        @valeur        Indique un attribut caractéristique
+.        .              CaractÃ©rise le noeud courant
+``..``   ``..``             DÃ©signe le noeud parent
+@        @valeur        Indique un attribut caractÃ©ristique
 =======  =============  =================================================================
 
-La transformation peut être réalisée :
+La transformation peut Ãªtre rÃ©alisÃ©e :
 
 - soit par ajout de texte,
-- soit en définissant des éléments de transformation, c'est-à-dire des éléments permettant de définir des règles de transformation à appliquer aux éléments sélectionnés par l'attribut match 
+- soit en dÃ©finissant des Ã©lÃ©ments de transformation, c'est-Ã -dire des Ã©lÃ©ments permettant de dÃ©finir des rÃ¨gles de transformation Ã  appliquer aux Ã©lÃ©ments sÃ©lectionnÃ©s par l'attribut match 
 
-Voici un exemple de feuille XSL permettant d'effectuer la transformation XML vers HTML décrite ci-dessus::
+Voici un exemple de feuille XSL permettant d'effectuer la transformation XML vers HTML dÃ©crite ci-dessus::
 
-   <?xml version="1.0" encoding="ISO-8859-1"?>
+   <?xml version="1.0" encoding="UTF-8"?>
    <xsl:stylesheet
    xmlns:xsl="http://www.w3.org/TR/WD-xsl"
    xmlns="http://www.w3.org/TR/REC-html40"
@@ -132,15 +132,15 @@ Voici un exemple de feuille XSL permettant d'effectuer la transformation XML ver
 
 Voici la signification de cette feuille XSL
 
-* Le premier tag <xsl:template> permet d'appliquer une transformation à l'ensemble du document (la valeur "/" de l'attribut match indique l'élément racine du document XML). Ce tag contient des balises HTML qui seront transmises dans l'arbre résultat
-* L'élément <xsl:apply-templates/> indique le traitement de tous les enfants directs de la racine.
-* La balise <xsl:template match="personne" > permet d'aller traiter les éléments de type personne
-* Enfin les deux éléments <xsl:value-of select="nom"/> et <xsl:value-of select="prenom"/> permettent de recuperer les valeurs des balises nom et prenom 
+* Le premier tag <xsl:template> permet d'appliquer une transformation Ã  l'ensemble du document (la valeur "/" de l'attribut match indique l'Ã©lÃ©ment racine du document XML). Ce tag contient des balises HTML qui seront transmises dans l'arbre rÃ©sultat
+* L'Ã©lÃ©ment <xsl:apply-templates/> indique le traitement de tous les enfants directs de la racine.
+* La balise <xsl:template match="personne" > permet d'aller traiter les Ã©lÃ©ments de type personne
+* Enfin les deux Ã©lÃ©ments <xsl:value-of select="nom"/> et <xsl:value-of select="prenom"/> permettent de recuperer les valeurs des balises nom et prenom 
 
-Références
+RÃ©fÃ©rences
 ==========
 
 - Article : http://www.commentcamarche.net/xml/xmlxsl.php3
-- Schéma  : http://fr.wikipedia.org/wiki/Extended_stylesheet_language_transformations
+- SchÃ©ma  : http://fr.wikipedia.org/wiki/Extended_stylesheet_language_transformations
 
 .. |presentationxsl| image:: presentationXSL.png 

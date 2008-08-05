@@ -1,6 +1,6 @@
 /* *##%
  * Copyright (C) 2006
- *     Code Lutin, Cédric Pineau, Benjamin Poussin
+ *     Code Lutin, CÃ©dric Pineau, Benjamin Poussin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,14 +31,14 @@
 
 package org.codelutin.jrst;
 
+import junit.framework.TestCase;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.StringReader;
 import java.io.Writer;
-
-import junit.framework.TestCase;
 
 
 /**

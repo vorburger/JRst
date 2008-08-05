@@ -1,5 +1,5 @@
 =========================
-Documentation développeur
+Documentation dÃ©veloppeur
 =========================
 
 .. contents:: Sommaire
@@ -9,20 +9,20 @@ Le diagramme de Class
 
 |classDiagramme|
 
-La Class **AdvancedReader** a pour fonction de faciliter la lecture du fichier RST grâce à différentes méthodes :
+La Class **AdvancedReader** a pour fonction de faciliter la lecture du fichier RST grÃ¢ce Ã  diffÃ©rentes mÃ©thodes :
   - String readLine() : renvoie une ligne
   - String[] readLines(int nombresLigne) : renvoie un certain nombre de lignes
   - Stringn[] readWhile(Pattern p) : renvoie les lignes tant qu'elles correspondent au pattern
 
 ...
 
-La Class **JRSTLexer** utilise **AdvancedReader** pour construire un fichier XML, il va parcourir l'ensemble du document pour isoler les types de données, leurs paramètres et leurs contenus, donc rassembler toutes les informations utiles à la mise en forme du XML final. Il va commencer par l'entête du document (peekHeader(), peekDocInfo()) pour ensuite s'intéresser au corps (peekBody()).
+La Class **JRSTLexer** utilise **AdvancedReader** pour construire un fichier XML, il va parcourir l'ensemble du document pour isoler les types de donnÃ©es, leurs paramÃ¨tres et leurs contenus, donc rassembler toutes les informations utiles Ã  la mise en forme du XML final. Il va commencer par l'entÃªte du document (peekHeader(), peekDocInfo()) pour ensuite s'intÃ©resser au corps (peekBody()).
 
-La Class **JRSTReader** utilise **JRSTLexer**, il interprète le XML qui lui est renvoyé pour construire le XML final. Celui-ci est conforme à la DTD définie par DocUtils_. Cette Class a parfois besoin de s'appeler elle même lorsque une partie du document doit être interprétée indépendamment du reste. Par exemple, s'il y a une liste dans une case d'un tableau, l'on extrait les informations de la case et on les interprètes, le contenu d'une admoniton (une note) doit lui aussi être considéré comme un document indépendant. Lorsque la génération est terminée, la Class compose le sommaire (composeContent()) puis s'occupe de toutes les spécificités « inline » (inline()), comme par exemple les mots en italique ou gras, les références, les footnotes... Tout ce qui peut apparaître à l'intérieur d'une ligne.
+La Class **JRSTReader** utilise **JRSTLexer**, il interprÃ¨te le XML qui lui est renvoyÃ© pour construire le XML final. Celui-ci est conforme Ã  la DTD dÃ©finie par DocUtils_. Cette Class a parfois besoin de s'appeler elle mÃªme lorsque une partie du document doit Ãªtre interprÃ©tÃ©e indÃ©pendamment du reste. Par exemple, s'il y a une liste dans une case d'un tableau, l'on extrait les informations de la case et on les interprÃ¨tes, le contenu d'une admoniton (une note) doit lui aussi Ãªtre considÃ©rÃ© comme un document indÃ©pendant. Lorsque la gÃ©nÃ©ration est terminÃ©e, la Class compose le sommaire (composeContent()) puis s'occupe de toutes les spÃ©cificitÃ©s Â« inline Â» (inline()), comme par exemple les mots en italique ou gras, les rÃ©fÃ©rences, les footnotes... Tout ce qui peut apparaÃ®tre Ã  l'intÃ©rieur d'une ligne.
 
-La Class **reStructuredText** référence toutes les variables nécessaires à la génération du XML final.
+La Class **reStructuredText** rÃ©fÃ©rence toutes les variables nÃ©cessaires Ã  la gÃ©nÃ©ration du XML final.
 
-La Class **JRST** contient la méthode main(), elle gère les options, la lecture et l'écriture des fichiers. Elle lit le document, le parse grâce à la class **JRSTReader** puis applique le XSL désiré (si besoin) grâce à la class **JRSTGenerator**.
+La Class **JRST** contient la mÃ©thode main(), elle gÃ¨re les options, la lecture et l'Ã©criture des fichiers. Elle lit le document, le parse grÃ¢ce Ã  la class **JRSTReader** puis applique le XSL dÃ©sirÃ© (si besoin) grÃ¢ce Ã  la class **JRSTGenerator**.
 
 Exemple d'utilisation
 =====================
@@ -37,7 +37,7 @@ L'on souhaite convertir le document rst (text.rst) suivant en html (text.html) :
 
    :Author: Letellier Sylvain
 
-   .. Attention:: texte à être réinterprété comme un fichier rst indépendant
+   .. Attention:: texte Ã  Ãªtre rÃ©interprÃ©tÃ© comme un fichier rst indÃ©pendant
 
 On utilise donc la commande suivante :
 
@@ -45,7 +45,7 @@ On utilise donc la commande suivante :
 
    JRST -t html -o text.html text.rst
 
-Ce diagramme de séquence décrit le fonctionnement du parseur tout au long de la génération :
+Ce diagramme de sÃ©quence dÃ©crit le fonctionnement du parseur tout au long de la gÃ©nÃ©ration :
 
 |sequanceDiagramme|
 
@@ -54,7 +54,7 @@ La Classe JRSTGenerator, grace au fichier XSL rst2xhtml.xsl, renvoie le fichier 
    <?xml version="1.0" encoding="UTF-8"?>
    <html xmlns="http://www.w3.org/TR/xhtml1/strict">
      <head>
-       <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15"/>
+       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
        <meta name="generator" content="JRST http://jrst.labs.libre-entreprise.org/"/>
        <title>Titre</title>
      </head>
@@ -73,18 +73,18 @@ La Classe JRSTGenerator, grace au fichier XSL rst2xhtml.xsl, renvoie le fichier 
        <div class="attention">
          <p class="title">attention :</p>
          <p class="body">
-           <p>texte à être réinterprété comme un fichier rst indépendant</p>
+           <p>texte Ã  Ãªtre rÃ©interprÃ©tÃ© comme un fichier rst indÃ©pendant</p>
          </p>
        </div>
      </body>
    </html>
 
-Qui affiche la page (un CSS à été ajouté pour la mise en forme) :
+Qui affiche la page (un CSS Ã  Ã©tÃ© ajoutÃ© pour la mise en forme) :
 
 .. topic:: Titre
 
    :Author: Letellier Sylvain
-   .. Attention:: texte à être réinterprété comme un fichier rst indépendant
+   .. Attention:: texte Ã  Ãªtre rÃ©interprÃ©tÃ© comme un fichier rst indÃ©pendant
 
 
 .. _DocUtils: http://docutils.sourceforge.net/docs/ref/doctree.html

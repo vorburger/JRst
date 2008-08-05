@@ -264,12 +264,12 @@ ADMONITIONS
 
 
 
-.. Attention:: Derrière toi c'est horrible !
+.. Attention:: DerriÃ¨re toi c'est horrible !
 
 
 .. admonition:: Ceci est un avertissement.
 
-   Je vous demande de vous arrêtez.
+   Je vous demande de vous arrÃªtez.
 
 BLOCK QUOTE
 -----------

@@ -1,6 +1,6 @@
 /* *##%
  * Copyright (C) 2006
- *     Code Lutin, Cédric Pineau, Benjamin Poussin
+ *     Code Lutin, CÃ©dric Pineau, Benjamin Poussin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,17 +31,16 @@
 
 package org.codelutin.jrst.directive;
 
-import static org.codelutin.jrst.ReStructuredText.IMAGE;
-import static org.codelutin.jrst.ReStructuredText.SUBSTITUTION_DEFINITION;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.codelutin.jrst.JRSTDirective;
 import org.codelutin.jrst.JRSTLexer;
+import static org.codelutin.jrst.ReStructuredText.IMAGE;
+import static org.codelutin.jrst.ReStructuredText.SUBSTITUTION_DEFINITION;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * .. image:: picture.jpeg :height: 100 :width: 200 :scale: 50 :alt: alternate

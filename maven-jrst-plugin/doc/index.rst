@@ -4,20 +4,20 @@ Maven-jrst-plugin
 .. contents::
 
 
-Présentation
+PrÃ©sentation
 ------------
 
 Le plugin maven-jrst-plugin permet l'utilisation depuis maven de 
-JRst. Pour plus de détails sur Jrst veuillez consulter 
+JRst. Pour plus de dÃ©tails sur Jrst veuillez consulter 
 l'adresse suivante http://jrst.labs.libre-entreprise.org .
 
-Il permet de transfomer les fichiers RST en fichiers xdoc de maven, pour générer
+Il permet de transfomer les fichiers RST en fichiers xdoc de maven, pour gÃ©nÃ©rer
 le site web proposer par le plugin maven-site-plugin.
 
 Utilisation dans le pom.xml
 ---------------------------
 
-Voici une déclaration de utilisation de maven-jrst-plugin dans un 
+Voici une dÃ©claration de utilisation de maven-jrst-plugin dans un 
 pom.xml.
 
 ::

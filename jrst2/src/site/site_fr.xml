@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project name="JRst">
 	
   <skin>                                                                                                                                                                                                                 
@@ -32,16 +32,16 @@
     </links>
 
     <menu name="Utilisateur">
-      <item href="/user/index.html" name="Présentation du JRST"></item>
-	  <item href="/user/presentationRST.html" name="Introduction à ReStructuredText"></item>
-	  <item href="/user/fonctionnalites.html" name="Fonctionnalités incluses"></item>
-      <item href="http://labs.libre-entreprise.org/frs/?group_id=54&amp;release_id=252" name="Télécharger"/>
+      <item href="/user/index.html" name="PrÃ©sentation du JRST"></item>
+	  <item href="/user/presentationRST.html" name="Introduction Ã  ReStructuredText"></item>
+	  <item href="/user/fonctionnalites.html" name="FonctionnalitÃ©s incluses"></item>
+      <item href="http://labs.libre-entreprise.org/frs/?group_id=54&amp;release_id=252" name="TÃ©lÃ©charger"/>
     </menu>
 
 	<menu name="Developpeur">
 	  <item name="Fonctionnement" href="/devel/docDeveloppeur.html"/>
 	  <item name="Presentation au XSL" href="/devel/presentationXSL.html"/>
-	  <item name="Librairies utilisées" href="/devel/librairies.html"/>
+	  <item name="Librairies utilisÃ©es" href="/devel/librairies.html"/>
       <item name="Todo" href="/devel/Todo.html"/>
 	  <item name="Documentation externe" href="/devel/docExterne.html"/>
     </menu>

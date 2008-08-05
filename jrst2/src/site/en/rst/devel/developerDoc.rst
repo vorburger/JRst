@@ -72,7 +72,7 @@ This sequence diagramme describes the parser's mechanism throughout the generati
    <?xml version="1.0" encoding="UTF-8"?>
    <html xmlns="http://www.w3.org/TR/xhtml1/strict">
      <head>
-       <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15"/>
+       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
        <meta name="generator" content="JRST http://jrst.labs.libre-entreprise.org/"/>
        <title>Title</title>
      </head>

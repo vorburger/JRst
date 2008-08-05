@@ -1,5 +1,5 @@
 ====================================
-Les différentes librairies utilisées
+Les diffÃ©rentes librairies utilisÃ©es
 ====================================
 
 .. contents:: Sommaire
@@ -7,7 +7,7 @@ Les différentes librairies utilisées
 dom4j_
 ======
 
-Dom4j_ est une API Open Source Java permettant de travailler avec XML, XPath et XSLT. Cette bibliothèque est compatible avec les standards DOM, SAX et JAXP.
+Dom4j_ est une API Open Source Java permettant de travailler avec XML, XPath et XSLT. Cette bibliothÃ¨que est compatible avec les standards DOM, SAX et JAXP.
 
 javax.xml.transform_
 ====================
@@ -22,7 +22,7 @@ SDoc_ fournit des composants Swing qui inclut la coloration syntaxique pour de n
 Xmlunit_
 ========
 
-Xmlunit_ permet de comparer deux fichiers XML pour mettre en évidences les différences.
+Xmlunit_ permet de comparer deux fichiers XML pour mettre en Ã©vidences les diffÃ©rences.
 
 .. _dom4j: http://www.dom4j.org
 .. _javax.xml.transform: http://java.sun.com/j2se/1.4.2/docs/api/javax/xml/transform/package-summary.html

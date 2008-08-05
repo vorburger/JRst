@@ -18,7 +18,7 @@ Le grand titre
   de null part
 
   avec meme un para
-:copyright: © 2007. JRST - Code Lutin - GPL
+:copyright: Â© 2007. JRST - Code Lutin - GPL
 
 ------------------
 
@@ -274,12 +274,12 @@ ADMONITIONS
 
 
 
-.. Attention:: Derrière toi c'est horrible !
+.. Attention:: DerriÃ¨re toi c'est horrible !
 
 
 .. admonition:: Ceci est un avertissement.
 
-   Je vous demande de vous arrêtez.
+   Je vous demande de vous arrÃªtez.
 
 BLOCK QUOTE
 -----------

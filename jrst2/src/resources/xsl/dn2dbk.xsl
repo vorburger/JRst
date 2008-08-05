@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1" ?> 
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
 #=======
 # Dn2dbk 
@@ -8,7 +8,7 @@
 # :email: ebellot@netcourrier.com
 # :date: 2003-02-27 
 # :version: 0.3.1
-# :Copyright: Copyright© 2003, Eric Bellot
+# :Copyright: CopyrightÂ© 2003, Eric Bellot
 #
 # This script is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -158,16 +158,16 @@ ARTICLEINFO
 
 <xsl:template match="copyright">
     <xsl:param name="ct" select="normalize-space(string(.))"/>
-    <xsl:if test="normalize-space(substring-before($ct,'©'))='Copyright' 
-                  or normalize-space(substring-before($ct,'©'))='copyright'">
+    <xsl:if test="normalize-space(substring-before($ct,'Â©'))='Copyright' 
+                  or normalize-space(substring-before($ct,'Â©'))='copyright'">
         <copyright>
             <year>
                 <xsl:value-of
-                select="normalize-space(substring-before(substring-after($ct,'©'),','))"/>
+                select="normalize-space(substring-before(substring-after($ct,'Â©'),','))"/>
             </year>
             <holder>
                 <xsl:value-of
-                select="normalize-space(substring-after(substring-after($ct,'©'),','))"/>
+                select="normalize-space(substring-after(substring-after($ct,'Â©'),','))"/>
             </holder>
         </copyright>
     </xsl:if>

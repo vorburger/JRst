@@ -31,14 +31,14 @@ XSL document structure
 	
 XSL document being XML document, it starts obligatorily with the following tag::
 
-   <?xml version="1.0" encoding="ISO-8859-1"?>
+   <?xml version="1.0" encoding="UTF-8"?>
 
 In other part, any XSL style sheet are include between the tag <xsl:stylesheet... > and </xsl:stylesheet>. 
 The tag xsl:stylesheet encapsulates tags xsl:template defining elements of XML document transformations.
 
 ::
 
-   <?xml version="1.0" encoding="ISO-8859-1"?>
+   <?xml version="1.0" encoding="UTF-8"?>
    <xsl:stylesheet
    xmlns:xsl="http://www.w3.org/TR/WD-xsl"
    xmlns="http://www.w3.org/TR/REC-html40"
@@ -55,7 +55,7 @@ Association of XSL sheet with XML document
 XSL style sheet (saved in a .xsl extension file) can be related to a XML document 
 (To XML document uses XSL sheet) inserting the following tag in the beginning of XML document::
 
-   <?xml version="1.0" encoding="ISO-8859-1"?>
+   <?xml version="1.0" encoding="UTF-8"?>
    <?xml-stylesheet href="file.xsl" type="text/xsl"?>
 
 
@@ -69,7 +69,7 @@ So XML tag following::
 
    <person>
       <name>Pillou</name>
-      <firstName>Jean-François</firstName>
+      <firstName>Jean-FranÃ§ois</firstName>
    </person>
    <person>
       <name>VanHaute</name>
@@ -83,7 +83,7 @@ So XML tag following::
 Will be transform to following HTML tags::
 
    <ul>
-      <li>Pillou - Jean-François</li>
+      <li>Pillou - Jean-FranÃ§ois</li>
       <li>VanHaute - Nico</li>
       <li>Andrieu - Seb</li>
    </ul>
@@ -115,7 +115,7 @@ The transformation can be made:
   
 This is an example of XSL sheet to transform XML towards HTML::
 
-   <?xml version="1.0" encoding="ISO-8859-1"?>
+   <?xml version="1.0" encoding="UTF-8"?>
    <xsl:stylesheet
    xmlns:xsl="http://www.w3.org/TR/WD-xsl"
    xmlns="http://www.w3.org/TR/REC-html40"

@@ -1,6 +1,6 @@
 /* *##%
  * Copyright (C) 2006
- *     Code Lutin, Cédric Pineau, Benjamin Poussin
+ *     Code Lutin, CÃ©dric Pineau, Benjamin Poussin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,14 +31,14 @@
 
 package org.codelutin.jrst.directive;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.codelutin.jrst.JRSTDirective;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.Text;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * .. date:: .. time::

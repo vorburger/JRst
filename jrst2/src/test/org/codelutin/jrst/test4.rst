@@ -1,5 +1,5 @@
 =====================================
-Tutoriel pour la création d'un module
+Tutoriel pour la crÃ©ation d'un module
 =====================================
 
 :Author: Ruchaud Julien <ruchaud@codelutin.com>
@@ -12,33 +12,33 @@ Tutoriel pour la création d'un module
 Exemple
 -------
 
-Ce tutoriel montre le développement d'un module en reprenant les différentes parties de la documentation développeur. L'exemple traité est la gestion électronique de documents. Le module GED est limité à un modèle super simple.
+Ce tutoriel montre le dÃ©veloppement d'un module en reprenant les diffÃ©rentes parties de la documentation dÃ©veloppeur. L'exemple traitÃ© est la gestion Ã©lectronique de documents. Le module GED est limitÃ© Ã  un modÃ¨le super simple.
 
-Les fonctionnalités du module GED sont les suivantes :
+Les fonctionnalitÃ©s du module GED sont les suivantes :
 
 - Ajout/Suppression de documents
 - Visualisation de la liste des documents
 
-Les différents fichiers de notre module seront répartis dans les répertoires suivants :
+Les diffÃ©rents fichiers de notre module seront rÃ©partis dans les rÃ©pertoires suivants :
 
-- pour le modèle : /src/xmi
+- pour le modÃ¨le : /src/xmi
 - pour la vue : /src/webapp/WEB-INF/ged
-- pour le contrôleur : /src/java/web/mentawai/ged
+- pour le contrÃ´leur : /src/java/web/mentawai/ged
 
 
-Modèle
+ModÃ¨le
 ------
 
 
-Etape 1 : Création du modèle sur ArgoUML
+Etape 1 : CrÃ©ation du modÃ¨le sur ArgoUML
 ++++++++++++++++++++++++++++++++++++++++
 
-Le modèle est le plus simple possible, il ne comporte qu'une seule classe, Document. Elle définie un document avec son nom et sa description.
+Le modÃ¨le est le plus simple possible, il ne comporte qu'une seule classe, Document. Elle dÃ©finie un document avec son nom et sa description.
 
 ::
 
   +----------------------------------+
-  |             «entity»             |
+  |             Â«entityÂ»             |
   |             Document             |
   +----------------------------------+
   | name : String                    |
@@ -47,14 +47,14 @@ Le modèle est le plus simple possible, il ne comporte qu'une seule classe, Docum
   | getNameAndDescription() : String |
   +----------------------------------+
 
-Le modèle est à créer dans le fichier /src/xmi/chorem.zargo dans le paquetage org.codelutin.chorem.entities.ged. On remarque que la classe porte le stéréotype Entity, ceci permet d'indiquer que Topia se chargera de la génération de cette classe ainsi que de sa persistance.
+Le modÃ¨le est Ã  crÃ©er dans le fichier /src/xmi/chorem.zargo dans le paquetage org.codelutin.chorem.entities.ged. On remarque que la classe porte le stÃ©rÃ©otype Entity, ceci permet d'indiquer que Topia se chargera de la gÃ©nÃ©ration de cette classe ainsi que de sa persistance.
 
 
-Etape 2 : Génération du code avec ToPIA
+Etape 2 : GÃ©nÃ©ration du code avec ToPIA
 +++++++++++++++++++++++++++++++++++++++
 
-Le plugin Maven 2 Generator se charge de lancer la génération de ToPIA. Par la commande "mvn compile", nous lançons la compilation du projet ainsi que la génération ToPIA. Nous obtenons les classes Java et les fichiers de mapping Hibernate dans le répertoire /src/gen/java/org/codelutin/chorem/entities/ged. 
-Le projet ne compile pas car il ne trouve pas l'implémentation des méthodes du modèle :
+Le plugin Maven 2 Generator se charge de lancer la gÃ©nÃ©ration de ToPIA. Par la commande "mvn compile", nous lanÃ§ons la compilation du projet ainsi que la gÃ©nÃ©ration ToPIA. Nous obtenons les classes Java et les fichiers de mapping Hibernate dans le rÃ©pertoire /src/gen/java/org/codelutin/chorem/entities/ged. 
+Le projet ne compile pas car il ne trouve pas l'implÃ©mentation des mÃ©thodes du modÃ¨le :
 
 :: 
 
@@ -64,10 +64,10 @@ Le projet ne compile pas car il ne trouve pas l'implémentation des méthodes du m
   location: package org.codelutin.chorem.entities.ged
 
 
-Etape 3 : Implémentation des méthodes
+Etape 3 : ImplÃ©mentation des mÃ©thodes
 +++++++++++++++++++++++++++++++++++++
 
-Les méthodes contenues dans le modèle n'étant pas implémentées, il est maintenant nécessaire de les complèter. Elles sont a compléter dans le répertoire /src/java/org/codelutin/chorem/entities/ged et porte comme nom, le nom de classe avec le suffixe "Impl". Elle doivent hériter de sa classe abstraite et implémenter son interface.
+Les mÃ©thodes contenues dans le modÃ¨le n'Ã©tant pas implÃ©mentÃ©es, il est maintenant nÃ©cessaire de les complÃ¨ter. Elles sont a complÃ©ter dans le rÃ©pertoire /src/java/org/codelutin/chorem/entities/ged et porte comme nom, le nom de classe avec le suffixe "Impl". Elle doivent hÃ©riter de sa classe abstraite et implÃ©menter son interface.
 
 ::
 
@@ -83,7 +83,7 @@ Maintenant la compilation (mvn compile) ne doit plus produire d'erreur.
 Etape 4 : Modification des classes de persistances
 ++++++++++++++++++++++++++++++++++++++++++++++++++
 
-La propriété topia.persistence.classes dans le fichier /src/ressources/TopiaContextImpl.properties doit contenir la classe Document.
+La propriÃ©tÃ© topia.persistence.classes dans le fichier /src/ressources/TopiaContextImpl.properties doit contenir la classe Document.
 
 ::
 
@@ -94,26 +94,26 @@ Vue
 ---
 
 
-Etape 5 : Déclaration du module au niveau du Layout
+Etape 5 : DÃ©claration du module au niveau du Layout
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Il faut déclarer le nom du module dans les fichiers de langue dans le répertoire /src/webapp/WEB-INF/common/lang.
+Il faut dÃ©clarer le nom du module dans les fichiers de langue dans le rÃ©pertoire /src/webapp/WEB-INF/common/lang.
 
 ::
 
   ged = GED
 
-Après, il faut ajouter le module dans l'entête, fichier /src/webapp/WEB-INF/common/layout/layout.jsp, pour pouvoir donner l'accès à celui-ci.
+AprÃ¨s, il faut ajouter le module dans l'entÃªte, fichier /src/webapp/WEB-INF/common/layout/layout.jsp, pour pouvoir donner l'accÃ¨s Ã  celui-ci.
 
 ::
 
   | <a class="Link" href="${path}/ged.mtw"><fmt:message key="ged" bundle="${commonBundle}"/></a>
 
 
-Etape 6 : Création du menu
+Etape 6 : CrÃ©ation du menu
 ++++++++++++++++++++++++++
 
-Chaque module a son propre menu. Il faut créer le fichier /src/webapp/ged/common/menu.jsp pour ajouter un menu au module GED.
+Chaque module a son propre menu. Il faut crÃ©er le fichier /src/webapp/ged/common/menu.jsp pour ajouter un menu au module GED.
 
 ::
 
@@ -129,15 +129,15 @@ Chaque module a son propre menu. Il faut créer le fichier /src/webapp/ged/common
   <jsp:include page="${common}/layout/tabSpace.jsp"/>
 
 
-Etape 7 : Création des pages
+Etape 7 : CrÃ©ation des pages
 ++++++++++++++++++++++++++++
 
-Il faut créer les pages JSP de visualisation du module. Quelques règles sont à respecter :
-  1. Il faut toujours regarder et recopier ce qui a été fait.
-  2. Tous les formulaires doivent être créés avec le tag chorem:action.
-  3. Aucun texte doit être fixe dans la page, il faut utiliser fmt:message.
+Il faut crÃ©er les pages JSP de visualisation du module. Quelques rÃ¨gles sont Ã  respecter :
+  1. Il faut toujours regarder et recopier ce qui a Ã©tÃ© fait.
+  2. Tous les formulaires doivent Ãªtre crÃ©Ã©s avec le tag chorem:action.
+  3. Aucun texte doit Ãªtre fixe dans la page, il faut utiliser fmt:message.
 
-Les deux fichiers sont stockés dans le répertoire /src/webapp/ged/document.
+Les deux fichiers sont stockÃ©s dans le rÃ©pertoire /src/webapp/ged/document.
 
 Le fichier list.jsp permet de visualiser la liste des documents :
 
@@ -221,10 +221,10 @@ Le fichier form.jsp permet de modifier ou creer un nouveau document :
 Etape 8 : Internationalisation
 ++++++++++++++++++++++++++++++
 
-Pour finir les pages jsp, il faut créer les fichiers de langue dans le répertoire /src/webapp/WEB-INF/ged/common/lang. De plus, il faut rajouter ce répertoire comme ressource dans le pom.xml de Maven.
+Pour finir les pages jsp, il faut crÃ©er les fichiers de langue dans le rÃ©pertoire /src/webapp/WEB-INF/ged/common/lang. De plus, il faut rajouter ce rÃ©pertoire comme ressource dans le pom.xml de Maven.
 
 
-Fichier de langue pour le français est ged_fr.properties, il contient :
+Fichier de langue pour le franÃ§ais est ged_fr.properties, il contient :
 
 ::
 
@@ -243,23 +243,23 @@ Fichier de langue pour le français est ged_fr.properties, il contient :
   document.form.name = Nom :
   document.form.description = Description :
 
-Généralement les clés sont de la forme suivante : "nom de l'entité"."nom de la page"."nom de l'élément" = ...
+GÃ©nÃ©ralement les clÃ©s sont de la forme suivante : "nom de l'entitÃ©"."nom de la page"."nom de l'Ã©lÃ©ment" = ...
 
-Le bundle commun (${commonBundle}) contient l'ensemble des traductions transversales à tous les modules.
+Le bundle commun (${commonBundle}) contient l'ensemble des traductions transversales Ã  tous les modules.
 
 
-Contrôleur
+ContrÃ´leur
 ----------
 
 
-Etape 9 : Création des actions
+Etape 9 : CrÃ©ation des actions
 ++++++++++++++++++++++++++++++
 
-Quatres actions sont toujours créer pour chaque entités du modèle, elles permettent les manipulations de base.  Elles sont stockées dans le package actions du module.
+Quatres actions sont toujours crÃ©er pour chaque entitÃ©s du modÃ¨le, elles permettent les manipulations de base.  Elles sont stockÃ©es dans le package actions du module.
 
-Ces actions vont être nécessaire pour notre exemple les voici, elle doit être dans src/java/org/codelutin/chorem/web/mentawai/ged/action/document :
+Ces actions vont Ãªtre nÃ©cessaire pour notre exemple les voici, elle doit Ãªtre dans src/java/org/codelutin/chorem/web/mentawai/ged/action/document :
 
-DocumentFindId.java, permet de rechercher un document par rapport à son identifiant :
+DocumentFindId.java, permet de rechercher un document par rapport Ã  son identifiant :
 
 ::
 
@@ -271,7 +271,7 @@ DocumentFindId.java, permet de rechercher un document par rapport à son identifi
     }
   }
 
-DocumentFindAll.java, permet de récupérer l'ensemble des documents :
+DocumentFindAll.java, permet de rÃ©cupÃ©rer l'ensemble des documents :
 
 ::
 
@@ -282,7 +282,7 @@ DocumentFindAll.java, permet de récupérer l'ensemble des documents :
     }
   }
 
-DocumentUpdate.java, permet de créer et de modifier un document :
+DocumentUpdate.java, permet de crÃ©er et de modifier un document :
 
 ::
 
@@ -317,10 +317,10 @@ DocumentDelete.java, permet la suppression d'un document :
   }
 
 
-Etape 10 : Création du Manageur
+Etape 10 : CrÃ©ation du Manageur
 +++++++++++++++++++++++++++++++
 
-Le manageur centralise l'ensemble des urls, des pages et des cas d'utilisation avec les actions associées. Pour la GED la classe à créer est src/java/org/codelutin/chorem/web/mentawai/ged/Manager.java :
+Le manageur centralise l'ensemble des urls, des pages et des cas d'utilisation avec les actions associÃ©es. Pour la GED la classe Ã  crÃ©er est src/java/org/codelutin/chorem/web/mentawai/ged/Manager.java :
 
 ::
 
@@ -340,26 +340,26 @@ Le manageur centralise l'ensemble des urls, des pages et des cas d'utilisation a
       createFirstLine(DOCUMENT_MODIFY, SuccessAction.class);
       createFirstLine(DOCUMENT_STORE, DocumentUpdate.class);
       createFirstLine(DOCUMENT_CANCEL, SuccessAction.class);
-      // JSP et actions liées
+      // JSP et actions liÃ©es
       createLastLine(DOCUMENT_LIST_JSP, DocumentFindAll.class);
       createLastLine(DOCUMENT_FORM_JSP, DocumentFindId.class);
     }
   }
 
 
-Etape 11 : Création des cas d'utilisation
+Etape 11 : CrÃ©ation des cas d'utilisation
 +++++++++++++++++++++++++++++++++++++++++
 
-Il faut maintenant créer les cas d'utilisation. Pour notre module, un seul suffit, aucune page ne présente de comportements différents. La classe à créer est src/java/org/codelutin/chorem/web/mentawai/ged/usecase/DocumentUseCase.java :
+Il faut maintenant crÃ©er les cas d'utilisation. Pour notre module, un seul suffit, aucune page ne prÃ©sente de comportements diffÃ©rents. La classe Ã  crÃ©er est src/java/org/codelutin/chorem/web/mentawai/ged/usecase/DocumentUseCase.java :
 
 ::
 
   public class DocumentUseCase extends UseCase {
     public String general() throws Exception {
-      // En partant de la liste des docs on retourne sur cette liste en supprimant un doc ou on accède au formulaire de création
+      // En partant de la liste des docs on retourne sur cette liste en supprimant un doc ou on accÃ¨de au formulaire de crÃ©ation
       accessPoint(DOCUMENT_LIST_JSP).move(DOCUMENT_DEL, DOCUMENT_LIST_JSP).move(DOCUMENT_NEW, DOCUMENT_FORM_JSP);
 
-      // En partant du formulaire de création on retourne à la liste des docs en validant la création ou en l'annulant
+      // En partant du formulaire de crÃ©ation on retourne Ã  la liste des docs en validant la crÃ©ation ou en l'annulant
       access(DOCUMENT_FORM_JSP, "documentId").move(DOCUMENT_CANCEL, DOCUMENT_LIST_JSP).move(DOCUMENT_STORE, DOCUMENT_LIST_JSP);
 
       return super.execute();
@@ -383,10 +383,10 @@ Ajoutons ensuite le cas d'utilisation au manageur du module :
   }
 
 
-Etape 12 : Déclaration du module
+Etape 12 : DÃ©claration du module
 ++++++++++++++++++++++++++++++++
 
-Il est nécessaire d'ajouter le chargement du manageur du module GED dans le manageur global de Chorem (src/java/org/codelutin/chorem/web/mentawai/Manager.java) :
+Il est nÃ©cessaire d'ajouter le chargement du manageur du module GED dans le manageur global de Chorem (src/java/org/codelutin/chorem/web/mentawai/Manager.java) :
 
 ::
 
@@ -398,7 +398,7 @@ Test
 ----
 
 
-Etape 13 : Démarrer Chorem
+Etape 13 : DÃ©marrer Chorem
 ++++++++++++++++++++++++++
 
 

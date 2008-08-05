@@ -1,6 +1,6 @@
 /* *##%
  * Copyright (C) 2006
- *     Code Lutin, Cédric Pineau, Benjamin Poussin
+ *     Code Lutin, CÃ©dric Pineau, Benjamin Poussin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,82 +31,23 @@
 
 package org.codelutin.jrst;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import static org.codelutin.i18n.I18n._;
-import static org.codelutin.jrst.ReStructuredText.ADDRESS;
-import static org.codelutin.jrst.ReStructuredText.ADMONITION;
-import static org.codelutin.jrst.ReStructuredText.ATTRIBUTION;
-import static org.codelutin.jrst.ReStructuredText.AUTHOR;
-import static org.codelutin.jrst.ReStructuredText.AUTHORS;
-import static org.codelutin.jrst.ReStructuredText.BLOCK_QUOTE;
-import static org.codelutin.jrst.ReStructuredText.BULLET_LIST;
-import static org.codelutin.jrst.ReStructuredText.COLSPEC;
-import static org.codelutin.jrst.ReStructuredText.COMMENT;
-import static org.codelutin.jrst.ReStructuredText.CONTACT;
-import static org.codelutin.jrst.ReStructuredText.COPYRIGHT;
-import static org.codelutin.jrst.ReStructuredText.DATE;
-import static org.codelutin.jrst.ReStructuredText.DECORATION;
-import static org.codelutin.jrst.ReStructuredText.DEFINITION;
-import static org.codelutin.jrst.ReStructuredText.DEFINITION_LIST;
-import static org.codelutin.jrst.ReStructuredText.DEFINITION_LIST_ITEM;
-import static org.codelutin.jrst.ReStructuredText.DESCRIPTION;
-import static org.codelutin.jrst.ReStructuredText.DOCINFO;
-import static org.codelutin.jrst.ReStructuredText.DOCTEST_BLOCK;
-import static org.codelutin.jrst.ReStructuredText.DOCUMENT;
-import static org.codelutin.jrst.ReStructuredText.EMPHASIS;
-import static org.codelutin.jrst.ReStructuredText.ENTRY;
-import static org.codelutin.jrst.ReStructuredText.ENUMERATED_LIST;
-import static org.codelutin.jrst.ReStructuredText.FIELD;
-import static org.codelutin.jrst.ReStructuredText.FIELD_BODY;
-import static org.codelutin.jrst.ReStructuredText.FIELD_LIST;
-import static org.codelutin.jrst.ReStructuredText.FIELD_NAME;
-import static org.codelutin.jrst.ReStructuredText.FOOTER;
-import static org.codelutin.jrst.ReStructuredText.FOOTNOTE;
-import static org.codelutin.jrst.ReStructuredText.FOOTNOTE_REFERENCE;
-import static org.codelutin.jrst.ReStructuredText.FOOTNOTE_SYMBOL;
-import static org.codelutin.jrst.ReStructuredText.HEADER;
-import static org.codelutin.jrst.ReStructuredText.IMAGE;
-import static org.codelutin.jrst.ReStructuredText.LINE;
-import static org.codelutin.jrst.ReStructuredText.LINE_BLOCK;
-import static org.codelutin.jrst.ReStructuredText.LIST_ITEM;
-import static org.codelutin.jrst.ReStructuredText.LITERAL;
-import static org.codelutin.jrst.ReStructuredText.LITERAL_BLOCK;
-import static org.codelutin.jrst.ReStructuredText.OPTION;
-import static org.codelutin.jrst.ReStructuredText.OPTION_ARGUMENT;
-import static org.codelutin.jrst.ReStructuredText.OPTION_GROUP;
-import static org.codelutin.jrst.ReStructuredText.OPTION_LIST;
-import static org.codelutin.jrst.ReStructuredText.OPTION_LIST_ITEM;
-import static org.codelutin.jrst.ReStructuredText.OPTION_STRING;
-import static org.codelutin.jrst.ReStructuredText.ORGANIZATION;
-import static org.codelutin.jrst.ReStructuredText.PARAGRAPH;
-import static org.codelutin.jrst.ReStructuredText.REFERENCE;
-import static org.codelutin.jrst.ReStructuredText.REGEX_ANONYMOUS_HYPERLINK_REFERENCE;
-import static org.codelutin.jrst.ReStructuredText.REGEX_EMAIL;
-import static org.codelutin.jrst.ReStructuredText.REGEX_EMPHASIS;
-import static org.codelutin.jrst.ReStructuredText.REGEX_FOOTNOTE_REFERENCE;
-import static org.codelutin.jrst.ReStructuredText.REGEX_HYPERLINK_REFERENCE;
-import static org.codelutin.jrst.ReStructuredText.REGEX_INLINE_REFERENCE;
-import static org.codelutin.jrst.ReStructuredText.REGEX_LITERAL;
-import static org.codelutin.jrst.ReStructuredText.REGEX_REFERENCE;
-import static org.codelutin.jrst.ReStructuredText.REGEX_STRONG;
-import static org.codelutin.jrst.ReStructuredText.REGEX_SUBSTITUTION_REFERENCE;
-import static org.codelutin.jrst.ReStructuredText.REVISION;
-import static org.codelutin.jrst.ReStructuredText.ROW;
-import static org.codelutin.jrst.ReStructuredText.SECTION;
-import static org.codelutin.jrst.ReStructuredText.SIDEBAR;
-import static org.codelutin.jrst.ReStructuredText.STATUS;
-import static org.codelutin.jrst.ReStructuredText.STRONG;
-import static org.codelutin.jrst.ReStructuredText.SUBSTITUTION_DEFINITION;
-import static org.codelutin.jrst.ReStructuredText.SUBTITLE;
-import static org.codelutin.jrst.ReStructuredText.TABLE;
-import static org.codelutin.jrst.ReStructuredText.TARGET;
-import static org.codelutin.jrst.ReStructuredText.TBODY;
-import static org.codelutin.jrst.ReStructuredText.TERM;
-import static org.codelutin.jrst.ReStructuredText.TGROUP;
-import static org.codelutin.jrst.ReStructuredText.THEAD;
-import static org.codelutin.jrst.ReStructuredText.TITLE;
-import static org.codelutin.jrst.ReStructuredText.TOPIC;
-import static org.codelutin.jrst.ReStructuredText.TRANSITION;
-import static org.codelutin.jrst.ReStructuredText.VERSION;
+import static org.codelutin.jrst.ReStructuredText.*;
+import org.codelutin.jrst.directive.ContentDirective;
+import org.codelutin.jrst.directive.DateDirective;
+import org.codelutin.jrst.directive.ImageDirective;
+import org.codelutin.jrst.directive.SectnumDirective;
+import org.codelutin.util.StringUtil;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.Node;
+import org.dom4j.VisitorSupport;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -123,22 +64,6 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.codelutin.jrst.directive.ContentDirective;
-import org.codelutin.jrst.directive.DateDirective;
-import org.codelutin.jrst.directive.ImageDirective;
-import org.codelutin.jrst.directive.SectnumDirective;
-import org.codelutin.util.StringUtil;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.Node;
-import org.dom4j.VisitorSupport;
 
 /*
  * 
@@ -678,7 +603,7 @@ public class JRSTReader {
             }
         }
 
-        // les el�ments a enlever (deja parser : header, footer...)
+        // les eléments a enlever (deja parser : header, footer...)
         item = lexer.peekRemove();
         if (itemEquals("remove", item))
             lexer.remove();

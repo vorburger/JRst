@@ -2,27 +2,27 @@
 Todo
 ====
 
-Voici la liste des tâches qui reste à faire. Si quelqu'un souhaite aider, ou
-a une idée à proposer il ne faut pas hésiter.
+Voici la liste des tÃ¢ches qui reste Ã  faire. Si quelqu'un souhaite aider, ou
+a une idÃ©e Ã  proposer il ne faut pas hÃ©siter.
 
-- intégrer une date multiformat
+- intÃ©grer une date multiformat
 - faire une feuille de style de conversion de xhtml -> xdoc
 
 - la documentation en anglais (si quelqu'un pouvait me relire :) )
-- faire une règle ant pour aider à la génération
+- faire une rÃ¨gle ant pour aider Ã  la gÃ©nÃ©ration
   <jrst include="..." exclude="..." destination="" extension="...."/>
-  destination est le répertoire destination
+  destination est le rÃ©pertoire destination
   extension est la modification de l'extension des fichiers sources avec
   cette extension
 
-- un export vers pretion, magic, ou autre outil de présentation.
+- un export vers pretion, magic, ou autre outil de prÃ©sentation.
 
 - permettre l'import de d'autre format que rst, par exemple .odt
   ce qui permettra de convertir simplement du .odt en rst.
 
-- Faire une doclet qui permette d'écrire les Javadocs en RST
+- Faire une doclet qui permette d'Ã©crire les Javadocs en RST
 
-- Correction du bug sur les URIResolver, lors de la génération DocBook -> fo
-  il va chercher les imports à la racine du jrst, et non dans le jar.
+- Correction du bug sur les URIResolver, lors de la gÃ©nÃ©ration DocBook -> fo
+  il va chercher les imports Ã  la racine du jrst, et non dans le jar.
 
 - ajouter une directive pour supporter les equations mathematiques f(x)=a^3/x qui sera rendu graphiquement

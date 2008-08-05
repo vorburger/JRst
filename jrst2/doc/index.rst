@@ -2,41 +2,41 @@
 Parseur reStructuredText : le JRst
 ==================================
 
-Présentation
+PrÃ©sentation
 ------------
 
 Le format reStructuredText est un format de description de documents. A l'image
-d'autres LaTeX ou DocBook, il peut être décliné en une multitude de formats. Ces
+d'autres LaTeX ou DocBook, il peut Ãªtre dÃ©clinÃ© en une multitude de formats. Ces
 formats souffrent habituellement d'une syntaxe envahissante qui, si elle est
-nécessaire pour des documents très spécifiques, devient gênante quand il s'agit
-de créer rapidement un document pas trop complexe. RST dispose quant à lui d'une
+nÃ©cessaire pour des documents trÃ¨s spÃ©cifiques, devient gÃªnante quand il s'agit
+de crÃ©er rapidement un document pas trop complexe. RST dispose quant Ã  lui d'une
 syntaxe tellement simple qu'elle en devient presque invisible.
 
-JRST est un parseur RST en Java permettant de créer une représentation en arbre
-d'un document. Il devient alors facile de générer une représentation du document
-vers différents formats.
+JRST est un parseur RST en Java permettant de crÃ©er une reprÃ©sentation en arbre
+d'un document. Il devient alors facile de gÃ©nÃ©rer une reprÃ©sentation du document
+vers diffÃ©rents formats.
 
 
 Usage
 -----
 
-Le parser JRST prend un fichier reStructuredText en entré et génère un fichier XML
-qui pourra ensuite servir à produire divers formats de fichiers grâce à des fichiers
-XSL de générations. Les formats de sortie disponibles sont le html, le xhtml, le rst,
+Le parser JRST prend un fichier reStructuredText en entrÃ© et gÃ©nÃ¨re un fichier XML
+qui pourra ensuite servir Ã  produire divers formats de fichiers grÃ¢ce Ã  des fichiers
+XSL de gÃ©nÃ©rations. Les formats de sortie disponibles sont le html, le xhtml, le rst,
 le pdf, le docbook, le odt (Open-Office), le rtf, ou encore le XML.
 
 ::
 
    JRST myfile.rst
 
-Cette commande aura pour effet de convertir le fichier myfile.rst en XML qui sera affiché sur la sortie standard (console).
+Cette commande aura pour effet de convertir le fichier myfile.rst en XML qui sera affichÃ© sur la sortie standard (console).
 Plusieurs options sont disponibles :
 
 -o file,--outFile=file           pour rediriger la sortie vers un fichier.
--t format,--outType format       pour préciser un format de sortie, donc utiliser un ou des fichiers XSL de génération.
+-t format,--outType format       pour prÃ©ciser un format de sortie, donc utiliser un ou des fichiers XSL de gÃ©nÃ©ration.
                                  Plusieurs formats sont disponibles xhtml, docbook, xml, html, xdoc, rst, pdf, odt, rtf.
--x xslFile,--xslFile xslFile     sert à préciser le fichier xsl de génération à utiliser.
---force                          forcer l'écriture d'un fichier, si le fichier de sortie existe, il sera remplacé.
+-x xslFile,--xslFile xslFile     sert Ã  prÃ©ciser le fichier xsl de gÃ©nÃ©ration Ã  utiliser.
+--force                          forcer l'Ã©criture d'un fichier, si le fichier de sortie existe, il sera remplacÃ©.
 --help                           pour afficher les options disponibles :
 
 
@@ -57,12 +57,12 @@ ex :
 
    JRST --force -t html -o myfile.html myfile.rst
 
-Cette commande produira un fichier html (myfile.html) à partir du fichier reStructuredText_ (myfile.rst)
-même si myfile.html existe déjà.
+Cette commande produira un fichier html (myfile.html) Ã  partir du fichier reStructuredText_ (myfile.rst)
+mÃªme si myfile.html existe dÃ©jÃ .
 
 
 Plugin Maven
 ------------
 
-Un plugin Maven est disponible à l'adresse suivante http://jrst.labs.libre-entreprise.org/maven-jrst-plugin.
+Un plugin Maven est disponible Ã  l'adresse suivante http://jrst.labs.libre-entreprise.org/maven-jrst-plugin.
 Il permet l'utilisation depuis Maven de JRst.

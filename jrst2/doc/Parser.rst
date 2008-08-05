@@ -20,7 +20,7 @@ regarde la premiere ligne::
   +-------------+---------+----+
 
 Elle nous indique qu'il y aura 3 colonnes en dessous. Si maintenant on prend
-la troisième ligne::
+la troisiÃ¨me ligne::
 
   +=======+=====+====+====+====+
 
@@ -29,7 +29,7 @@ que 4 colonnes car un des + servait a fermer une colonne de la ligne du dessus.
 
 Donc si sur les lignes du dessous on a un | on ne doit le prendre que si sur
 la ligne determinant la separation de ligne il y a un + au meme niveau. Sinon
-cela veut dire que nous sommes toujours dans la même cellule.
+cela veut dire que nous sommes toujours dans la mÃªme cellule.
 
 On peut donc decouper le tableau en en 4 sous tableaux::
 
@@ -50,12 +50,12 @@ On peut donc decouper le tableau en en 4 sous tableaux::
   |             |         |    |
   +-------------+---------+----+
 
-Les + supplémentaires sur les lignes ne doivent pas être pris comme des
+Les + supplÃ©mentaires sur les lignes ne doivent pas Ãªtre pris comme des
 erreurs, car en fait ils peuvent avoir servit pour des colonnes d'une autre
 partie du tableau.
 
 Tant que l'on ne retrouve pas une ligne de la meme longueur que la premiere et
-ne contenante que les caractères + =-
+ne contenante que les caractÃ¨res + =-
 
 Donc on detecte un tableau si la ligne correspond a l'expression::
 
@@ -68,7 +68,7 @@ pour le header::
 
   (\+=)+\+
 
-pour les séparations::
+pour les sÃ©parations::
 
   [+|]( +|-+)(\+( +|-+))+[+|]
 

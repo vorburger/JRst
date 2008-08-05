@@ -1,6 +1,6 @@
 /* *##%
  * Copyright (C) 2006
- *     Code Lutin, Cédric Pineau, Benjamin Poussin
+ *     Code Lutin, CÃ©dric Pineau, Benjamin Poussin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,55 +31,9 @@
 
 package org.codelutin.jrst;
 
-import static org.codelutin.jrst.ReStructuredText.ADDRESS;
-import static org.codelutin.jrst.ReStructuredText.AUTHOR;
-import static org.codelutin.jrst.ReStructuredText.AUTHORS;
-import static org.codelutin.jrst.ReStructuredText.BULLET_LIST;
-import static org.codelutin.jrst.ReStructuredText.CLASSIFIER;
-import static org.codelutin.jrst.ReStructuredText.CONTACT;
-import static org.codelutin.jrst.ReStructuredText.COPYRIGHT;
-import static org.codelutin.jrst.ReStructuredText.DATE;
-import static org.codelutin.jrst.ReStructuredText.DEFINITION;
-import static org.codelutin.jrst.ReStructuredText.DEFINITION_LIST;
-import static org.codelutin.jrst.ReStructuredText.DOCINFO;
-import static org.codelutin.jrst.ReStructuredText.EMPHASIS;
-import static org.codelutin.jrst.ReStructuredText.ENUMERATED_LIST;
-import static org.codelutin.jrst.ReStructuredText.FIELD_BODY;
-import static org.codelutin.jrst.ReStructuredText.FIELD_LIST;
-import static org.codelutin.jrst.ReStructuredText.FIELD_NAME;
-import static org.codelutin.jrst.ReStructuredText.LIST_ITEM;
-import static org.codelutin.jrst.ReStructuredText.LITERAL;
-import static org.codelutin.jrst.ReStructuredText.LITERAL_BLOCK;
-import static org.codelutin.jrst.ReStructuredText.ORGANIZATION;
-import static org.codelutin.jrst.ReStructuredText.PARAGRAPH;
-import static org.codelutin.jrst.ReStructuredText.REVISION;
-import static org.codelutin.jrst.ReStructuredText.SECTION;
-import static org.codelutin.jrst.ReStructuredText.STATUS;
-import static org.codelutin.jrst.ReStructuredText.STRONG;
-import static org.codelutin.jrst.ReStructuredText.TABLE;
-import static org.codelutin.jrst.ReStructuredText.TITLE;
-import static org.codelutin.jrst.ReStructuredText.TITLE_CHAR;
-import static org.codelutin.jrst.ReStructuredText.TRANSITION;
-import static org.codelutin.jrst.ReStructuredText.VERSION;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.LinkedList;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.URIResolver;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import static org.codelutin.jrst.ReStructuredText.*;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
@@ -90,6 +44,21 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.LinkedList;
 
 /**
  * Cette classe contient plusieurs methode pour generer, soit en utilisant une
@@ -583,7 +552,7 @@ public class JRSTGenerator implements DocumentHandler {
         } else if (CLASSIFIER.equals(e.getName())) {
             write(" : ");
         } else if (DEFINITION.equals(e.getName())) {
-            // pour une fois on est obligé de passer une ligne dans le
+            // pour une fois on est obligÃ© de passer une ligne dans le
             // start, car on ne sait pas determiner la fin des classifiers
             // qui doivent etre tous sur la ligne du TERM
             newLine();
@@ -644,7 +613,7 @@ public class JRSTGenerator implements DocumentHandler {
     }
 
     /**
-     * Ecrit le text, si indent est vrai, alors chaque ligne est indentée
+     * Ecrit le text, si indent est vrai, alors chaque ligne est indentÃ©e
      * 
      * @param text
      * @param indent

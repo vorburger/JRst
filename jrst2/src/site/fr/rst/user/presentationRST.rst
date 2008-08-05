@@ -1,15 +1,15 @@
 ===============================
-Introduction à ReStructuredText
+Introduction Ã  ReStructuredText
 ===============================
 
-Document adapté de celui de Richard Jones : http://docutils.sourceforge.net/sandbox/wilk/french/quickstart-fr.html
+Document adaptÃ© de celui de Richard Jones : http://docutils.sourceforge.net/sandbox/wilk/french/quickstart-fr.html
 
 .. contents:: Sommaire
 
 
 Ce texte contient des liens de la forme "(quickref__)".  Ils sont
-relatifs au manuel de référence utilisateur `Quick reStructuredText`_.
-S'ils ne fonctionnent pas, référez vous au document `master quick
+relatifs au manuel de rÃ©fÃ©rence utilisateur `Quick reStructuredText`_.
+S'ils ne fonctionnent pas, rÃ©fÃ©rez vous au document `master quick
 reference`_.
 
 __ http://docutils.sourceforge.net/docs/rst/quickref.html
@@ -20,34 +20,34 @@ __ http://docutils.sourceforge.net/docs/rst/quickref.html
 Structure
 ---------
 
-Pour commencer, il me semble que "Structured Text" n'est pas tout à fait la
-bonne appellation. Nous devrions plutôt le nommer "Relaxed Text" qui contient
-quelques schémas logiques. Ces schémas sont interprétés par un convertisseur
-HTML pour produire "Very Structured Text" (un texte très structuré) qui pourra
-être utilisé par un navigateur web.
+Pour commencer, il me semble que "Structured Text" n'est pas tout Ã  fait la
+bonne appellation. Nous devrions plutÃ´t le nommer "Relaxed Text" qui contient
+quelques schÃ©mas logiques. Ces schÃ©mas sont interprÃ©tÃ©s par un convertisseur
+HTML pour produire "Very Structured Text" (un texte trÃ¨s structurÃ©) qui pourra
+Ãªtre utilisÃ© par un navigateur web.
 
-Le schéma le plus simple est le **paragraphe** (quickref__).
-C'est un bloc de texte séparé par des lignes vides (une seule suffit).
-Les paragraphes doivent avoir le même décalage -- c'est à dire des espaces
-à gauche. Ces paragraphes produiront un texte décalé. Par exemple::
-
-  Ceci est un paragraphe.
-  Très court.
-
-     Le texte de ce paragraphe sera décalé,
-     généralement utilisé pour des citations.
-
-  En voilà un autre
-
-Le résultat donne :
+Le schÃ©ma le plus simple est le **paragraphe** (quickref__).
+C'est un bloc de texte sÃ©parÃ© par des lignes vides (une seule suffit).
+Les paragraphes doivent avoir le mÃªme dÃ©calage -- c'est Ã  dire des espaces
+Ã  gauche. Ces paragraphes produiront un texte dÃ©calÃ©. Par exemple::
 
   Ceci est un paragraphe.
-  Très court.
+  TrÃ¨s court.
 
-     Le texte de ce paragraphe sera décalé,
-     généralement utilisé pour des citations.
+     Le texte de ce paragraphe sera dÃ©calÃ©,
+     gÃ©nÃ©ralement utilisÃ© pour des citations.
 
-  En voilà un autre
+  En voilÃ  un autre
+
+Le rÃ©sultat donne :
+
+  Ceci est un paragraphe.
+  TrÃ¨s court.
+
+     Le texte de ce paragraphe sera dÃ©calÃ©,
+     gÃ©nÃ©ralement utilisÃ© pour des citations.
+
+  En voilÃ  un autre
   
 __ http://docutils.sourceforge.net/docs/rst/quickref.html#paragraphs
 
@@ -62,23 +62,23 @@ Dans les paragraphes et le corps du texte, nous pouvons utiliser
 des marqueurs pour *italique* avec "`` *italique* ``" ou **gras**
 avec "`` **gras** ``".
 
-Notez qu'aucun traitement supplémentaire n'est apporté entre deux
-doubles apostrophes inversées -- les astérisques, comme dans "`` * ``",
-sont donc conservées en l'état.
+Notez qu'aucun traitement supplÃ©mentaire n'est apportÃ© entre deux
+doubles apostrophes inversÃ©es -- les astÃ©risques, comme dans "`` * ``",
+sont donc conservÃ©es en l'Ã©tat.
 
-Si vous souhaitez utiliser un de ces caractères "spéciaux" dans
-le texte, il n'y a généralement pas de problème -- reStructuredText
+Si vous souhaitez utiliser un de ces caractÃ¨res "spÃ©ciaux" dans
+le texte, il n'y a gÃ©nÃ©ralement pas de problÃ¨me -- reStructuredText
 est assez malin.
-Par exemple, cet astérisque ``*`` est traité correctement. Si vous
-souhaitez par contre ``*``entourer un texte par des astérisques``*`` 
-**sans** qu'il soit en italique, il est nécessaire d'indiquer que
-l'astérisque ne doit pas être interprété. Pour cela il suffit de placer
-une barre oblique inversée juste avant lui, comme ça "``\*``" (quickref__), ou
-en l'entourant de doubles apostrophes inversées (litteral), comme cela ::
+Par exemple, cet astÃ©risque ``*`` est traitÃ© correctement. Si vous
+souhaitez par contre ``*``entourer un texte par des astÃ©risques``*`` 
+**sans** qu'il soit en italique, il est nÃ©cessaire d'indiquer que
+l'astÃ©risque ne doit pas Ãªtre interprÃ©tÃ©. Pour cela il suffit de placer
+une barre oblique inversÃ©e juste avant lui, comme Ã§a "``\*``" (quickref__), ou
+en l'entourant de doubles apostrophes inversÃ©es (litteral), comme cela ::
 
   ``\*``
 
-(``\*`` n'est pas implanté dans le JRST seul les `` fonctionnent)
+(``\*`` n'est pas implantÃ© dans le JRST seul les `` fonctionnent)
 
 
 __ http://docutils.sourceforge.net/docs/rst/quickref.html#escaping
@@ -86,22 +86,22 @@ __ http://docutils.sourceforge.net/docs/rst/quickref.html#escaping
 Listes
 ------
 
-Il y a trois types de listes: **numérotées**, **avec puces** et
-de **définitions**. Dans chaque cas, nous pouvons avoir autant
+Il y a trois types de listes: **numÃ©rotÃ©es**, **avec puces** et
+de **dÃ©finitions**. Dans chaque cas, nous pouvons avoir autant
 de paragraphes, sous-listes, etc. que l'on souhaite, tant que
-le décalage à gauche est aligné sur la première ligne.
+le dÃ©calage Ã  gauche est alignÃ© sur la premiÃ¨re ligne.
 
-Les listes doivent toujours démarrer un nouveau paragraphe
--- c'est à dire qu'il doit y avoir un saut de ligne juste avant.
+Les listes doivent toujours dÃ©marrer un nouveau paragraphe
+-- c'est Ã  dire qu'il doit y avoir un saut de ligne juste avant.
 
-Listes **numérotées** (par des nombres, lettres, chiffres romains;
+Listes **numÃ©rotÃ©es** (par des nombres, lettres, chiffres romains;
 quickref__)
 
 __ http://docutils.sourceforge.net/docs/rst/quickref.html#enumerated-lists
 
-En démarrant une ligne avec un numéro ou une lettre suivie d'un
-point ".", une parenthèse droite ")" ou entouré par des parenthèses
--- comme vous préférez. Toutes ces formes sont reconnues::
+En dÃ©marrant une ligne avec un numÃ©ro ou une lettre suivie d'un
+point ".", une parenthÃ¨se droite ")" ou entourÃ© par des parenthÃ¨ses
+-- comme vous prÃ©fÃ©rez. Toutes ces formes sont reconnues::
 
     1. nombres
 
@@ -112,19 +112,19 @@ point ".", une parenthèse droite ")" ou entouré par des parenthèses
 
     a. lettres minuscules
 
-       3. avec une sous-liste qui démarre à un nombre différent
-       4. faites attention à garder une séquence de nombre correcte !
+       3. avec une sous-liste qui dÃ©marre Ã  un nombre diffÃ©rent
+       4. faites attention Ã  garder une sÃ©quence de nombre correcte !
 
     I. majuscules en chiffres romains
 
     i. minuscules en chiffres romains
 
-    (1) des nombres à nouveau
+    (1) des nombres Ã  nouveau
 
     1) et encore
 
-Le résultat (note : Tous les styles de listes ne sont pas toujours
-supportés par tous les navigateurs, vous ne verrez donc pas forcément
+Le rÃ©sultat (note : Tous les styles de listes ne sont pas toujours
+supportÃ©s par tous les navigateurs, vous ne verrez donc pas forcÃ©ment
 les effets complets) :
 
 1. nombres
@@ -136,99 +136,99 @@ A. Lettres en majuscule
 
 a. lettres minuscules
 
-   3. avec une sous-liste qui démarre à un nombre différent
-   4. faites attention à garder une séquence de nombre correcte !
+   3. avec une sous-liste qui dÃ©marre Ã  un nombre diffÃ©rent
+   4. faites attention Ã  garder une sÃ©quence de nombre correcte !
 
 I. majuscules en chiffres romains
 
 i. minuscules en chiffres romains
 
-(1) des nombres à nouveau
+(1) des nombres Ã  nouveau
 
 1) et encore
 
-Listes **à puces** (quickref__)
+Listes **Ã  puces** (quickref__)
 
 __ http://docutils.sourceforge.net/docs/rst/quickref.html#bullet-lists
 
-De la même manière que pour les listes numérotées, il faut démarrer
-la première ligne avec une puce -- soit "-", "+" ou "*"::
+De la mÃªme maniÃ¨re que pour les listes numÃ©rotÃ©es, il faut dÃ©marrer
+la premiÃ¨re ligne avec une puce -- soit "-", "+" ou "*"::
 
     * une puce "*"
 
       - une sous-liste avec "-"
 
-         + à nouveau une sous-liste
+         + Ã  nouveau une sous-liste
 
       - une autre option
 
-Le résultat:
+Le rÃ©sultat:
 
     * une puce "*"
 
       - une sous-liste avec "-"
 
-         + à nouveau une sous-liste
+         + Ã  nouveau une sous-liste
 
       - une autre option
 
-Les listes de **définitions** (quickref__)
+Les listes de **dÃ©finitions** (quickref__)
 
 __ http://docutils.sourceforge.net/docs/rst/quickref.html#definition-lists
 
-Comme les deux autres, les listes de définitions consistent en un
-terme et la définition de ce terme. Le format est le suivant::
+Comme les deux autres, les listes de dÃ©finitions consistent en un
+terme et la dÃ©finition de ce terme. Le format est le suivant::
 
     Quoi
-      Les listes de définitions associent un terme avec une définition.
+      Les listes de dÃ©finitions associent un terme avec une dÃ©finition.
 
     *Comment*
-      Le terme est une phrase d'une ligne, et la définition est d'un
-      ou plusieurs paragraphes ou éléments, décalés par rapport au terme.
-      Les lignes vides ne sont pas autorisées entre le terme et la définition.
+      Le terme est une phrase d'une ligne, et la dÃ©finition est d'un
+      ou plusieurs paragraphes ou Ã©lÃ©ments, dÃ©calÃ©s par rapport au terme.
+      Les lignes vides ne sont pas autorisÃ©es entre le terme et la dÃ©finition.
 
-Le résultat:
+Le rÃ©sultat:
 
 Quoi
-  Les listes de définitions associent un terme avec une définition.
+  Les listes de dÃ©finitions associent un terme avec une dÃ©finition.
 
 *Comment*
-  Le terme est une phrase d'une ligne, et la définition est d'un
-  ou plusieurs paragraphes ou éléments, décalés par rapport au terme.
-  Les lignes vides ne sont pas autorisées entre le terme et la définition.
+  Le terme est une phrase d'une ligne, et la dÃ©finition est d'un
+  ou plusieurs paragraphes ou Ã©lÃ©ments, dÃ©calÃ©s par rapport au terme.
+  Les lignes vides ne sont pas autorisÃ©es entre le terme et la dÃ©finition.
 
-Préformatage
+PrÃ©formatage
 ------------
 (quickref__)
 
 __ http://docutils.sourceforge.net/docs/rst/quickref.html#literal-blocks
 
-Pour inclure un texte préformaté sans traitement
-il suffit de terminer le paragraphe par "``::``". Le texte préformaté est
-terminé lorsqu'une ligne retombe au niveau du décalage précédent. Par exemple::
+Pour inclure un texte prÃ©formatÃ© sans traitement
+il suffit de terminer le paragraphe par "``::``". Le texte prÃ©formatÃ© est
+terminÃ© lorsqu'une ligne retombe au niveau du dÃ©calage prÃ©cÃ©dent. Par exemple::
 
   Un exemple::
 
       Espaces, nouvelles lignes, lignes vides, et toutes sortes de marqueurs
-         (comme *ceci* ou \cela) sont préservés dans les bloc préformatés.
+         (comme *ceci* ou \cela) sont prÃ©servÃ©s dans les bloc prÃ©formatÃ©s.
 
   Fin de l'exemple
 
-Le résultat:
+Le rÃ©sultat:
 
   Un exemple::
 
       Espaces, nouvelles lignes, lignes vides, et toutes sortes de marqueurs
-         (comme *ceci* ou \cela) sont préservés dans les bloc préformatés.
+         (comme *ceci* ou \cela) sont prÃ©servÃ©s dans les bloc prÃ©formatÃ©s.
 
   Fin de l'exemple
 
-Notez que si le paragraphe contient seulement "``::``", il est ignoré.
+Notez que si le paragraphe contient seulement "``::``", il est ignorÃ©.
 
   ::
 
-     Ceci est un texte préformaté,
-     le paragraphe "::" est ignoré.
+     Ceci est un texte prÃ©formatÃ©,
+     le paragraphe "::" est ignorÃ©.
 
 Sections
 --------
@@ -237,14 +237,14 @@ Sections
 __ http://docutils.sourceforge.net/docs/rst/quickref.html#section-structure
 
 Pour diviser un texte en plusieurs sections, nous utilisons des
-**en-têtes de section**. C'est à dire une seule ligne de texte (d'un
-ou plusieurs mots) avec un ornement : juste en dessous et éventuellement
-dessus aussi, avec des tirets "``-----``", égal "``=====``", tildes
-"``~~~~~``" ou n'importe quel de ces caractères ``= - ` : ' " ~ ^ _ * + # < >``
+**en-tÃªtes de section**. C'est Ã  dire une seule ligne de texte (d'un
+ou plusieurs mots) avec un ornement : juste en dessous et Ã©ventuellement
+dessus aussi, avec des tirets "``-----``", Ã©gal "``=====``", tildes
+"``~~~~~``" ou n'importe quel de ces caractÃ¨res ``= - ` : ' " ~ ^ _ * + # < >``
 qui vous semble convenir. Un ornement simplement en dessous n'a pas la
-même signification qu'un ornement dessus-dessous avec le même caractère.
-Les ornements doivent avoir au moins la taille du texte. Soyez cohérent,
-les ornements identiques sont censés être du même niveau::
+mÃªme signification qu'un ornement dessus-dessous avec le mÃªme caractÃ¨re.
+Les ornements doivent avoir au moins la taille du texte. Soyez cohÃ©rent,
+les ornements identiques sont censÃ©s Ãªtre du mÃªme niveau::
 
   Chapitre 1
   ==========
@@ -261,7 +261,7 @@ les ornements identiques sont censés être du même niveau::
   Chapitre 2
   ==========
 
-Le résultat de cette structure, sous la forme pseudo-XML::
+Le rÃ©sultat de cette structure, sous la forme pseudo-XML::
 
     <section>
         <title>
@@ -280,15 +280,15 @@ Le résultat de cette structure, sous la forme pseudo-XML::
             Chapitre 2
   
 (Pseudo-XML utilise une indentation et n'as pas de balises finale. Il
-n'est pas possible de montrer le résultat, comme dans les autres exemples,
-du fait que les sections ne peuvent être utilisées à l'intérieur d'un
-paragraphe décalé. Pour un exemple concret, comparez la structure de
-ce document avec le résultat.)
+n'est pas possible de montrer le rÃ©sultat, comme dans les autres exemples,
+du fait que les sections ne peuvent Ãªtre utilisÃ©es Ã  l'intÃ©rieur d'un
+paragraphe dÃ©calÃ©. Pour un exemple concret, comparez la structure de
+ce document avec le rÃ©sultat.)
 
 
 Pour indiquer le titre du document, utilisez un style d'ornement unique
-en début de document. Pour indiquer un sous-titre de document, utilisez
-un autre ornement unique juste après le titre.
+en dÃ©but de document. Pour indiquer un sous-titre de document, utilisez
+un autre ornement unique juste aprÃ¨s le titre.
 Par exemple::
 
     =================
@@ -304,8 +304,8 @@ Par exemple::
     ...
 
 Notez que "Titre du document" et "Titre de la section" utilisent le signe
-égal, mais sont différents et sans relation. Le texte et l'ornement peuvent
-être de la même taille pour des questions d'esthétisme.
+Ã©gal, mais sont diffÃ©rents et sans relation. Le texte et l'ornement peuvent
+Ãªtre de la mÃªme taille pour des questions d'esthÃ©tisme.
 
 
 Images
@@ -320,13 +320,13 @@ Par exemple::
 
     .. image:: images/biohazard.png
 
-Le résultat:
+Le rÃ©sultat:
 
 .. image:: images/biohazard.png
 
-La partie ``images/biohazard.png`` indique le chemin d'accès au fichier
-de l'image qui doit apparaître. Il n'y a pas de restriction sur l'image
-(format, taille etc). Si l'image doit apparaître en HTML et que vous
+La partie ``images/biohazard.png`` indique le chemin d'accÃ¨s au fichier
+de l'image qui doit apparaÃ®tre. Il n'y a pas de restriction sur l'image
+(format, taille etc). Si l'image doit apparaÃ®tre en HTML et que vous
 souhaitez lui ajouter des informations::
 
   .. image:: images/biohazard.png
@@ -335,7 +335,7 @@ souhaitez lui ajouter des informations::
      :scale: 50
      :alt: texte alternatif
 
-Consultez la documentation__ complète de la directive image pour plus d'informations.
+Consultez la documentation__ complÃ¨te de la directive image pour plus d'informations.
 
 __ http://docutils.sourceforge.net/spec/rst/directives.html
 __ http://docutils.sourceforge.net/spec/rst/directives.html#images
@@ -344,9 +344,9 @@ __ http://docutils.sourceforge.net/spec/rst/directives.html#images
 Et ensuite ?
 ------------
 
-Cette introduction montre les possibilités les plus courantes de reStructuredText,
-mais il y en a bien d'autres à explorer. Le manuel de référence utilisateur
-'Quick reStructuredText`_ est recommandé pour aller plus loin. Pour les détails complets
+Cette introduction montre les possibilitÃ©s les plus courantes de reStructuredText,
+mais il y en a bien d'autres Ã  explorer. Le manuel de rÃ©fÃ©rence utilisateur
+'Quick reStructuredText`_ est recommandÃ© pour aller plus loin. Pour les dÃ©tails complets
 consultez `reStructuredText Markup Specification`_ [#]_.
 
 

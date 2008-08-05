@@ -3,7 +3,7 @@ voir implantation docutils, et asciidoc
 un objet RSTReader qui permet de lire un flux avec des methodes pratiques pour le RST
   int getLine(); retourne le numero de ligne courant
   boolean eof(); retourne vrai si la fin du fichier
-  int skip_blank_lines(); passe les lignes blanches, et retourne le nombre passée
+  int skip_blank_lines(); passe les lignes blanches, et retourne le nombre passÃ©e
   String [] read_all(); lit toutes les lignes du fichier
   String [] read_lines(int count); lit un certain nombre de ligne
   String [] read_ahead(int count); lit un certain nombre de ligne sans avancer le curseur

@@ -1,6 +1,6 @@
 /* *##%
  * Copyright (C) 2006
- *     Code Lutin, Cédric Pineau, Benjamin Poussin
+ *     Code Lutin, CÃ©dric Pineau, Benjamin Poussin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,16 +31,14 @@
 
 package org.codelutin.jrst;
 
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.net.URL;
-
 import junit.framework.TestCase;
-
 import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
 
 
 /**

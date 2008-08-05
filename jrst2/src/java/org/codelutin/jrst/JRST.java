@@ -1,6 +1,6 @@
 /* *##%
  * Copyright (C) 2006
- *     Code Lutin, Cédric Pineau, Benjamin Poussin
+ *     Code Lutin, CÃ©dric Pineau, Benjamin Poussin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,6 +30,31 @@
  */
 package org.codelutin.jrst;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.MimeConstants;
+import org.codelutin.i18n.I18n;
+import org.codelutin.util.FileCompletion;
+import org.codelutin.util.FileUtil;
+import org.codelutin.util.StringUtil;
+import org.dom4j.Document;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
+import uk.co.flamingpenguin.jewel.cli.Cli;
+import uk.co.flamingpenguin.jewel.cli.CliFactory;
+import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
+import uk.co.flamingpenguin.jewel.cli.Option;
+import uk.co.flamingpenguin.jewel.cli.Unparsed;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedOutputStream;
@@ -48,36 +73,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.URIResolver;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamSource;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FopFactory;
-import org.apache.fop.apps.MimeConstants;
-import org.codelutin.i18n.I18n;
-import org.codelutin.util.FileCompletion;
-import org.codelutin.util.FileUtil;
-import org.codelutin.util.Resource;
-import org.codelutin.util.StringUtil;
-import org.dom4j.Document;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
-
-import uk.co.flamingpenguin.jewel.cli.Cli;
-import uk.co.flamingpenguin.jewel.cli.CliFactory;
-import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
-import uk.co.flamingpenguin.jewel.cli.Option;
-import uk.co.flamingpenguin.jewel.cli.Unparsed;
 
 /**
  * FIXME: 'JRST --help' doesn't work, but 'JRST --help toto' work :( FIXME:
@@ -371,8 +366,8 @@ public class JRST {
 
     public static void generate(String xslListOrOutType, File fileIn,
             File fileOut, Overwrite overwrite) throws Exception {
-        generate(xslListOrOutType, fileIn, "ISO-8859-15", fileOut,
-                "ISO-8859-15", overwrite);
+        generate(xslListOrOutType, fileIn, "UTF-8", fileOut,
+                "UTF-8", overwrite);
     }
 
     /**

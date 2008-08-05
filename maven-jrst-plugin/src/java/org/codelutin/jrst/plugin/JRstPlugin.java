@@ -1,6 +1,6 @@
 /* *##%
  * Copyright (C) 2006
- *     Code Lutin, Cédric Pineau, Benjamin Poussin
+ *     Code Lutin, CÃ©dric Pineau, Benjamin Poussin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,123 +31,115 @@
 
 package org.codelutin.jrst.plugin;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.apache.tools.ant.BuildLogger;
-import org.apache.tools.ant.NoBannerLogger;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Copy;
-import org.apache.tools.ant.types.FileSet;
 import org.codelutin.jrst.JRST;
 import org.codelutin.util.FileUtil;
 import org.codelutin.util.FileUtil.FileAction;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
- * Génére du xdoc à partir de fichiers Rst
- * 
+ * GÃ©nÃ©re du xdoc Ã  partir de fichiers Rst
+ * <p/>
  * Les fichiers rst sont dans les repertoires:
  * <li> src/site/fr/rst/
  * <li> src/site/en/rst/
  * <li> src/site/es/rst/
  * <li> ...
- * 
+ * <p/>
  * et ils iront au final dans:
  * <li> target/site-build/fr/xdoc/
  * <li> target/site-build/en/xdoc/
  * <li> target/site-build/es/xdoc/
  * <li> ...
- *  
+ * <p/>
  * tous les autres fichiers iront dans target/site-build en respectant la
  * meme hierarchie de repertoire.
- *  
+ *
  * @goal jrst
  * @phase pre-site
  */
-public class JRstPlugin extends AbstractMojo implements FileAction {    
+public class JRstPlugin extends AbstractMojo implements FileAction {
     /**
-     * R�pertoire source des fichiers Rst
-     * 
+     * Répertoire source des fichiers Rst
+     *
      * @parameter default-value="src/site"
      * @required
      */
     private String directoryIn = "src/site";
-    
+
     /**
-     * Encoding en entr�e
-     * 
-     * @parameter default-value="ISO-8859-15"
+     * Encoding en entrée
+     *
+     * @parameter default-value="UTF-8"
      */
-    private String inputEncoding = "ISO-8859-15";
+    private String inputEncoding = "UTF-8";
 
     /**
      * Encoding en sortie
-     * 
-     * @parameter default-value="ISO-8859-15"
+     *
+     * @parameter default-value="UTF-8"
      */
-    private String outputEncoding = "ISO-8859-15";
-    
+    private String outputEncoding = "UTF-8";
+
     /**
-     * Répertoire cible des fichiers xdoc générée
-     * 
+     * RÃ©pertoire cible des fichiers xdoc gÃ©nÃ©rÃ©e
+     *
      * @parameter default-value="target/site-build"
      * @required
      */
     private String directoryOut = "target/site-build";
 
     /**
-     * Arr�te la g�n�ration en cas d'erreurs
-     * 
+     * Arrï¿½te la gï¿½nï¿½ration en cas d'erreurs
+     *
      * @parameter default-value="true"
      */
     private boolean ignoreErrors = true;
-    
+
     /**
-     * Ecrase les fichiers g�n�r�s
-     * 
+     * Ecrase les fichiers gï¿½nï¿½rï¿½s
+     *
      * @parameter default-value="ifnewer"
      */
     private String overwrite = "ifnewer";
-    
-    /**
-     * 
-     * @parameter default-value="fr"
-     */
+
+    /** @parameter default-value="fr" */
     private String defaultLocale = "fr";
-    
+
     /**
      * Permet d'obtenir plus d'information
-     * 
+     *
      * @parameter default-value="false"
      */
     private boolean verbose = false;
-    
+
     /**
-    * Projet en cours de deploiement.
-    * @parameter expression="${project}"
-    */
+     * Projet en cours de deploiement.
+     *
+     * @parameter expression="${project}"
+     */
 
     private MavenProject project;
-    
+
     private int numberFilesGenerates;
-    
+
     /**
-     * Retourne la langue par defaut precisé dans le pom.xml
+     * Retourne la langue par defaut precisÃ© dans le pom.xml
+     *
      * @return
      */
     protected String getDefaultLocale() {
         String result = defaultLocale;
         return result;
     }
-    
-    /**
-     * @return the overwrite
-     */
+
+    /** @return the overwrite */
     public JRST.Overwrite getOverwrite() {
-        JRST.Overwrite result = JRST.Overwrite.NEVER; 
+        JRST.Overwrite result = JRST.Overwrite.NEVER;
         if (this.overwrite.contains("new")) {
             result = JRST.Overwrite.IFNEWER;
         } else if ("true".equalsIgnoreCase(this.overwrite) ||
@@ -156,63 +148,63 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
         }
         return result;
     }
-    
+
     public void execute() throws MojoExecutionException {
         try {
             actionGenerate();
         } catch (GenerationJRstException e) {
-            System.out.println("Error during generation for :\n" 
+            System.out.println("Error during generation for :\n"
                     + GenerationJRstException.getFilesErrors());
-            if(!ignoreErrors)
+            if (!ignoreErrors)
                 throw new MojoExecutionException("Erreur lors de l'execution");
         }
         actionCopy();
     }
-    
-    private void actionGenerate(){
-        getLog().info("Génération des fichier xdocs à partir des fichiers rst");
+
+    private void actionGenerate() {
+        getLog().info("GÃ©nÃ©ration des fichier xdocs Ã  partir des fichiers rst");
         numberFilesGenerates = 0;
         FileUtil.walkAfter(new File(directoryIn), this);
         getLog().info("Generating " + numberFilesGenerates + " files to " + directoryOut);
     }
-    
+
     public boolean doAction(File file) {
         String fileIn = file.getAbsoluteFile().toString();
         String fileOut = null;
         getLog().info("Using " + fileIn);
         if (fileIn.matches(".*[/\\\\]rst[/\\\\].*\\.rst")) {
-            fileOut = 
-                fileIn.replace(directoryIn, directoryOut)
-                .replace(".rst",".xml")
-                .replaceFirst("([/\\\\])rst([/\\\\])", "$1xdoc$2");
+            fileOut =
+                    fileIn.replace(directoryIn, directoryOut)
+                            .replace(".rst", ".xml")
+                            .replaceFirst("([/\\\\])rst([/\\\\])", "$1xdoc$2");
 
             if (defaultLocale != null && !"".equals(defaultLocale)) {
                 fileOut = fileOut.replaceFirst("([/\\\\])" + defaultLocale + "([/\\\\])", "$1");
             }
-            
+
             try {
                 JRST.generate(JRST.TYPE_XDOC,
                         new File(fileIn), inputEncoding, new File(fileOut), outputEncoding, getOverwrite());
-                numberFilesGenerates ++;
+                numberFilesGenerates++;
             } catch (Exception e) {
                 getLog().error(e);
-                if(!ignoreErrors) {
+                if (!ignoreErrors) {
                     throw new GenerationJRstException(fileIn);
                 }
             }
         }
-        
-        if(fileOut != null && verbose) {
+
+        if (fileOut != null && verbose) {
             getLog().info("Using " + fileIn);
             getLog().info("Generating " + fileOut);
         }
         return true;
     }
 
-    private void actionCopy(){          
+    private void actionCopy() {
         getLog().info("Copie des fichiers images");
-        /* Execution de la tâche ant copy */
-         
+        /* Execution de la tÃ¢che ant copy */
+
         try {
             if (defaultLocale != null && !"".equals(defaultLocale)) {
                 // copie de tous les fichiers non rst
@@ -223,7 +215,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
                         "([/\\\\])" + defaultLocale + "([/\\\\])", "$1",
                         true,
                         ".*[/\\\\]rst[/\\\\].*");
-                
+
                 // copie des images du repertoire rst dans le build-site
                 FileUtil.copyAndRenameRecursively(
                         new File(directoryIn),
@@ -238,18 +230,18 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
                 FileUtil.copyAndRenameRecursively(
                         new File(directoryIn),
                         new File(directoryOut),
-                        false, 
-                        "", 
-                        "", 
-                        true, 
+                        false,
+                        "",
+                        "",
+                        true,
                         ".*[/\\\\]rst[/\\\\].*");
-                
+
                 // copie des images du repertoire rst dans le build-site
                 FileUtil.copyAndRenameRecursively(
                         new File(directoryIn),
                         new File(directoryOut),
                         false,
-                        "([/\\\\])rst([/\\\\])", 
+                        "([/\\\\])rst([/\\\\])",
                         "$1resources$2",
                         false,
                         ".*[/\\\\]rst[/\\\\].*(\\.png|\\.jpeg|\\.jpg|\\.gif)$");
@@ -257,11 +249,8 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
         } catch (IOException eee) {
             getLog().error(eee);
         }
-        
-        
-      
-        
-//        /* Création d'un projet ant */
+
+//        /* CrÃ©ation d'un projet ant */
 //        Project project = new Project();
 //        
 //        BuildLogger logger = new NoBannerLogger();
@@ -273,7 +262,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
 //        project.getBaseDir();
 //        project.addBuildListener(logger);
 //
-//        /* Création de la tâche ant Copy */
+//        /* CrÃ©ation de la tÃ¢che ant Copy */
 //        Copy copy = new Copy();
 //        copy.setProject(project);
 //        copy.setTaskName("Copy images");

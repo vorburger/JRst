@@ -1,6 +1,6 @@
 /* *##%
  * Copyright (C) 2006
- *     Code Lutin, C�dric Pineau, Benjamin Poussin
+ *     Code Lutin, Cï¿½dric Pineau, Benjamin Poussin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,6 +31,11 @@
 
 package org.codelutin.jrst;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -39,18 +44,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-
 /**
  * Le principe est de positionner la mark du {@link AdvancedReader} lors du
  * debut d'une methode peek*, puis a la fin de la methode de regarder le nombre
- * de caractere utilis� pour la methode et de faire un reset.
+ * de caractere utilisï¿½ pour la methode et de faire un reset.
  * <p>
- * Le nombre de caractere utilis� servira pour le remove lorsque l'utilisateur
- * indiquera qu'il utilise l'element retourn�, si l'utilisateur n'appelle pas
+ * Le nombre de caractere utilisï¿½ servira pour le remove lorsque l'utilisateur
+ * indiquera qu'il utilise l'element retournï¿½, si l'utilisateur n'appelle pas
  * remove alors il peut relire autant de fois qu'il veut le meme element, ou
  * essayer d'en lire un autre.
  * <p>
@@ -609,7 +609,7 @@ public class JRSTLexer {
      * Ex :     -a            command-line option &quot;a&quot;
      *          -1 file, --one=file, --two file
      *                     Multiple options with arguments.
-     * Sch�ma :  ________________________________
+     * Schéma :  ________________________________
      *           v          |                    |
      *        -{1,2}\w+ -&gt;|','                   |
      *                    |'='-----|-&gt; \w+ ---&gt;|','
@@ -617,7 +617,7 @@ public class JRSTLexer {
      *                    |&quot;  &quot; -----&gt; \w+ ---&gt; end   |
      *                      &circ;                         |
      *                      |_________________________|
-     * L�gende :   
+     * Légende :   
      * 
      *          -{1,2} --&gt; 1 or 2 tirets
      *          \w+ -----&gt; word characters one or more times

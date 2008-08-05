@@ -1,12 +1,12 @@
 =========================
-Fonctionnalités proposées
+FonctionnalitÃ©s proposÃ©es
 =========================
 
 La DTD de Docutils : http://docutils.sourceforge.net/docs/ref/doctree.html
 
 .. contents:: Sommaire
 
-Fonctionnalités implantées
+FonctionnalitÃ©s implantÃ©es
 ==========================
 
 Element racine
@@ -35,7 +35,7 @@ Elements bibliographiques
 -  date_
 -  copyright_
 
-Elements de décoration
+Elements de dÃ©coration
 ----------------------
 
 -  decoration_
@@ -111,7 +111,7 @@ Elements de la ligne
 -  reference_ 
 -  footnote_reference_ 
 
-Fonctionnalités non-implantées
+FonctionnalitÃ©s non-implantÃ©es
 ==============================
 
 -  abbreviation_
