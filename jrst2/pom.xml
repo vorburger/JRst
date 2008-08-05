@@ -1,50 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<!--The version of maven's project object model-->
+    <!--The version of maven's project object model-->
     <modelVersion>4.0.0</modelVersion>
-    
+
     <!--lutinproject.xml-->
     <parent>
-    	<groupId>lutinlib</groupId>
-    	<artifactId>lutinproject</artifactId>
-    	<version>2.2</version>
+        <groupId>lutinlib</groupId>
+        <artifactId>lutinproject</artifactId>
+        <version>2.2</version>
     </parent>
-    
+
     <!--A unique name for this project-->
     <artifactId>jrst</artifactId>
     <name>JRst</name>
-    
+
     <!--ejb, jar, war...-->
     <packaging>jar</packaging>
-    
+
     <!--Version-->
     <version>0.8.2-SNAPSHOT</version>
-    
+
     <!--Description-->
     <description>Parser RST en Java.</description>
     <inceptionYear>2004</inceptionYear>
-    
+
     <!--Tracking-->
     <issueManagement>
         <url>http://labs.libre-entreprise.org/tracker/?group_id=54</url>
     </issueManagement>
     <properties>
-                                <!--Source base dir-->
-                                <maven.src.dir>${basedir}/src</maven.src.dir>
+        <!--Source base dir-->
+        <maven.src.dir>${basedir}/src</maven.src.dir>
 
-                                <!--Compile with ?-->
-                                <maven.compile.source>1.5</maven.compile.source>
-                                <maven.compile.target>1.5</maven.compile.target>
-                        </properties>
+        <!--Compile with ?-->
+        <maven.compile.source>1.5</maven.compile.source>
+        <maven.compile.target>1.5</maven.compile.target>
+
+        <maven.test.skip>true</maven.test.skip>
+    </properties>
 
     <!--who the developers are for the project-->
     <repositories>
-       <repository>
+        <repository>
             <id>codelutin-repository</id>
             <name>CodeLutinRepository</name>
-            <url> http://lutinbuilder.labs.libre-entreprise.org/maven2 </url>
+            <url>http://lutinbuilder.labs.libre-entreprise.org/maven2</url>
         </repository>
     </repositories>
     <build>
@@ -74,7 +76,7 @@
                     <outputEncoding>UTF-8</outputEncoding>
                     <locales>fr,en</locales>
                 </configuration>
-           </plugin>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -87,7 +89,7 @@
             </plugin>
         </plugins>
     </build>
-    
+
     <!--Librairies-->
     <dependencies>
         <dependency>
@@ -103,9 +105,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>lutinlib</groupId>
+            <groupId>org.codelutin</groupId>
             <artifactId>lutinutil</artifactId>
-            <version>0.29</version>
+            <version>0.30-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -155,7 +157,7 @@
         <site>
             <id>labs</id>
             <url>
-                scp://labs.libre-entreprise.org/home/groups/${pom.artifactId}/htdocs/ 
+                scp://labs.libre-entreprise.org/home/groups/${pom.artifactId}/htdocs/
             </url>
         </site>
     </distributionManagement>

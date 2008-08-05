@@ -1,6 +1,6 @@
 /* *##%
  * Copyright (C) 2006
- *     Code Lutin, Cï¿½dric Pineau, Benjamin Poussin
+ *     Code Lutin, Cédric Pineau, Benjamin Poussin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -47,10 +47,10 @@ import java.util.regex.Pattern;
 /**
  * Le principe est de positionner la mark du {@link AdvancedReader} lors du
  * debut d'une methode peek*, puis a la fin de la methode de regarder le nombre
- * de caractere utilisï¿½ pour la methode et de faire un reset.
+ * de caractere utilisé pour la methode et de faire un reset.
  * <p>
- * Le nombre de caractere utilisï¿½ servira pour le remove lorsque l'utilisateur
- * indiquera qu'il utilise l'element retournï¿½, si l'utilisateur n'appelle pas
+ * Le nombre de caractere utilisé servira pour le remove lorsque l'utilisateur
+ * indiquera qu'il utilise l'element retourné, si l'utilisateur n'appelle pas
  * remove alors il peut relire autant de fois qu'il veut le meme element, ou
  * essayer d'en lire un autre.
  * <p>

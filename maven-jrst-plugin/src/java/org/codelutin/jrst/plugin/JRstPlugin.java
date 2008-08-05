@@ -1,6 +1,6 @@
 /* *##%
  * Copyright (C) 2006
- *     Code Lutin, CÃ©dric Pineau, Benjamin Poussin
+ *     Code Lutin, Cédric Pineau, Benjamin Poussin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,7 +42,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * GÃ©nÃ©re du xdoc Ã  partir de fichiers Rst
+ * Génére du xdoc à  partir de fichiers Rst
  * <p/>
  * Les fichiers rst sont dans les repertoires:
  * <li> src/site/fr/rst/
@@ -86,7 +86,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
     private String outputEncoding = "UTF-8";
 
     /**
-     * RÃ©pertoire cible des fichiers xdoc gÃ©nÃ©rÃ©e
+     * Répertoire cible des fichiers xdoc générée
      *
      * @parameter default-value="target/site-build"
      * @required
@@ -94,14 +94,14 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
     private String directoryOut = "target/site-build";
 
     /**
-     * Arrï¿½te la gï¿½nï¿½ration en cas d'erreurs
+     * Arréte la génération en cas d'erreurs
      *
      * @parameter default-value="true"
      */
     private boolean ignoreErrors = true;
 
     /**
-     * Ecrase les fichiers gï¿½nï¿½rï¿½s
+     * Ecrase les fichiers générés
      *
      * @parameter default-value="ifnewer"
      */
@@ -128,13 +128,12 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
     private int numberFilesGenerates;
 
     /**
-     * Retourne la langue par defaut precisÃ© dans le pom.xml
+     * Retourne la langue par defaut precisé dans le pom.xml
      *
      * @return
      */
     protected String getDefaultLocale() {
-        String result = defaultLocale;
-        return result;
+        return defaultLocale;
     }
 
     /** @return the overwrite */
@@ -162,7 +161,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
     }
 
     private void actionGenerate() {
-        getLog().info("GÃ©nÃ©ration des fichier xdocs Ã  partir des fichiers rst");
+        getLog().info("Génération des fichier xdocs à  partir des fichiers rst");
         numberFilesGenerates = 0;
         FileUtil.walkAfter(new File(directoryIn), this);
         getLog().info("Generating " + numberFilesGenerates + " files to " + directoryOut);
@@ -203,7 +202,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
 
     private void actionCopy() {
         getLog().info("Copie des fichiers images");
-        /* Execution de la tÃ¢che ant copy */
+        /* Execution de la tâche ant copy */
 
         try {
             if (defaultLocale != null && !"".equals(defaultLocale)) {
@@ -250,7 +249,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
             getLog().error(eee);
         }
 
-//        /* CrÃ©ation d'un projet ant */
+//        /* Création d'un projet ant */
 //        Project project = new Project();
 //        
 //        BuildLogger logger = new NoBannerLogger();
@@ -262,7 +261,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
 //        project.getBaseDir();
 //        project.addBuildListener(logger);
 //
-//        /* CrÃ©ation de la tÃ¢che ant Copy */
+//        /* Création de la tâche ant Copy */
 //        Copy copy = new Copy();
 //        copy.setProject(project);
 //        copy.setTaskName("Copy images");
