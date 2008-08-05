@@ -1,6 +1,6 @@
 /* *##%
  * Copyright (C) 2006
- *     Code Lutin, CÃ©dric Pineau, Benjamin Poussin
+ *     Code Lutin, Cédric Pineau, Benjamin Poussin
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -933,7 +933,7 @@ public class JRSTReader {
             result.setText(line);
         } else {
             File fileIn = new File(path);
-            URL url = fileIn.toURL();
+            URL url = fileIn.toURI().toURL();
             Reader in = new InputStreamReader(url.openStream());
 
             Document doc = newJRSTReader(in);
