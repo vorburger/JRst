@@ -213,7 +213,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
                         false,
                         "([/\\\\])" + defaultLocale + "([/\\\\])", "$1",
                         true,
-                        ".*[/\\\\]rst[/\\\\].*");
+                        new String[]{".*[/\\\\]rst[/\\\\].*"});
 
                 // copie des images du repertoire rst dans le build-site
                 FileUtil.copyAndRenameRecursively(
@@ -223,7 +223,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
                         "([/\\\\])" + defaultLocale + "([/\\\\])rst([/\\\\])",
                         "$1resources$2",
                         false,
-                        ".*[/\\\\]rst[/\\\\].*(\\.png|\\.jpeg|\\.jpg|\\.gif)$");
+                        new String[]{".*[/\\\\]rst[/\\\\].*(\\.png|\\.jpeg|\\.jpg|\\.gif)$"});
             } else {
                 // copie de tous les fichiers non rst
                 FileUtil.copyAndRenameRecursively(
@@ -233,7 +233,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
                         "",
                         "",
                         true,
-                        ".*[/\\\\]rst[/\\\\].*");
+                        new String[]{".*[/\\\\]rst[/\\\\].*"});
 
                 // copie des images du repertoire rst dans le build-site
                 FileUtil.copyAndRenameRecursively(
@@ -243,7 +243,7 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
                         "([/\\\\])rst([/\\\\])",
                         "$1resources$2",
                         false,
-                        ".*[/\\\\]rst[/\\\\].*(\\.png|\\.jpeg|\\.jpg|\\.gif)$");
+                        new String[]{".*[/\\\\]rst[/\\\\].*(\\.png|\\.jpeg|\\.jpg|\\.gif)$"});
             }
         } catch (IOException eee) {
             getLog().error(eee);
