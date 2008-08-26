@@ -31,16 +31,27 @@
 
 package org.codelutin.jrst.plugin;
 
-
+/**
+ * GenerationJRstException
+ *
+ * @author ruchaud
+ * @version $Revision$
+ * 
+ * Last update : $Date$
+ * By : $Author$
+ */
 public class GenerationJRstException extends RuntimeException {
 
-    static private String FilesErrors = "";
+    /** serialVersionUID */
+    private static final long serialVersionUID = 7121169280356405413L;
     
+    static private String filesErrors = "";
+
     public GenerationJRstException(String fileIn) {
-        FilesErrors += fileIn + "\n";
+        filesErrors += fileIn + "\n";
     }
 
     public static String getFilesErrors() {
-        return FilesErrors;
+        return filesErrors;
     }
 }
