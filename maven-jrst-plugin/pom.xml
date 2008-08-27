@@ -13,7 +13,7 @@
      </parent>
 
     <!--A unique name for this project-->
-    <groupId>lutinplugin</groupId>
+    <groupId>org.codelutin.plugin</groupId>
     <artifactId>maven-jrst-plugin</artifactId>
     <name>Plugin maven JRst</name>
 
