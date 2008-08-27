@@ -1,21 +1,19 @@
-/* *##%
- * Copyright (C) 2006
- *     Code Lutin, Cédric Pineau, Benjamin Poussin
+/* *##% Plugin maven JRst
+ * Copyright (C) 2006 - 2008 CodeLutin
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU General Lesser Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *##%*/
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>. ##%*/
 
 /* *
  * JRstPlugin.java
@@ -31,15 +29,14 @@
 
 package org.codelutin.jrst.plugin;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
 import org.codelutin.jrst.JRST;
 import org.codelutin.util.FileUtil;
 import org.codelutin.util.FileUtil.FileAction;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Génére du xdoc à partir de fichiers Rst.
@@ -116,13 +113,6 @@ public class JRstPlugin extends AbstractMojo implements FileAction {
      * @parameter default-value="false"
      */
     private boolean verbose = false;
-
-    /**
-     * Projet en cours de deploiement.
-     * 
-     * @parameter expression="${project}"
-     */
-    private MavenProject project;
 
     /**
      * Number of generated files.

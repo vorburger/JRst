@@ -5,12 +5,12 @@
     <!--The version of maven's project object model-->
     <modelVersion>4.0.0</modelVersion>
 
-    <!--lutinproject.xml--> <!-- bug dans maven, les plugins ne fonctionne pas s'il herite d'un projet, mais pour la generation du site -->
-    <!--parent>
-         <groupId>lutinlib</groupId>
+    <!-- parent -->
+    <parent>
+         <groupId>org.codelutin</groupId>
          <artifactId>lutinproject</artifactId>
-         <version>2.2</version>
-     </parent-->
+         <version>2.4</version>
+     </parent>
 
     <!--A unique name for this project-->
     <groupId>lutinplugin</groupId>
@@ -30,46 +30,15 @@
     <inceptionYear>2006</inceptionYear>
 
     <properties>
-        <!--Test-->
-        <maven.test.skip>true</maven.test.skip>
+		<!-- id du projet du labs -->
+        <labs.id>54</labs.id>
 
-        <!--Source base dir-->
-        <maven.src.dir>${basedir}/src</maven.src.dir>
-    </properties>
-
-    <!-- debut de ce qui devrait etre dans le pere -->
-    <build>
-        <sourceDirectory>${maven.src.dir}/java</sourceDirectory>
-        <testSourceDirectory>${maven.src.dir}/test</testSourceDirectory>
+        <!-- nom du projet sur le labs -->
+        <labs.project>jrst</labs.project>
         
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                </configuration>
-            </plugin>
-       </plugins>
-    </build>
-    <distributionManagement>
-        <repository>
-            <id>labs</id>
-            <url>scp://labs.libre-entreprise.org/home/groups/lutinbuilder/htdocs/maven2</url>
-        </repository>
-
-        <site>
-            <id>labs</id>
-            <url>scp://labs.libre-entreprise.org/home/groups/jrst/htdocs/${pom.artifactId}</url>
-        </site>
-    </distributionManagement>
-    <!-- fin de ce qui devrait etre dans le pere -->
-
-
-    <!--Tracking-->
-    <issueManagement>
-        <url>http://labs.libre-entreprise.org/tracker/?group_id=54</url>
-    </issueManagement>
+        <!-- Test -->
+        <maven.test.skip>false</maven.test.skip>
+    </properties>
 
     <!--who the developers are for the project-->
     <contributors>
@@ -103,50 +72,16 @@
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.7.0</version>
+            <version>1.7.1</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
-            <groupId>lutinlib</groupId>
+            <groupId>org.codelutin</groupId>
             <artifactId>jrst</artifactId>
             <version>[0.8,)</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
-
-    <!--
-    | surcharge des valeurs par defaut
-    +-->
-    <mailingLists>
-        <mailingList>
-            <name>jrst-cvscomit</name>
-            <subscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/jrst-cvscommit</subscribe>
-            <unsubscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/jrst-cvscommit</unsubscribe>
-            <archive>http://lists.labs.libre-entreprise.org/pipermail/jrst-cvscommit/</archive>
-        </mailingList>
-
-        <mailingList>
-            <name>jrst-devel</name>
-            <subscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/jrst-devel</subscribe>
-            <unsubscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/jrst-devel</unsubscribe>
-            <archive>http://lists.labs.libre-entreprise.org/pipermail/jrst-devel/</archive>
-        </mailingList>
-
-        <mailingList>
-            <name>jrst-user</name>
-            <subscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/jrst-user</subscribe>
-            <unsubscribe>http://lists.labs.libre-entreprise.org/mailman/listinfo/jrst-user</unsubscribe>
-            <archive>http://lists.labs.libre-entreprise.org/pipermail/jrst-user/</archive>
-        </mailingList>
-    </mailingLists>
-
-    <scm>
-        <url>http://cvs.labs.libre-entreprise.org/cgi-bin/cvsweb.cgi/?cvsroot=jrst</url>
-        <connection>scm:cvs:pserver:anonymous@cvs.labs.libre-entreprise.org:/cvsroot/jrst:${pom.artifactId}</connection>
-    </scm>
-    <!--
-    | fin de surcharge
-    +-->
 
 </project>
