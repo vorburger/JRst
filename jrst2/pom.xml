@@ -5,11 +5,11 @@
     <!--The version of maven's project object model-->
     <modelVersion>4.0.0</modelVersion>
 
-    <!--lutinproject.xml-->
+    <!-- parent -->
     <parent>
-        <groupId>lutinlib</groupId>
+        <groupId>org.codelutin</groupId>
         <artifactId>lutinproject</artifactId>
-        <version>2.2</version>
+        <version>2.4</version>
     </parent>
 
     <!--A unique name for this project-->
@@ -26,29 +26,17 @@
     <description>Parser RST en Java.</description>
     <inceptionYear>2004</inceptionYear>
 
-    <!--Tracking-->
-    <issueManagement>
-        <url>http://labs.libre-entreprise.org/tracker/?group_id=54</url>
-    </issueManagement>
     <properties>
-        <!--Source base dir-->
-        <maven.src.dir>${basedir}/src</maven.src.dir>
+        <!-- id du projet du labs -->
+        <labs.id>54</labs.id>
 
-        <!--Compile with ?-->
-        <maven.compile.source>1.5</maven.compile.source>
-        <maven.compile.target>1.5</maven.compile.target>
-
+        <!-- nom du projet sur le labs -->
+        <labs.project>jrst</labs.project>
+        
+        <!-- Test -->
         <maven.test.skip>true</maven.test.skip>
     </properties>
 
-    <!--who the developers are for the project-->
-    <repositories>
-        <repository>
-            <id>codelutin-repository</id>
-            <name>CodeLutinRepository</name>
-            <url>http://lutinbuilder.labs.libre-entreprise.org/maven2</url>
-        </repository>
-    </repositories>
     <build>
         <plugins>
             <plugin>
@@ -67,15 +55,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>2.0-beta-7</version>
-                <configuration>
-                    <outputEncoding>UTF-8</outputEncoding>
-                    <locales>fr,en</locales>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -123,6 +102,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <version>2.7.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>sdoc</groupId>
             <artifactId>sdoc</artifactId>
             <version>0.5.0-beta</version>
@@ -147,18 +132,16 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+            <version>1.1.1</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>org.docbook</groupId>
             <artifactId>docbook-xsl</artifactId>
             <version>1.72.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
-    <distributionManagement>
-        <site>
-            <id>labs</id>
-            <url>
-                scp://labs.libre-entreprise.org/home/groups/${pom.artifactId}/htdocs/
-            </url>
-        </site>
-    </distributionManagement>
 </project>
