@@ -2,10 +2,10 @@
 <project name="JRst">
 	
   <skin>                                                                                                                                                                                                                 
-    <groupId>lutinlib</groupId>                                                                                                                                                                            
-    <artifactId>lutin-site-skin</artifactId>
-    <version>0.1</version>
-  </skin>                 
+    <groupId>org.codelutin</groupId>                                                                                                                                                                            
+    <artifactId>maven-lutin-skin</artifactId>
+    <version>0.2-SNAPSHOT</version>
+  </skin>               
 	
   <bannerLeft>
       <name>Java ReStructuredText parser</name>
