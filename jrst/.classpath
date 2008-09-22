@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="src/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="MAVEN_REPO/externallib/jars/jregex-1.2_01.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Lutin XML processing library"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Lutin utilities library"/>
-	<classpathentry kind="output" path=".eclipse"/>
-</classpath>
