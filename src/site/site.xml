@@ -32,7 +32,6 @@
         </links>
 
         <breadcrumbs>
-            <item name="Nuiton" href="http://www.nuiton.org" />
             <item name="${project.name}" href="${project.url}" />
         </breadcrumbs>
 
