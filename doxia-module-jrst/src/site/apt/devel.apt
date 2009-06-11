@@ -1,0 +1,10 @@
+                     -------------
+                     Documentation
+                     -------------
+
+Documentation
+
+  JRst doxia module, is inherited from {{{http://maven.apache.org/doxia/doxia-1.0.x/doxia-modules/doxia-module-xdoc/index.html}doxia-module-xdoc}}.
+
+  It just intercept xdoc parser call, transform RST into xdoc, and
+  then send generated xdoc to XDoc parser.

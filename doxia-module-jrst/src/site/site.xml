@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="${project.name}">
+	
+    <skin>
+        <groupId>org.nuiton</groupId>
+        <artifactId>maven-nuiton-skin</artifactId>
+        <version>1.0.0-alpha-1</version>
+    </skin>
+	
+    <bannerLeft>
+        <name>${project.name}</name>
+        <href>/</href>
+    </bannerLeft>
+	
+    <bannerRight>
+        <src>http://www.codelutin.com/images/lutinorange-codelutin.png</src>
+        <href>http://www.codelutin.com</href>
+    </bannerRight>
+
+    <poweredBy>
+        <logo href="http://maven.apache.org" name="Maven" img="images/logos/maven-feather.png"/>
+        <logo href="http://jrst.labs.libre-entreprise.org" name="JRst" img="images/jrst-logo.png"/>
+        <logo href="http://docutils.sourceforge.net/rst.html" name="ReStructuredText" img="images/restructuredtext-logo.png"/>
+    </poweredBy>
+
+    <body>
+        <links>
+            <item name="JRst" href="http://jrst.labs.libre-entreprise.org/"/>
+            <item name="Maven-jrst-plugin" href="http://jrst.labs.libre-entreprise.org/maven-jrst-plugin/"/>
+            <!--item name="Labs" href="http://labs.libre-entreprise.org/"/>
+            <item name="Nuiton" href="http://www.nuiton.org"/>
+            <item name="Code Lutin" href="http://www.codelutin.com/"/-->
+      <!--item name="[fr" href="http://jrst.labs.libre-entreprise.org/jrst/fr-redirect.html"/>
+      <item name="en]" href="http://jrst.labs.libre-entreprise.org/jrst/en-redirect.html"/-->
+        </links>
+
+        <menu name="User">
+            <item href="/index.html" name="About"/>
+      
+        </menu>
+
+        <menu name="Developer">
+            <item href="/devel.html" name="Documentation"/>
+        </menu>
+
+        <menu ref="reports"/>
+
+    </body>
+</project>

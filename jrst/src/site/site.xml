@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="JRst">
+
+    <publishDate format="dd/MM/yyyy"/>
+  
+    <skin>
+        <groupId>org.nuiton</groupId>
+        <artifactId>maven-nuiton-skin</artifactId>
+        <version>1.0.0-alpha-1</version>
+    </skin>
+	
+    <bannerLeft>
+        <name>Java ReStructuredText parser</name>
+        <href>/</href>
+    </bannerLeft>
+	
+    <bannerRight>
+        <src>http://www.codelutin.com/images/lutinorange-codelutin.png</src>
+        <href>http://www.codelutin.com</href>
+    </bannerRight>
+
+    <poweredBy>
+        <logo href="http://maven.apache.org" name="Maven" img="images/logos/maven-feather.png"/>
+        <logo href="http://jrst.labs.libre-entreprise.org" name="JRst" img="images/jrst-logo.png"/>
+        <logo href="http://docutils.sourceforge.net/rst.html" name="ReStructuredText" img="images/restructuredtext-logo.png"/>
+    </poweredBy>
+
+    <body>
+        <links>
+            <item name="Maven-jrst-plugin" href="http://jrst.labs.libre-entreprise.org/nuiton/maven-jrst-plugin/"/>
+            <item name="doxia-module-jrst" href="http://jrst.labs.libre-entreprise.org/nuiton/doxia-module-jrst/"/>
+            <!--item name="Labs" href="http://labs.libre-entreprise.org/"/>
+            <item name="Nuiton" href="http://www.nuiton.org"/>
+            <item name="Code Lutin" href="http://www.codelutin.com/"/-->
+            <item name="[fr" href="http://jrst.labs.libre-entreprise.org/nuiton/jrst/fr-redirect.html"/>
+            <item name="en]" href="http://jrst.labs.libre-entreprise.org/nuiton/jrst/en-redirect.html"/>
+        </links>
+
+        <menu name="Utilisateur">
+            <item href="/user/index.html" name="Présentation du JRST"/>
+            <item href="/user/presentationRST.html" name="Introduction à ReStructuredText"/>
+            <item href="/user/fonctionnalites.html" name="Fonctionnalités incluses"/>
+            <item href="http://labs.libre-entreprise.org/frs/?group_id=54" name="Télécharger"/>
+        </menu>
+
+        <menu name="Developpeur">
+            <item name="Fonctionnement" href="/devel/docDeveloppeur.html"/>
+            <item name="Presentation au XSL" href="/devel/presentationXSL.html"/>
+            <item name="Librairies utilisées" href="/devel/librairies.html"/>
+            <item name="Todo" href="/devel/Todo.html"/>
+            <item name="Documentation externe" href="/devel/docExterne.html"/>
+        </menu>
+
+        <menu name="Téléchargement">
+            <item href="${repository.home.url}/org/nuiton/${project.artifactId}/${project.version}/${project.build.finalName}.jar"
+                  name="Librairie (jar)"/>
+            <item href="${repository.home.url}/org/nuiton/${project.artifactId}/${project.version}/${project.build.finalName}-javadoc.jar"
+                  name="Javadoc (jar)"/>
+            <item href="${repository.home.url}/org/nuiton/${project.artifactId}/${project.version}/${project.build.finalName}-sources.jar"
+                  name="Sources (jar)"/>
+            <item href="${repository.home.url}/org/nuiton/${project.artifactId}/${project.version}/${project.build.finalName}-deps.zip"
+                  name="Bundle sans sources (zip)"/>
+            <item href="${repository.home.url}/org/nuiton/${project.artifactId}/${project.version}/${project.build.finalName}-full.zip"
+                  name="Bundle complêt (zip)"/>
+        </menu>
+
+        <menu ref="reports"/>
+
+    </body>
+</project>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ************************************************************* -->
+    <!-- *** POM Relationships *************************************** -->
+    <!-- ************************************************************* -->
+
+    <parent>
+        <groupId>org.nuiton</groupId>
+        <artifactId>mavenpom</artifactId>
+        <version>1.0.0-alpha-3-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>doxia-module-jrst</artifactId>
+    <version>1.0.2-alpha-2-SNAPSHOT</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.maven.doxia</groupId>
+            <artifactId>doxia-module-xdoc</artifactId>
+            <version>${doxia.version}</version>
+        </dependency>
+        <!--  There is a pb with xalan -->
+        <dependency>
+            <groupId>org.nuiton</groupId>
+            <artifactId>jrst</artifactId>
+            <version>1.0.0-alpha-1</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>xalan</groupId>
+                    <artifactId>xalan</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.doxia</groupId>
+            <artifactId>doxia-core</artifactId>
+            <type>test-jar</type>
+            <version>${doxia.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.6</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <!-- ************************************************************* -->
+    <!-- *** Project Information ************************************* -->
+    <!-- ************************************************************* -->
+
+    <name>Doxia JRst Module</name>
+    <description>JRst module for doxia</description>
+    <inceptionYear>2009</inceptionYear>
+    <url>http://maven-site.nuiton.org/${project.artifactId}</url>
+    <!--url>http://www.nuiton.org/embedded/${project.artifactId}</url-->
+
+    <!-- ************************************************************* -->
+    <!-- *** Build Settings ****************************************** -->
+    <!-- ************************************************************* -->
+    <packaging>jar</packaging>
+
+    <properties>        
+        <doxia.version>1.0</doxia.version>
+        
+    </properties>
+
+    <developers>
+        <developer>
+            <name>Eric Chatellier</name>
+            <id>chatellier</id>
+            <email>chatellier@codelutin.com
+            </email>
+            <organization>CodeLutin</organization>
+            <timezone>+2</timezone>
+            <roles>
+                <role>Développeur</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <build>
+
+        <defaultGoal>install</defaultGoal>
+
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-maven-plugin</artifactId>
+                <version>1.3.5</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/components/components.xml</descriptor>
+                        <descriptor>target/generated-resources/plexus/META-INF/plexus/components.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>descriptor</goal>
+                            <goal>merge-descriptors</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    
+    <!-- ************************************************************* -->
+    <!-- *** Build Environment  ************************************** -->
+    <!-- ************************************************************* -->
+
+    <!-- Source control management. -->
+    <scm>
+        <connection>scm:svn:svn://anonymous@labs.libre-entreprise.org/svnroot/jrst/doxia-module-jrst/trunk</connection>
+        <developerConnection>scm:svn:svn+ssh://tchemit@labs.libre-entreprise.org/svnroot/jrst/doxia-module-jrst/trunk</developerConnection>
+        <url>http://www.nuiton.org/repositories/browse/doxia-module-jrst/trunk</url>
+        
+        <!-- a utiliser quand on sera sur nuiton -->
+        <!-- ne fonctionnera pas pour les multi-modules a cause de l'expansion de l'artifactId
+             il faudra alors remttre ces trois valeurs sur le pom parent du multi-module -->
+        <!--connection>scm:svn:http://svn.nuiton.org/svn/${project.artifactId}/trunk</connection>
+        <developerConnection>scm:svn:http://svn.nuiton.org/svn/${project.artifactId}/trunk</developerConnection>
+        <url>http://www.nuiton.org/repositories/browse/${project.artifactId}/trunk</url-->
+    </scm>
+
+</project>

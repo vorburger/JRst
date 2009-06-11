@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="${project.name}">
+
+    <publishDate format="dd/MM/yyyy"/>
+
+    <skin>
+        <groupId>org.nuiton</groupId>
+        <artifactId>maven-nuiton-skin</artifactId>
+        <version>1.0.0-alpha-1</version>
+    </skin>
+
+    <bannerLeft>
+        <name>${project.name}</name>
+        <href>/</href>
+    </bannerLeft>
+
+    <bannerRight>
+        <src>http://www.codelutin.com/images/lutinorange-codelutin.png</src>
+        <href>${project.organization.url}</href>
+    </bannerRight>
+
+    <poweredBy>
+        <logo href="http://maven.apache.org" name="Maven" img="images/logos/maven-feather.png"/>
+        <logo href="http://jrst.labs.libre-entreprise.org" name="JRst" img="images/jrst-logo.png"/>
+        <logo href="http://docutils.sourceforge.net/rst.html" name="ReStructuredText" img="images/restructuredtext-logo.png"/>
+    </poweredBy>
+
+    <body>
+        <links>
+            <item name="jrst" href="http://jrst.labs.libre-entreprise.org/nuiton/jrst/"/>
+            <item name="doxia-module-jrst" href="http://jrst.labs.libre-entreprise.org/nuiton/doxia-module-jrst/"/>
+            <!--item name="Labs" href="http://labs.libre-entreprise.org/"/>
+            <item name="Nuiton" href="http://www.nuiton.org"/>
+            <item name="${project.organization.name}" href="${project.organization.url}"/-->
+            <item name="[fr" href="index.html"/>
+            <item name="en]" href="en/index.html"/>
+        </links>
+
+        <menu name="Utilisateur">
+            <item name="Accueil" href="index.html"/>
+            <item name="Détail des goals" href="plugin-info.html">
+                <item name="jrst:jrst" href="jrst-mojo.html"/>
+                <item name="jrst:help" href="help-mojo.html"/>
+            </item>
+        </menu>
+        
+        <menu name="Téléchargement">
+            <item href="${repository.home.url}/org/nuiton/${project.artifactId}/${project.version}/${project.build.finalName}.jar"
+                  name="Librairie (jar)"/>
+            <item href="${repository.home.url}/org/nuiton/${project.artifactId}/${project.version}/${project.build.finalName}-javadoc.jar"
+                  name="Javadoc (jar)"/>
+            <item href="${repository.home.url}/org/nuiton/${project.artifactId}/${project.version}/${project.build.finalName}-sources.jar"
+                  name="Sources (jar)"/>
+        </menu>
+
+        <menu ref="reports"/>
+    </body>
+</project>

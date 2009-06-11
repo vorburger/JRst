@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ************************************************************* -->
+    <!-- *** POM Relationships *************************************** -->
+    <!-- ************************************************************* -->
+
+    <parent>
+        <groupId>org.nuiton</groupId>
+        <artifactId>mavenpom</artifactId>
+        <version>1.0.0-alpha-3-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>jrst</artifactId>
+    <version>1.0.0-alpha-2-SNAPSHOT</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.nuiton</groupId>
+            <artifactId>nuiton-utils</artifactId>
+            <version>1.1.0-alpha-1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>1.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>fop</artifactId>
+            <version>0.95</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <version>2.7.1</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>sdoc</groupId>
+            <artifactId>sdoc</artifactId>
+            <version>0.5.0-beta-patchcl</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>uk.co.flamingpenguin</groupId>
+            <artifactId>jewelcli</artifactId>
+            <version>0.54</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+            <version>1.1.1</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.docbook</groupId>
+            <artifactId>docbook-xsl</artifactId>
+            <version>1.72.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.6</version>
+            <scope>test</scope>
+        </dependency>
+        
+    </dependencies>
+
+    <!-- ************************************************************* -->
+    <!-- *** Project Information ************************************* -->
+    <!-- ************************************************************* -->
+
+    <name>JRst</name>
+    <description>Parser RST en Java.</description>
+    <inceptionYear>2004</inceptionYear>
+    <url>http://maven-site.nuiton.org/${project.artifactId}</url>
+    <!--url>http://www.nuiton.org/embedded/${project.artifactId}</url-->
+
+    <!-- ************************************************************* -->
+    <!-- *** Build Settings ****************************************** -->
+    <!-- ************************************************************* -->
+    <packaging>jar</packaging>
+
+    <properties>
+
+        <!-- Site en et fr -->
+        <maven.site.locales>fr,en</maven.site.locales>
+        
+        <maven.jar.main.class>org.nuiton.jrst.JRST</maven.jar.main.class>
+        
+    </properties>
+
+    <developers>
+        <developer>
+            <name>Benjamin Poussin</name>
+            <id>bpoussin</id>
+            <email>poussin@codelutin.com</email>
+            <organization>CodeLutin</organization>
+            <timezone>+2</timezone>
+            <roles>
+                <role>Développeur</role>
+                <role>Debian packager</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Eric Chatellier</name>
+            <id>chatellier</id>
+            <email>chatellier@codelutin.com</email>
+            <organization>CodeLutin</organization>
+            <timezone>+2</timezone>
+            <roles>
+                <role>Développeur</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Sylvain Letellier</name>
+            <id>sletellier</id>
+            <email>letellier@codelutin.com</email>
+            <organization>CodeLutin</organization>
+            <timezone>+2</timezone>
+            <roles>
+                <role>Développeur</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <build>
+
+        <defaultGoal>install</defaultGoal>
+
+        <plugins>
+
+            <!-- plugin i18n -->
+            <plugin>
+                <groupId>org.nuiton</groupId>
+                <artifactId>maven-i18n-plugin</artifactId>
+                <version>1.0.0-alpha-1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>parserJava</goal>
+                            <goal>gen</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+
+                <plugin>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <quiet>true</quiet>
+                        <links>
+                            <link>http://java.sun.com/javase/6/docs/api/</link>
+                            <link>http://lutinutil.labs.libre-entreprise.org/nuiton-utils/apidocs/</link>
+                        </links>
+                    </configuration>
+                </plugin>
+            
+                <!--plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.1</version>
+                    <configuration>
+                        <descriptors>
+                            <descriptor>src/main/assembly/deps.xml</descriptor>
+                            <descriptor>src/main/assembly/full.xml</descriptor>
+                        </descriptors>
+                        <attach>false</attach>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codelutin</groupId>
+                            <artifactId>doxia-module-jrst</artifactId>
+                            <version>1.0.1</version>
+                        </dependency>
+                    </dependencies>
+                </plugin-->
+                
+            </plugins>
+        </pluginManagement>
+
+    </build>
+
+    <!-- ************************************************************* -->
+    <!-- *** Build Environment  ************************************** -->
+    <!-- ************************************************************* -->
+
+    <!-- Source control management. -->
+    <scm>
+        <connection>scm:svn:svn://anonymous@labs.libre-entreprise.org/svnroot/jrst/jrst/trunk</connection>
+        <developerConnection>scm:svn:svn+ssh://tchemit@labs.libre-entreprise.org/svnroot/jrst/jrst/trunk</developerConnection>
+        <url>http://www.nuiton.org/repositories/browse/jrst/trunk</url>
+
+        <!-- a utiliser quand on sera sur nuiton -->
+        <!-- ne fonctionnera pas pour les multi-modules a cause de l'expansion de l'artifactId
+             il faudra alors remttre ces trois valeurs sur le pom parent du multi-module -->
+        <!--connection>scm:svn:http://svn.nuiton.org/svn/${project.artifactId}/trunk</connection>
+        <developerConnection>scm:svn:http://svn.nuiton.org/svn/${project.artifactId}/trunk</developerConnection>
+        <url>http://www.nuiton.org/repositories/browse/${project.artifactId}/trunk</url-->      
+  </scm>
+    
+    <!-- Maven Environment : profiles -->
+    <profiles>
+        <profile>
+            <id>release-profile</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+
+                    <!-- launch in a release the assembly automaticly -->
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-assemblies</id>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+
+            </build>
+        </profile>
+    </profiles>
+
+</project>

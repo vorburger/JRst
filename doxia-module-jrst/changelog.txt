@@ -1,0 +1,11 @@
+doxia-module-jrst (1.1.0) ?
+
+  * migrate to nuiton
+
+doxia-module-jrst (1.0.1) chemit 20090511
+
+  * Bump versions (lutinproject 3.5.4, jrst 0.8.6)
+
+doxia-module-jrst (1.0.0) chemit
+
+  * Initial release

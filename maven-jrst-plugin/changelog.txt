@@ -1,0 +1,25 @@
+ver 1.0.0 ?
+  * migrate to org.nuiton groupId
+
+ver 0.8.6 chemit 20090511
+  * bump versions (lutinproject, lutinutil, jrst, maven-i18n-plugin, maven-license-switcher-plugin)
+  * use doxia-modules-jrst instead of maven-jrst-plugin
+  * improve download section on site
+
+ver-0.8.5 chemit 20090409
+ * follow jrst version
+
+ver-0-8-4 chemit 20090218
+ * 20090210 [chemit] use lutinproject:3.4
+ * 20090205 [chatellier] Set default locale to 'en'
+ * 20090205 [chatellier] Remove some required setting for parameter with default values
+ * 20090205 [chatellier] Write javadoc in english
+
+ver-0-8-3 thimel 200810XX
+ * 20081008 [chemit] refactor plugin to generate ony when required
+ * 20081008 [chemit] Using lutinpluginproject 3.0 in a better way :)
+ * 20081008 [chemit] add log4j.properties
+ * 20081008 [chemit] use a DirectoryScanner instead of FileAction since we do not want to parse scm admin files...
+
+ver-0-8-2 thimel 20080922
+ * 20080922 [thimel] Using lutinpluginproject 3.0

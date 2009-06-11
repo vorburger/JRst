@@ -1,0 +1,21 @@
+private Element composeInclude(Element item) throws Exception {
+	String option = item.attributeValue("option");
+   	String path = item.getText();
+   	Element result = null;
+   	if (option.equals("litteral")){
+      	result=DocumentHelper.createElement("LITERAL_BLOCK");
+       	FileReader reader = new FileReader(path);
+       	BufferedReader bf = new BufferedReader(reader);
+      	String line = bf.readLine();
+       	while (line!=null)
+           	line += "\n"+bf.readLine();
+       	result.setText(line);
+   	}
+   	else{
+       	JRSTReader reader = new JRSTReader();
+       	FileReader in = new FileReader(path);
+       	Document doc = reader.read(in);
+       	result.appendContent(doc.getRootElement());
+   	}	
+   	return result;
+}

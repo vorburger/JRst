@@ -1,0 +1,27 @@
+                -----------------
+                Doxia Module JRst
+                -----------------
+
+Configuration
+
+--------------------------------------------------
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-site-plugin</artifactId>
+    <version>2.0</version>
+    <dependencies>
+      <dependency>
+        <groupId>org.nuiton</groupId>
+        <artifactId>doxia-module-jrst</artifactId>
+        <version>1.1.0</version>
+      </dependency>
+    </dependencies>
+  </plugin>
+--------------------------------------------------
+
+  That it ! Then run "mvn site".
+
+
+Warning
+
+  This version only works with doxia-1.0.x (provided by maven-site-plugin-2.0).
