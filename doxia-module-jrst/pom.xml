@@ -9,12 +9,12 @@
 
     <parent>
         <groupId>org.nuiton</groupId>
-        <artifactId>mavenpom</artifactId>
-        <version>1.0.0-alpha-3-SNAPSHOT</version>
+        <artifactId>jrst</artifactId>
+        <version>1.0.0-rc-3-SNAPSHOT</version>
     </parent>
 
+    <groupId>org.nuiton.jrst</groupId>
     <artifactId>doxia-module-jrst</artifactId>
-    <version>1.0.2-alpha-2-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -24,9 +24,9 @@
         </dependency>
         <!--  There is a pb with xalan -->
         <dependency>
-            <groupId>org.nuiton</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>jrst</artifactId>
-            <version>1.0.0-alpha-1</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -56,12 +56,10 @@
     <!-- *** Project Information ************************************* -->
     <!-- ************************************************************* -->
 
-    <name>Doxia JRst Module</name>
+    <name>jrst - Doxia module</name>
     <description>JRst module for doxia</description>
     <inceptionYear>2009</inceptionYear>
-    <url>http://maven-site.nuiton.org/${project.artifactId}</url>
-    <!--url>http://www.nuiton.org/embedded/${project.artifactId}</url-->
-
+    
     <!-- ************************************************************* -->
     <!-- *** Build Settings ****************************************** -->
     <!-- ************************************************************* -->
@@ -113,22 +111,4 @@
         </plugins>
     </build>
     
-    <!-- ************************************************************* -->
-    <!-- *** Build Environment  ************************************** -->
-    <!-- ************************************************************* -->
-
-    <!-- Source control management. -->
-    <scm>
-        <connection>scm:svn:svn://anonymous@labs.libre-entreprise.org/svnroot/jrst/doxia-module-jrst/trunk</connection>
-        <developerConnection>scm:svn:svn+ssh://tchemit@labs.libre-entreprise.org/svnroot/jrst/doxia-module-jrst/trunk</developerConnection>
-        <url>http://www.nuiton.org/repositories/browse/doxia-module-jrst/trunk</url>
-        
-        <!-- a utiliser quand on sera sur nuiton -->
-        <!-- ne fonctionnera pas pour les multi-modules a cause de l'expansion de l'artifactId
-             il faudra alors remttre ces trois valeurs sur le pom parent du multi-module -->
-        <!--connection>scm:svn:http://svn.nuiton.org/svn/${project.artifactId}/trunk</connection>
-        <developerConnection>scm:svn:http://svn.nuiton.org/svn/${project.artifactId}/trunk</developerConnection>
-        <url>http://www.nuiton.org/repositories/browse/${project.artifactId}/trunk</url-->
-    </scm>
-
 </project>

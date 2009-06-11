@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ************************************************************* -->
+    <!-- *** POM Relationships *************************************** -->
+    <!-- ************************************************************* -->
+    <parent>
+        <groupId>org.nuiton</groupId>
+        <artifactId>mavenpom</artifactId>
+        <version>1.0.0-rc-2-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>jrst</artifactId>
+    <version>1.0.0-rc-3-SNAPSHOT</version>
+
+    <modules>
+        <module>jrst</module>
+        <module>maven-jrst-plugin</module>
+        <module>doxia-module-jrst</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+
+            
+
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- ************************************************************* -->
+    <!-- *** Project Information ************************************* -->
+    <!-- ************************************************************* -->
+    <name>jrst - pom</name>
+    <description>JRsT pom</description>
+    <inceptionYear>2004</inceptionYear>
+    <url>http://maven-site.nuiton.org/jrst</url>
+
+    <!-- ************************************************************* -->
+    <!-- *** Build Settings ****************************************** -->
+    <!-- ************************************************************* -->
+
+    <packaging>pom</packaging>
+
+    <properties>
+        
+        <!-- pour un muli module on doit fixer le projectId -->
+        <projectId>jrst</projectId>
+        
+    </properties>
+
+    <build>
+
+        <defaultGoal>install</defaultGoal>
+
+        <pluginManagement>
+            <plugins>
+
+            </plugins>
+        </pluginManagement>
+
+    </build>
+
+    <!-- ************************************************************* -->
+    <!-- *** Build Environment  ************************************** -->
+    <!-- ************************************************************* -->
+
+    <!-- Source control management. -->
+    <scm>
+
+        <connection>scm:svn:http://svn.nuiton.org/svn/jrst/trunk</connection>
+        <developerConnection>scm:svn:http://svn.nuiton.org/svn/jrst/trunk</developerConnection>
+        <url>http://www.nuiton.org/repositories/browse/jrst/trunk</url>
+    </scm>
+    
+</project>
+

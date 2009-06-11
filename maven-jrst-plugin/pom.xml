@@ -9,18 +9,18 @@
 
     <parent>
         <groupId>org.nuiton</groupId>
-        <artifactId>mavenpom</artifactId>
-        <version>1.0.0-alpha-3-SNAPSHOT</version>
+        <artifactId>jrst</artifactId>
+        <version>1.0.0-rc-3-SNAPSHOT</version>
     </parent>
 
+    <groupId>org.nuiton.jrst</groupId>
     <artifactId>maven-jrst-plugin</artifactId>
-    <version>1.0.0-alpha-2-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
-            <groupId>org.nuiton</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>jrst</artifactId>
-            <version>1.0.0-alpha-1</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -50,14 +50,12 @@
     <!-- ************************************************************* -->
     <!-- *** Project Information ************************************* -->
     <!-- ************************************************************* -->
-    <name>Maven JRST Plugin</name>
+    <name>jrst - maven plugin</name>
     <description>
         Maven2 plugin to generate reStructuredText file into xDoc.
     </description>
     <inceptionYear>2006</inceptionYear>
-    <url>http://maven-site.nuiton.org/${project.artifactId}</url>
-    <!--url>http://www.nuiton.org/embedded/${project.artifactId}</url-->
-
+    
     <!-- ************************************************************* -->
     <!-- *** Build Settings ****************************************** -->
     <!-- ************************************************************* -->
@@ -92,16 +90,7 @@
 
         <pluginManagement>
             <plugins>
-                 <!--plugin>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.codelutin</groupId>
-                            <artifactId>doxia-module-jrst</artifactId>
-                            <version>1.0.1</version>
-                        </dependency>
-                    </dependencies>
-                </plugin-->
+                 
             </plugins>
         </pluginManagement>
 
@@ -116,23 +105,5 @@
             </plugin>
         </plugins>
     </reporting>
-
-    <!-- ************************************************************* -->
-    <!-- *** Build Environment  ************************************** -->
-    <!-- ************************************************************* -->
-
-    <!-- Source control management. -->
-    <scm>
-        <connection>scm:svn:svn://anonymous@labs.libre-entreprise.org/svnroot/jrst/maven-jrst-plugin/trunk</connection>
-        <developerConnection>scm:svn:svn+ssh://tchemit@labs.libre-entreprise.org/svnroot/jrst/maven-jrst-plugin/trunk</developerConnection>
-        <url>http://www.nuiton.org/repositories/browse/maven-jrst-plugin/trunk</url>
-
-        <!-- a utiliser quand on sera sur nuiton -->
-        <!-- ne fonctionnera pas pour les multi-modules a cause de l'expansion de l'artifactId
-             il faudra alors remttre ces trois valeurs sur le pom parent du multi-module -->
-        <!--connection>scm:svn:http://svn.nuiton.org/svn/${project.artifactId}/trunk</connection>
-        <developerConnection>scm:svn:http://svn.nuiton.org/svn/${project.artifactId}/trunk</developerConnection>
-        <url>http://www.nuiton.org/repositories/browse/${project.artifactId}/trunk</url-->
-    </scm>
 
 </project>
