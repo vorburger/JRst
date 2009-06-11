@@ -4,7 +4,7 @@
     <skin>
         <groupId>org.nuiton</groupId>
         <artifactId>maven-nuiton-skin</artifactId>
-        <version>1.0.0-alpha-1</version>
+        <version>1.0.0-rc-1</version>
     </skin>
 	
     <bannerLeft>
@@ -17,28 +17,19 @@
         <href>http://www.codelutin.com</href>
     </bannerRight>
 
-    <poweredBy>
-        <logo href="http://maven.apache.org" name="Maven" img="images/logos/maven-feather.png"/>
-        <logo href="http://jrst.labs.libre-entreprise.org" name="JRst" img="images/jrst-logo.png"/>
-        <logo href="http://docutils.sourceforge.net/rst.html" name="ReStructuredText" img="images/restructuredtext-logo.png"/>
-    </poweredBy>
-
     <body>
-        <links>
-            <item name="Maven-jrst-plugin" href="http://jrst.labs.libre-entreprise.org/nuiton/maven-jrst-plugin/"/>
-            <item name="doxia-module-jrst" href="http://jrst.labs.libre-entreprise.org/nuiton/doxia-module-jrst/"/>
-            <!--item name="Labs" href="http://labs.libre-entreprise.org/"/>
-            <item name="Nuiton" href="http://www.nuiton.org"/>
-            <item name="Code Lutin" href="http://www.codelutin.com/"/-->
-            <item name="[fr" href="http://jrst.labs.libre-entreprise.org/jrst/nuiton/fr-redirect.html"/>
-            <item name="en]" href="http://jrst.labs.libre-entreprise.org/jrst/nuiton/en-redirect.html"/>
-        </links>
+        
+        <breadcrumbs>
+            <item name="${project.name}" href="${project.url}" />
+        </breadcrumbs>
+        
+        <menu ref="parent"/>
 
         <menu name="User">
             <item href="/user/index.html" name="About"/>
             <item href="/user/RSTpresentation.html" name="A ReStructuredText Primer"/>
             <item href="/user/functionality.html" name="Functionalities suggested"/>
-            <item href="http://labs.libre-entreprise.org/frs/?group_id=54" name="Download"/>
+            <!--item href="http://labs.libre-entreprise.org/frs/?group_id=54" name="Download"/-->
       
         </menu>
 
@@ -56,11 +47,7 @@
             <item href="${repository.home.url}/org/nuiton/${project.artifactId}/${project.version}/${project.build.finalName}-javadoc.jar"
                   name="Javadoc (jar)"/>
             <item href="${repository.home.url}/org/nuiton/${project.artifactId}/${project.version}/${project.build.finalName}-sources.jar"
-                  name="Sources (jar)"/>
-            <item href="${repository.home.url}/org/nuiton/${project.artifactId}/${project.version}/${project.build.finalName}-deps.zip"
-                  name="Bundle without sources (zip)"/>
-            <item href="${repository.home.url}/org/nuiton/${project.artifactId}/${project.version}/${project.build.finalName}-full.zip"
-                  name="Bundle with sources (zip)"/>
+                  name="Sources (jar)"/>            
         </menu>
 
         <menu ref="reports"/>

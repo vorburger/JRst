@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="${project.name}">
+
+    <publishDate format="dd/MM/yyyy"/>
+
+    <skin>
+        <groupId>org.nuiton</groupId>
+        <artifactId>maven-nuiton-skin</artifactId>
+        <version>1.0.0-rc-1</version>
+    </skin>
+
+    <bannerLeft>
+        <name>${project.name}</name>
+        <href>/</href>
+    </bannerLeft>
+
+    <bannerRight>
+        <src>http://www.codelutin.com/images/lutinorange-codelutin.png</src>
+        <href>${project.organization.url}</href>
+    </bannerRight>
+
+    <poweredBy>
+        <logo href="http://maven.apache.org" name="Maven" img="${project.url}/images/logos/maven-feather.png"/>
+        <logo href="http://jrst.labs.libre-entreprise.org" name="JRst" img="${project.url}/images/jrst-logo.png"/>
+        <logo href="http://docutils.sourceforge.net/rst.html" name="ReStructuredText" img="${project.url}/images/restructuredtext-logo.png"/>
+    </poweredBy>
+
+    <body>
+        <links>
+            <item name="[fr" href="${project.url}/index.html"/>
+            <item name="en]" href="${project.url}/en/index.html"/>
+        </links>
+
+        <breadcrumbs>
+            <item name="Nuiton" href="http://www.nuiton.org" />
+            <item name="${project.name}" href="${project.url}" />
+        </breadcrumbs>
+
+        <menu ref="modules"/>
+
+        <menu ref="reports"/>
+    </body>
+</project>

@@ -17,6 +17,7 @@
     <artifactId>maven-jrst-plugin</artifactId>
 
     <dependencies>
+        
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jrst</artifactId>
@@ -27,22 +28,16 @@
         <dependency>
             <groupId>org.nuiton</groupId>
             <artifactId>maven-helper-plugin</artifactId>
-            <version>${helper.version}</version>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
-            <version>${maven.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-project</artifactId>
-            <version>${maven.version}</version>
-            <scope>provided</scope>
         </dependency>
 
     </dependencies>
@@ -50,7 +45,7 @@
     <!-- ************************************************************* -->
     <!-- *** Project Information ************************************* -->
     <!-- ************************************************************* -->
-    <name>jrst - maven plugin</name>
+    <name>JRst - maven plugin</name>
     <description>
         Maven2 plugin to generate reStructuredText file into xDoc.
     </description>
@@ -60,13 +55,6 @@
     <!-- *** Build Settings ****************************************** -->
     <!-- ************************************************************* -->
     <packaging>maven-plugin</packaging>
-
-    <properties>
-
-        <!-- Site en et fr -->
-        <maven.site.locales>fr,en</maven.site.locales>
-
-    </properties>
 
     <build>
 
@@ -87,12 +75,6 @@
             </plugin>
 
         </plugins>
-
-        <pluginManagement>
-            <plugins>
-                 
-            </plugins>
-        </pluginManagement>
 
     </build>
 
