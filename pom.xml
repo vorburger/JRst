@@ -13,7 +13,7 @@
     </parent>
 
     <artifactId>jrst</artifactId>
-    <version>1.0.0-rc-3-SNAPSHOT</version>
+    <version>1.0.0-rc-3</version>
 
     <modules>
         <module>jrst</module>
@@ -239,9 +239,9 @@
 
     <!-- Source control management. -->
     <scm>
-        <connection>scm:svn:http://svn.nuiton.org/svn/jrst/trunk</connection>
-        <developerConnection>scm:svn:http://svn.nuiton.org/svn/jrst/trunk</developerConnection>
-        <url>http://www.nuiton.org/repositories/browse/jrst/trunk</url>
+        <connection>scm:svn:http://svn.nuiton.org/svn/jrst/tags/jrst-1.0.0-rc-3</connection>
+        <developerConnection>scm:svn:http://svn.nuiton.org/svn/jrst/tags/jrst-1.0.0-rc-3</developerConnection>
+        <url>http://www.nuiton.org/repositories/browse/jrst/tags/jrst-1.0.0-rc-3</url>
     </scm>
     
 </project>
