@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.nuiton</groupId>
         <artifactId>mavenpom</artifactId>
-        <version>1.0.0-rc-2-SNAPSHOT</version>
+        <version>1.0.0-rc-2</version>
     </parent>
 
     <artifactId>jrst</artifactId>
@@ -34,7 +34,7 @@
             <dependency>
                 <groupId>org.nuiton</groupId>
                 <artifactId>nuiton-utils</artifactId>
-                <version>1.1.0-rc-1</version>
+                <version>1.1.0-rc-2</version>
                 <scope>compile</scope>
             </dependency>
 
@@ -225,7 +225,7 @@
                 <plugin>
                     <groupId>org.nuiton.i18n</groupId>
                     <artifactId>maven-i18n-plugin</artifactId>
-                    <version>1.0.0-rc-2-SNAPSHOT</version>
+                    <version>1.0.0-rc-1</version>
                 </plugin>
                 
             </plugins>
