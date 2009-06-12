@@ -223,9 +223,9 @@
                 </plugin>
 
                 <plugin>
-                    <groupId>org.nuiton</groupId>
+                    <groupId>org.nuiton.i18n</groupId>
                     <artifactId>maven-i18n-plugin</artifactId>
-                    <version>1.0.0-rc-1</version>
+                    <version>1.0.0-rc-2-SNAPSHOT</version>
                 </plugin>
                 
             </plugins>

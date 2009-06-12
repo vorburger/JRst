@@ -92,7 +92,7 @@
 
             <!-- plugin i18n -->
             <plugin>
-                <groupId>org.nuiton</groupId>
+                <groupId>org.nuiton.i18n</groupId>
                 <artifactId>maven-i18n-plugin</artifactId>
                 <executions>
                     <execution>
