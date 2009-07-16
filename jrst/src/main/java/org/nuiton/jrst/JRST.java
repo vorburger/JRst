@@ -26,6 +26,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -58,6 +59,8 @@ import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
+import org.nuiton.jrst.convertisor.DocUtils2RST;
+import org.nuiton.jrst.convertisor.DocUtilsVisitor;
 import uk.co.flamingpenguin.jewel.cli.Cli;
 import uk.co.flamingpenguin.jewel.cli.CliFactory;
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
@@ -100,8 +103,8 @@ public class JRST {
     /** XSL Stylesheet to transform Docbook into htmlhelp. */
     protected static final String docbook2htmlhelp = "/htmlhelp/htmlhelp.xsl";
     
-    /** XSL Stylesheet to transform xml into rst. */
-    protected static final String rst2rst = "/xsl/xml2rst.xsl";
+//    /** XSL Stylesheet to transform xml into rst. */
+//    protected static final String rst2rst = "JRSTWriter";
 
     /** XSL Stylesheet to transform Docbook into ODF. */
     protected static final String docbook2odf = "/xsl/docbook2odf-0.244/docbook.xsl";
@@ -151,7 +154,7 @@ public class JRST {
         stylesheets.put(TYPE_XHTML, rst2docbook + "," + docbook2xhtml);
         stylesheets.put(TYPE_JAVAHELP, rst2docbook + "," + docbook2javahelp);
         stylesheets.put(TYPE_HTMLHELP, rst2docbook + "," + docbook2htmlhelp);
-        stylesheets.put(TYPE_RST, rst2rst);
+        stylesheets.put(TYPE_RST, "");
         stylesheets.put(TYPE_ODT, rst2docbook + "," + docbook2odf);
         stylesheets.put(TYPE_FO, rst2docbook + "," + docbook2fo);
         stylesheets.put(TYPE_PDF, rst2docbook + "," + docbook2fo);
@@ -421,107 +424,138 @@ public class JRST {
             JRSTReader jrst = new JRSTReader();
             Document doc = jrst.read(in);
 
-            // apply xsl on rst xml document
-            JRSTGenerator gen = new JRSTGenerator();
-            String[] xsls = StringUtil.split(xslList, ",");
-            for (String xsl : xsls) {
-                URL stylesheet = null;
-                File file = new File(xsl);
-                if (file.exists()) {
-                    stylesheet = file.toURL();
+            // Sortie vers rst
+            if (xslListOrOutType.equals(TYPE_RST)){
+                // Creation dun visitor qui convertie de l'xml vers le rst
+                DocUtilsVisitor visitor = new DocUtils2RST();
+
+                // Atacher le visitor au document
+                // il va parcourir tout les elements et reconstruir du rst
+                doc.accept(visitor);
+
+                // Recuperation du resultat
+                String result = visitor.getResult();
+
+                // Ecriture du resultat dans un fichier
+                // prepare the output flux
+                FileWriter out = null;
+                if (fileOut != null) {
+                    try {
+                        fileOut.getAbsoluteFile().getParentFile().mkdirs();
+                        out = new FileWriter(fileOut);
+                        // write generated document
+                        out.write(result);
+                    } finally {
+                        out.close();
+                    }
                 } else {
-                    //stylesheet = JRST.class.getResource(xsl);
-                    stylesheet = Resource.getURL(xsl);
+                    // Si aucun fichier de sortie nest definie, on utilise la sortie standard
+                    System.out.println(result);
                 }
-                if (stylesheet == null) {
-                    throw new FileNotFoundException("Can't find stylesheet: "
-                            + xsl);
-                }
-                
-                // add uri resolver
-                /*gen.setUriResolver(new URIResolver() {
-                    public Source resolve(String href, String base) {
-                        System.out.println("RESOLVING: href: "+href+" base: "+base);
-                        
-                        return null;
-                        try {
+            }
+            else {
+                // apply xsl on rst xml document
+                JRSTGenerator gen = new JRSTGenerator();
+                String[] xsls = StringUtil.split(xslList, ",");
+                for (String xsl : xsls) {
+                    URL stylesheet = null;
+                    File file = new File(xsl);
+                    if (file.exists()) {
+                        stylesheet = file.toURL();
+                    } else {
+                        //stylesheet = JRST.class.getResource(xsl);
+                        stylesheet = Resource.getURL(xsl);
+                    }
+                    if (stylesheet == null) {
+                        throw new FileNotFoundException("Can't find stylesheet: "
+                                + xsl);
+                    }
+
+                    // add uri resolver
+                    /*gen.setUriResolver(new URIResolver() {
+                        public Source resolve(String href, String base) {
                             System.out.println("RESOLVING: href: "+href+" base: "+base);
-                            StreamSource ss = new StreamSource(new FileInputStream(new File(href)));
-                            return ss;
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
+
                             return null;
+                            try {
+                                System.out.println("RESOLVING: href: "+href+" base: "+base);
+                                StreamSource ss = new StreamSource(new FileInputStream(new File(href)));
+                                return ss;
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                                return null;
+                            }
+                        }
+                    });*/
+
+                    doc = gen.transform(doc, stylesheet);
+                }
+
+                boolean pdf = false;
+                // generation PDF
+                if (xslListOrOutType != null) {
+                    if (xslListOrOutType.equals("pdf")) {
+                        pdf = true;
+                        FopFactory fopFactory = FopFactory.newInstance();
+                        // OutputStream outPDF = new BufferedOutputStream(new
+                        // FileOutputStream(new File("C:/Temp/myfile.pdf")));
+
+                        OutputStream outPDF = null;
+                        if (fileOut != null) {
+                            fileOut.getAbsoluteFile().getParentFile().mkdirs();
+                            outPDF = new BufferedOutputStream(new FileOutputStream(
+                                    fileOut));
+                        } else {
+                            outPDF = new BufferedOutputStream(System.out);
+                        }
+
+                        FOUserAgent userAgent = fopFactory.newFOUserAgent();
+
+                        // Step 3: Construct fop with desired output format
+                        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF,
+                                userAgent, outPDF);
+
+                        // Step 4: Setup JAXP using identity transformer
+                        TransformerFactory factory = TransformerFactory
+                                .newInstance();
+                        Transformer transformer = factory.newTransformer(); // identity
+                        // transformer
+
+                        // Step 5: Setup input and output for XSLT transformation
+                        // Setup input stream
+                        Source src = new StreamSource(new StringReader(doc.asXML()));
+
+                        // Resulting SAX events (the generated FO) must be piped
+                        // through to FOP
+                        Result res = new SAXResult(fop.getDefaultHandler());
+
+                        // Step 6: Start XSLT transformation and FOP processing
+                        transformer.transform(src, res);
+
+                        if (fileOut != null) {
+                            outPDF.close();
                         }
                     }
-                });*/
-                
-                doc = gen.transform(doc, stylesheet);
-            }
-
-            boolean pdf = false;
-            // generation PDF
-            if (xslListOrOutType != null) {
-                if (xslListOrOutType.equals("pdf")) {
-                    pdf = true;
-                    FopFactory fopFactory = FopFactory.newInstance();
-                    // OutputStream outPDF = new BufferedOutputStream(new
-                    // FileOutputStream(new File("C:/Temp/myfile.pdf")));
-
-                    OutputStream outPDF = null;
+                }
+                if (!pdf) {
+                    // prepare the output flux
+                    XMLWriter out = null;
                     if (fileOut != null) {
                         fileOut.getAbsoluteFile().getParentFile().mkdirs();
-                        outPDF = new BufferedOutputStream(new FileOutputStream(
-                                fileOut));
+
+                        out = new XMLWriter(FileUtil.getWriter(fileOut,
+                                outputEncoding), new OutputFormat("  ", true,
+                                outputEncoding));
                     } else {
-                        outPDF = new BufferedOutputStream(System.out);
+                        out = new XMLWriter(System.out, new OutputFormat("  ",
+                                true, outputEncoding));
                     }
-
-                    FOUserAgent userAgent = fopFactory.newFOUserAgent();
-
-                    // Step 3: Construct fop with desired output format
-                    Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF,
-                            userAgent, outPDF);
-
-                    // Step 4: Setup JAXP using identity transformer
-                    TransformerFactory factory = TransformerFactory
-                            .newInstance();
-                    Transformer transformer = factory.newTransformer(); // identity
-                    // transformer
-
-                    // Step 5: Setup input and output for XSLT transformation
-                    // Setup input stream
-                    Source src = new StreamSource(new StringReader(doc.asXML()));
-
-                    // Resulting SAX events (the generated FO) must be piped
-                    // through to FOP
-                    Result res = new SAXResult(fop.getDefaultHandler());
-
-                    // Step 6: Start XSLT transformation and FOP processing
-                    transformer.transform(src, res);
+                    // write generated document
+                    out.write(doc);
 
                     if (fileOut != null) {
-                        outPDF.close();
+                        out.close();
                     }
-                }
-            }
-            if (!pdf) {
-                // prepare the output flux
-                XMLWriter out = null;
-                if (fileOut != null) {
-                    fileOut.getAbsoluteFile().getParentFile().mkdirs();
-
-                    out = new XMLWriter(FileUtil.getWriter(fileOut,
-                            outputEncoding), new OutputFormat("  ", true,
-                            outputEncoding));
-                } else {
-                    out = new XMLWriter(System.out, new OutputFormat("  ",
-                            true, outputEncoding));
-                }
-                // write generated document
-                out.write(doc);
-
-                if (fileOut != null) {
-                    out.close();
                 }
             }
         }
