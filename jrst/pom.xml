@@ -20,61 +20,60 @@
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.nuiton</groupId>
             <artifactId>nuiton-utils</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>xmlunit</groupId>
-            <artifactId>xmlunit</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>fop</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>sdoc</groupId>
-            <artifactId>sdoc</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
-            <version>1.6.1</version>
-            <scope>compile</scope>
         </dependency>
+        <!-- Apache FOP (Formatting Objects Processor) XSL-FO -->
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>fop</artifactId>
+        </dependency>
+        <!-- Annoted interfaces to present command line arguments -->
         <dependency>
             <groupId>uk.co.flamingpenguin</groupId>
             <artifactId>jewelcli</artifactId>
-            <scope>compile</scope>
+        </dependency>
+        <!-- XSLT processor -->
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- Swing librairie -->
+        <dependency>
+            <groupId>sdoc</groupId>
+            <artifactId>sdoc</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- XSL librairies -->
+        <dependency>
+            <groupId>org.docbook</groupId>
+            <artifactId>docbook-xsl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- Test librairies -->
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.docbook</groupId>
-            <artifactId>docbook-xsl</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
-        
+
     </dependencies>
 
     <!-- ************************************************************* -->
@@ -84,16 +83,16 @@
     <name>JRst - lib</name>
     <description>Parser RST en Java.</description>
     <inceptionYear>2004</inceptionYear>
-    
+
     <!-- ************************************************************* -->
     <!-- *** Build Settings ****************************************** -->
     <!-- ************************************************************* -->
     <packaging>jar</packaging>
 
     <properties>
-        
+
         <maven.jar.main.class>org.nuiton.jrst.JRST</maven.jar.main.class>
-        
+
     </properties>
 
     <build>
@@ -115,7 +114,7 @@
                     </execution>
                 </executions>
             </plugin>
-            
+
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
@@ -155,7 +154,7 @@
                         </links>
                     </configuration>
                 </plugin>
-                            
+
             </plugins>
         </pluginManagement>
 
@@ -164,7 +163,7 @@
     <!-- ************************************************************* -->
     <!-- *** Build Environment  ************************************** -->
     <!-- ************************************************************* -->
-    
+
     <!-- Maven Environment : profiles -->
     <profiles>
         <profile>
@@ -206,3 +205,4 @@
     </profiles>
 
 </project>
+
