@@ -25,7 +25,8 @@ Ainsi la structuration des données (définie par XML) et leur représentation (
 XSL) sont séparées. Cela signifie qu'il est possible à partir d'un document XML de créer des documents
 utilisant différentes représentations (HTML pour créer des pages web, WML pour les mobiles WAP, ...).
 
-|presentationxsl|
+.. image:: ../schemas/presentationXSL.png
+   :alt: Présentation XSL
 
 
 Structure d'un document XSL
@@ -164,4 +165,3 @@ Références
 - Article : http://www.commentcamarche.net/xml/xmlxsl.php3
 - Schéma  : http://fr.wikipedia.org/wiki/Extended_stylesheet_language_transformations
 
-.. |presentationxsl| image:: images/presentationXSL.png 

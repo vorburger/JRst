@@ -7,7 +7,9 @@ Documentation développeur
 Le diagramme de Class
 =====================
 
-|classDiagramme|
+.. image:: ../schemas/diagrammeClass.png
+   :alt: Diagramme de classes
+   :align: center
 
 La Class **AdvancedReader** à pour fonction de faciliter la lecture du fichier RST_ grâce à différentes méthodes :
   - String readLine() : renvoie une ligne
@@ -26,7 +28,9 @@ La Class **JRST** contient la méthode main(), elle gère les options, la lectur
 La génération
 =============
 
-|diagrammegeneration|
+.. image:: ../schemas/diagrammeGeneration.png
+   :alt: Arbre des différentes générations possibles
+   :align: center
 
 Référence :
 
@@ -61,7 +65,9 @@ On utilise donc la commande suivante::
 
 Ce diagramme de séquence décrit le fonctionnement du parseur tout au long de la génération :
 
-|sequanceDiagramme|
+.. image:: ../schemas/diagrammeSequence.png
+   :alt: Diagramme de séquence d'une génération
+   :align: center
 
 La Classe **JRSTGenerator**, grâce au fichier XSL rst2xhtml.xsl, renvoie le fichier html suivant::
 
@@ -124,6 +130,4 @@ en commençant par le fichierXSL puis par le fichierXSL2...
 .. _Cascading Style Sheets: http://fr.wikipedia.org/wiki/Feuilles_de_style_en_cascade
 .. _RST: http://docutils.sourceforge.net/rst.html
 .. _DocUtils: http://docutils.sourceforge.net/docs/ref/doctree.html
-.. |diagrammegeneration| image:: images/diagrammeGeneration.png
-.. |classDiagramme| image:: images/diagrammeClass.png
-.. |sequanceDiagramme| image:: images/diagrammeSequance.png
+

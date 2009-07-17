@@ -65,7 +65,7 @@ So we use this following command::
 
 This sequence diagramme describes the parser's mechanism throughout the generation :
 
-|sequanceDiagramme|
+|sequenceDiagramme|
 
 **JRSTGenerator** Class with the XSL file rst2xhtml.xsl, returns following html file::
 
@@ -132,4 +132,4 @@ starting by XSLfile then XSL2file2...
 .. _DocUtils: http://docutils.sourceforge.net/docs/ref/doctree.html
 .. |diagrammegeneration| image:: images/diagrammeGeneration.png
 .. |classDiagramme| image:: images/DiagrammeClass.png 
-.. |sequanceDiagramme| image:: images/DiagrammeSequance.png
+.. |sequenceDiagramme| image:: images/DiagrammeSequence.png
