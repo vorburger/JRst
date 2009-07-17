@@ -20,47 +20,59 @@
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.nuiton</groupId>
             <artifactId>nuiton-utils</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>fop</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>sdoc</groupId>
             <artifactId>sdoc</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
+            <version>1.6.1</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>uk.co.flamingpenguin</groupId>
             <artifactId>jewelcli</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.docbook</groupId>
             <artifactId>docbook-xsl</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>compile</scope>
         </dependency>
         
     </dependencies>
@@ -116,7 +128,7 @@
                 </configuration>
             </plugin>
 
-            <!--plugin>
+            <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <configuration>
                     <outputDirectory>${project.build.directory}/lib</outputDirectory>
@@ -126,7 +138,7 @@
                         <id>copy-dependencies</id>
                     </execution>
                 </executions>
-            </plugin-->
+            </plugin>
 
         </plugins>
 
