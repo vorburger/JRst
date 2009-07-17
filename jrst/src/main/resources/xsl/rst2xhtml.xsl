@@ -154,7 +154,7 @@
 	</xsl:template>
 	
 	<xsl:template match="literal_block">
-		<pre><xsl:value-of select="text()"/></pre>
+		<pre class="literal_block"><xsl:value-of select="text()"/></pre>
 	</xsl:template>
 
 	<xsl:template match="bullet_list">
@@ -247,18 +247,40 @@
 	</xsl:template>
 
 	<xsl:template match="image">
-		<!-- todo manage heigth and witdh -->
-		<xsl:if test="@target">
-			<a href="{@target}">
-				<img alt="{@alt}" src="{@uri}"><xsl:apply-templates/></img>
-			</a>
-		</xsl:if>
-		<xsl:if test="not(@target)">
-			<img alt="{@alt}" src="{@uri}"><xsl:apply-templates/></img>
-		</xsl:if>
+                <xsl:choose>
+                    <xsl:when test="(@target) and (@align)">
+                        <p class="align-{@align}">
+                            <a href="{@target}">
+                                <xsl:call-template name="img" />
+                            </a>
+			</p>
+                    </xsl:when>
+                    <xsl:when test="@target">
+                        <a href="{@target}">
+                            <xsl:call-template name="img" />
+                        </a>
+                    </xsl:when>
+                    <xsl:when test="@align">
+                        <p class="align-{@align}">
+                            <xsl:call-template name="img" />
+			</p>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:call-template name="img" />
+                    </xsl:otherwise>
+                </xsl:choose>
 	</xsl:template>
 
-	
+	<xsl:template name="img">
+            <xsl:element name="img">
+                <xsl:attribute name="alt"><xsl:value-of select="@alt"/></xsl:attribute>
+                <xsl:attribute name="src"><xsl:value-of select="@uri"/></xsl:attribute>
+                <xsl:if test="@width"><xsl:attribute name="width"><xsl:value-of select="@width"/></xsl:attribute></xsl:if>
+                <xsl:if test="@height"><xsl:attribute name="height"><xsl:value-of select="@height"/></xsl:attribute></xsl:if>
+                <xsl:apply-templates/>
+            </xsl:element>
+        </xsl:template>
+
 	
 	<xsl:template match="footer">
 		<hr/>
