@@ -29,6 +29,11 @@
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
         </dependency>
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
+            <scope>compile</scope>
+        </dependency>
         <!-- Apache FOP (Formatting Objects Processor) XSL-FO -->
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
@@ -43,37 +48,31 @@
         <dependency>
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
-            <scope>runtime</scope>
+            <!--scope>runtime</scope-->
         </dependency>
         <!-- Swing librairie -->
         <dependency>
             <groupId>sdoc</groupId>
             <artifactId>sdoc</artifactId>
-            <scope>runtime</scope>
+            <!--scope>runtime</scope-->
         </dependency>
         <!-- XSL librairies -->
         <dependency>
             <groupId>org.docbook</groupId>
             <artifactId>docbook-xsl</artifactId>
-            <scope>runtime</scope>
+            <!--scope>runtime</scope-->
         </dependency>
         <!-- Test librairies -->
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>jaxen</groupId>
-            <artifactId>jaxen</artifactId>
-            <scope>test</scope>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <!-- ************************************************************* -->
