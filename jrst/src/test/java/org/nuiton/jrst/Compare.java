@@ -29,10 +29,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.plaf.FileChooserUI;
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.dom4j.Document;
@@ -59,7 +61,9 @@ public class Compare {
             source = new File(args[0]);
             parser(source);
         } else {
-            System.err.println("Argument source manquant");
+            JFileChooser fc = new JFileChooser();
+            fc.showOpenDialog(new JFrame());
+            parser(fc.getSelectedFile());
         }
     }
 
@@ -68,7 +72,7 @@ public class Compare {
         Reader in = new InputStreamReader(url.openStream());
         JRSTReader jrst = new JRSTReader();
         Document docRst = jrst.read(in); // JRST
-        String cmd = "rst2xml.py " + source.getPath();
+        String cmd = "rst2xml " + source.getPath();
         Process p = Runtime.getRuntime().exec(cmd); // Python
         ThreadRedirection t = new ThreadRedirection(p);
         t.start();
