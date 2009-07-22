@@ -249,11 +249,11 @@
 	<xsl:template match="image">
                 <xsl:choose>
                     <xsl:when test="(@target) and (@align)">
-                        <p class="align-{@align}">
+                        <div class="align-{@align}" align="{@align}">
                             <a href="{@target}">
                                 <xsl:call-template name="img" />
                             </a>
-			</p>
+			</div>
                     </xsl:when>
                     <xsl:when test="@target">
                         <a href="{@target}">
@@ -261,9 +261,9 @@
                         </a>
                     </xsl:when>
                     <xsl:when test="@align">
-                        <p class="align-{@align}">
+                        <div class="align-{@align}" align="{@align}">
                             <xsl:call-template name="img" />
-			</p>
+			</div>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:call-template name="img" />
