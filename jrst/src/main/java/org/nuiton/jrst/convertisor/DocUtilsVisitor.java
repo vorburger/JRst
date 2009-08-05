@@ -19,7 +19,7 @@ import org.dom4j.VisitorSupport;
  * @author letellier
  */
 
-public abstract class DocUtilsVisitor extends VisitorSupport{
+public class DocUtilsVisitor extends VisitorSupport{
 
     /** to use log facility, just put in your code: log.info(\"...\"); */
     private static Log log = LogFactory.getLog(DocUtilsVisitor.class);
@@ -54,31 +54,10 @@ public abstract class DocUtilsVisitor extends VisitorSupport{
         try {
 
             // FIXME : Cette partie ne marche pas corectement...
-            List<Element> elements = el.elements();
-            Document doc = DocumentHelper.createDocument();
             log.info("This element : " + el.getName());
-            for (Element element : elements){
-                log.info("Child : " + element.getName());
-                try{
-                    doc.add(element);
-                }
-                catch(org.dom4j.IllegalAddException ex){
-                    log.error("Imposible d ajouter l element " + ex);
-                    if (log.isDebugEnabled()){
-                        log.debug("Voici l element concerné : " + element.asXML());
-                    }
-                }
-            }
-
-            if (log.isDebugEnabled()){
-                log.debug("parsing doc : " + doc.asXML());
-            }
 
             // Creation dune nouvelle instance du visitor utilise
             DocUtilsVisitor visitor = this.getClass().newInstance();
-
-            // TODO : on ne devrais pas en avoir besoin
-            visitor.setCachedElements(getCachedElements());
 
             // Traitement recursif (pour parser un document dans un autre
             el.accept(visitor);
