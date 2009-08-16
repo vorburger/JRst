@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
  * Class qui redirige la sortie standard pour la laisser en interne
  */
 public class ThreadRedirection extends Thread {
+    public static final String LINE_SEPARATOR = "\n";
     protected StringBuffer str;
     protected Process process;
 
@@ -34,6 +35,7 @@ public class ThreadRedirection extends Thread {
         str = new StringBuffer();
     }
 
+    @Override
     public void run() {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -41,7 +43,7 @@ public class ThreadRedirection extends Thread {
             try {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    str.append(line + "\n");
+                    str.append(line + LINE_SEPARATOR);
                 }
 
             } finally {
