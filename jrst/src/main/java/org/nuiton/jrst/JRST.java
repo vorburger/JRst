@@ -438,7 +438,8 @@ public class JRST {
 
                 // Recuperation du resultat
                 String result = visitor.getResult();
-
+                // nettoyage du visiteur
+                visitor.clear();
                 // Ecriture du resultat dans un fichier
                 // prepare the output flux
                 FileWriter out = null;
