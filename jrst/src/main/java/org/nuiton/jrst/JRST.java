@@ -256,8 +256,9 @@ public class JRST {
         while (!done) {
             System.out.println(_("rstFile?"));
             cheminRST = lireFile(false, false);
-            if (cheminRST.length() == 0)
+            if (cheminRST.length() == 0) {
                 System.exit(0);
+            }
             File fileRST = new File(cheminRST);
             if (!fileRST.exists()) {
                 System.out.println(_("dontExist"));
@@ -395,7 +396,9 @@ public class JRST {
      * 
      * @param xslListOrOutType
      * @param fileIn
+     * @param inputEncoding
      * @param fileOut
+     * @param outputEncoding
      * @param overwrite
      * @throws Exception
      */
@@ -419,18 +422,18 @@ public class JRST {
             }
 
             // parse rst file
-            URL url = fileIn.toURL();
+            URL url = fileIn.toURI().toURL();
             Reader in = new InputStreamReader(url.openStream(), inputEncoding);
             JRSTReader jrst = new JRSTReader();
             Document doc = jrst.read(in);
 
             // Sortie vers rst
             if (xslListOrOutType.equals(TYPE_RST)){
-                // Creation dun visitor qui convertie de l'xml vers le rst
+                // Creation d'un visitor qui convertie de l'xml vers le rst
                 DocUtilsVisitor visitor = new DocUtils2RST();
 
                 // Atacher le visitor au document
-                // il va parcourir tout les elements et reconstruir du rst
+                // il va parcourir tout les elements et reconstruire du rst
                 doc.accept(visitor);
 
                 // Recuperation du resultat
@@ -461,7 +464,7 @@ public class JRST {
                     URL stylesheet = null;
                     File file = new File(xsl);
                     if (file.exists()) {
-                        stylesheet = file.toURL();
+                        stylesheet = file.toURI().toURL();
                     } else {
                         //stylesheet = JRST.class.getResource(xsl);
                         stylesheet = Resource.getURL(xsl);
