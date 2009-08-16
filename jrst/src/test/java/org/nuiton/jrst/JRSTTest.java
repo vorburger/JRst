@@ -1,7 +1,6 @@
 package org.nuiton.jrst;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
@@ -39,7 +38,7 @@ public class JRSTTest {
     }
 
     @Test
-    public void testToRst() throws IOException {
+    public void testToRst() throws Exception {
         File in = new File(testBasedir, "toRst1-in.rst");
 
         List<String> IN_LINES = Arrays.asList(new String[]{
@@ -75,13 +74,9 @@ public class JRSTTest {
         FileUtils.writeLines(in, IN_LINES);
 
         File out = new File(testBasedir, "toRst1-out.rst");
-        try {
-            JRST.generate(JRST.TYPE_RST, in, out, JRST.Overwrite.ALLTIME);
 
-        } catch (Exception e) {
-            log.error(e);
-            Assert.fail(e.getMessage());
-        }
+        JRST.generate(JRST.TYPE_RST, in, out, JRST.Overwrite.ALLTIME);
+
         List<?> readLines = FileUtils.readLines(out);
         Assert.assertEquals(OUT_LINES.size(), readLines.size());
         for (int i = 0, j = OUT_LINES.size(); i < j; i++) {
