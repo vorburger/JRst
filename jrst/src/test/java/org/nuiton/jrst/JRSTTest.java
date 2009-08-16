@@ -83,7 +83,6 @@ public class JRSTTest {
             Assert.fail(e.getMessage());
         }
         List<?> readLines = FileUtils.readLines(out);
-        // the title == Title === is transformed in Title ----
         Assert.assertEquals(OUT_LINES.size(), readLines.size());
         for (int i = 0, j = OUT_LINES.size(); i < j; i++) {
             String inLine = OUT_LINES.get(i);
