@@ -60,7 +60,7 @@
             </dependency>
 
             <dependency>
-                <groupId>sdoc</groupId>
+                <groupId>org.nuiton.thirdparty</groupId>
                 <artifactId>sdoc</artifactId>
                 <version>0.5.0-beta-patchcl</version>
                 <scope>test</scope>
@@ -74,9 +74,9 @@
             </dependency>
 
             <dependency>
-                <groupId>uk.co.flamingpenguin</groupId>
+                <groupId>uk.co.flamingpenguin.jewelcli</groupId>
                 <artifactId>jewelcli</artifactId>
-                <version>0.54</version>
+                <version>0.57</version>
                 <scope>compile</scope>
             </dependency>
 

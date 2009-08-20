@@ -41,7 +41,7 @@
         </dependency>
         <!-- Annoted interfaces to present command line arguments -->
         <dependency>
-            <groupId>uk.co.flamingpenguin</groupId>
+            <groupId>uk.co.flamingpenguin.jewelcli</groupId>
             <artifactId>jewelcli</artifactId>
         </dependency>
         <!-- XSLT processor -->
@@ -52,7 +52,7 @@
         </dependency>
         <!-- Swing librairie -->
         <dependency>
-            <groupId>sdoc</groupId>
+            <groupId>org.nuiton.thirdparty</groupId>
             <artifactId>sdoc</artifactId>
             <!--scope>runtime</scope-->
         </dependency>
