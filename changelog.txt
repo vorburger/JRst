@@ -1,4 +1,6 @@
-ver-1.0.0 ?
-  * migrate to nuiton
+1.0.0 chemit 20090823
+
+  * add a jrst-doc module
+  * migrate to nuiton (relocate artifacts, change package names)
   * use a multi-module layout 
 
