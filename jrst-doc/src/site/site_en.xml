@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="${project.name}">
+
+    <poweredBy>
+        <logo href="http://jrst.labs.libre-entreprise.org" name="JRst" img="${project.url}/images/jrst-logo.png"/>
+        <logo href="http://docutils.sourceforge.net/rst.html" name="ReStructuredText" img="${project.url}/images/restructuredtext-logo.png"/>
+    </poweredBy>
+    
+    <bannerLeft>
+        <name>${project.name}</name>
+        <href>/</href>
+    </bannerLeft>
+	
+    <body>
+        
+        <breadcrumbs>
+            <item name="${project.name}" href="${project.url}" />
+        </breadcrumbs>
+        
+        <menu ref="parent"/>
+
+        <menu name="User">
+            <item href="/user/index.html" name="About"/>
+            <item href="/user/RSTpresentation.html" name="A ReStructuredText Primer"/>
+            <item href="/user/functionality.html" name="Functionalities suggested"/>
+        </menu>
+
+        <menu name="Developer">
+            <item name="Documentation" href="/devel/developerDoc.html"/>
+            <item name="A XSL primer" href="/devel/XSLpresentation.html"/>
+            <item name="Librairy used" href="/devel/library.html"/>
+            <item name="Todo" href="/devel/Todo.html"/>
+            <item name="External documentation" href="/devel/externalDoc.html"/>
+        </menu>
+
+    </body>
+</project>

@@ -1,0 +1,41 @@
+ver 1.0.0 ?
+  * migrate to org.nuiton groupId
+
+ver 0.8.6 chemit 20090511
+  * bump versions (lutinproject, lutinutil, maven-i18n-plugin, maven-license-switcher-plugin)
+  * use doxia-modules-jrst instead of maven-jrst-plugin
+  * improve download section on site
+  * fix some javadoc, reformat code, remove redundant cast,...
+
+ver-0.8.5 chemit 20090409
+
+  * Fix admonition
+  * Fix comment directive and titles trailing spaces
+  * Readd ODT support ?
+  * Readd PDF support ?
+
+ver-0.8.4 chemit 20090218
+
+  * Fix javadoc
+  * Fix anchor in content
+  * Update xml2rst.xsl stylesheet
+  * Re add i18n plugin on build
+  * Reenable tests during maven build
+  * Move test to junit 4
+  * switch to lutinproject 3.4
+
+ver-0.8.3 chemit 20081009
+ 
+  * Add title property in xdoc xslt
+  * Switch license to lgpl
+  * maven 2 layout
+
+ver-0.7 poussin 20061110
+
+  * complete rewrite where dom4j tree is use as memory model
+  * parser is in 3 classes, reader, lexer, composer
+  * generation is based on XSL (support, xhtml, xdoc, docbook, other xsl)
+
+ver-0.6 poussin 20060327
+
+  * first version with only regexp and own memory model
