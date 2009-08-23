@@ -21,11 +21,11 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.nuiton.jrst.JRST;
-import org.nuiton.util.FileUtil;
 import org.nuiton.util.MirroredFileUpdater;
 
 import java.io.File;
 import java.io.IOException;
+import org.nuiton.util.PluginHelper;
 
 /**
  * Transform rst site documentation into xdoc, to
@@ -273,7 +273,7 @@ public class JRstPlugin extends AbstractMojo {
                 getLog().info("Copy resource " + in + " to " + out);
             }
             try {
-                FileUtil.copy(in, out);
+                PluginHelper.copy(in, out);
             } catch (IOException e) {
                 getLog().error(e);
             }
