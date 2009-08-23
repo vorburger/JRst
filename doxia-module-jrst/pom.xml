@@ -66,8 +66,19 @@
     <developers>
         <developer>
             <name>Eric Chatellier</name>
-            <id>chatellier</id>
+            <id>echatellier</id>
             <email>chatellier@codelutin.com
+            </email>
+            <organization>CodeLutin</organization>
+            <timezone>+2</timezone>
+            <roles>
+                <role>Développeur</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Tony Chemit</name>
+            <id>tchemit</id>
+            <email>chemit@codelutin.com
             </email>
             <organization>CodeLutin</organization>
             <timezone>+2</timezone>
@@ -90,17 +101,10 @@
             <plugin>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-maven-plugin</artifactId>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/main/components/components.xml</descriptor>
-                        <descriptor>target/generated-resources/plexus/META-INF/plexus/components.xml</descriptor>
-                    </descriptors>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
                             <goal>descriptor</goal>
-                            <goal>merge-descriptors</goal>
                         </goals>
                     </execution>
                 </executions>
