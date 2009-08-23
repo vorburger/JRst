@@ -1,0 +1,103 @@
+----
+Maven-jrst-plugin
+----
+----
+2009-08-23
+----
+
+Présentation
+
+  Le plugin maven2 pour utiliser la librairie jrst.
+
+Fonctionnement
+
+  Maven ne gère pas le RST par défaut, voilà pourquoi le plugin
+  maven-jrst-plugin a été développé.
+
+  Il utilise donc une structure similaire des sources des sites
+  maven, mais les transforme en xdoc, et passe ensuite le relai
+  à maven.
+
+  Le pom, doit doit être configuré pour :
+  
+  * demander la génération des fichiers xdoc
+
+  * changer le répertoire par défaut des sources du site
+
+Configuration du pom
+
+* pre-site : maven-jrst-plugin
+
+-----------------------------------------------------------------------------------
+
+  <plugin>
+        <groupId>org.codelutin</groupId>
+        <artifactId>maven-jrst-plugin</artifactId>
+        <version>${maven-jrst-plugin.version}</version>
+        <configuration>
+            <directoryIn>${basedir}/src/site</directoryIn>
+            <directoryOut>${project.build.directory}/generated-site</directoryOut>
+            <defaultLocale>fr</defaultLocale>
+            <inputEncoding>UTF-8</inputEncoding>
+            <outputEncoding>UTF-8</outputEncoding>
+        </configuration>
+        <executions>
+            <execution>
+                <phase>pre-site</phase>
+                <goals>
+                    <goal>jrst</goal>
+                </goals>
+            </execution>
+        </executions>
+  </plugin>
+-----------------------------------------------------------------------------------
+
+* pre-site : maven-antrun-plugin
+
+  Ce plugin est utilisé pour copier les fichiers "non-rst"
+  dans le répertoire de génération de site.
+
+-----------------------------------------------------------------------------------
+
+  <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+            <execution>
+                <phase>pre-site</phase>
+                <configuration>
+                    <tasks>
+                        <mkdir dir="${basedir}/src/site"/>
+                        <copy todir="${project.build.directory}/generated-site" 
+                              verbose="${maven.verbose}"
+                              overwrite="false">
+                            <fileset dir="${basedir}/src/site">
+                                <exclude name="**/rst/**"/>
+                            </fileset>
+                        </copy>
+                    </tasks>
+                </configuration>
+                <goals>
+                    <goal>run</goal>
+                </goals>
+            </execution>
+        </executions>
+  </plugin>
+
+-----------------------------------------------------------------------------------
+
+* site : maven-site-plugin
+
+-----------------------------------------------------------------------------------
+
+  <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+           <siteDirectory>${project.build.directory}/generated-site</siteDirectory>
+           <inputEncoding>UTF-8</inputEncoding>
+           <outputEncoding>UTF-8</outputEncoding>
+           <generateReports>true</generateReports>
+           <locales>fr,en</locales>
+        </configuration>
+  </plugin>
+
+-----------------------------------------------------------------------------------

@@ -1,23 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="${project.name}">
 
-    <publishDate format="dd/MM/yyyy"/>
-
-    <skin>
-        <groupId>org.nuiton</groupId>
-        <artifactId>maven-nuiton-skin</artifactId>
-        <version>1.0.0</version>
-    </skin>
-
     <bannerLeft>
         <name>${project.name}</name>
         <href>/</href>
     </bannerLeft>
-
-    <bannerRight>
-        <src>http://www.codelutin.com/images/lutinorange-codelutin.png</src>
-        <href>${project.organization.url}</href>
-    </bannerRight>
 
     <body>
         
@@ -36,11 +23,11 @@
         </menu>
         
         <menu name="Téléchargement">
-            <item href="${repository.home.url}/org/nuiton/${project.artifactId}/${project.version}/${project.build.finalName}.jar"
+            <item href="${repository.home.url}/org/nuiton/jrst/${project.artifactId}/${project.version}/${project.build.finalName}.jar"
                   name="Librairie (jar)"/>
-            <item href="${repository.home.url}/org/nuiton/${project.artifactId}/${project.version}/${project.build.finalName}-javadoc.jar"
+            <item href="${repository.home.url}/org/nuiton/jrst/${project.artifactId}/${project.version}/${project.build.finalName}-javadoc.jar"
                   name="Javadoc (jar)"/>
-            <item href="${repository.home.url}/org/nuiton/${project.artifactId}/${project.version}/${project.build.finalName}-sources.jar"
+            <item href="${repository.home.url}/org/nuiton/jrst/${project.artifactId}/${project.version}/${project.build.finalName}-sources.jar"
                   name="Sources (jar)"/>
         </menu>
 
