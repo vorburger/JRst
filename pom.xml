@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.nuiton</groupId>
         <artifactId>mavenpom</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>jrst</artifactId>
@@ -232,7 +232,7 @@
                 <plugin>
                     <groupId>org.nuiton.i18n</groupId>
                     <artifactId>maven-i18n-plugin</artifactId>
-                    <version>1.0.0</version>
+                    <version>1.0.1-SNAPSHOT</version>
                 </plugin>
                 
             </plugins>
