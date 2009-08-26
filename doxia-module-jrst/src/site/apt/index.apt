@@ -11,9 +11,9 @@ Configuration
     <version>2.0</version>
     <dependencies>
       <dependency>
-        <groupId>org.nuiton</groupId>
+        <groupId>org.nuiton.jrst</groupId>
         <artifactId>doxia-module-jrst</artifactId>
-        <version>1.1.0</version>
+        <version>1.0.0</version>
       </dependency>
     </dependencies>
   </plugin>
@@ -24,4 +24,4 @@ Configuration
 
 Warning
 
-  This version only works with doxia-1.0.x (provided by maven-site-plugin-2.0).
+  Version 1.0.x only works with doxia-1.0.x (provided by maven-site-plugin-2.0.x).
