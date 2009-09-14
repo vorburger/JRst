@@ -179,9 +179,9 @@ public class ReStructuredText {
             .compile("\\*\\*(.+?)\\*\\*");
     public static final Pattern REGEX_LITERAL = Pattern.compile("``([^`]+)``");
     public static final Pattern REGEX_REFERENCE = Pattern
-            .compile("(http://[-/%#[\\&&&[^(&gt;)]]\\._\\w]+\\w+)((\\W|&|$)+)");
+            .compile("(http://[-/%#[\\&&&[^(&gt;)]]\\._\\w:]+\\w+)((\\W|&|$)+)");
     public static final Pattern REGEX_INLINE_REFERENCE = Pattern
-            .compile("`(.+) \\&lt\\;(http://[-/%#&\\._\\w]+)(\\&gt\\;)`_");
+            .compile("`(.+) \\&lt\\;(http://[-/%#&\\._\\w:]+)(\\&gt\\;)`_");
     public static final Pattern REGEX_EMAIL = Pattern
             .compile("(^|[^_\\w])([-\\._\\w]+@[-\\._\\w]+)([^-\\._\\w]|$)");
     public static final Pattern REGEX_FOOTNOTE_REFERENCE = Pattern
