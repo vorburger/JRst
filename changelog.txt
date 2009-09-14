@@ -1,3 +1,7 @@
+1.0.1 xxx 200909xx
+
+  * Add port in url regex
+
 1.0.0 chemit 20090823
 
   * add a jrst-doc module
