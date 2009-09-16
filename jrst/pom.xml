@@ -42,6 +42,7 @@
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xml-serializer</artifactId>
+            <scope>compile</scope>
         </dependency>
         <!-- Annoted interfaces to present command line arguments -->
         <dependency>
