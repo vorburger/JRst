@@ -39,6 +39,10 @@
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>fop</artifactId>
         </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xml-serializer</artifactId>
+        </dependency>
         <!-- Annoted interfaces to present command line arguments -->
         <dependency>
             <groupId>uk.co.flamingpenguin.jewelcli</groupId>
@@ -48,7 +52,6 @@
         <dependency>
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
-            <!--scope>runtime</scope-->
         </dependency>
         <!-- Swing librairie -->
         <dependency>
@@ -60,7 +63,6 @@
         <dependency>
             <groupId>org.docbook</groupId>
             <artifactId>docbook-xsl</artifactId>
-            <!--scope>runtime</scope-->
         </dependency>
         <!-- Test librairies -->
         <dependency>
