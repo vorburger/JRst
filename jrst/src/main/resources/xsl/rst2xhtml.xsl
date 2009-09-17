@@ -9,7 +9,7 @@
 	<html>
 	  <head>
 	    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	    <meta name="generator" content="JRST http://jrst.labs.libre-entreprise.org/" />
+	    <meta name="generator" content="JRST http://maven-site.nuiton.org/jrst" />
 	    <title><xsl:value-of select="title"/></title>
 	  </head>
 		<body>
