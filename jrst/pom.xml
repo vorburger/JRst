@@ -39,11 +39,7 @@
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>fop</artifactId>
         </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xml-serializer</artifactId>
-            <scope>compile</scope>
-        </dependency>
+        
         <!-- Annoted interfaces to present command line arguments -->
         <dependency>
             <groupId>uk.co.flamingpenguin.jewelcli</groupId>
@@ -53,6 +49,11 @@
         <dependency>
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
+        </dependency>
+        <!-- TC-20090929 force it, otherwise the dependency is not attached-->
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>serializer</artifactId>
         </dependency>
         <!-- Swing librairie -->
         <dependency>

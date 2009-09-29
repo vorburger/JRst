@@ -17,7 +17,6 @@
 
 package org.nuiton.jrst;
 
-import junit.framework.TestCase;
 import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
@@ -25,6 +24,7 @@ import org.dom4j.io.XMLWriter;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import org.junit.Test;
 
 /**
  * JRSTReaderTest.
@@ -37,8 +37,9 @@ import java.net.URL;
  * Last update: $Date$
  * by : $Author$
  */
-public class JRSTReaderTest extends TestCase {
+public class JRSTReaderTest {
 
+    @Test
     public void testRead() throws Exception {
         URL url = JRSTReaderTest.class
                 .getResource("/test.rst");

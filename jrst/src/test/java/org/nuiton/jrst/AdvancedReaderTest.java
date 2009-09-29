@@ -86,6 +86,7 @@ public class AdvancedReaderTest {
      * {@link org.nuiton.jrst.AdvancedReader#skipBlankLines()}.
      * @throws IOException 
      */
+    @Test
     public void testSkipBlankLines() throws IOException {
         {
             AdvancedReader in = new AdvancedReader(new FileReader(file));
@@ -106,6 +107,7 @@ public class AdvancedReaderTest {
      * Test method for {@link org.nuiton.jrst.AdvancedReader#readAll()}.
      * @throws IOException 
      */
+    @Test
     public void testReadAll() throws IOException {
         {
             AdvancedReader in = new AdvancedReader(new FileReader(file));
@@ -130,6 +132,7 @@ public class AdvancedReaderTest {
      * Test method for {@link org.nuiton.jrst.AdvancedReader#readLines(int)}.
      * @throws IOException 
      */
+    @Test
     public void testReadLines() throws IOException {
         {
             AdvancedReader in = new AdvancedReader(new FileReader(file));
@@ -155,6 +158,7 @@ public class AdvancedReaderTest {
      * {@link org.nuiton.jrst.AdvancedReader#readUntil(java.lang.String)}.
      * @throws IOException 
      */
+    @Test
     public void testReadUntil() throws IOException {
         {
             AdvancedReader in = new AdvancedReader(new FileReader(file));
@@ -186,6 +190,7 @@ public class AdvancedReaderTest {
      * {@link org.nuiton.jrst.AdvancedReader#readUntil(java.lang.String)}.
      * @throws IOException 
      */
+    @Test
     public void testReadWhile() throws IOException {
         {
             AdvancedReader in = new AdvancedReader(new FileReader(file));
@@ -218,6 +223,7 @@ public class AdvancedReaderTest {
      * Test method for {@link org.nuiton.jrst.AdvancedReader#readLine()}.
      * @throws IOException 
      */
+    @Test
     public void testReadLine() throws IOException {
         {
             AdvancedReader in = new AdvancedReader(new FileReader(file));
@@ -240,6 +246,7 @@ public class AdvancedReaderTest {
         }
     }
 
+    @Test
     public void testMark() throws IOException {
         AdvancedReader in = new AdvancedReader(new StringReader(text));
         String line = in.readLine();
@@ -251,6 +258,7 @@ public class AdvancedReaderTest {
         Assert.assertEquals("1 toto tata tutu", line);
     }
 
+    @Test
     public void testUnread() throws IOException {
         AdvancedReader in = new AdvancedReader(new StringReader(text));
         Assert.assertEquals(0, in.getCharNumber());
@@ -271,6 +279,7 @@ public class AdvancedReaderTest {
         Assert.assertEquals("1 toto tata tutu", line);
     }
 
+    @Test
     public void testSkip() throws IOException {
         AdvancedReader in = new AdvancedReader(new StringReader(text));
         in.skip(3);

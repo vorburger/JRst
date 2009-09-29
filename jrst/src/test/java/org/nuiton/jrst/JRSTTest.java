@@ -38,7 +38,7 @@ public class JRSTTest {
     }
 
     @Test
-    public void testToRst() throws Exception {
+    public void generateRst() throws Exception {
         File in = new File(testBasedir, "toRst1-in.rst");
 
         List<String> IN_LINES = Arrays.asList(new String[]{
@@ -85,5 +85,16 @@ public class JRSTTest {
             Assert.assertEquals(inLine, outLine);
 
         }
+    }
+
+    @Test
+    public void generateHtml() throws Exception {
+
+        File in = new File(basedir, "src/test/resources/text.rst");
+
+        File out = new File(testBasedir, "jrst-RstToHtml2.html");
+
+        JRST.generate(JRST.TYPE_HTML, in, out, JRST.Overwrite.ALLTIME);
+
     }
 }

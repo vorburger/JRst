@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.nuiton</groupId>
         <artifactId>mavenpom</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>jrst</artifactId>
@@ -43,6 +43,67 @@
                 <groupId>org.nuiton</groupId>
                 <artifactId>maven-helper-plugin</artifactId>
                 <version>${helper.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.maven</groupId>
+                        <artifactId>maven-artifact</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.maven</groupId>
+                        <artifactId>maven-artifact-manager</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.maven</groupId>
+                        <artifactId>maven-model</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.maven</groupId>
+                        <artifactId>maven-profile</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.apache.maven</groupId>
+                        <artifactId>maven-settings</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-httpclient</groupId>
+                        <artifactId>commons-httpclient</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>plexus</groupId>
+                        <artifactId>plexus-mail-sender-simple</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>plexus</groupId>
+                        <artifactId>plexus-mail-sender-api</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>plexus</groupId>
+                        <artifactId>plexus-mail-sender-javamail</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>javax.mail</groupId>
+                        <artifactId>mail</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.sonatype.plexus</groupId>
+                        <artifactId>plexus-cipher</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                        <groupId>org.sonatype.plexus</groupId>
+                        <artifactId>plexus-sec-dispatcher</artifactId>
+                    </exclusion>
+
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -67,11 +128,21 @@
             </dependency>
 
             <dependency>
+                <groupId>xalan</groupId>
+                <artifactId>serializer</artifactId>
+                <version>2.7.1</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- TC-20090929 y'a serializer-2.7.1 offer par xalan 2-7-1
+             cela devrait faire l'affaire -->
+
+            <!--dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xml-serializer</artifactId>
                 <version>2.7.1</version>
                 <scope>runtime</scope>
-            </dependency>
+            </dependency-->
 
             <dependency>
                 <groupId>org.nuiton.thirdparty</groupId>
@@ -108,13 +179,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.nuiton</groupId>
-                <artifactId>maven-helper-plugin</artifactId>
-                <version>${helper.version}</version>
-                <scope>compile</scope>
-            </dependency>
-
-            <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-plugin-api</artifactId>
                 <version>${maven.version}</version>
@@ -145,7 +209,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.6</version>
+                <version>4.7</version>
                 <scope>test</scope>
             </dependency>
 
@@ -247,13 +311,13 @@
 
     </build>
 
-      <repositories>
+    <!--repositories>
         <repository>
-          <id>labs</id>
-          <name>lutinbuilder</name>
-          <url>http://lutinbuilder.labs.libre-entreprise.org/maven2/</url>
+            <id>labs</id>
+            <name>lutinbuilder</name>
+            <url>http://lutinbuilder.labs.libre-entreprise.org/maven2/</url>
         </repository>
-      </repositories>
+    </repositories-->
 
 
     <!-- ************************************************************* -->
