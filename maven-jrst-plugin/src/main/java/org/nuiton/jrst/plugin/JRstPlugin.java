@@ -21,11 +21,11 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.nuiton.jrst.JRST;
-import org.nuiton.util.MirroredFileUpdater;
+import org.nuiton.io.MirroredFileUpdater;
 
 import java.io.File;
 import java.io.IOException;
-import org.nuiton.util.PluginHelper;
+import org.nuiton.plugin.PluginHelper;
 
 /**
  * Transform rst site documentation into xdoc, to
