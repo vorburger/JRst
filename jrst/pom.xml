@@ -96,6 +96,9 @@
 
         <maven.jar.main.class>org.nuiton.jrst.JRST</maven.jar.main.class>
 
+        <!-- extra files to include in release -->
+        <redmine.releaseFiles>${redmine.libReleaseFiles}</redmine.releaseFiles>
+
     </properties>
 
     <build>
