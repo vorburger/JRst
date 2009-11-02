@@ -36,7 +36,7 @@
             <dependency>
                 <groupId>org.nuiton</groupId>
                 <artifactId>nuiton-utils</artifactId>
-                <version>1.1.0</version>
+                <version>${nuiton-utils.version}</version>
                 <scope>compile</scope>
             </dependency>
 
@@ -285,7 +285,8 @@
         <!--maven.site.locales>fr,en</maven.site.locales-->
 
         <doxia.version>1.0</doxia.version>
-
+        <nuiton-utils.version>1.1.0</nuiton-utils.version>
+        <i18n.version>1.0.2-SNAPSHOT</i18n.version>
     </properties>
 
     <build>
@@ -304,7 +305,7 @@
                 <plugin>
                     <groupId>org.nuiton.i18n</groupId>
                     <artifactId>maven-i18n-plugin</artifactId>
-                    <version>1.0.1-SNAPSHOT</version>
+                    <version>${i18n.version}</version>
                 </plugin>
 
             </plugins>
