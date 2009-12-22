@@ -45,7 +45,6 @@ public class JrstParserTest extends AbstractParserTest {
         return parser;
     }
 
-    /** @throws Exception */
     public void testParseRst() throws Exception {
         StringWriter output = null;
         Reader reader = null;
@@ -63,8 +62,12 @@ public class JrstParserTest extends AbstractParserTest {
             assertTrue(output.toString().indexOf("Title") != -1);
             assertTrue(output.toString().indexOf("blocks.") != -1);*/
         } finally {
-            output.close();
-            reader.close();
+            if (output != null) {
+                output.close();
+            }
+            if (reader != null) {
+                reader.close();
+            }
         }
     }
 
