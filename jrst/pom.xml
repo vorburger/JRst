@@ -84,7 +84,7 @@
     <!-- *** Project Information ************************************* -->
     <!-- ************************************************************* -->
 
-    <name>JRst - lib</name>
+    <name>JRst :: Api</name>
     <description>Parser RST en Java.</description>
     <inceptionYear>2004</inceptionYear>
 

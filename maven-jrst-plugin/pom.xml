@@ -45,7 +45,7 @@
     <!-- ************************************************************* -->
     <!-- *** Project Information ************************************* -->
     <!-- ************************************************************* -->
-    <name>JRst - maven plugin</name>
+    <name>JRst :: Maven plugin</name>
     <description>
         Maven2 plugin to generate reStructuredText file into xDoc.
     </description>

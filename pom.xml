@@ -220,7 +220,7 @@
     <!-- ************************************************************* -->
     <!-- *** Project Information ************************************* -->
     <!-- ************************************************************* -->
-    <name>JRst - project</name>
+    <name>JRst</name>
     <description>JRst</description>
     <inceptionYear>2004</inceptionYear>
     <url>http://maven-site.nuiton.org/jrst</url>
@@ -284,9 +284,9 @@
         <maven.site.locales>fr</maven.site.locales>
         <!--maven.site.locales>fr,en</maven.site.locales-->
 
-        <doxia.version>1.0</doxia.version>
-        <nuiton-utils.version>1.1.0</nuiton-utils.version>
-        <i18n.version>1.0.2-SNAPSHOT</i18n.version>
+        <doxia.version>1.1.2</doxia.version>
+        <nuiton-utils.version>1.1.1</nuiton-utils.version>
+        <i18n.version>1.0.1</i18n.version>
     </properties>
 
     <build>
