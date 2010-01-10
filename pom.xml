@@ -9,8 +9,8 @@
     <!-- ************************************************************* -->
     <parent>
         <groupId>org.nuiton</groupId>
-        <artifactId>mavenpom</artifactId>
-        <version>1.1.4</version>
+        <artifactId>mavenpom4redmine</artifactId>
+        <version>2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>jrst</artifactId>
