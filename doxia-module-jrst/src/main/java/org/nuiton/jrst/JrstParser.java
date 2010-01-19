@@ -60,7 +60,7 @@ public class JrstParser extends XdocParser {
             doc = gen.transform(doc, stylesheet);
 
             // Give xsl result to XDoc parser
-            Readerr = new StringReader(doc.asXML());
+            Reader reader = new StringReader(doc.asXML());
             super.parse(reader, sink);
         } catch (Exception e) {
             throw new ParseException("Can't parse rst file", e);
