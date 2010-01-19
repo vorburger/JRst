@@ -11,10 +11,12 @@
         <properties>
             <title><xsl:value-of select="title"/></title>
         </properties>
-    	<section>
-          <xsl:attribute name="name"><xsl:value-of select="title"/></xsl:attribute>
-	      <xsl:apply-templates /> 
-		</section>
+        <body>
+          <section>
+            <xsl:attribute name="name"><xsl:value-of select="title"/></xsl:attribute>
+            <xsl:apply-templates />
+          </section>
+       </body>
     </document>
   </xsl:template>
 

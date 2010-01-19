@@ -17,19 +17,23 @@
 
 package org.nuiton.jrst;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 
+import org.apache.maven.doxia.AbstractModuleTest;
 import org.apache.maven.doxia.module.xdoc.XdocSink;
 import org.apache.maven.doxia.parser.AbstractParserTest;
 import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.sink.Sink;
+import org.codehaus.plexus.PlexusTestCase;
 
 /**
  * @author chatellier
  * @version $Revision : 1$
  */
-public class JrstParserTest extends AbstractParserTest {
+public class JrstParserTest extends AbstractModuleTest {
 
     protected JrstParser parser;
 
@@ -40,12 +44,7 @@ public class JrstParserTest extends AbstractParserTest {
         parser = (JrstParser) lookup(Parser.ROLE, "jrst");
     }
 
-    @Override
-    protected Parser createParser() {
-        return parser;
-    }
-
-    public void testParseRst() throws Exception {
+    public void testParse() throws Exception {
         StringWriter output = null;
         Reader reader = null;
 
@@ -53,14 +52,13 @@ public class JrstParserTest extends AbstractParserTest {
             output = new StringWriter();
             reader = getTestReader("test", "rst");
 
-            Sink sink = new XdocSink(output) {};
-            createParser().parse(reader, sink);
+            Sink sink = new XdocSink(output){};
+            parser.parse(reader, sink);
 
-            /* FIXME output is null :(
             assertTrue(output.toString().indexOf("emphasis") != -1);
             assertTrue(output.toString().indexOf("This is the first item") != -1);
             assertTrue(output.toString().indexOf("Title") != -1);
-            assertTrue(output.toString().indexOf("blocks.") != -1);*/
+            assertTrue(output.toString().indexOf("blocks.") != -1);
         } finally {
             if (output != null) {
                 output.close();
@@ -74,6 +72,11 @@ public class JrstParserTest extends AbstractParserTest {
     @Override
     protected String outputExtension() {
         return "rst";
+    }
+
+    @Override
+    protected String getOutputDir(){
+        return "parser/";
     }
 
 }
