@@ -280,8 +280,7 @@
 
         <!-- Site fr et en-->
         <!-- TODO faire fonctionner le multi-language en multi-module...-->
-        <maven.site.locales>fr</maven.site.locales>
-        <!--maven.site.locales>fr,en</maven.site.locales-->
+        <!--siteLocales>fr,en</siteLocales-->
 
         <doxia.version>1.1.2</doxia.version>
         <nuiton-utils.version>1.1.1</nuiton-utils.version>
