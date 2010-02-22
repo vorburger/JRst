@@ -65,6 +65,7 @@
             <!-- plugin plugin -->
             <plugin>
                 <artifactId>maven-plugin-plugin</artifactId>
+                <version>2.5.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -273,6 +274,7 @@
              <!--Site report's plugin-->
             <plugin>
                 <artifactId>maven-plugin-plugin</artifactId>
+                <version>2.5.1</version>
             </plugin>
 
             <plugin>
