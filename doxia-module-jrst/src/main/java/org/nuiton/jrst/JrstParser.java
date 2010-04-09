@@ -32,7 +32,7 @@ import org.dom4j.Document;
  * specified doxia Sink.
  * 
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
- * @version $Id: JrstParser.java 746992 2009-02-23 12:35:59Z vsiveton $
+ * @version $Id$
  * @since 0.9.0
  * @plexus.component role="org.apache.maven.doxia.parser.Parser"
  *                   role-hint="jrst"
