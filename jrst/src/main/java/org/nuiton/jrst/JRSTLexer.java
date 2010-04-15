@@ -2102,7 +2102,7 @@ public class JRSTLexer {
                 result.addAttribute("xml:space", "preserve");
 
                 // first line is part of comment
-                result.setText(line.substring(2).trim() + "\n");
+                result.setText(line.substring(2).trim());
                 line = in.readLine();
                 int level = level(line);
                 if (level > 0) {
@@ -2113,6 +2113,44 @@ public class JRSTLexer {
                     }
                     result.addText(text);
                 }
+            }
+        }
+
+        endPeek();
+        return result;
+    }
+
+    /**
+     * .. comment
+     *
+     * @return Element
+     * @throws IOException
+     */
+    public List<Element> peekAllComment() throws IOException {
+        beginPeek();
+        List<Element> result = new ArrayList<Element>();
+        String[] lines = in.readWhile("^\\.\\.\\s*.*$");
+        if (lines != null) {
+//            int levelRef = level(line);
+            for (String line : lines) {
+                System.out.println(line);
+                Element comment = DocumentHelper.createElement("comment");
+                comment.addAttribute("level", "0");
+                comment.addAttribute("xml:space", "preserve");
+
+                // first line is part of comment
+                comment.setText(line.substring(2).trim());
+                result.add(comment);
+
+//                int level = level(line);
+//                if (level == levelRef) {
+//                    String[] lines = readBlock(level);
+//                    String text = line.substring(level);
+//                    for (String l : lines) {
+//                        text += "\n" + l.substring(level);
+//                    }
+//                    result.addText(text);
+//                }
             }
         }
 

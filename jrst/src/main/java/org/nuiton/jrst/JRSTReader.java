@@ -564,7 +564,7 @@ public class JRSTReader {
     }
 
     /**
-     * @param LinkedList
+     * @param title
      *            <Element> title, String num
      * @return Element
      */
@@ -694,6 +694,12 @@ public class JRSTReader {
             lexer.remove();
         }
 
+        // skip blank line
+        skipBlankLine(lexer);
+        
+        // les commentaires
+        List<Element> comments = lexer.peekAllComment();        
+
         // le titre du doc
         item = lexer.peekTitle();
         if (itemEquals(TITLE, item)) {
@@ -800,6 +806,11 @@ public class JRSTReader {
             // skipBlankLine(lexer);
             item = lexer.peekDocInfo();
 
+            // Ajout des commentaires
+    //        System.out.println(comment.asXML());
+            for (Element comment : comments){
+                item.add(composeComment(comment));
+            }
         }
 
         // l'abstract du doc
@@ -852,7 +863,6 @@ public class JRSTReader {
      * </p>
      * 
      * @param lexer
-     * @param root
      * @return Element
      * @throws DocumentException
      * @throws IOException

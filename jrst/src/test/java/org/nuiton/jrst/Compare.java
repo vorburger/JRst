@@ -35,6 +35,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.plaf.FileChooserUI;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.dom4j.Document;
@@ -50,6 +53,9 @@ import sdoc.*;
  */
 @Ignore
 public class Compare {
+    
+    /** to use log facility, just put in your code: log.info(\"...\"); */
+    private static Log log = LogFactory.getLog(Compare.class);
 
     static boolean[] bColorRst;
 
@@ -73,7 +79,13 @@ public class Compare {
         JRSTReader jrst = new JRSTReader();
         Document docRst = jrst.read(in); // JRST
         String cmd = "rst2xml " + source.getPath();
-        Process p = Runtime.getRuntime().exec(cmd); // Python
+        Process p = null;
+        try {
+            p = Runtime.getRuntime().exec(cmd); // Python
+        } catch (IOException eee) {
+            log.error("You must install python-docutils to compare rst files");
+            System.exit(0);
+        }
         ThreadRedirection t = new ThreadRedirection(p);
         t.start();
         p.waitFor(); // On attend que le processus ce termine
