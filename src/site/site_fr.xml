@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="${project.name}">
+
+  <bannerLeft>
+    <name>${project.name}</name>
+    <href>/</href>
+  </bannerLeft>
+
+  <poweredBy>
+    <logo href="http://maven.apache.org" name="Maven"
+          img="${project.url}/images/logos/maven-feather.png"/>
+  </poweredBy>
+
+  <body>
+
+    <links>
+      <item name="Libre-Entreprise" href="http://www.libre-entreprise.org/"/>
+      <!--item name="[fr" href="${project.url}/index.html"/>
+        <item name="en]" href="${project.url}/en/index.html"/-->
+    </links>
+
+    <breadcrumbs>
+      <item name="${project.name}" href="index.html"/>
+    </breadcrumbs>
+
+    <menu name="Langue">
+      <item name="French" href="index.html"/>
+      <item name="English" href="./en/index.html"/>
+    </menu>
+
+    <menu ref="modules"/>
+
+    <menu ref="reports"/>
+  </body>
+</project>

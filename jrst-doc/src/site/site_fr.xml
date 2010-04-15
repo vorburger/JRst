@@ -1,37 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="${project.name}">
 
-    <poweredBy>
-        <logo href="http://jrst.labs.libre-entreprise.org" name="JRst" img="${project.url}/images/jrst-logo.png"/>
-        <logo href="http://docutils.sourceforge.net/rst.html" name="ReStructuredText" img="${project.url}/images/restructuredtext-logo.png"/>
-    </poweredBy>
+  <poweredBy>
+    <logo href="http://jrst.labs.libre-entreprise.org" name="JRst"
+          img="${project.url}/images/jrst-logo.png"/>
+    <logo href="http://docutils.sourceforge.net/rst.html"
+          name="ReStructuredText"
+          img="${project.url}/images/restructuredtext-logo.png"/>
+  </poweredBy>
 
-    <bannerLeft>
-        <name>${project.name}</name>
-        <href>/</href>
-    </bannerLeft>
-	
-    <body>
-        
-        <breadcrumbs>
-            <item name="${project.name}" href="${project.url}" />
-        </breadcrumbs>
+  <bannerLeft>
+    <name>${project.name}</name>
+    <href>/</href>
+  </bannerLeft>
 
-        <menu ref="parent"/>
+  <body>
 
-        <menu name="Utilisateur">
-            <item href="/user/index.html" name="Présentation du JRST"/>
-            <item href="/user/presentationRST.html" name="Introduction à ReStructuredText"/>
-            <item href="/user/fonctionnalites.html" name="Fonctionnalités incluses"/>
-        </menu>
+    <breadcrumbs>
+      <item name="${project.name}" href="index.html"/>
+    </breadcrumbs>
 
-        <menu name="Developpeur">
-            <item name="Fonctionnement" href="/devel/docDeveloppeur.html"/>
-            <item name="Presentation au XSL" href="/devel/presentationXSL.html"/>
-            <item name="Librairies utilisées" href="/devel/librairies.html"/>
-            <item name="Todo" href="/devel/Todo.html"/>
-            <item name="Documentation externe" href="/devel/docExterne.html"/>
-        </menu>
 
-    </body>
+    <links>
+      <item name="[fr" href="index.html"/>
+      <item name="en]" href="en/index.html"/>
+    </links>
+
+    <menu ref="parent"/>
+
+    <menu name="Utilisateur">
+      <item href="/user/index.html" name="Présentation du JRST"/>
+      <item href="/user/presentationRST.html"
+            name="Introduction à ReStructuredText"/>
+      <item href="/user/fonctionnalites.html" name="Fonctionnalités incluses"/>
+    </menu>
+
+    <menu name="Developpeur">
+      <item name="Fonctionnement" href="/devel/docDeveloppeur.html"/>
+      <item name="Presentation au XSL" href="/devel/presentationXSL.html"/>
+      <item name="Librairies utilisées" href="/devel/librairies.html"/>
+      <item name="Todo" href="/devel/Todo.html"/>
+      <item name="Documentation externe" href="/devel/docExterne.html"/>
+    </menu>
+
+  </body>
 </project>

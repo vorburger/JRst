@@ -1,29 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="${project.name}">
-	
-    <bannerLeft>
-        <name>Java ReStructuredText parser</name>
-        <href>/</href>
-    </bannerLeft>
-	
-    <body>
-        
-        <breadcrumbs>
-            <item name="${project.name}" href="${project.url}" />
-        </breadcrumbs>
-        
-        <menu ref="parent"/>
 
-        <menu name="Download">
-            <item href="${repository.home.url}/org/nuiton/jrst/${project.artifactId}/${project.version}/${project.build.finalName}.jar"
-                  name="Library (jar)"/>
-            <item href="${repository.home.url}/org/nuiton/jrst/${project.artifactId}/${project.version}/${project.build.finalName}-javadoc.jar"
-                  name="Javadoc (jar)"/>
-            <item href="${repository.home.url}/org/nuiton/jrst/${project.artifactId}/${project.version}/${project.build.finalName}-sources.jar"
-                  name="Sources (jar)"/>            
-        </menu>
+  <bannerLeft>
+    <name>Java ReStructuredText parser</name>
+    <href>/</href>
+  </bannerLeft>
 
-        <menu ref="reports"/>
+  <body>
 
-    </body>
+    <breadcrumbs>
+      <item name="${project.name}" href="index.html"/>
+    </breadcrumbs>
+
+    <links>
+      <item name="[fr" href="../index.html"/>
+      <item name="en]" href="index.html"/>
+    </links>
+
+    <menu name="Project Parent">
+      <item name="JRst" href="../../en/index.html"/>
+    </menu>
+
+    <menu name="Download">
+      <item
+        href="${repository.home.url}/org/nuiton/jrst/${project.artifactId}/${project.version}/${project.build.finalName}.jar"
+        name="Library (jar)"/>
+      <item
+        href="${repository.home.url}/org/nuiton/jrst/${project.artifactId}/${project.version}/${project.build.finalName}-javadoc.jar"
+        name="Javadoc (jar)"/>
+      <item
+        href="${repository.home.url}/org/nuiton/jrst/${project.artifactId}/${project.version}/${project.build.finalName}-sources.jar"
+        name="Sources (jar)"/>
+    </menu>
+
+    <menu ref="reports"/>
+
+  </body>
 </project>

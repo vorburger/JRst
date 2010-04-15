@@ -1,27 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="${project.name}">
 
-    <bannerLeft>
-        <name>${project.name}</name>
-        <href>/</href>
-    </bannerLeft>
+  <bannerLeft>
+    <name>${project.name}</name>
+    <href>/</href>
+  </bannerLeft>
 
-    <poweredBy>
-        <logo href="http://maven.apache.org" name="Maven" img="${project.url}/images/logos/maven-feather.png"/>
-    </poweredBy>
+  <poweredBy>
+    <logo href="http://maven.apache.org" name="Maven"
+          img="${project.url}/images/logos/maven-feather.png"/>
+  </poweredBy>
 
-    <body>
-        <links>
-            <item name="[fr" href="${project.url}/index.html"/>
-            <item name="en]" href="${project.url}/en/index.html"/>
-        </links>
+  <body>
+    <breadcrumbs>
+      <item name="${project.name}" href="index.html"/>
+    </breadcrumbs>
 
-        <breadcrumbs>
-            <item name="${project.name}" href="${project.url}" />
-        </breadcrumbs>
-        
-        <menu ref="modules"/>
+    <links>
+      <item name="Libre-Entreprise" href="http://www.libre-entreprise.org/"/>
+      <!--item name="[fr" href="${project.url}/index.html"/>
+    <item name="en]" href="${project.url}/en/index.html"/-->
+    </links>
 
-        <menu ref="reports"/>
-    </body>
+    <menu name="Language">
+      <item name="French" href="../index.html"/>
+      <item name="English" href="index.html"/>
+    </menu>
+
+    <!--<menu ref="modules"/>-->
+
+    <menu name="Modules">
+      <item name="JRst :: Api" href="../jrst/en/index.html"/>
+      <item name="JRst :: Maven Plugin" href="../maven-jrst-plugin/en/index.html"/>
+      <item name="JRst :: Doxia module" href="../doxia-module-jrst/en/index.html"/>
+      <item name="JRst :: Documentation" href="../jrst-doc/en/index.html"/>
+    </menu>
+
+    <menu ref="reports"/>
+  </body>
 </project>

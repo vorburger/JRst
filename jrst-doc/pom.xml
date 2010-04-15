@@ -31,11 +31,29 @@
 
     <properties>
         <maven.reports.generate>false</maven.reports.generate>
+        <siteSourcesType>rst</siteSourcesType>
     </properties>
     
     <build>
 
-        <pluginManagement>
+      <plugins>
+        <plugin>
+            <artifactId>maven-site-plugin</artifactId>
+            <dependencies>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>doxia-module-jrst</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+          <executions>
+            <execution>
+              <id>default-site</id>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+        <!--pluginManagement>
             <plugins>
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
@@ -46,10 +64,15 @@
                             <version>${project.version}</version>
                         </dependency>
                     </dependencies>
+                  <executions>
+                    <execution>
+                      <id>default-site</id>
+                    </execution>
+                  </executions>
                 </plugin>
 
             </plugins>
-        </pluginManagement>
+        </pluginManagement-->
 
     </build>
 

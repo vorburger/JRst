@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.nuiton</groupId>
         <artifactId>mavenpom4redmine</artifactId>
-        <version>2.1</version>
+        <version>2.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>jrst</artifactId>
@@ -101,6 +101,21 @@
                     <exclusion>
                         <groupId>org.sonatype.plexus</groupId>
                         <artifactId>plexus-sec-dispatcher</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                      <groupId>org.codehaus.plexus</groupId>
+                      <artifactId>plexus-velocity</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                      <groupId>org.apache.velocity</groupId>
+                      <artifactId>velocity</artifactId>
+                    </exclusion>
+
+                    <exclusion>
+                      <groupId>org.apache.maven.shared</groupId>
+                      <artifactId>maven-dependency-tree</artifactId>
                     </exclusion>
 
                 </exclusions>
@@ -196,6 +211,14 @@
                 <groupId>org.apache.maven.doxia</groupId>
                 <artifactId>doxia-module-xdoc</artifactId>
                 <version>${doxia.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven.doxia</groupId>
+                <artifactId>doxia-core</artifactId>
+                <version>${doxia.version}</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
@@ -209,7 +232,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.7</version>
+                <version>4.8.1</version>
                 <scope>test</scope>
             </dependency>
 
@@ -279,8 +302,9 @@
         <projectId>jrst</projectId>
 
         <!-- Site fr et en-->
-        <!-- TODO faire fonctionner le multi-language en multi-module...-->
-        <!--siteLocales>fr,en</siteLocales-->
+        <siteLocales>fr,en</siteLocales>
+
+        <siteSourcesType>apt</siteSourcesType>
 
         <doxia.version>1.1.2</doxia.version>
         <nuiton-utils.version>1.2</nuiton-utils.version>
@@ -289,7 +313,7 @@
 
     <build>
 
-        <defaultGoal>install</defaultGoal>
+        <!--<defaultGoal>install</defaultGoal>-->
 
         <pluginManagement>
             <plugins>

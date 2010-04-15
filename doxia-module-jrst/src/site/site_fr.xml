@@ -1,28 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="${project.name}">
-	
-    <bannerLeft>
-        <name>${project.name}</name>
-        <href>/</href>
-    </bannerLeft>
-	
-    <body>
-        
-        <breadcrumbs>
-            <item name="${project.name}" href="${project.url}" />
-        </breadcrumbs>
-        
-        <menu ref="parent"/>
 
-        <menu name="User">
-            <item href="/index.html" name="About"/>
-        </menu>
+  <bannerLeft>
+    <name>${project.name}</name>
+    <href>/</href>
+  </bannerLeft>
 
-        <menu name="Developer">
-            <item href="/devel.html" name="Documentation"/>
-        </menu>
+  <body>
 
-        <menu ref="reports"/>
+    <breadcrumbs>
+      <item name="${project.name}" href="${project.url}"/>
+    </breadcrumbs>
 
-    </body>
+    <links>
+      <item name="[fr" href="index.html"/>
+      <item name="en]" href="en/index.html"/>
+    </links>
+
+    <menu ref="parent"/>
+
+    <menu name="User">
+      <item href="/index.html" name="About"/>
+    </menu>
+
+    <menu name="Developer">
+      <item href="/devel.html" name="Documentation"/>
+    </menu>
+
+    <menu ref="reports"/>
+
+  </body>
 </project>
