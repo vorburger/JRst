@@ -806,11 +806,12 @@ public class JRSTReader {
             // skipBlankLine(lexer);
             item = lexer.peekDocInfo();
 
-            // Ajout des commentaires
-    //        System.out.println(comment.asXML());
-            for (Element comment : comments){
-                item.add(composeComment(comment));
-            }
+        }
+
+         // Ajout des commentaires
+    //        System.out.println(comment.asXML());               
+        for (Element comment : comments){
+            result.add(composeComment(comment));
         }
 
         // l'abstract du doc

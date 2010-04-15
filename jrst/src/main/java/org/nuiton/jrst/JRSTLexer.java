@@ -2133,7 +2133,6 @@ public class JRSTLexer {
         if (lines != null) {
 //            int levelRef = level(line);
             for (String line : lines) {
-                System.out.println(line);
                 Element comment = DocumentHelper.createElement("comment");
                 comment.addAttribute("level", "0");
                 comment.addAttribute("xml:space", "preserve");
@@ -2152,6 +2151,7 @@ public class JRSTLexer {
 //                    result.addText(text);
 //                }
             }
+            in.mark();
         }
 
         endPeek();
