@@ -20,7 +20,9 @@
 
 	<xsl:template match="comment">
 		<xsl:comment>
+            <xsl:text> </xsl:text>
 	  		<xsl:apply-templates/>
+            <xsl:text> </xsl:text>
 	  	</xsl:comment>
 	</xsl:template>
 	
