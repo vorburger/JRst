@@ -1,19 +1,27 @@
-/* *##% JRst
- * Copyright (C) 2004 - 2009 CodeLutin
- *
+/*
+ * #%L
+ * JRst :: Api
+ * 
+ * $Id$
+ * $HeadURL$
+ * %%
+ * Copyright (C) 2004 - 2010 CodeLutin
+ * %%
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
+ * it under the terms of the GNU Lesser General Public License as 
+ * published by the Free Software Foundation, either version 3 of the 
  * License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- *
- * You should have received a copy of the GNU General Lesser Public
+ * 
+ * You should have received a copy of the GNU General Lesser Public 
  * License along with this program.  If not, see
- * <http://www.gnu.org/licenses/lgpl-3.0.html>. ##%*/
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
+ */
 
 package org.nuiton.jrst;
 
@@ -72,18 +80,18 @@ public class AdvancedReader {
     /** nombre de caractere lu au minimum sur le vrai reader */
     protected static final int READ_AHEAD = 80;
 
-    protected Reader in = null;
-    protected CharList buffer = null;
+    protected Reader in;
+    protected CharList buffer;
 
-    protected int charNumber = 0;
-    protected int charNumberMark = 0;
-    protected int lineNumber = 0;
-    protected int lineNumberMark = 0;
+    protected int charNumber;
+    protected int charNumberMark;
+    protected int lineNumber;
+    protected int lineNumberMark;
 
-    protected int nextChar = 0;
-    protected int markChar = 0;
+    protected int nextChar;
+    protected int markChar;
 
-    protected int readInMark = 0;
+    protected int readInMark;
 
     /**
      * 
@@ -91,7 +99,7 @@ public class AdvancedReader {
      */
     public AdvancedReader(Reader in) {
         this.in = new LineNumberReader(in);
-        this.buffer = new ArrayCharList();
+        buffer = new ArrayCharList();
     }
 
     public void mark() throws IOException {
@@ -117,14 +125,14 @@ public class AdvancedReader {
      * @return the charNumber
      */
     public int getCharNumber() {
-        return this.charNumber;
+        return charNumber;
     }
 
     /**
      * @return the lineNumber
      */
     public int getLineNumber() {
-        return this.lineNumber;
+        return lineNumber;
     }
 
     /**

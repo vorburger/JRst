@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+  #%L
+  JRst
+  
+  $Id$
+  $HeadURL$
+  %%
+  Copyright (C) 2004 - 2010 CodeLutin
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as 
+  published by the Free Software Foundation, either version 3 of the 
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Lesser Public License for more details.
+  
+  You should have received a copy of the GNU General Lesser Public 
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/lgpl-3.0.html>.
+  #L%
+  -->
+
+<project xmlns="http://maven-site.nuiton.org/maven-license-plugin/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven-site.nuiton.org/maven-license-plugin/1.0.0 http://maven-site.nuiton.org/maven-license-plugin/licenseProjectDescriptor-1.0.0.xsd">
+  <mainLicense>lgpl_v3</mainLicense>
+
+  <headers>
+
+    <header>
+      <commentStyle>java</commentStyle>
+      <fileSets>
+        <fileSet>
+          <basedir>src/main/java</basedir>
+          <include>**/*.java</include>
+        </fileSet>
+        <fileSet>
+          <basedir>src/test/java</basedir>
+          <include>**/*.java</include>
+        </fileSet>
+      </fileSets>
+    </header>
+
+    <header>
+      <commentStyle>rst</commentStyle>
+      <fileSet>
+        <basedir>src/site</basedir>
+        <include>**/*.rst</include>
+      </fileSet>
+    </header>
+
+     <header>
+      <commentStyle>apt</commentStyle>
+      <fileSet>
+        <basedir>src/site</basedir>
+        <include>**/*.apt</include>
+      </fileSet>
+    </header>
+
+    <header>
+      <commentStyle>xml</commentStyle>
+      <fileSets>
+
+        <fileSet>
+          <basedir>src/site</basedir>
+          <include>**/*.xml</include>
+        </fileSet>
+        <fileSet>
+          <basedir>src/license</basedir>
+          <include>**/*.xml</include>
+        </fileSet>
+        <fileSet>
+          <basedir/>
+          <include>pom.xml</include>
+        </fileSet>
+      </fileSets>
+    </header>
+
+  </headers>
+
+</project>

@@ -1,19 +1,27 @@
-/* *##% JRst
- * Copyright (C) 2004 - 2009 CodeLutin
- *
+/*
+ * #%L
+ * JRst :: Api
+ * 
+ * $Id$
+ * $HeadURL$
+ * %%
+ * Copyright (C) 2004 - 2010 CodeLutin
+ * %%
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
+ * it under the terms of the GNU Lesser General Public License as 
+ * published by the Free Software Foundation, either version 3 of the 
  * License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- *
- * You should have received a copy of the GNU General Lesser Public
+ * 
+ * You should have received a copy of the GNU General Lesser Public 
  * License along with this program.  If not, see
- * <http://www.gnu.org/licenses/lgpl-3.0.html>. ##%*/
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
+ */
 
 package org.nuiton.jrst;
 
@@ -82,7 +90,7 @@ import uk.co.flamingpenguin.jewel.cli.Unparsed;
 @CommandLineInterface(application = "JRST")
 public class JRST {
 
-    public static enum Overwrite {
+    public enum Overwrite {
         NEVER, IFNEWER, ALLTIME
     }
 
@@ -144,7 +152,7 @@ public class JRST {
     /**
      * key, Out type; value: chain of XSL file to provide wanted file for output
      */
-    protected static Map<String, String> stylesheets = null;
+    protected static Map<String, String> stylesheets;
 
     static {
         stylesheets = new HashMap<String, String>();
@@ -568,7 +576,7 @@ public class JRST {
     /**
      * Les options
      */
-    public static interface JRSTOption {
+    public interface JRSTOption {
 
         @Option(description = "display this help and exit")
         boolean isHelp();
@@ -577,27 +585,27 @@ public class JRST {
         boolean isForce();
 
         @Option(shortName = "c", description = "Console mode")
-        public boolean isConsole();
+        boolean isConsole();
 
         @Option(shortName = "x", description = "XSL file list to apply, comma separated")
-        public String getXslFile();
+        String getXslFile();
 
-        public boolean isXslFile();
+        boolean isXslFile();
 
         @Option(shortName = "t", pattern = "xml|xhtml|docbook|html|xdoc|rst|fo|pdf", // TODO
         // odt|rtf",
         description = "Output type")
-        public String getOutType();
+        String getOutType();
 
-        public boolean isOutType();
+        boolean isOutType();
 
         @Option(shortName = "o", description = "Output file")
-        public File getOutFile();
+        File getOutFile();
 
-        public boolean isOutFile();
+        boolean isOutFile();
 
         @Unparsed(name = "FILE")
-        public File getFile();
+        File getFile();
     }
 
 }

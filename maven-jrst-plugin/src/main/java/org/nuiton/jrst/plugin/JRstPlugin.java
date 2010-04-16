@@ -1,19 +1,27 @@
-/* *##% Plugin maven JRst
- * Copyright (C) 2006 - 2009 CodeLutin
- *
+/*
+ * #%L
+ * JRst :: Maven plugin
+ * 
+ * $Id$
+ * $HeadURL$
+ * %%
+ * Copyright (C) 2006 - 2010 CodeLutin
+ * %%
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
+ * it under the terms of the GNU Lesser General Public License as 
+ * published by the Free Software Foundation, either version 3 of the 
  * License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- *
- * You should have received a copy of the GNU General Lesser Public
+ * 
+ * You should have received a copy of the GNU General Lesser Public 
  * License along with this program.  If not, see
- * <http://www.gnu.org/licenses/lgpl-3.0.html>. ##%*/
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
+ */
 
 package org.nuiton.jrst.plugin;
 
@@ -167,10 +175,10 @@ public class JRstPlugin extends AbstractMojo {
      */
     public JRST.Overwrite getOverwrite() {
         JRST.Overwrite result = JRST.Overwrite.NEVER;
-        if (this.overwrite.contains("new")) {
+        if (overwrite.contains("new")) {
             result = JRST.Overwrite.IFNEWER;
-        } else if ("true".equalsIgnoreCase(this.overwrite)
-                || "alltime".equalsIgnoreCase(this.overwrite)) {
+        } else if ("true".equalsIgnoreCase(overwrite)
+                || "alltime".equalsIgnoreCase(overwrite)) {
             result = JRST.Overwrite.ALLTIME;
         }
         return result;

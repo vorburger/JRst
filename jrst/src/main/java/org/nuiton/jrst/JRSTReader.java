@@ -1,19 +1,27 @@
-/* *##% JRst
- * Copyright (C) 2004 - 2009 CodeLutin
- *
+/*
+ * #%L
+ * JRst :: Api
+ * 
+ * $Id$
+ * $HeadURL$
+ * %%
+ * Copyright (C) 2004 - 2010 CodeLutin
+ * %%
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
+ * it under the terms of the GNU Lesser General Public License as 
+ * published by the Free Software Foundation, either version 3 of the 
  * License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- *
- * You should have received a copy of the GNU General Lesser Public
+ * 
+ * You should have received a copy of the GNU General Lesser Public 
  * License along with this program.  If not, see
- * <http://www.gnu.org/licenses/lgpl-3.0.html>. ##%*/
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
+ */
 
 /* *
  * JRSTReader.java
@@ -351,23 +359,23 @@ public class JRSTReader {
     /** to use log facility, just put in your code: log.info(\"...\"); */
     private static Log log = LogFactory.getLog(JRSTReader.class);
 
-    protected boolean ERROR_MISSING_ITEM = false;
+    protected boolean ERROR_MISSING_ITEM;
 
     protected static int MAX_SECTION_DEPTH = -1000;
 
-    protected static Map<String, JRSTDirective> defaultDirectives = null;
+    protected static Map<String, JRSTDirective> defaultDirectives;
 
     protected Map<String, JRSTDirective> directives = new HashMap<String, JRSTDirective>();
 
-    private boolean sectnum = false;
+    private boolean sectnum;
 
     private Element footer;
 
-    private int idMax = 0;
+    private int idMax;
 
-    private int symbolMax = 0;
+    private int symbolMax;
 
-    private int symbolMaxRef = 0;
+    private int symbolMaxRef;
 
     private LinkedList<Integer> lblFootnotes = new LinkedList<Integer>();
 

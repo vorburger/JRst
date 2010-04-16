@@ -1,20 +1,28 @@
-/* *##% JRst
- * Copyright (C) 2004 - 2009 CodeLutin
- *
+/*
+ * #%L
+ * JRst :: Api
+ * 
+ * $Id$
+ * $HeadURL$
+ * %%
+ * Copyright (C) 2004 - 2010 CodeLutin
+ * %%
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
+ * it under the terms of the GNU Lesser General Public License as 
+ * published by the Free Software Foundation, either version 3 of the 
  * License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- *
- * You should have received a copy of the GNU General Lesser Public
+ * 
+ * You should have received a copy of the GNU General Lesser Public 
  * License along with this program.  If not, see
- * <http://www.gnu.org/licenses/lgpl-3.0.html>. ##%*
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
  */
+
 package org.nuiton.jrst;
 
 import static org.nuiton.i18n.I18n._;
@@ -61,61 +69,61 @@ public class JRSTInterface extends JDialog {
     /** serialVersionUID */
     private static final long serialVersionUID = 5327326730753891936L;
 
-    private JPanel savePanel = null;
+    private JPanel savePanel;
 
-    private JPanel formatPanel = null;
+    private JPanel formatPanel;
 
-    private JPanel openPanel = null;
+    private JPanel openPanel;
 
-    private JPanel formatLigne = null;
+    private JPanel formatLigne;
 
-    private JPanel xslLigne = null;
+    private JPanel xslLigne;
 
-    private JComboBox formatList = null;
+    private JComboBox formatList;
 
-    private JButton boutonAnnuler = null;
+    private JButton boutonAnnuler;
 
-    private JButton boutonConvertir = null;
+    private JButton boutonConvertir;
 
-    private JPanel panelPrincipal = null;
+    private JPanel panelPrincipal;
 
-    private JPanel boutonPanel = null;
+    private JPanel boutonPanel;
 
-    private JButton boutonSaveLocation = null;
+    private JButton boutonSaveLocation;
 
-    private JLabel errorLbl = null;
+    private JLabel errorLbl;
 
-    private JButton boutonOpenLocation = null;
+    private JButton boutonOpenLocation;
 
-    private JButton boutonXslLocation = null;
+    private JButton boutonXslLocation;
 
-    private String[] listFormats = null;
+    private String[] listFormats;
 
-    private JTextField saveText = null;
+    private JTextField saveText;
 
-    private JTextField openText = null;
+    private JTextField openText;
 
-    private JTextField xslText = null;
+    private JTextField xslText;
 
-    private JRadioButton format = null;
+    private JRadioButton format;
 
-    private JRadioButton xslRadio = null;
+    private JRadioButton xslRadio;
 
-    private LinkedList<JPanel> ListAddXslPanel = null;
+    private LinkedList<JPanel> ListAddXslPanel;
 
-    private LinkedList<JTextField> ListXslText = null;
+    private LinkedList<JTextField> ListXslText;
 
-    private LinkedList<JButton> ListXslBouton = null;
+    private LinkedList<JButton> ListXslBouton;
 
-    private LinkedList<JButton> ListXslBoutonLocation = null;
-    private boolean ecrase = false;
-    private String[] commande = null;
+    private LinkedList<JButton> ListXslBoutonLocation;
+    private boolean ecrase;
+    private String[] commande;
 
     private ImageIcon open = Resource.getIcon("icone/open.png");
     private ImageIcon delete = Resource.getIcon("icone/cancel.png");
     private ImageIcon more = Resource.getIcon("icone/more.gif");
 
-    private LinkedList<Container> composantsXSL = null;
+    private LinkedList<Container> composantsXSL;
 
     /**
      * le parametre initialise les options disponibles
@@ -124,19 +132,19 @@ public class JRSTInterface extends JDialog {
      */
     public JRSTInterface(String o) {
 
-        this.setFormats(o);
-        this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        this.setTitle("JRST");
-        this.setLayout(new BorderLayout());
-        this.add(getPanelPrincipal(), BorderLayout.CENTER);
+        setFormats(o);
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setTitle("JRST");
+        setLayout(new BorderLayout());
+        add(getPanelPrincipal(), BorderLayout.CENTER);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setModal(true); // pour que JRST attende que cette fenetre soit
+        setModal(true); // pour que JRST attende que cette fenetre soit
         // ferme
-        this.pack();
-        this.setResizable(false);
-        this.setLocation(dim.width / 2 - this.getWidth() / 2, dim.height / 2
-                - this.getHeight() / 2); // Centrer
-        this.setVisible(true);
+        pack();
+        setResizable(false);
+        setLocation(dim.width / 2 - getWidth() / 2, dim.height / 2
+                - getHeight() / 2); // Centrer
+        setVisible(true);
     }
 
     private JPanel getPanelPrincipal() {
@@ -287,7 +295,7 @@ public class JRSTInterface extends JDialog {
                 ListAddXslPanel.remove(i);
                 ListXslBoutonLocation.remove(i);
                 ListXslText.remove(i);
-                this.pack();
+                pack();
 
             }
         }
@@ -300,7 +308,7 @@ public class JRSTInterface extends JDialog {
         ListXslBouton.getLast().setIcon(delete);
         ListAddXslPanel.add(ajoutXSL());
         formatPanel.add(ListAddXslPanel.getLast());
-        this.pack();
+        pack();
 
     }
 
@@ -520,7 +528,7 @@ public class JRSTInterface extends JDialog {
         if (getOpenText().getText().equals("")) {
             getErrorLabel().setText(_("openEmpty?"));
             getErrorLabel().setForeground(Color.RED);
-            this.pack();
+            pack();
         } else {
             if (!ecrase) {
                 File file = new File(getSaveText().getText());
@@ -552,7 +560,7 @@ public class JRSTInterface extends JDialog {
                     cmd += " -o " + getSaveText().getText();
                 cmd += " " + getOpenText().getText() + " ";
                 commande = cmd.trim().split(" ");
-                this.dispose();
+                dispose();
             }
         }
     }

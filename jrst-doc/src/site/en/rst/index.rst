@@ -1,3 +1,27 @@
+.. -
+.. * #%L
+.. * JRst :: Documentation
+.. * 
+.. * $Id$
+.. * $HeadURL$
+.. * %%
+.. * Copyright (C) 2009 - 2010 CodeLutin
+.. * %%
+.. * This program is free software: you can redistribute it and/or modify
+.. * it under the terms of the GNU Lesser General Public License as 
+.. * published by the Free Software Foundation, either version 3 of the 
+.. * License, or (at your option) any later version.
+.. * 
+.. * This program is distributed in the hope that it will be useful,
+.. * but WITHOUT ANY WARRANTY; without even the implied warranty of
+.. * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.. * GNU General Lesser Public License for more details.
+.. * 
+.. * You should have received a copy of the GNU General Lesser Public 
+.. * License along with this program.  If not, see
+.. * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+.. * #L%
+.. -
 ===============================
 reStructuredText_ parser : JRst
 ===============================
@@ -63,13 +87,13 @@ even if myfile.html already exists.
 Maven_ Plugin
 -------------
 
-Maven_ plugin is available at the following links : http://jrst.labs.libre-entreprise.org/maven-jrst-plugin.
+Maven_ plugin is available at the following links : http://maven-site.nuiton.org/jrst/maven-jrst-plugin/en.
 It enables the use of JRST from Maven_.
 
 .. [1] Only html, xhtml, DocBook_, xdoc and pdf are available for the moment.
 
 .. _reStructuredText: RSTpresentation.html
 .. _Maven: http://maven.apache.org/
-.. _XSL: http://jrst.labs.libre-entreprise.org/en/devel/XSLpresentation.rst
+.. _XSL: ./devel/XSLpresentation.html
 .. _DocBook: http://www.docbook.org/
 .. _LaTex: http://www.latex-project.org/
