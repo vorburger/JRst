@@ -37,11 +37,12 @@
     </parent>
 
     <artifactId>jrst</artifactId>
-    <version>1.1.2-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
 
     <modules>
         <module>jrst</module>
-        <module>maven-jrst-plugin</module>
+        <!-- Evolution #35: Suppression du module "maven-jrst-plugin" -->
+        <!--<module>maven-jrst-plugin</module>-->
         <module>doxia-module-jrst</module>
         <module>jrst-doc</module>
     </modules>
