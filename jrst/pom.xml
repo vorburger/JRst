@@ -128,8 +128,6 @@
 
     <build>
 
-        <defaultGoal>install</defaultGoal>
-
         <plugins>
 
             <!-- plugin i18n -->
@@ -217,8 +215,10 @@
 
     <!-- Maven Environment : profiles -->
     <profiles>
+
+        <!-- create assmelbies only at release time -->
         <profile>
-            <id>release-profile</id>
+            <id>release-assembly-profile</id>
             <activation>
                 <property>
                     <name>performRelease</name>

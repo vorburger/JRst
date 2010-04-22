@@ -127,8 +127,6 @@
 
     <build>
 
-        <defaultGoal>install</defaultGoal>
-
         <plugins>
             <plugin>
                 <groupId>org.codehaus.plexus</groupId>

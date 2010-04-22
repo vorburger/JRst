@@ -338,8 +338,6 @@
 
     <build>
 
-        <!--<defaultGoal>install</defaultGoal>-->
-
         <pluginManagement>
             <plugins>
 
@@ -353,15 +351,6 @@
         </pluginManagement>
 
     </build>
-
-    <!--repositories>
-        <repository>
-            <id>labs</id>
-            <name>lutinbuilder</name>
-            <url>http://lutinbuilder.labs.libre-entreprise.org/maven2/</url>
-        </repository>
-    </repositories-->
-
 
     <!-- ************************************************************* -->
     <!-- *** Build Environment  ************************************** -->
