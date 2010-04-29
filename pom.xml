@@ -333,7 +333,7 @@
 
         <doxia.version>1.1.2</doxia.version>
         <nuiton-utils.version>1.2</nuiton-utils.version>
-        <i18n.version>1.2.1</i18n.version>
+        <i18n.version>1.2.2</i18n.version>
     </properties>
 
     <build>
