@@ -327,11 +327,11 @@
         <projectId>jrst</projectId>
 
         <!-- Site fr et en-->
-        <siteLocales>fr,en</siteLocales>
+        <locales>fr,en</locales>
 
         <siteSourcesType>apt</siteSourcesType>
 
-        <doxia.version>1.1.2</doxia.version>
+        <doxia.version>1.1.3</doxia.version>
         <nuiton-utils.version>1.2</nuiton-utils.version>
         <i18n.version>1.2.2</i18n.version>
     </properties>

@@ -39,11 +39,10 @@ import org.dom4j.Document;
  * Parse an RST model, transform it into xdoc model and emit events into the
  * specified doxia Sink.
  * 
- * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
+ * @author <a href="mailto:chatellier@maven.org">Eric Chatellier</a>
  * @version $Id$
  * @since 0.9.0
- * @plexus.component role="org.apache.maven.doxia.parser.Parser"
- *                   role-hint="jrst"
+ * @plexus.component role="org.apache.maven.doxia.parser.Parser" role-hint="jrst"
  */
 public class JrstParser extends XdocParser {
 

@@ -30,8 +30,8 @@ import org.apache.maven.doxia.module.site.AbstractSiteModule;
 /**
  * JrstSiteModule.
  *
- * @author chatellier
- * @version $Revision : 1 $
+ * @author <a href="mailto:chatellier@maven.org">Eric Chatellier</a>
+ * @version $Id$
  * @since 0.9.0
  * @plexus.component role="org.apache.maven.doxia.module.site.SiteModule" role-hint="jrst"
  */
