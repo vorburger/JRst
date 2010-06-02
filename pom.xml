@@ -33,7 +33,7 @@
     <parent>
         <groupId>org.nuiton</groupId>
         <artifactId>mavenpom4redmine</artifactId>
-        <version>2.1.4</version>
+        <version>2.1.5</version>
     </parent>
 
     <artifactId>jrst</artifactId>
