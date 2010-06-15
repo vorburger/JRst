@@ -362,5 +362,12 @@
         <developerConnection>scm:svn:http://svn.nuiton.org/svn/jrst/trunk</developerConnection>
         <url>http://www.nuiton.org/repositories/browse/jrst/trunk</url>
     </scm>
+    
+    <repositories>
+    	<repository>
+    		<id>nuiton.org-release</id>
+    		<url>http://maven.nuiton.org/release/</url>
+    	</repository>
+    </repositories>
 
 </project>

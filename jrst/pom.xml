@@ -36,6 +36,7 @@
         <groupId>org.nuiton</groupId>
         <artifactId>jrst</artifactId>
         <version>1.2-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>org.nuiton.jrst</groupId>
@@ -254,6 +255,13 @@
             </build>
         </profile>
     </profiles>
+
+	<pluginRepositories>
+		<pluginRepository>
+    		<id>nuiton.org-release</id>
+    		<url>http://maven.nuiton.org/release/</url>
+		</pluginRepository>
+	</pluginRepositories>
 
 </project>
 
