@@ -408,12 +408,19 @@ public class JRST {
      * @param fileOut
      * @param outputEncoding
      * @param overwrite
+     * @param options 
      * @throws Exception
      */
 
     public static void generate(String xslListOrOutType, File fileIn,
             String inputEncoding, File fileOut, String outputEncoding,
             Overwrite overwrite) throws Exception {
+    	generate(xslListOrOutType, fileIn, inputEncoding, fileOut, outputEncoding, overwrite, new JRSTOptions());
+    }
+    
+    public static void generate(String xslListOrOutType, File fileIn,
+            String inputEncoding, File fileOut, String outputEncoding,
+            Overwrite overwrite, JRSTOptions options) throws Exception {
         if (fileOut != null
                 && fileOut.exists()
                 && (overwrite == Overwrite.NEVER || (overwrite == Overwrite.IFNEWER && FileUtil
@@ -432,7 +439,7 @@ public class JRST {
             // parse rst file
             URL url = fileIn.toURI().toURL();
             Reader in = new InputStreamReader(url.openStream(), inputEncoding);
-            JRSTReader jrst = new JRSTReader();
+            JRSTReader jrst = new JRSTReader(options);
             Document doc = jrst.read(in);
 
             // Sortie vers rst

@@ -391,6 +391,8 @@ public class JRSTReader {
 
     private LinkedList<Element> eTitle = new LinkedList<Element>();
 
+	private final JRSTOptions options;
+
     static {
         defaultDirectives = new HashMap<String, JRSTDirective>();
         defaultDirectives.put(IMAGE, new ImageDirective());
@@ -403,12 +405,18 @@ public class JRSTReader {
     }
 
     /**
+     * @param options 
      * 
      */
-    public JRSTReader() {
+    public JRSTReader(JRSTOptions options) {
+    	this.options = options;
     }
 
-    /**
+    public JRSTReader() {
+    	this.options = new JRSTOptions();
+	}
+
+	/**
      * @param name
      * @return the defaultDirectives
      */
@@ -449,7 +457,7 @@ public class JRSTReader {
      * @throws Exception
      */
     public Document read(Reader reader) throws Exception {
-        JRSTLexer lexer = new JRSTLexer(reader);
+        JRSTLexer lexer = new JRSTLexer(reader, options);
         try {
             Element root = composeDocument(lexer);
 
@@ -459,8 +467,10 @@ public class JRSTReader {
             root.accept(new VisitorSupport() {
                 @Override
                 public void visit(Element e) {
-                    // remove all level attribute
-                    e.addAttribute("level", null);
+                	if (!options.keepLevel) {
+	                    // remove all level attribute
+	                    e.addAttribute("level", null);
+                	}
                     // Constrution du sommaire
                     String type = e.attributeValue("type");
                     if (type != null) {
@@ -1944,6 +1954,7 @@ public class JRSTReader {
             throw new DocumentException("Element without level: " + from);
         }
         to.addAttribute("level", level);
+        to.addAttribute("realLevel", from.attributeValue("realLevel"));
     }
 
     /**
@@ -1992,7 +2003,7 @@ public class JRSTReader {
     }
 
     private Document newJRSTReader(Reader r) throws Exception {
-        JRSTReader reader = new JRSTReader();
+        JRSTReader reader = new JRSTReader(this.options);
         reader.setVariable(idMax, symbolMax, symbolMaxRef, lblFootnotes,
                 lblFootnotesRef, eFootnotes, eTarget, eTargetAnonymous,
                 eTargetAnonymousCopy);

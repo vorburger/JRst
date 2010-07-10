@@ -203,9 +203,12 @@ public class JRSTLexer {
      */
     private int elementLength;
 
-    public JRSTLexer(Reader reader) {
+    private JRSTOptions options;
+    
+    public JRSTLexer(Reader reader, JRSTOptions options) {
         titleLevels = new ArrayList<String>();
         in = new AdvancedReader(reader);
+        this.options = options;
     }
 
     /**
@@ -1224,6 +1227,8 @@ public class JRSTLexer {
                 // it's literal block until level is down
                 String[] lines = in.readWhile("(^ {" + level + "}.*|\\s*)");
                 while (lines.length > 0) {
+                // Attempted, but wrong, fix for endless loop:
+                // while (lines.length > 0 && !lines[0].isEmpty()) {
                     for (String line : lines) {
                         if (!line.matches("\\s*")) {
                             para += line.substring(level) + "\n";
@@ -1964,8 +1969,7 @@ public class JRSTLexer {
                 String title = in.readLine();
                 if (title != null
                         && startsWithTitleChar(title)
-                        && line.replaceFirst("\\s*$", "").length() == title
-                                .length()) {
+                        && (line.replaceFirst("\\s*$", "").length() == title.length() || options.lenientTitle)) {
 
                     result = DocumentHelper.createElement(TITLE).addAttribute(
                             "type", "simple").addAttribute("char",
@@ -1987,8 +1991,13 @@ public class JRSTLexer {
                 level = titleLevels.size();
                 titleLevels.add(titleLevel);
             }
-            result.addAttribute("level", String
-                    .valueOf(JRSTReader.MAX_SECTION_DEPTH + level));
+            
+			result.addAttribute("level", String.valueOf(JRSTReader.MAX_SECTION_DEPTH + level));
+			
+            if (options.otherKindsOfTitleLevels) {
+            	int theLevel = "=+-~".indexOf(titleLevel.charAt(0)) + 1;
+    			result.addAttribute("realLevel", String.valueOf(theLevel));
+            }
         }
 
         endPeek();
