@@ -37,4 +37,8 @@ public class JRSTOptions {
 	 */
 	public boolean keepLevel = false;
 
+	/**
+	 * Should newlines be added in the gen. XML? 
+	 */
+	public boolean newlinesInXML = true;
 }

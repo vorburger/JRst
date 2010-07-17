@@ -563,8 +563,9 @@ public class JRST {
                         fileOut.getAbsoluteFile().getParentFile().mkdirs();
 
                         out = new XMLWriter(FileUtil.getWriter(fileOut,
-                                outputEncoding), new OutputFormat("  ", true,
-                                outputEncoding));
+                                outputEncoding), new OutputFormat(
+                                		options.newlinesInXML ? "  " : "", 
+                                		options.newlinesInXML, outputEncoding));
                     } else {
                         out = new XMLWriter(System.out, new OutputFormat("  ",
                                 true, outputEncoding));
