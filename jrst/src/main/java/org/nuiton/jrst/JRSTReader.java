@@ -2255,9 +2255,24 @@ public class JRSTReader {
             String ref = text.substring(matcher.start(), matcher.end() - 1);
 
             ref = ref.replaceAll("(&apos;|_)", "");
+            
+            String link = null;
+            int linkPos = ref.indexOf("&lt;");
+            if (linkPos > -1) {
+            	int linkEndPos = ref.indexOf("&gt;");
+				link = ref.substring(linkPos + "&lt;".length(), linkEndPos );
+            	ref = ref.substring(0, linkPos);
+            }
+            
             ref = ref.replaceAll("[\\W&&[^-]]", " ").trim();
             Element hyper = DocumentHelper.createElement("reference");
             hyper.addAttribute("name", ref);
+            
+            if (link != null) {
+                hyper.addAttribute("link", link);
+            }            
+            
+            // Not sure what all this is...
             boolean trouve = false;
             for (int i = 0; i < eTarget.size() && !trouve; i++) {
                 Element el = eTarget.get(i);
