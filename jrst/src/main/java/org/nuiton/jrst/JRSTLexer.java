@@ -70,7 +70,7 @@ public class JRSTLexer {
                                                                  * "\u2043"
                                                                  */;
 
-    public static final String TITLE_CHAR = "-=-~'`^+:!\"#$%&*,./;|?@\\_[\\]{}<>()";
+    public static final String TITLE_CHAR = "-=-~'`^+!\"#$%&*,./;|?@\\_[\\]{}<>()";
 
     public static final String DOCINFO_ITEM = "author|authors|organization|address|contact|version|revision|status|date|copyright";
 
